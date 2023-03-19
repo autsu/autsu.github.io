@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>minikube on /dev/null</title>
+    <link>/tags/minikube/</link>
+    <description>Recent content in minikube on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Thu, 14 Jul 2022 14:30:52 +0000</lastBuildDate><atom:link href="/tags/minikube/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>minikube 问题汇总</title>
+      <link>/posts/minikube_wen_ti_hui_zong/</link>
+      <pubDate>Thu, 14 Jul 2022 14:30:52 +0000</pubDate>
+      
+      <guid>/posts/minikube_wen_ti_hui_zong/</guid>
+      <description>设置代理后，minikube kubectl 无响应 在给虚拟机设置了代理后，整个网络体验爽快多了，再也不用担心拉不下来包了。。。
+只需要将虚拟机的网络设置为桥接模式，然后开启 clashx 的 “允许局域网连接”（非常重要的一步，之前就是因为忽略了这一步，导致虚拟机无法使用宿主机代理），然后再点击 clashx 的 “复制终端代理命令”，将里面的 127.</description>
+    </item>
+    
+  </channel>
+</rss>

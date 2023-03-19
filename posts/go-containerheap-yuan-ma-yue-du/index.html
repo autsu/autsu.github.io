@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>go container/heap 源码阅读 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="heap（堆），是一个用数组表示的完全二叉树，常用于构建优先队列，排序和快速找出一个集合中的最小值（或者最大值）。在 go 标准库下的 container 包中提供了这种数据结构。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"go container/heap 源码阅读",
+      "item":"/posts/go-containerheap-yuan-ma-yue-du/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/go-containerheap-yuan-ma-yue-du/"
+    },
+    "headline": "go container\/heap 源码阅读 | \/dev\/null","datePublished": "2021-07-22T14:16:49+00:00",
+    "dateModified": "2021-07-22T14:16:49+00:00",
+    "wordCount":  539 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "heap（堆），是一个用数组表示的完全二叉树，常用于构建优先队列，排序和快速找出一个集合中的最小值（或者最大值）。在 go 标准库下的 container 包中提供了这种数据结构。"
+}
+</script><meta property="og:title" content="go container/heap 源码阅读 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/go-containerheap-yuan-ma-yue-du/" />
+
+
+
+
+<meta property="og:description" content="heap（堆），是一个用数组表示的完全二叉树，常用于构建优先队列，排序和快速找出一个集合中的最小值（或者最大值）。在 go 标准库下的 container 包中提供了这种数据结构。" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-07-22T14:16:49&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-07-22T14:16:49&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="go" />
+
+<meta property="article:tag" content="源码" />
+
+<meta property="article:tag" content="数据结构" />
+
+<meta property="article:tag" content="堆" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/2021-2-24-go-container-list-source-code/" />
+
+<meta property="og:see_also" content="/posts/jian-zhi-offer-40-zui-xiao-de-k-ge-shu/" />
+
+<meta property="og:see_also" content="/posts/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/" />
+
+<meta property="og:see_also" content="/posts/goji-yi-ci-defer-cuo-wu/" />
+
+<meta property="og:see_also" content="/posts/goiocopy-de-keng/" />
+
+<meta property="og:see_also" content="/posts/2021-3-13-byte-array/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">go container/heap 源码阅读</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2021-07-22</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>3分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <p>heap（堆），是一个用数组表示的完全二叉树，常用于构建优先队列，排序和快速找出一个集合中的最小值（或者最大值）。在 go 标准库下的 container 包中提供了这种数据结构。</p>
+<!-- more -->
+<h1 id="源码">源码</h1>
+<h2 id="interface">interface</h2>
+<p>要想使用堆，需要实现 <code>Interface</code> 接口，这个接口中内嵌了一个 <code>sort.Interface</code> 接口，所以一共需要包含 5 个方法：Len() 用于返回长度，Swap() 用于交换两个值，Less() 用于定义比较两个值的规则，Push() 和 Pop() 分别代表添加到末尾和弹出末尾元素。通过 Less() 可以自定义堆为最大堆还是最小堆。</p>
+<pre><code class="language-go">type Interface interface {
+	sort.Interface
+	Push(x interface{}) // 添加 x 到末尾
+	Pop() interface{}   // 弹出末尾元素并返回
+}
+</code></pre>
+<p>一开始我不是很明白为什么要实现 Push 和 Pop 两个方法，因为这两个方法的定义已经很明确了，后来看了 heap 包下的 example_pq_test.go 才明白了原因，主要在于一些操作还需要做一些额外的工作，比如优先级队列的实现，其实现的 Pop() 如下：</p>
+<pre><code class="language-go">func (pq *PriorityQueue) Pop() interface{} {
+	old := *pq
+	n := len(old)
+	item := old[n-1]
+	old[n-1] = nil  // avoid memory leak
+    // 将 index 置为 -1 是为了标识该数据已经出了优先级队列了
+	item.index = -1 
+	*pq = old[0 : n-1]
+	return item
+}
+</code></pre>
+<h2 id="push">Push</h2>
+<pre><code class="language-go">func Push(h Interface, x interface{}) {
+	h.Push(x)
+	// 从下到上堆化
+	up(h, h.Len()-1)
+}
+</code></pre>
+<p>Push 会先执行自己实现的 h.Push 方法，将 x 添加到末尾，之后再执行 up 进行堆化。</p>
+<h2 id="up">up</h2>
+<pre><code class="language-go">// up 代表上浮，从下到上堆化
+// j 代表需要堆化的元素 index，up 会从该元素开始，不断向上调整堆
+// 在 Push 中会调用 up
+func up(h Interface, j int) {
+	for {
+		// j 的父节点
+		i := (j - 1) / 2 // parent
+
+		// i == j ：此时 i 是最后一个元素
+		//
+		// 在解释 !h.Less(j, i) 之前，先来看看 Less(i, j int) 接口的定义：
+		//
+		// 		func (m myheap) Less(i, j int) bool {
+		//			return m[i] &lt; m[j]	// 这代表实现的堆为最小堆
+		// 		}
+		//
+		// 		func (m myheap) Less(i, j int) bool {
+		//			return m[i] &gt; m[j]	// 这代表实现的堆为最大堆
+		// 		}
+		//
+		//
+		// 1. 最小堆，如果 j（子节点）大于 i（父节点），情况如下图：
+		//
+		//						3	i
+		//						  \
+		//						   5  j
+		//
+		// 此时便不需要交换 i 和 j，!h.Less(j, i) 对应 !m[j] &lt; m[i]，即 m[j] &gt; m[i]
+		//
+		// 最大堆同理
+		if i == j || !h.Less(j, i) {
+			break
+		}
+		// 否则需要进行交换，还是以最小堆为例：
+		//
+		//						5	i
+		//						  \
+		//						   3  j
+		//
+		// 此时不满足 !h.Less(j, i)，此时 i（父节点）大于 j（子节点），
+		// 不满足最小堆的定义，所以需要进行交换
+		h.Swap(i, j)
+
+		// up 代表上浮，所以更新 j 为其父节点 i
+		j = i
+	}
+}
+</code></pre>
+<h2 id="push-的流程图示">Push 的流程图示</h2>
+<p>执行以下代码：</p>
+<pre><code class="language-go">type myheap []int   // myheap 是一个最小堆
+
+func TestHeapPushPop(t *testing.T) {
+	h := new(myheap)
+	heap.Push(h, 5)
+	heap.Push(h, 10)
+	heap.Push(h, 2)
+	heap.Push(h, 99)
+	heap.Push(h, 3)
+	heap.Push(h, 233)
+	heap.Push(h, 1)
+}
+</code></pre>
+<p><img src="https://autsu.github.io/post-images/1626964254407.png" alt=""></p>
+<h2 id="pop">Pop</h2>
+<pre><code class="language-go">func Pop(h Interface) interface{} {
+	n := h.Len() - 1
+	// 堆顶是最小（或最大）元素，将其交换到末尾，pop 会移除该元素
+	h.Swap(0, n)
+	// FIXME down 的作用不确定，以下为猜测
+	// down 会将第二小（或大）的元素移动到堆顶，便于下次操作
+	down(h, 0, n)
+	return h.Pop()
+}
+</code></pre>
+<h2 id="down">down</h2>
+<pre><code class="language-go">func down(h Interface, i0, n int) bool {
+	i := i0
+	for {
+		j1 := 2*i + 1          // j1 是 i 的左子节点
+		// j1 &gt; n 代表子节点不存在
+		// j1 == n 代表子节点是堆中最后一个节点，down 操作会忽略最后一个元素
+		if j1 &gt;= n || j1 &lt; 0 { // j1 &lt; 0 after int overflow
+			break
+		}
+		// j 用来保存子节点中较小（大）的那个，默认为左子节点
+		j := j1 // left child
+
+		// j2 := j1 + 1，这表示 j2 是 i 的右子节点
+		// 这里是 j2 &lt; n 而不是 j2 &lt;= n，因为 down 操作会忽略最后一个元素
+		// 如果是最小堆，则选出 j1（左子节点）和 j2（右子节点）中较小的那个
+		// 如果是最大堆，则选出 j1（左子节点）和 j2（右子节点）中较大的那个
+		if j2 := j1 + 1; j2 &lt; n &amp;&amp; h.Less(j2, j1) {
+			// 满足条件，则更新 j 为右子节点
+			j = j2 // = 2*i + 2  // right child
+		}
+
+		// 判断 j（子节点） 和 i（父节点）的关系
+		// 如果是最小堆，!h.Less(j, i) 代表 j &gt; i，即父节点小于较小的子节点，
+		// 此时已经满足最小堆的特性了，直接 break
+		// 如果是最大堆，!h.Less(j, i) 代表 j &lt; i，与上面同理
+		if !h.Less(j, i) {
+			break
+		}
+
+		// 到这里说明 j（子节点） 和 i（父节点）不满足堆的特性，
+		// 如果是最小堆，说明此时 i &gt; j，需要交换
+		// 如果是最大堆，说明此时 i &lt; j，需要交换
+		h.Swap(i, j)
+
+		// down 代表下沉，更新 i 为其子节点 j，进行下一轮循环
+		i = j
+	}
+
+	// 如果没有执行过 i = j，则不满足 i &gt; i0 条件，
+	// 这代表没有进行 down 操作
+	return i &gt; i0
+}
+</code></pre>
+<h2 id="pop-的流程如下图">Pop 的流程如下图：</h2>
+<p><img src="https://github.com/autsu/diagrams/blob/master/img/%E5%A0%86%E7%9A%84pop%E6%93%8D%E4%BD%9C.png?raw=true" alt=""></p>
+<h2 id="写在最后">写在最后</h2>
+<p>上面只对 <code>heap</code> 包中的核心函数进行了分析，剩余还有 <code>Init</code>，<code>Remove</code>，<code>Fix()</code> 函数，但是其内部也是调用了 <code>up</code> 和 <code>down</code> 这两个函数，所以就不一一分析了。</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/go/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#go</a>
+    
+    <a href="/tags/%E6%BA%90%E7%A0%81/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#源码</a>
+    
+    <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#数据结构</a>
+    
+    <a href="/tags/%E5%A0%86/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#堆</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/epoll-de-lt-he-et/" class="block">epoll 的 LT 和 ET</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/jian-zhi-offer-40-zui-xiao-de-k-ge-shu/" class="block">剑指 Offer 40. 最小的 k 个数</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#interface">interface</a></li>
+    <li><a href="#push">Push</a></li>
+    <li><a href="#up">up</a></li>
+    <li><a href="#push-的流程图示">Push 的流程图示</a></li>
+    <li><a href="#pop">Pop</a></li>
+    <li><a href="#down">down</a></li>
+    <li><a href="#pop-的流程如下图">Pop 的流程如下图：</a></li>
+    <li><a href="#写在最后">写在最后</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/2021-2-24-go-container-list-source-code/" class="no-underline">go container/list 源码分析【未完】</a>
+          <br />
+        
+          <a href="/posts/jian-zhi-offer-40-zui-xiao-de-k-ge-shu/" class="no-underline">剑指 Offer 40. 最小的 k 个数</a>
+          <br />
+        
+          <a href="/posts/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/" class="no-underline">【两万字长文带你深入Go语言GC源码——腾讯技术工程】阅读笔记</a>
+          <br />
+        
+          <a href="/posts/goji-yi-ci-defer-cuo-wu/" class="no-underline">go：记一次 defer 错误</a>
+          <br />
+        
+          <a href="/posts/goiocopy-de-keng/" class="no-underline">go：http.Request.Body 第二次读取为空 </a>
+          <br />
+        
+          <a href="/posts/2021-3-13-byte-array/" class="no-underline">go 字节数组错误：\u0001</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>堆 on /dev/null</title>
+    <link>/tags/%E5%A0%86/</link>
+    <description>Recent content in 堆 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Wed, 17 Aug 2022 23:02:26 +0000</lastBuildDate><atom:link href="/tags/%E5%A0%86/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>两个类似的堆问题：leetcode 347 前 K 个高频元素 和 692. 前 K 个高频单词 </title>
+      <link>/posts/leetcode_347_and_692/</link>
+      <pubDate>Wed, 17 Aug 2022 23:02:26 +0000</pubDate>
+      
+      <guid>/posts/leetcode_347_and_692/</guid>
+      <description>首先先来看一下这两个问题：
+347. 前 K 个高频元素 给你一个整数数组 nums 和一个整数 k ，请你返回其中出现频率前 k 高的元素。你可以按 任意顺序 返回答案。</description>
+    </item>
+    
+    <item>
+      <title>go container/heap 源码阅读</title>
+      <link>/posts/go-containerheap-yuan-ma-yue-du/</link>
+      <pubDate>Thu, 22 Jul 2021 14:16:49 +0000</pubDate>
+      
+      <guid>/posts/go-containerheap-yuan-ma-yue-du/</guid>
+      <description>heap（堆），是一个用数组表示的完全二叉树，常用于构建优先队列，排序和快速找出一个集合中的最小值（或者最大值）。在 go 标准库下的 container 包中提供了这种数据结构。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 40. 最小的 k 个数</title>
+      <link>/posts/jian-zhi-offer-40-zui-xiao-de-k-ge-shu/</link>
+      <pubDate>Wed, 21 Jul 2021 21:07:14 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-40-zui-xiao-de-k-ge-shu/</guid>
+      <description>输入整数数组 arr ，找出其中最小的 k 个数</description>
+    </item>
+    
+  </channel>
+</rss>

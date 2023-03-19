@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>汇编 on /dev/null</title>
+    <link>/tags/%E6%B1%87%E7%BC%96/</link>
+    <description>Recent content in 汇编 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Mon, 04 Oct 2021 11:57:14 +0000</lastBuildDate><atom:link href="/tags/%E6%B1%87%E7%BC%96/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[转载] Mac 通过DOSBox搭建汇编环境（附编译、链接、执行、调试详细过程）</title>
+      <link>/posts/mac-tong-guo-dosbox-da-jian-hui-bian-huan-jing-fu-bian-yi-lian-jie-zhi-xing-diao-shi-xiang-xi-guo-cheng/</link>
+      <pubDate>Mon, 04 Oct 2021 11:57:14 +0000</pubDate>
+      
+      <guid>/posts/mac-tong-guo-dosbox-da-jian-hui-bian-huan-jing-fu-bian-yi-lian-jie-zhi-xing-diao-shi-xiang-xi-guo-cheng/</guid>
+      <description>https://blog.csdn.net/qq_41855420/article/details/103746234</description>
+    </item>
+    
+  </channel>
+</rss>

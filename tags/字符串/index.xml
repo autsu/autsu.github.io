@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>字符串 on /dev/null</title>
+    <link>/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/</link>
+    <description>Recent content in 字符串 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Tue, 03 Aug 2021 21:38:24 +0000</lastBuildDate><atom:link href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[牛客][腾讯2020笔试题] 第一题. 压缩算法</title>
+      <link>/posts/teng-xun-2020-bi-shi-ti-ya-suo-suan-fa/</link>
+      <pubDate>Tue, 03 Aug 2021 21:38:24 +0000</pubDate>
+      
+      <guid>/posts/teng-xun-2020-bi-shi-ti-ya-suo-suan-fa/</guid>
+      <description>说明：该题出自牛客 —— 腾讯2020校园招聘-后台
+时间限制：C/C++ 1秒，其他语言2秒</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 43. 字符串相乘</title>
+      <link>/posts/leetcode-43-zi-fu-chuan-xiang-cheng/</link>
+      <pubDate>Wed, 23 Jun 2021 11:18:48 +0000</pubDate>
+      
+      <guid>/posts/leetcode-43-zi-fu-chuan-xiang-cheng/</guid>
+      <description>给定两个以字符串形式表示的非负整数 num1 和 num2，返回 num1 和 num2 的乘积，它们的乘积也表示为字符串形式。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 67. 把字符串转换成整数</title>
+      <link>/posts/jian-zhi-offer-67-ba-zi-fu-chuan-zhuan-huan-cheng-zheng-shu/</link>
+      <pubDate>Wed, 21 Apr 2021 22:12:13 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-67-ba-zi-fu-chuan-zhuan-huan-cheng-zheng-shu/</guid>
+      <description>写一个函数 StrToInt，实现把字符串转换成整数这个功能。不能使用 atoi 或者其他类似的库函数。</description>
+    </item>
+    
+    <item>
+      <title>leetcode 394. 字符串解码</title>
+      <link>/posts/leetcode-394-zi-fu-chuan-jie-ma/</link>
+      <pubDate>Mon, 19 Apr 2021 18:57:01 +0000</pubDate>
+      
+      <guid>/posts/leetcode-394-zi-fu-chuan-jie-ma/</guid>
+      <description>题目描述 给定一个经过编码的字符串，返回它解码后的字符串。
+编码规则为: k[encoded_string]，表示其中方括号内部的 encoded_string 正好重复 k 次。注意 k 保证为正整数。</description>
+    </item>
+    
+    <item>
+      <title>面试题 01.06. 字符串压缩</title>
+      <link>/posts/2021-3-13-ctcl-0106-compress-string/</link>
+      <pubDate>Fri, 16 Apr 2021 19:41:48 +0000</pubDate>
+      
+      <guid>/posts/2021-3-13-ctcl-0106-compress-string/</guid>
+      <description>题目描述 字符串压缩。利用字符重复出现的次数，编写一种方法，实现基本的字符串压缩功能。比如，字符串aabcccccaaa会变为a2b1c5a3。若“压缩”后的字符串没有变短，则返回原先的字符串。你可以假设字符串中只包含大小写英文字母（a至z）。
+示例1:
+输入：&amp;ldquo;aabcccccaaa&amp;rdquo; 输出：&amp;ldquo;a2b1c5a3&amp;rdquo; 示例2:</description>
+    </item>
+    
+    <item>
+      <title>LeetCode165.比较版本号</title>
+      <link>/posts/2021-3-5-leet-165-compare-version-numbers/</link>
+      <pubDate>Fri, 16 Apr 2021 19:32:54 +0000</pubDate>
+      
+      <guid>/posts/2021-3-5-leet-165-compare-version-numbers/</guid>
+      <description>题目描述 给你两个版本号 version1 和 version2 ，请你比较它们。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 48. 最长不含重复字符的子字符串</title>
+      <link>/posts/jian-zhi-offer-48-zui-chang-bu-han-chong-fu-zi-fu-de-zi-zi-fu-chuan/</link>
+      <pubDate>Fri, 16 Apr 2021 15:58:39 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-48-zui-chang-bu-han-chong-fu-zi-fu-de-zi-zi-fu-chuan/</guid>
+      <description>题目描述 请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。
+示例 1:
+输入: &amp;quot;abcabcbb&amp;quot; 输出: 3 解释: 因为无重复字符的最长子串是 &amp;quot;abc&amp;quot;，所以其长度为 3。 示例 2:</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 50. 第一个只出现一次的字符（书中为35题）</title>
+      <link>/posts/jian-zhi-offer-50-di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-shu-zhong-wei-35-ti/</link>
+      <pubDate>Fri, 16 Apr 2021 15:55:30 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-50-di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-shu-zhong-wei-35-ti/</guid>
+      <description>题目描述 在字符串 s 中找出第一个只出现一次的字符。如果没有，返回一个单空格。 s 只包含小写字母。</description>
+    </item>
+    
+  </channel>
+</rss>

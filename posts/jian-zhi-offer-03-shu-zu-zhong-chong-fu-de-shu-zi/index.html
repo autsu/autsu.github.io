@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>剑指 Offer 03. 数组中重复的数字 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="题目描述 找出数组中重复的数字。
+在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"剑指 Offer 03. 数组中重复的数字",
+      "item":"/posts/jian-zhi-offer-03-shu-zu-zhong-chong-fu-de-shu-zi/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/jian-zhi-offer-03-shu-zu-zhong-chong-fu-de-shu-zi/"
+    },
+    "headline": "剑指 Offer 03. 数组中重复的数字 | \/dev\/null","datePublished": "2021-04-16T15:38:03+00:00",
+    "dateModified": "2021-04-16T15:38:03+00:00",
+    "wordCount":  290 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "题目描述 找出数组中重复的数字。\n在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。"
+}
+</script><meta property="og:title" content="剑指 Offer 03. 数组中重复的数字 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/jian-zhi-offer-03-shu-zu-zhong-chong-fu-de-shu-zi/" />
+
+
+
+
+<meta property="og:description" content="题目描述 找出数组中重复的数字。
+在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-04-16T15:38:03&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-04-16T15:38:03&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="算法" />
+
+<meta property="article:tag" content="哈希表" />
+
+<meta property="article:tag" content="数组" />
+
+<meta property="article:tag" content="剑指offer" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/leetcode146lru-huan-cun-ji-zhi/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">剑指 Offer 03. 数组中重复的数字</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2021-04-16</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>2分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <!-- more -->
+<h2 id="题目描述">题目描述</h2>
+<blockquote>
+<p>找出数组中重复的数字。</p>
+<p>在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。</p>
+<p>示例 1：</p>
+<p>输入：
+[2, 3, 1, 0, 2, 5, 3]
+输出：2 或 3</p>
+<p>限制：</p>
+<p>2 &lt;= n &lt;= 100000</p>
+</blockquote>
+<h4 id="方法1哈希表">方法1：哈希表</h4>
+<p>看到这种寻找重复元素的题目，首先想到的就是哈希表，通过 map 的 key 可以很容易的找到重复元素：</p>
+<pre><code class="language-go">func findRepeatNumber(nums []int) int {
+    m := make(map[int]struct{})
+    for i := 0; i &lt; len(nums); i++ {
+        // 如果该 key 已存在，说明重复
+        if _, ok := m[nums[i]]; ok {
+            return nums[i]
+        }
+        m[nums[i]] = struct{}{}
+    }
+    return -1
+}
+
+// 执行用时: 40 ms
+// 内存消耗: 9.6 MB
+</code></pre>
+<p>复杂度分析：
+时间复杂度 O(N) ： 遍历数组使用 O(N) ，map 添加与查找元素皆为 O(1) 。
+空间复杂度 O(N) ： map 占用 O(N) 大小的额外空间。</p>
+<h4 id="方法2排序">方法2：排序</h4>
+<p>对数组排序后，看相邻元素是否有相同的：</p>
+<pre><code class="language-go">func findRepeatNumber(nums []int) int {
+  	// 先排序
+    sort.Slice(nums, func(i, j int) bool {
+        return nums[i] &lt; nums[j]
+    })
+    for i := 0; i &lt; len(nums); i++ {
+        if nums[i] == nums[i+1] {
+            return nums[i]
+        }
+    }
+    return -1
+}
+
+// 执行用时: 48 ms
+// 内存消耗: 8.7 MB
+</code></pre>
+<p>复杂度分析：
+时间复杂度 O(NlogN) ： 排序的时间复杂度为 O(NlogN)
+空间复杂度 O(1) ： 无需额外空间</p>
+<h4 id="方法3原地置换原地哈希">方法3：原地置换、原地哈希</h4>
+<p>题干中有一句很重要的话：<em><strong>在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内</strong></em>，这说明了每个元素都可以存放在其值下标处（例如 2 可以存在 nums[2]，5 可以存在 nums[5]）,我们可以使用某种方法，将每个元素放到其对应位置，实现一个哈希表，哈希表的 key 是数组下标，value 是与下标相同的值，例如：</p>
+<p><img src="https://zkept-1302605083.cos.ap-nanjing.myqcloud.com/LeetCode/office_03_hash.jpg" alt=""></p>
+<p>当 key 发生冲突时，说明该元素是我们要找的重复数，但是用什么方法使每个元素移动到其对应位置呢?</p>
+<p>这里可以使用原地置换法，首先判断 i 是否等于 nums[i]，不是的话则继续判断 nums[i] 是否等于 nums[nums[i]]，如果相等，则说明发生了冲突，该数为重复数，直接返回，否则交换两个位置的值（swap(nums[i], nums[nums[i]]) ），如果 i 等于 nums[i]，则说明 nums[i] 已经放在了对应的位置，此时可以i++，重复上述步骤，直到 i &gt; len(nums) 或者 return。</p>
+<p>算法流程：</p>
+<ol>
+<li>遍历数组 nums ，设索引初始值为 i = 0 :
+<ol>
+<li>若 nums[i] = i ： 说明此数字已在对应索引位置，无需交换，因此跳过；</li>
+<li>若 nums[nums[i]] = nums[i] ： 代表索引 nums[i] 处和索引 i 处的元素值都为 nums[i] ，即找      到一组重复值，返回此值 nums[i] ；</li>
+<li>否则： 交换索引为 i 和 nums[i] 的元素值，将此数字交换至对应索引位置。</li>
+</ol>
+</li>
+<li>若遍历完毕尚未返回，则返回 -1 。</li>
+</ol>
+<p>文字可能不太好理解，结合下面的图帮助理解：</p>
+<p><img src="https://zkept-1302605083.cos.ap-nanjing.myqcloud.com/LeetCode/office_03.png" alt=""></p>
+<pre><code class="language-go">func findRepeatNumber(nums []int) int {
+    i := 0
+    for i &lt; len(nums) {
+        if i == nums[nums[i]] {
+            i++
+        } else if nums[i] == nums[nums[i]] {
+            return nums[i]
+        }
+        nums[i], nums[nums[i]] = nums[nums[i]], nums[i]
+    }
+    return -1
+}
+
+// 执行用时: 36 ms
+// 内存消耗: 8.7 MB
+
+</code></pre>
+<p>复杂度分析：
+时间复杂度 O(N) ： 遍历数组使用 O(N)，每轮遍历的判断和交换操作使用 O(1)。
+空间复杂度 O(1) ： 使用常数复杂度的额外空间。</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/%E7%AE%97%E6%B3%95/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#算法</a>
+    
+    <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#哈希表</a>
+    
+    <a href="/tags/%E6%95%B0%E7%BB%84/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#数组</a>
+    
+    <a href="/tags/%E5%89%91%E6%8C%87offer/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#剑指offer</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/jian-zhi-offer-18-shan-chu-lian-biao-de-jie-dian/" class="block">剑指 Offer 18. 删除链表的节点</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/leetcode146lru-huan-cun-ji-zhi/" class="block">LeetCode146.LRU 缓存机制</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#题目描述">题目描述</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#方法1哈希表">方法1：哈希表</a></li>
+            <li><a href="#方法2排序">方法2：排序</a></li>
+            <li><a href="#方法3原地置换原地哈希">方法3：原地置换、原地哈希</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/leetcode146lru-huan-cun-ji-zhi/" class="no-underline">LeetCode146.LRU 缓存机制</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

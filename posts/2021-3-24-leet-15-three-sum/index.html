@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>leetcode 15. 三数之和 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="题目描述 给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三 个元素 a，b，c ，使得 a &#43; b &#43; c = 0 请你找出所有和为 0 且不重复的三元组。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"leetcode 15. 三数之和",
+      "item":"/posts/2021-3-24-leet-15-three-sum/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/2021-3-24-leet-15-three-sum/"
+    },
+    "headline": "leetcode 15. 三数之和 | \/dev\/null","datePublished": "2021-04-16T19:38:53+00:00",
+    "dateModified": "2021-04-16T19:38:53+00:00",
+    "wordCount":  608 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "题目描述 给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三 个元素 a，b，c ，使得 a \u002b b \u002b c = 0 请你找出所有和为 0 且不重复的三元组。"
+}
+</script><meta property="og:title" content="leetcode 15. 三数之和 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/2021-3-24-leet-15-three-sum/" />
+
+
+
+
+<meta property="og:description" content="题目描述 给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三 个元素 a，b，c ，使得 a &#43; b &#43; c = 0 请你找出所有和为 0 且不重复的三元组。" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-04-16T19:38:53&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-04-16T19:38:53&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="双指针" />
+
+<meta property="article:tag" content="数组" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/jian-zhi-offer-04-er-wei-shu-zu-zhong-de-cha-zhao/" />
+
+<meta property="og:see_also" content="/posts/2021-3-26-leet-56-merge-interval/" />
+
+<meta property="og:see_also" content="/posts/jian-zhi-offer-22-lian-biao-zhong-dao-shu-di-k-ge-jie-dian/" />
+
+<meta property="og:see_also" content="/posts/jian-zhi-offer-03-shu-zu-zhong-chong-fu-de-shu-zi/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">leetcode 15. 三数之和</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2021-04-16</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>3分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h2 id="题目描述">题目描述</h2>
+<blockquote>
+<p>给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三
+个元素 a，b，c ，使得 a + b + c = 0
+请你找出所有和为 0 且不重复的三元组。</p>
+<p>注意：答案中不可以包含重复的三元组。</p>
+<p> 
+示例 1：</p>
+<p>输入：nums = [-1,0,1,2,-1,-4]
+输出：[[-1,-1,2],[-1,0,1]]
+示例 2：</p>
+<p>输入：nums = []
+输出：[]
+示例 3：</p>
+<p>输入：nums = [0]
+输出：[]
+ </p>
+<p>提示：</p>
+<p>0 &lt;= nums.length &lt;= 3000
+-105 &lt;= nums[i] &lt;= 105</p>
+</blockquote>
+<h2 id="方法1排序--双指针">方法1：排序 + 双指针</h2>
+<h3 id="算法流程">算法流程</h3>
+<p>大致流程：</p>
+<ol>
+<li>首先将数组按 <code>升序</code> 排序</li>
+<li>准备三个指针 k、i、j</li>
+<li>初始化，将 k 放置在第一个元素，i 放置在 k+1 处，j 放置在最后一个元素处</li>
+<li>开始循环，条件为 k &lt; len(nums)-2</li>
+<li>如果当前 nums[k] &gt; 0，则 break</li>
+<li>如果 nums[k&ndash;] 和 nums[k] 相同，则 continue 去重</li>
+<li>固定 k ，先移动 i 和 j，当 i == j 时，再移动 k</li>
+<li>在移动 i 和 j 时计算 <code>nums[k] + nums[j] + nums[i]</code> 的值，记为 s
+<ol>
+<li>如果 s &lt; 0，将 i++，如果 nums[i++] == nums[i]，则继续 + 1，这样可以保证不取到重复元素</li>
+<li>如果 s &gt; 0，将 j&ndash;，如果 nums[j&ndash;] == nums[j]，则继续 - 1，原因同上</li>
+<li>如果 s == 0，记录当前的三个数字，之后将 i++，j&ndash;，移动同时和上面一样，进行去重处理</li>
+</ol>
+</li>
+</ol>
+<p>分析：</p>
+<p>因为数组是排好序的，所以 k 指向的是最小元素，i 指向次小元素，j 指向最大元素（排除一些特殊情况比如 [0, 0, 0, 0]）</p>
+<p>这里的 k 起的是固定作用，目的是枚举全部情况，当三个值的和小于 0 时，可以将 i++ 使和增大，同理当和大于 0 时，可以将 j&ndash; 将和减小，当和等于 0 时，说明此时已经搜集到了结果，可以将 k++ 进行下个数的枚举</p>
+<p>第 5 步的原因是：因为 nums[j] &gt;= nums[i] &gt;= nums[k] &gt; 0，即 3 个数字都大于 0 ，在此固定指针 k 之后不可能再找到结果了。</p>
+<p>第 4 步的条件为 k &lt; len(nums)-2，原因是 i 和 j 都在 k 之后，当 k 在 len(nums)-2-1 处时，j 在最后一个，i 在倒数第二个，k，i，j 刚好对应最后三个数，所以可以作为最后一次判断。这只是一个优化，可以减少 2 次不必要的循环，k &lt; len(nums) 依然是正确的。</p>
+<p>关于去重的条件 <code>i &lt; j &amp;&amp; nums[i] == nums[i+1]</code> 中需要首先判断 i &lt; j 的原因是防止越界，例如：</p>
+<p>测试用例 [0, 0, 0]，k 在 [0]，i 在 [1]，j 在 [2]，sum = 0，此时因为 nums[i] == nums[i+1]，所以执行 i++ 到 [1]，还是重复，继续 i++ 到 [2]，如果没有 i &lt; j 的条件，这里会执行判断语句 nums[i] == nums[i+1] 即 nums[2] == nums[3]，而这个 nums[3] 就会导致越界致使程序错误，但加了 i &lt; j 会导致短路，使得后面的 nums[i] == nums[i+1] 不执行。</p>
+<p>对于 <code>i &lt; j &amp;&amp; nums[j] == nums[j-1]</code> 也是一样的道理，还是测试用例 [0, 0, 0]，如果没有 i &lt; j 的约束，则 j 会一直执行 j&ndash;，当 j 到达 0 时，[j-1] 就会发生数组越界问题。</p>
+<p>流程如下图：</p>
+<p><img src="https://zengh1.github.io/post-images/1618573149147.png" alt=""></p>
+<p>代码如下：</p>
+<p>未优化版，是我根据上面思路写的：</p>
+<pre><code class="language-go">func threeSum(nums []int) [][]int {
+	res := make([][]int, 0)
+	if len(nums) == 0 {
+		return res
+	}
+	sort.Slice(nums, func(i, j int) bool {
+		return nums[i] &lt; nums[j]
+	})
+
+	k := 0
+	i, j := k+1, len(nums)-1
+	for k &lt; len(nums)-2 {
+		count++
+		s := 0
+		// [-1, 0, 0]
+		if i &gt;= j {
+			k++
+			continue
+		}
+
+		if nums[k] &gt; 0 {
+			break
+		}
+		//fmt.Println(k, i, j)
+		s = nums[k] + nums[i] + nums[j]
+		if s &gt; 0 {
+			for i &lt; j &amp;&amp; nums[j] == nums[j-1] {
+				j--
+			}
+			j--
+		} else if s &lt; 0 {
+			for i &lt; j &amp;&amp; nums[i] == nums[i+1] {
+				i++
+			}
+			i++
+		} else {
+			r := make([]int, 0)
+			r = append(r, nums[k], nums[i], nums[j])
+			res = append(res, r)
+			for i &lt; j &amp;&amp; nums[i] == nums[i+1] {
+				i++
+			}
+			for i &lt; j &amp;&amp; nums[j] == nums[j-1] {
+				j--
+			}
+			i++
+			j--
+
+		}
+
+		if i &gt;= j {
+			for k &lt; len(nums)-1 &amp;&amp; nums[k] == nums[k+1] {
+				k++
+			}
+			k++
+			i, j = k+1, len(nums)-1
+		}
+	}
+	return res
+}	
+</code></pre>
+<p>优化版，来自题解：</p>
+<pre><code class="language-go">func threeSum1(nums []int) [][]int {
+	sort.Slice(nums, func(i, j int) bool {
+		return nums[i] &lt; nums[j]
+	})
+	res := make([][]int, 0)
+
+	for k := 0; k &lt; len(nums)-2; k++ {
+		count++
+		if nums[k] &gt; 0 {
+			break
+		}
+		if k &gt; 0 &amp;&amp; nums[k] == nums[k-1] {
+			continue
+		}
+
+		i, j := k+1, len(nums)-1
+
+		for i &lt; j {
+			count++
+			sum := nums[i] + nums[j] + nums[k]
+			if sum &lt; 0 {
+				for i &lt; j &amp;&amp; nums[i] == nums[i+1] {
+					i++
+				}
+				i++
+			} else if sum &gt; 0 {
+				for i &lt; j &amp;&amp; nums[j] == nums[j-1] {
+					j--
+				}
+				j--
+			} else {
+				r := make([]int, 0)
+				r = append(r, nums[k], nums[i], nums[j])
+				res = append(res, r)
+
+				for i &lt; j &amp;&amp; nums[i] == nums[i+1] {
+					i++
+				}
+				i++
+				for i &lt; j &amp;&amp; nums[j] == nums[j-1] {
+					j--
+				}
+				j--
+			}
+		}
+	}
+	return res
+}
+</code></pre>
+<p>经过测试，这两个函数的执行时间相差了三十倍！不知道为何性能差距会如此之大，可能是我写的冗余判断条件太多了，暂时也没有去仔细分析的想法，只能说明自己的逻辑能力还是菜的抠脚，还需要多多去练习才行。</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#双指针</a>
+    
+    <a href="/tags/%E6%95%B0%E7%BB%84/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#数组</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/2021-3-23-offer-52-get-intersection-node/" class="block">剑指 Offer 52. 两个链表的第一个公共节点</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/2021-3-26-leet-56-merge-interval/" class="block">LeetCode 56. 合并区间</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#题目描述">题目描述</a></li>
+    <li><a href="#方法1排序--双指针">方法1：排序 + 双指针</a>
+      <ul>
+        <li><a href="#算法流程">算法流程</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/jian-zhi-offer-04-er-wei-shu-zu-zhong-de-cha-zhao/" class="no-underline">剑指 Offer 04. 二维数组中的查找</a>
+          <br />
+        
+          <a href="/posts/2021-3-26-leet-56-merge-interval/" class="no-underline">LeetCode 56. 合并区间</a>
+          <br />
+        
+          <a href="/posts/jian-zhi-offer-22-lian-biao-zhong-dao-shu-di-k-ge-jie-dian/" class="no-underline">剑指 Offer 22. 链表中倒数第k个节点</a>
+          <br />
+        
+          <a href="/posts/jian-zhi-offer-03-shu-zu-zhong-chong-fu-de-shu-zi/" class="no-underline">剑指 Offer 03. 数组中重复的数字</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

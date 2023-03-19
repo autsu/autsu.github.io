@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>go gc 白话版 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="主流的垃圾回收算法 引用计数法 根据对象自身的引用计数来回收，当引用计数归零时进行回收，但是计数频繁更新会带来更多开销，且无法解决循环引用的问题。
+优点：简单直接，回收速度快 缺点：需要额外的空间存放计数，无法处理循环引用的情况； 标记清除法 标记出所有不需要回收的对象，在标记完成后统一回收掉所有未被标记的对象。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"go gc 白话版",
+      "item":"/posts/go-gc/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/go-gc/"
+    },
+    "headline": "go gc 白话版 | \/dev\/null","datePublished": "2022-06-01T22:15:39+00:00",
+    "dateModified": "2022-06-01T22:15:39+00:00",
+    "wordCount":  346 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "主流的垃圾回收算法 引用计数法 根据对象自身的引用计数来回收，当引用计数归零时进行回收，但是计数频繁更新会带来更多开销，且无法解决循环引用的问题。\n优点：简单直接，回收速度快 缺点：需要额外的空间存放计数，无法处理循环引用的情况； 标记清除法 标记出所有不需要回收的对象，在标记完成后统一回收掉所有未被标记的对象。"
+}
+</script><meta property="og:title" content="go gc 白话版 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/go-gc/" />
+
+
+
+
+<meta property="og:description" content="主流的垃圾回收算法 引用计数法 根据对象自身的引用计数来回收，当引用计数归零时进行回收，但是计数频繁更新会带来更多开销，且无法解决循环引用的问题。
+优点：简单直接，回收速度快 缺点：需要额外的空间存放计数，无法处理循环引用的情况； 标记清除法 标记出所有不需要回收的对象，在标记完成后统一回收掉所有未被标记的对象。" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-06-01T22:15:39&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-06-01T22:15:39&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="go" />
+
+<meta property="article:tag" content="gc" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/" />
+
+<meta property="og:see_also" content="/posts/errgroup/" />
+
+<meta property="og:see_also" content="/posts/block-code/" />
+
+<meta property="og:see_also" content="/posts/gmp-mian-shi-ti/" />
+
+<meta property="og:see_also" content="/posts/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/" />
+
+<meta property="og:see_also" content="/posts/go-map-yuan-ma-yue-du/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">go gc 白话版</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-06-01</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>2分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h1 id="主流的垃圾回收算法">主流的垃圾回收算法</h1>
+<h2 id="引用计数法">引用计数法</h2>
+<p>根据对象自身的引用计数来回收，当引用计数归零时进行回收，但是计数频繁更新会带来更多开销，且无法解决循环引用的问题。</p>
+<ul>
+<li>优点：简单直接，回收速度快</li>
+<li>缺点：需要额外的空间存放计数，无法处理循环引用的情况；</li>
+</ul>
+<h2 id="标记清除法">标记清除法</h2>
+<p>标记出所有不需要回收的对象，在标记完成后统一回收掉所有未被标记的对象。</p>
+<ul>
+<li>优点：简单直接，速度快，适合可回收对象不多的场景</li>
+<li>缺点：会造成不连续的内存空间（内存碎片），导致有大的对象创建的时候，明明内存中总内存是够的，但是空间不是连续的造成对象无法分配，此外还需要 <strong>STW</strong> 来确保标记清除过程不被外部影响（比如 gc 前脚刚把一个对象标记为可达，用户程序后脚就释放了它）；
+<img src="https://autsu.github.io/post-images/1654446334006.jpg" alt="">
+（内存碎片)</li>
+</ul>
+<blockquote>
+<p>STW（Stop The World，Start The World）</p>
+<p>通常意义上指的是从Stop The World到Start The World这一段时间间隔。垃圾回收过程中为了保证准确性、防止无止境的内存增长等问题而不可避免的需要停止赋值器进一步操作对象图以完成垃圾回收。STW时间越长，对用户代码造成的影响越大。</p>
+</blockquote>
+<h2 id="标记整理法">标记整理法</h2>
+<p>这种算法用于解决 <strong>标记清除法</strong> 的内存碎片问题，它的标记阶段与标记清除法相同，但是会在完成标记工作后，移动非垃圾数据，使它们尽可能紧凑的放在内存中。
+<img src="https://autsu.github.io/post-images/1654446315708.jpg" alt=""></p>
+<ul>
+<li>优点：解决了内存碎片的问题</li>
+<li>缺点：性能低，因为在移动对象的时候不仅需要移动对象还要维护对象的引用地址，可能需要对内存经过几次扫描才能完成</li>
+</ul>
+<h2 id="复制回收法">复制回收法</h2>
+<p>和 <strong>标记整理法</strong> 一样，这种算法也是为了解决内存碎片问题，也会移动数据，它把堆内存划分为两个相等的空间 From 和 To，程序执行时使用 From 空间，垃圾回收执行时，会扫描 From 空间，把能追踪到的数据复制到 To 空间，当所有有用的数据都复制到 To 空间后，把 From 和 To 空间的角色交换一下，原来的 From 空间可以全部回收作为新的 To 空间；原来的 To 空间因为保存的都是有用的数据，所以可以作为新的 From 空间。
+<img src="https://autsu.github.io/post-images/1654446282139.jpg" alt=""></p>
+<ul>
+<li>优点：解决了内存碎片的问题，每次清除针对的都是整块内存，但是因为移动对象需要耗费时间，效率低于标记清除法；</li>
+<li>缺点：只有一半的堆内存可以使用，导致堆内存使用效率低。为了提高内存的使用率，通常会和其他垃圾回收算法搭配使用，只在一部分堆内存中使用复制回收，</li>
+</ul>
+<h2 id="分代式">分代式</h2>
+<p>将对象根据存活时间的长短进行分类，存活时间小于某个值的为年轻代，存活时间大于某个值的为老年代，永远不会参与回收的对象为永久代。并根据分代假设（如果一个对象存活时间不长则倾向于被回收，如果一个对象已经存活很长时间则倾向于存活更长时间）对对象进行回收。</p>
+<h2 id="三色标记法">三色标记法</h2>
+<p>到这里才是真正的重头戏，因为 Go 采用的正是这种 GC 算法。</p>
+<p>三色标记法将对象的颜色分为了黑、灰、白，三种颜色。</p>
+<ul>
+<li>黑色：该对象已经被标记过了，且该对象下的属性也全部都被标记过了（程序所需要的对象）；</li>
+<li>灰色：该对象已经被标记过了，但该对象下的属性没有全被标记完（GC需要从此对象中去寻找垃圾）；</li>
+<li>白色：该对象没有被标记过（垃圾对象）；</li>
+</ul>
+<p>在垃圾收集器开始工作时，从 GC Roots 开始进行遍历访问，访问步骤可以分为下面几步：</p>
+<ol>
+<li>GC Roots 根对象会被标记成灰色；</li>
+<li>然后从灰色集合中获取对象，将其标记为黑色，将该对象引用到的对象标记为灰色；</li>
+<li>重复步骤2，直到没有灰色集合可以标记为止；</li>
+<li>结束后，剩下的没有被标记的白色对象即为 GC Roots 不可达，可以进行回收。
+<img src="https://autsu.github.io/post-images/1654446199885.png" alt=""></li>
+</ol>
+<blockquote>
+<h3 id="gc-root-节点具体指哪些">❓gc root 节点具体指哪些？</h3>
+<p>说法1，来源： <a href="https://www.bilibili.com/video/BV1n5411H7qS?spm_id_from=333.999.0.0">https://www.bilibili.com/video/BV1n5411H7qS?spm_id_from=333.999.0.0</a>，2:30 秒</p>
+<p>可以把栈、数据段（.data，全局变量）上的数据对象作为 root</p>
+<p>说法 2，来源：https://www.luozhiyun.com/archives/475</p>
+<p>GC 执行根节点的标记，这包括扫描所有的栈、全局对象以及不在堆中的运行时数据结构。</p>
+<p>说法 3，来源：https://www.bookstack.cn/read/qcrao-Go-Questions/spilt.2.GC-GC.md</p>
+<p>根对象在垃圾回收的术语中又叫做根集合，它是垃圾回收器在标记过程时最先检查的对象，包括：</p>
+<ol>
+<li>全局变量：程序在编译期就能确定的那些存在于程序整个生命周期的变量。</li>
+<li>执行栈：每个 goroutine 都包含自己的执行栈，这些执行栈上包含栈上的变量及指向分配的堆内存区块的指针。</li>
+<li>寄存器：寄存器的值可能表示一个指针，参与计算的这些指针可能指向某些赋值器分配的堆内存区块。</li>
+</ol>
+</blockquote>
+<p>前面提到过，这类标记清理算法都需要 STW 来保证垃圾回收过程不受影响，那么如果没有 STW 会发生什么问题呢？</p>
+<p><strong>问题1：多标</strong></p>
+<p>通俗的说，就是一个本该被回收的对象（白色），却被错误的标记成了非白色，导致本轮 gc 没有正确回收，导致产生浮动垃圾。</p>
+<p>比如下面这张图：
+<img src="https://autsu.github.io/post-images/1654445991637.png" alt=""></p>
+<p>在步骤2中，gc 将 D 标记为了黑色，将 D 的可达对象 E 标记为了灰色，但在执行步骤3前，用户程序断开了 D 到 E 的引用（比如从 D = E 变成 D = null），此时 E 及其引用的 F，G 都会变为垃圾，因为它们都不再可达了，但是因为 D 已经标记成黑色，不会再次对其进行扫描了，这会导致 gc 继续标记，将 E 从灰色变为黑色，E 的引用对象 F 和 G 标记为灰色，最后将 F 和 G 标记为黑色。至此，该轮 gc 结束，E，F，G 都被错误的标记为了黑色而没有被及时回收。</p>
+<blockquote>
+<p>❓写屏障可以解决上面这种情况吗？</p>
+</blockquote>
+<p><strong>问题2：漏标</strong></p>
+<p>通俗的说，就是把一个有用的对象给错误的回收掉了，也就是悬挂指针问题。</p>
+<p>比如下面这张图：
+<img src="https://autsu.github.io/post-images/1654446000456.png" alt=""></p>
+<p>在步骤2中，E 已经变为灰色，但在 gc 进一步标记之前，用户程序断开了 E 到 G 的引用，同时已经标记为黑色的 D 新增了对 G 的引用，之后 gc 标记时发现 E 到 G 已经不可达，便不会将 G 标记为灰色，而因为 D 已经是黑色不会再次扫描，所以也不会对 G 进行标记，最终，G 依然保持着白色，导致最后被 gc 清理。</p>
+<p>现在问题来了，用 STW 会导致 gc 过程中整个程序不可用，不用 STW 又会出现内存错误，有没有什么办法可以尽可能的让用户程序和 gc 交替（并发）执行，减少 STW  造成的影响，同时又不会出现内存错误呢？比如 <strong>增量式回收</strong>，就是<strong>将 gc 过程分多次完成，也就是用户程序与垃圾回收交替执行</strong>，如下图：
+<img src="https://autsu.github.io/post-images/1654446167140.jpg" alt=""></p>
+<p>只要满足以下条件，就可以避免之前的内存问题了：</p>
+<h3 id="强三色不变式">强三色不变式</h3>
+<p><strong>黑色对象不会引用白色对象</strong>，称为 <strong>强三色不变式</strong>，比如在 <strong>问题2：漏标</strong> 中，如果避免黑色对象 D 到白色对象 G 的引用，就不会出现错误回收的问题了。</p>
+<h3 id="弱三色不变式">弱三色不变式</h3>
+<p><strong>黑色对象可以引用白色对象，前提是可以通过一个灰色对象抵达该白色对象</strong>，比如 A（黑）引用了 B（白色），而 C（灰色） 引用了 D（白色），D （白色）又引用了 B（白色），这种情况可以通过 C -&gt; D -&gt; B 抵达 B，这样 B 虽然被一个黑色对象引用，但是最终还是可达，不会被遗漏，这种情况称为 <strong>弱三色不变性</strong> 。</p>
+<p>实现强弱三色不变式的通常做法是建立 <strong>读/写屏障</strong>。</p>
+<h3 id="写屏障">写屏障</h3>
+<p><strong>写屏障</strong> 会在写操作中插入指令，目的是把对象的修改通知到垃圾回收器，比如当一个黑色对象尝试引用一个白色对象时，就会触发写屏障，此时为了保证 <strong>强三色不变式</strong>，就会将被引用的白色对象变为灰色，或者将引用白色对象的黑色对象变为灰色，这种写屏障属于 <strong>插入写屏障</strong> ；又或者是一个灰色对象尝试去除对一个白色对象的引用，为了保证 <strong>弱三色不变式</strong>，会将这个白色对象变为灰色，这种写屏障属于 <strong>删除写屏障</strong>。</p>
+<h4 id="插入写屏障的缺点">插入写屏障的缺点</h4>
+<p>**插入写屏障 **虽然实现非常简单并且也能保证强三色不变性，但是它也有明显的缺点。因为栈上的对象在垃圾收集中也会被认为是根对象，所以为了保证内存的安全，必须：</p>
+<ul>
+<li><strong>为栈上的对象增加写屏障</strong></li>
+</ul>
+<p>或者</p>
+<ul>
+<li><strong>在标记阶段完成重新对栈上的对象进行扫描</strong></li>
+</ul>
+<p>这两种方法各有各的缺点，前者会大幅度增加写入指针的额外开销，后者重新扫描栈对象时需要暂停程序，垃圾收集算法的设计者需要在这两者之间做出权衡。</p>
+<h4 id="删除写屏障的缺点">删除写屏障的缺点</h4>
+<p>而 <strong>删除写屏障</strong> 会存在 <strong>回收效率低</strong> 的问题，因为当删除灰色对象到白色对象的引用时，会直接将白色对象赋为灰色，但是这个白色对象可能本身是垃圾，可以在本轮被清除了，但是却逃过了本轮的清理。比如：</p>
+<p>黑 &mdash;&ndash;&gt; 灰 &mdash;&ndash;&gt; 白</p>
+<p>如果在扫描到白之前，断开灰到白的连接，此时因为白是整个调用链的最后一个对象，所以将会成为垃圾，但是因为删除写屏障的存在，会将该白色对象变为灰色，导致本轮 GC 未被清理。</p>
+<h3 id="读屏障">读屏障</h3>
+<p><strong>读屏障</strong> 适用于移动式垃圾回收，非移动式垃圾回收天然的不需要读屏障。像复制式回收这样会移动数据来避免碎片化，那么 gc 和用户程序交替执行时，读数据便也不那么安全了，比如下图：
+<img src="https://autsu.github.io/post-images/1654446082893.jpg" alt=""></p>
+<p>回收器已经将 A 从 From 复制到 To 空间了，之后交替执行的用户程序却读取了 From 空间中的老对象，并且在对象 B 中引用了这个老对象 A，而后续回收器复制 B 到 To 空间后，B 的新副本持有的依然是 A 的老对象指针，当 From 空间整体被回收时，因为 B 指向的依然是 From 空间的 A，所以访问便会出错。这种情况下，就需要建立读屏障，确保用户程序不会访问到老对象，例如在检测到引用对象已经存在新副本时，转而读取 To 空间的新副本。</p>
+<h1 id="go-gc">Go GC</h1>
+<p>Go 的 GC 结合了插入写屏障和删除写屏障的优点，称之为 <strong>混合写屏障</strong>，它的规则如下：</p>
+<ul>
+<li>GC 开始将栈上的对象全部扫描并标记为黑色；</li>
+<li>GC 期间，任何在栈上创建的新对象，均为黑色；</li>
+<li>被删除的堆对象标记为灰色；</li>
+<li>被添加的堆对象标记为灰色；</li>
+</ul>
+<p><del>Go 团队在最终实现时，<strong>没有为所有栈上的指针写操作启用写屏障</strong>，而是当发生栈上的写操作时，将栈标记为灰色，但此举产生了 <strong>灰色赋值器</strong>，将会需要标记终止阶段 STW 时对这些栈进行 <strong>重新扫描</strong>（v1.7 版本之前）。</del></p>
+<p>一些例子：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/%E6%B7%B7%E5%90%88%E5%86%99%E5%B1%8F%E9%9A%9C1-1.webp" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/%E6%B7%B7%E5%90%88%E5%86%99%E5%B1%8F%E9%9A%9C1-2.webp" alt=""></p>
+<p>看到这里我有一个疑问，这里就算不把对象 7 变成灰色，貌似也不会影响什么，因为它的上游对象对象 4 依然是灰色而不是黑色，所以会继续扫描到对象 7，然后再继续扫描到对象 6，为什么会说对象 6 被保护呢？</p>
+<p>然后我想了一下，这样做是为了防止这种情况的发生：在对象 4 准备扫描对象 7之前，用户程序断开了对象 4 到对象 7 的引用，导致此时的对象 7 依然是白色，如果这时黑色对象 10 再引用白色对象 7，为了保证强三色不变性，就需要将对象 7 变为灰色。</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/%E6%B7%B7%E5%90%88%E5%86%99%E5%B1%8F%E9%9A%9C1-3.webp" alt=""></p>
+<h1 id="参考抄袭">参考（抄袭）</h1>
+<p>Go语言GC实现原理及源码分析 <a href="https://www.luozhiyun.com/archives/475">https://www.luozhiyun.com/archives/475</a></p>
+<p>Golang垃圾回收(GC)介绍 <a href="https://liangyaopei.github.io/2021/01/02/golang-gc-intro/">https://liangyaopei.github.io/2021/01/02/golang-gc-intro/</a></p>
+<p><a href="https://draveness.me/golang/docs/part3-runtime/ch07-memory/golang-garbage-collector/">https://draveness.me/golang/docs/part3-runtime/ch07-memory/golang-garbage-collector/</a></p>
+<p><a href="https://www.bilibili.com/video/BV1n5411H7qS?spm_id_from=333.999.0.0">https://www.bilibili.com/video/BV1n5411H7qS?spm_id_from=333.999.0.0</a></p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/go/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#go</a>
+    
+    <a href="/tags/gc/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#gc</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/k8s-configmap/" class="block">k8s ConfigMap</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/k8s-namespace/" class="block">k8s namespace</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#引用计数法">引用计数法</a></li>
+    <li><a href="#标记清除法">标记清除法</a></li>
+    <li><a href="#标记整理法">标记整理法</a></li>
+    <li><a href="#复制回收法">复制回收法</a></li>
+    <li><a href="#分代式">分代式</a></li>
+    <li><a href="#三色标记法">三色标记法</a>
+      <ul>
+        <li><a href="#gc-root-节点具体指哪些">❓gc root 节点具体指哪些？</a></li>
+        <li><a href="#强三色不变式">强三色不变式</a></li>
+        <li><a href="#弱三色不变式">弱三色不变式</a></li>
+        <li><a href="#写屏障">写屏障</a>
+          <ul>
+            <li><a href="#插入写屏障的缺点">插入写屏障的缺点</a></li>
+            <li><a href="#删除写屏障的缺点">删除写屏障的缺点</a></li>
+          </ul>
+        </li>
+        <li><a href="#读屏障">读屏障</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/" class="no-underline">【两万字长文带你深入Go语言GC源码——腾讯技术工程】阅读笔记</a>
+          <br />
+        
+          <a href="/posts/errgroup/" class="no-underline">Go errgroup 使用</a>
+          <br />
+        
+          <a href="/posts/block-code/" class="no-underline">一段莫名阻塞的 reflect 代码</a>
+          <br />
+        
+          <a href="/posts/gmp-mian-shi-ti/" class="no-underline">GMP 面试题</a>
+          <br />
+        
+          <a href="/posts/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/" class="no-underline">两个 main goroutine 操作一个 channel 会怎样</a>
+          <br />
+        
+          <a href="/posts/go-map-yuan-ma-yue-du/" class="no-underline">go map源码阅读</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

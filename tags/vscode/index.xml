@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>vscode on /dev/null</title>
+    <link>/tags/vscode/</link>
+    <description>Recent content in vscode on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Sun, 10 Apr 2022 13:44:05 +0000</lastBuildDate><atom:link href="/tags/vscode/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>vscode 选中文本时滑动速度过快</title>
+      <link>/posts/vscode-xuan-zhong-wen-ben-shi-hua-dong-su-du-guo-kuai/</link>
+      <pubDate>Sun, 10 Apr 2022 13:44:05 +0000</pubDate>
+      
+      <guid>/posts/vscode-xuan-zhong-wen-ben-shi-hua-dong-su-du-guo-kuai/</guid>
+      <description>这是一个困扰我已久的问题，当选中一段代码并继续向下滑动时，滑动速度会非常快，导致无法准确选中我想要的部分，比如我的屏幕能显示200行代码，我想选中1-250行的代码，这就需要我向下滑动来选中剩余的50行，但是因为速度太快，导致我轻轻一滑就会瞬间跑到第800行代码的位置，于是我又要向上滑动，结果又瞬间到了第150行，非常令人蛋疼。
+在网上用中文搜索不到相关的问题，没办法只能用我蹩脚的英文搜索 vscode scroll too fast selecting，没想到还找出来不少，看来有时候还是得用英文搜索才能解决问题。https://github.</description>
+    </item>
+    
+  </channel>
+</rss>

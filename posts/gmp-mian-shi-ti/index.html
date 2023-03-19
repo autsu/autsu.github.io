@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>GMP 面试题 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="Goroutine 阻塞的话，是不是对应的 M 也会阻塞 如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么这个 G 会被标记为 runnable 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"GMP 面试题",
+      "item":"/posts/gmp-mian-shi-ti/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/gmp-mian-shi-ti/"
+    },
+    "headline": "GMP 面试题 | \/dev\/null","datePublished": "2022-01-26T11:42:52+00:00",
+    "dateModified": "2022-01-26T11:42:52+00:00",
+    "wordCount":  593 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "Goroutine 阻塞的话，是不是对应的 M 也会阻塞 如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么这个 G 会被标记为 runnable 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。"
+}
+</script><meta property="og:title" content="GMP 面试题 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/gmp-mian-shi-ti/" />
+
+
+
+
+<meta property="og:description" content="Goroutine 阻塞的话，是不是对应的 M 也会阻塞 如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么这个 G 会被标记为 runnable 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-01-26T11:42:52&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-01-26T11:42:52&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="面经" />
+
+<meta property="article:tag" content="go" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/wo-de-mian-jing/" />
+
+<meta property="og:see_also" content="/posts/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/" />
+
+<meta property="og:see_also" content="/posts/go-map-yuan-ma-yue-du/" />
+
+<meta property="og:see_also" content="/posts/mysql-mian-jing/" />
+
+<meta property="og:see_also" content="/posts/go-containerheap-yuan-ma-yue-du/" />
+
+<meta property="og:see_also" content="/posts/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class="lg:col-start-2 bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">GMP 面试题</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-01-26</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>3分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h1 id="goroutine-阻塞的话是不是对应的-m-也会阻塞">Goroutine 阻塞的话，是不是对应的 M 也会阻塞</h1>
+<p>如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么这个 G 会被标记为 <code>runnable</code> 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。</p>
+<h1 id="gmp-当一个-g-阻塞时gmp-会发生什么">GMP 当一个 G 阻塞时，G、M、P 会发生什么</h1>
+<p><strong>用户态阻塞</strong></p>
+<p>当 goroutine 因为 channel 操作或者 network I/O 而阻塞时（实际上 golang 已经用 netpoller 实现了goroutine网络 I/O 阻塞不会导致 M 被阻塞，仅阻塞 G ），对应的 G 会被放置到某个 wait 队列(如 channel 的 waitq )，该 G 的状态由 _Gruning 变为 _Gwaitting，而 M 会跳过该 G 尝试获取并执行下一个 G，如果此时没有 runnable 的G 供 M 运行，那么 M 将解绑 P，并进入 sleep 状态；当阻塞的 G 被另一端的 G2 唤醒时（比如 channel 的可读/写通知），G 被标记为 runnable，尝试加入 G2 所在 P 的 runnext，然后再是 P 的 Local 队列和 Global  队列。</p>
+<p><strong>系统调用阻塞</strong></p>
+<p>当 G 被阻塞在某个系统调用上时，此时 G 会阻塞在 _Gsyscall 状态，M 也处于 block on syscall 状态，此时的 M可被抢占调度：执行该 G 的 M 会与 P 解绑，而 P 则尝试与其它 idle 的 M 绑定，继续执行其它 G。如果没有其它idle 的 M，但 P 的 Local 队列中仍然有 G 需要执行，则创建一个新的 M；当系统调用完成后，G 会重新尝试获取一个 idle 的 P 进入它的 Local 队列恢复执行，如果没有 idle 的 P，G 会被标记为 runnable 加入到 Global 队列。</p>
+<h1 id="p-和-m-数量可以无限扩增的吗">P 和 M 数量可以无限扩增的吗？</h1>
+<p>不是无线扩增的。</p>
+<p>P 的数量：由启动时环境变量 <code>$GOMAXPROCS</code> 或者是由 <code>runtime</code> 的方法 <code>GOMAXPROCS()</code> 决定。</p>
+<p>M的数量：goroutine 程序启动时，会设置 M 的最大数量，默认10000。但是内核很难创建出如此多的线程，因此默认情况下 M 的最大数量取决于内核。也可以调用 runtime/debug 中的 SetMaxThreads 函数，手动设置 M 的最大数量。</p>
+<h1 id="p-的调度逻辑">P 的调度逻辑</h1>
+<p>先从本地 runq 获取待执行的 G，如果没有，再从全局 runq 获取待执行的 G，还没有的话，就从别的 P 中拿（偷）走一半的 G</p>
+<h1 id="如果一个-g-运行时间过长导致队列中后续-g-都无法运行呢">如果一个 G 运行时间过长，导致队列中后续 G 都无法运行呢？</h1>
+<p>内容来自：https://www.bilibili.com/video/BV1zT4y1F7XF?spm_id_from=333.999.0.0，里面有非常详细的介绍</p>
+<p>这涉及到 GMP 的抢占，在 main goroutine 启动时，会创建一个 <strong>sysmon goroutine</strong>，这是一个特殊的协程，其不依赖 P，也不由 GMP 调度，他会本着公平调度的原则，对运行时间过长的 P，实行抢占操作，就是告诉那些运行时间超过阈值的 P 该让出了，那么怎么知道运行时间过长了呢？P 里面有一个 <code>schedtick</code> 字段，每当调度执行一个新的 G，并且不继承上个 G 的时间片时（这里不懂），就会把它自增 1，还有一个 <code>sysmontick.schedwhen</code> 记录的是上次调度的时间，监测协程如果检测到 <code>sysmontick.schedtick</code> 不等于 <code>p.schedtick</code>，说明这个 P 又发生了新的调度，就会同步 <code>schedwhen</code> 和 <code>schedtick</code>，但如果相等，则说明子 <code>schedwhen</code> 这个时间点之后，这个 P 并未发生了新的调度，或者沿用了之前 G 的时间片，所以可以通过当前时间与 <code>schedwhen</code> 的差值，(sysmontick.schedwhen + forcePreemptNS &lt; now)，来判断当前 P 上的 G 是否运行时间过长了，如果运行时间过长，那么就要通知该 P 让出了。</p>
+<p>如何通知 P 呢？使用的是 <strong>栈增长</strong> 的方式。除了对协程栈没什么消耗的函数调用，Go 语言编译器都会在函数头部插入栈增长检测相关代码，会根据栈帧大小来插入不同的代码，<code>SP</code> 表示当前的栈使用到了哪个位置，<code>stackguard0</code> 表示协程栈的空间下界，当栈的消耗达到或超过 <code>stackguard0</code> 时，就需要进行栈增长，会根据超出大小的多少来使用不同的增长代码（这个具体看视频里的说明，一共 3 种策略），如果调度器希望当前 P 让出，那么就会将 <code>stackguard0</code> 设置为 <code>stackPreempt</code>，这是一个非常大的值，真正的栈指针不可能指向这个位置，所以可以安全的用作特殊标识，此外因为该值足够大，那么 3 种策略都会满足条件，从而 goto 到 <code>morestack</code> 处，<code>morestack</code> 会调用 <code>runtime.newstack</code> 函数，负责栈增长工作，但是在增长前，会先判断 <code>stackguard0</code> 是否等于 <code>stackPreempt</code>，如果等于就不进行栈增长了，而是执行一次协程调度，从而达到抢占的目的。</p>
+<p>不过这种抢占方式的缺陷就是过于依赖栈增长代码，如果来个 for{}，因为不涉及到函数调用，所以与栈增长无关，也就无法通过上面的方式来实现抢占，这一问题在 go1.14 中得到了解决，因为它实现了异步抢占，是通过信号（signal）实现的，当要抢占时，会向协程关联的 M 发送一个 <code>sigPreempt</code> 信号（好像底层是 SIGURG），目标线程（M）收到信号后会被中断，转去执行 <code>sigHandler</code>，该函数检测到信号为 <code>sigPreempt</code> 后，会调用 <code>runtime.doSigPreempt</code> 函数，它会向当前被打断的协程上下文中，注入一个异步抢占函数调用，之后返回，被打断的协程恢复，立刻执行被注入的异步抢占函数，该函数最终会调用 runtime 中的调度逻辑，从而实现让出。</p>
+<h1 id="g-陷入系统调用会发生什么">G 陷入系统调用会发生什么</h1>
+<p>一个协程要执行系统调用，就要切换到 g0 栈（为什么要切换到 g0 栈），在系统调用过程中，G 和 M 会一直绑定在一起，不能被分开，也就用不到 P 了，所以在陷入系统调用前，当前 M 会让出 P，解除 m.P 与当前 P 的强关联，并且记录到 m.oldp 中。但是这个 P 如果放着不管就有点浪费了，还是需要将其关联到其他 M，继续执行工作，当之前的 M 结束系统调用后，会先检查之前的 P（m.oldp）是否被占用，没有的话就继续使用，否则就重新申请一个，没申请到的话（什么情况下会申请不到？），就把当前 G 放到全局 runq 中，然后 M 就进入睡眠。</p>
+<h1 id="如果当前-m-没有绑定-p那么如何获取-g">如果当前 M 没有绑定 P，那么如何获取 G</h1>
+<h1 id="gmp-的几个队列">GMP 的几个队列</h1>
+<p>貌似 GMP 里的全局队列有两种，一种就是单纯保存用作记录的，还有一种是调度器的全局队列，里面保存的是空闲状态的</p>
+<p><strong>调度器的可运行 G 队列</strong></p>
+<p>存放等待执行的 g，新创建的 g 会先尝试保存到当前 g （这个 g 就是新创建 g 的父 goroutine）对应的 p 的本地队列，如果本地队列已满（256个），就会把 g 放到全局队列中。</p>
+<ul>
+<li>
+<p>该队列有容量限制吗？</p>
+</li>
+<li>
+<p>该队列里的 g 什么时候被消费？</p>
+</li>
+</ul>
+<p>如果某个 p 的本地 g 队列为空，则会从全局队列里获取</p>
+<p><strong>全局 M 队列</strong></p>
+<ul>
+<li>作用：</li>
+</ul>
+<ol>
+<li>获取所有 M 的信息</li>
+<li>防止 M 被当作垃圾回收掉</li>
+</ol>
+<p><strong>调度器的空闲 M 队列</strong></p>
+<p>运行时系统在停止 M 时，会把它放入调度器的空闲 M 队列</p>
+<ul>
+<li>什么时候被消费</li>
+</ul>
+<p>当 G 陷入系统调用时，与其关联的 M 也会被阻塞，而与之关联的 P 会被分离，使得这个 P 中剩余的 G 可以被执行，此时 P 就会去全局 M 队列里查找，如果有的话</p>
+<p><strong>全局 P 队列</strong></p>
+<p>保存了当前 runtime 创建的所有 P，runtime 会把这些 p 中的可运行 g 全部取出，并放入调度器的可运行 g 队列中，被转移的这些 g，会在以后经由调度再次放入某个 p 的可运行 g 队列</p>
+<p><strong>调度器的空闲 P 队列</strong></p>
+<p>当一个 p 不与任何 m 关联时，runtime 就会把它放入该列表，当 runtime 需要一个空闲的 p 来关联某个 m 时，就会从该队列获取。此外，p 进入空闲队列的一个重要条件是，本地队列里没有可运行的 g</p>
+<p><strong>P 的 G 队列</strong></p>
+<p>保存的是可运行的 g，新创建的 g 会先尝试放到这里，最大容量为 256。</p>
+<p><strong>P 的自由 G 队列，调度器的自由 G 列表</strong></p>
+<p>自由 g 表示的是已经运行完成的 g，主要是为了提高复用率，避免频繁创建 g，因为 g 本质也是一个对象。</p>
+<p>运行完成的 g 会先放到对应的 p 的自由 g 队列里，如果太多了，就会转移一部分到调度器的自由 g 列表</p>
+<p>当创建一个 goroutine 时，会先尝试从 p 的自由 g 队列中获取一个现成的 g，如果没有或者太少，会从调度器的自由 g 队列中拿一部分，如果调度器中也没有，才会新创建一个 g</p>
+<h1 id="g0m0-是什么">g0，m0 是什么</h1>
+<h1 id="程序题">程序题</h1>
+<p>以下程序的运行结果是什么？</p>
+<pre><code class="language-go">package main
+
+import (
+        &quot;fmt&quot;
+        &quot;sync&quot;
+        &quot;runtime&quot;
+)
+
+func main() {
+        runtime.GOMAXPROCS(1)
+
+        var wg sync.WaitGroup
+        wg.Add(3)
+
+  			// goroutine1
+        go func(n int) {
+                fmt.Println(n)
+                wg.Done()
+        }(1)
+
+  			// goroutine2
+        go func(n int) {
+                fmt.Println(n)
+                wg.Done()
+        }(2)
+
+  			// goroutine3
+        go func(n int) {
+                fmt.Println(n)
+                wg.Done()
+        }(3)
+
+        wg.Wait()
+}
+</code></pre>
+<p>结果：3 1 2</p>
+<p>P 有一个 runnext 字段，保存的是下一个要运行的 g，当创建一个新的 g 时，会调用 runqput 将其添加到 P 的 runq 中，如果当前 P 的 runq 中已经有 g 了，则会将其挤走，被挤走的那个进入 P 的本地 runq。runnext 的优先度比 runq 高，会先执行 runnext 的 g，再按顺序执行 runq 中的 g。</p>
+<p>在上面的程序中，因为设置了 runtime.GOMAXPROCS(1)，所以整个 runtime 中只有 1 个 P，也就是说上面的 3 个goroutine 都共用这一个 P，首先，goroutine1（简称 g1） 先放到 runnext，之后 g2 进来把 g1 挤走，g1 放到 runq，再之后，g3 把 g2 挤走，g2 放到 runq，此时 runnext 保存的是 g3，runq 中是 g1，g2，所以输出结果是 3，1，2</p>
+<h1 id="goroutine-的调度时机有哪些">goroutine 的调度时机有哪些</h1>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/%E9%9D%A2%E7%BB%8F/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#面经</a>
+    
+    <a href="/tags/go/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#go</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/ji-suan-ji-wang-luo-mian-shi-ti/" class="block">计算机网络面试题</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/mac-huan-jing-xia-vmware-fusion-xia-de-xu-ni-ji-centos-7de-nat-wang-luo-pei-zhi/" class="block">Mac环境下， VMware Fusion下的虚拟机（ CentOS 7/Ubuntu20）的 NAT网络配置</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+
+    
+    
+      <div
+        class="lg:col-start-2 bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/wo-de-mian-jing/" class="no-underline">我的面经</a>
+          <br />
+        
+          <a href="/posts/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/" class="no-underline">两个 main goroutine 操作一个 channel 会怎样</a>
+          <br />
+        
+          <a href="/posts/go-map-yuan-ma-yue-du/" class="no-underline">go map源码阅读</a>
+          <br />
+        
+          <a href="/posts/mysql-mian-jing/" class="no-underline">MySQL 面经汇总</a>
+          <br />
+        
+          <a href="/posts/go-containerheap-yuan-ma-yue-du/" class="no-underline">go container/heap 源码阅读</a>
+          <br />
+        
+          <a href="/posts/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/" class="no-underline">【两万字长文带你深入Go语言GC源码——腾讯技术工程】阅读笔记</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

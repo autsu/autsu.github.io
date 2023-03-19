@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>Go errgroup 使用 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="简介 errgroup 是 WaitGroup 的强化版，其在 WaitGroup 的基础上添加了错误处理的功能：如果一组 goroutine 中的某一个发生了错误，那么后续的所有 gorouine 都不会被执行。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Go errgroup 使用",
+      "item":"/posts/errgroup/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/errgroup/"
+    },
+    "headline": "Go errgroup 使用 | \/dev\/null","datePublished": "2022-05-28T23:55:35+00:00",
+    "dateModified": "2022-05-28T23:55:35+00:00",
+    "wordCount":  1163 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "简介 errgroup 是 WaitGroup 的强化版，其在 WaitGroup 的基础上添加了错误处理的功能：如果一组 goroutine 中的某一个发生了错误，那么后续的所有 gorouine 都不会被执行。"
+}
+</script><meta property="og:title" content="Go errgroup 使用 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/errgroup/" />
+
+
+
+
+<meta property="og:description" content="简介 errgroup 是 WaitGroup 的强化版，其在 WaitGroup 的基础上添加了错误处理的功能：如果一组 goroutine 中的某一个发生了错误，那么后续的所有 gorouine 都不会被执行。" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-05-28T23:55:35&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-05-28T23:55:35&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="go" />
+
+<meta property="article:tag" content="源码" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/go-map-yuan-ma-yue-du/" />
+
+<meta property="og:see_also" content="/posts/go-containerheap-yuan-ma-yue-du/" />
+
+<meta property="og:see_also" content="/posts/2021-2-24-go-container-list-source-code/" />
+
+<meta property="og:see_also" content="/posts/block-code/" />
+
+<meta property="og:see_also" content="/posts/gmp-mian-shi-ti/" />
+
+<meta property="og:see_also" content="/posts/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">Go errgroup 使用</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-05-28</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>6分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h1 id="简介">简介</h1>
+<p><strong>errgroup</strong> 是 WaitGroup 的强化版，其在 WaitGroup 的基础上添加了错误处理的功能：如果一组 goroutine 中的某一个发生了错误，那么后续的所有 gorouine 都不会被执行。</p>
+<h1 id="示例">示例</h1>
+<h2 id="示例-1">示例 1</h2>
+<p>一共开启 10 个 goroutine 执行任务，其中第三个 goroutine 会出错，使用 errgroup 可以保证第三个之后的所有 goroutine 都不会执行</p>
+<pre><code class="language-go">func main() {
+	group, ctx := errgroup.WithContext(context.Background())
+	count := 50
+	for i := 0; i &lt; count; i++ {
+		i := i // 闭包重新捕获变量 i
+		group.Go(func() error {
+			select {
+			case &lt;-ctx.Done():
+				log.Printf(&quot;[%d] group 里有一个任务失败了，所以这个任务不会执行\n&quot;, i)
+				return nil
+			default:
+			}
+			if i == 3 {
+				log.Printf(&quot;[%d] error\n&quot;, i)
+				return fmt.Errorf(&quot;[%d] error&quot;, i)
+			}
+			log.Printf(&quot;[%d] success\n&quot;, i)
+			return nil
+		})
+		time.Sleep(time.Millisecond * 10)
+	}
+	if err := group.Wait(); err != nil {
+		log.Println(err)
+	}
+}
+
+// Output:
+// 2022/05/29 00:02:51 [0] success
+// 2022/05/29 00:02:51 [1] success
+// 2022/05/29 00:02:51 [2] success
+// 2022/05/29 00:02:51 [3] error
+// 2022/05/29 00:02:51 [4] group 里有一个任务失败了，所以这个任务不会执行
+// 2022/05/29 00:02:51 [5] group 里有一个任务失败了，所以这个任务不会执行
+// 2022/05/29 00:02:51 [6] group 里有一个任务失败了，所以这个任务不会执行
+// 2022/05/29 00:02:51 [7] group 里有一个任务失败了，所以这个任务不会执行
+// 2022/05/29 00:02:51 [8] group 里有一个任务失败了，所以这个任务不会执行
+// 2022/05/29 00:02:51 [9] group 里有一个任务失败了，所以这个任务不会执行
+//2022/05/29 00:02:51 [3] error
+</code></pre>
+<h2 id="示例-2">示例 2</h2>
+<p>来源：https://lailin.xyz/post/go-training-week3-errgroup.html</p>
+<p>因为我是跳过文章前面的内容直接看示例的，所以一开始有点看不懂注释写的意思，后来翻了一下源码才明白，对注释针对自己的简介进行了一些修改。</p>
+<p>这个示例的大致意思是：使用 errgroup 开启了 3 个 goroutine，第一个运行 HTTP 服务，第二个监听 shutdown 接口用来关闭 HTTP 服务，第三个监听 ctrl+c 和 kill 这两个信号。这三个中的任何一个发生错误退出，都会让另外两个 goroutine 也退出（准确的说，运行 HTTP 服务的 goroutine 是不会主动退出的，只有第二个能将其结束，另外两个都可以主动结束，第二个执行 curl localhost:8080/shutdown 可以触发，第三个使用 ctrl+c 或者 kill 都可以触发）</p>
+<pre><code class="language-go">func main() {
+	// WithContext() 里面用 context.Cancel 包装了传入的 context，并返回包装后
+	// 的 ctx，而另一个返回值 cancel 则是放到了 errgroup.Group 里面
+	// 如果 g.Go(func() error) 里面的 func 返回了错误，那么会调用 Group.cancel
+	// 将包装的 ctx 取消
+	g, ctx := errgroup.WithContext(context.Background())
+
+	mux := http.NewServeMux()
+	mux.HandleFunc(&quot;/ping&quot;, func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(&quot;pong&quot;))
+	})
+
+	// 模拟单个服务错误退出
+	serverOut := make(chan struct{})
+	mux.HandleFunc(&quot;/shutdown&quot;, func(w http.ResponseWriter, r *http.Request) {
+		serverOut &lt;- struct{}{}
+	})
+
+	server := http.Server{
+		Handler: mux,
+		Addr:    &quot;:8080&quot;,
+	}
+
+	// g1
+	// g1 退出了所有的协程都能退出么？
+	// g1 退出后, context 将不再阻塞（这话第一眼没看懂，context 还会被阻塞？），g2, g3 都会随之退出
+	// 修改版注释：g1 只有在 g2 调用 Shutdown() 后才会退出，同时返回一个 error
+	// 之后 ctx 被 cancel，其他 goroutine 的 select 都会走 case &lt;-ctx.Done() 分支，
+	// 从而达到退出的目的（因为 select 没有加 default 分支，所以会被阻塞，直到有一个 case
+	// 满足条件，所以上面说的 context 将不再阻塞，实际应该是 select 不再阻塞）
+	// 然后 main 函数中的 g.Wait() 退出，所有协程都会退出
+	g.Go(func() error {
+		// g2 的 Shutdown 会让这里停止阻塞并返回一个 err
+		// 之后 ctx 会被 cancel 掉，g3 也会停止
+		if err := server.ListenAndServe(); err != nil {
+			log.Println(&quot;g1 error: &quot;, err)
+			return err
+		}
+		return nil
+	})
+
+	// g2
+	// g2 退出了所有的协程都能退出么？
+	// g2 退出时，调用了 shutdown，g1 会退出
+	// g2 退出后, context 将不再阻塞，g3 会随之退出
+	// 修改：g2 退出后, g1 cancel 掉了 ctx，g3 的 select 将不再阻塞，g3 会随之退出
+	// 然后 main 函数中的 g.Wait() 退出，所有协程都会退出
+	g.Go(func() error {
+		select {
+		case &lt;-ctx.Done():
+			log.Println(&quot;errgroup exit...&quot;)
+		case &lt;-serverOut: // curl localhost:8080/shutdown
+			log.Println(&quot;server will out...&quot;)
+		}
+
+		cancelCtx, cancel := context.WithCancel(context.Background())
+		// 这里不是必须的，但是如果使用 _ 的话静态扫描工具会报错，加上也无伤大雅
+		defer cancel()
+
+		log.Println(&quot;shutting down server...&quot;)
+		// Shutdown() 会停止 g1，同时 g1 的 ListenAndServe() 会返回一个 error
+		if err := server.Shutdown(cancelCtx); err != nil {
+			log.Println(&quot;g2 error: &quot;, err)
+			return err
+		}
+		return nil
+	})
+
+	// g3
+	// g3 捕获到 os 退出信号将会退出
+	// g3 退出了所有的协程都能退出么？
+	// g3 退出后, context 将不再阻塞，g2 会随之退出
+	// 修改：g3 收到信号返回一个 error 并退出，ctx 会被 cancel 掉，然后 g2 的 select
+	// 停止阻塞，执行下面的流程
+	// g2 退出时，调用了 shutdown，g1 会退出
+	// 然后 main 函数中的 g.Wait() 退出，所有协程都会退出
+	g.Go(func() error {
+		quit := make(chan os.Signal, 0)
+		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
+		select {
+		case &lt;-ctx.Done():
+			log.Println(&quot;g3: ctx is done&quot;)
+			return ctx.Err()
+		case sig := &lt;-quit:
+			return errors.Errorf(&quot;get os signal: %v&quot;, sig)
+		}
+	})
+
+	fmt.Printf(&quot;errgroup exiting: %+v\n&quot;, g.Wait())
+}
+</code></pre>
+<h2 id="示例-3">示例 3</h2>
+<p>errgroup 还可以限制同时开启的 goroutine 数量，其实本质也是使用 WaitGroup + channel 来实现的。</p>
+<p>下面的代码保证最多只开启 2 个 goroutine，其他的都会阻塞等待，值得一提的是，Group 即便是零值也是可以直接使用的，只是没有了 cancel 的能力。</p>
+<pre><code class="language-go">func main() {
+	eg := errgroup.Group{}
+	count := 20
+	mostRunning := 2
+	eg.SetLimit(mostRunning)
+
+	for i := 0; i &lt; count; i++ {
+		i := i
+		eg.Go(func() error {
+			log.Println(i)
+			time.Sleep(300 * time.Millisecond)
+			return nil
+		})
+	}
+
+	eg.Wait()
+}
+</code></pre>
+<h1 id="源码分析">源码分析</h1>
+<h2 id="group">Group</h2>
+<pre><code class="language-go">// A Group is a collection of goroutines working on subtasks that are part of
+// the same overall task.
+//
+// A zero Group is valid and does not cancel on error.
+// 
+// Group 是一组 goroutines，它们处理属于同一整体任务的子任务。零值是有效的，并且不会因错误而取消。
+// 因为零值的 cancel 是 nil，所以自然不会被执行
+type Group struct {
+	cancel func()	// 发生错误时会调用该函数，将 WithContext 创建的 ctx 取消
+
+	wg sync.WaitGroup
+
+  sem chan token	// 带缓存的 chan，用来限制可以创建的 goroutine 数量，token 是 struct{} 的别名
+
+	errOnce sync.Once	// 确保只有第一次发生错误时才执行某些操作
+	err     error	// 记录第一次发生的错误
+}
+</code></pre>
+<h2 id="withcontext">WithContext</h2>
+<pre><code class="language-go">// WithContext returns a new Group and an associated Context derived from ctx.
+//
+// The derived Context is canceled the first time a function passed to Go
+// returns a non-nil error or the first time Wait returns, whichever occurs
+// first.
+//
+// WithContext 返回一个 Group 和一个从 ctx 派生的关联上下文。派生的 Context 在 Go 函数第一次返
+// 回错误或 Wait 第一次返回时被取消，以先发生者为准。
+func WithContext(ctx context.Context) (*Group, context.Context) {
+  // 用 WithCancel 包装了传入的 ctx
+	ctx, cancel := context.WithCancel(ctx)
+  // 将 cancel 保存到 Cancel 属性
+	return &amp;Group{cancel: cancel}, ctx
+}
+</code></pre>
+<h2 id="go">Go</h2>
+<pre><code class="language-go">// Go calls the given function in a new goroutine.
+// It blocks until the new goroutine can be added without the number of
+// active goroutines in the group exceeding the configured limit.
+//
+// The first call to return a non-nil error cancels the group; its error will be
+// returned by Wait.
+//
+// Go 在一个新的 goroutine 中调用给定的函数。如果当前运行的 goroutine 数量达到了 limit 的上限，则会阻
+// 塞，直到可以添加。如果调用 f 返回了错误，则会取消该组（也就是调用 Group.cancel，只有第一次发生错误时
+// 会执行该操作），Wait 会返回它的错误。
+func (g *Group) Go(f func() error) {
+	if g.sem != nil {
+		g.sem &lt;- token{}	// 如果当前开启的 goroutine 数量大于 limit 则会被阻塞
+	}
+
+	g.wg.Add(1)
+	go func() {
+		defer g.done()
+
+		if err := f(); err != nil {
+      // 只执行一次，保证只有第一次发生错误时执行
+			g.errOnce.Do(func() {
+        g.err = err		// 保存错误，Wait() 会返回这个错误
+				if g.cancel != nil {
+          g.cancel()	// cancel 掉 WithContext() 创建的 ctx
+				}
+			})
+		}
+	}()
+}
+</code></pre>
+<h2 id="setlimit">SetLimit</h2>
+<pre><code class="language-go">// SetLimit limits the number of active goroutines in this group to at most n.
+// A negative value indicates no limit.
+//
+// Any subsequent call to the Go method will block until it can add an active
+// goroutine without exceeding the configured limit.
+//
+// The limit must not be modified while any goroutines in the group are active.
+//
+// SetLimit 将这个组中的活动 goroutine 的数量限制为最多 n。负值表示没有限制。
+// 对 Go 方法的任何后续调用都将阻塞，直到它可以添加一个活动的 goroutine 而不会
+// 超过配置的限制。当组中的任何 goroutine 处于活动状态时，不得修改限制。
+func (g *Group) SetLimit(n int) {
+	if n &lt; 0 {
+		g.sem = nil
+		return
+	}
+	if len(g.sem) != 0 {
+		panic(fmt.Errorf(&quot;errgroup: modify limit while %v goroutines in the group are still active&quot;, len(g.sem)))
+	}
+	g.sem = make(chan token, n)	// 使用带缓存的 chan
+}
+</code></pre>
+<h2 id="trygo">TryGo</h2>
+<pre><code class="language-go">// TryGo calls the given function in a new goroutine only if the number of
+// active goroutines in the group is currently below the configured limit.
+//
+// The return value reports whether the goroutine was started.
+//
+// 仅当组中当前活动的 goroutine 的数量低于配置的限制时，TryGo 才会在新的 goroutine 中调用给定的函数。
+// 返回值报告 goroutine 是否已启动。
+func (g *Group) TryGo(f func() error) bool {
+	if g.sem != nil {
+		select {
+		case g.sem &lt;- token{}:
+			// Note: this allows barging iff channels in general allow barging.
+		default:
+			return false
+		}
+	}
+
+	g.wg.Add(1)
+	go func() {
+		defer g.done()
+
+		if err := f(); err != nil {
+			g.errOnce.Do(func() {
+				g.err = err
+				if g.cancel != nil {
+					g.cancel()
+				}
+			})
+		}
+	}()
+	return true
+}
+</code></pre>
+<h2 id="wait">Wait</h2>
+<pre><code class="language-go">// Wait blocks until all function calls from the Go method have returned, then
+// returns the first non-nil error (if any) from them.
+//
+// 阻塞等待，直到来自 Go 方法的所有函数调用都返回，然后从它们返回第一个非零错误（如果有）。
+func (g *Group) Wait() error {
+	g.wg.Wait()
+	if g.cancel != nil {
+		g.cancel()
+	}
+	return g.err
+}
+</code></pre>
+<p>总的来看，源码还是比较简单的，也比较容易阅读。</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/go/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#go</a>
+    
+    <a href="/tags/%E6%BA%90%E7%A0%81/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#源码</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/k8s-namespace/" class="block">k8s namespace</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/kqueue/" class="block">kqueue</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#示例-1">示例 1</a></li>
+    <li><a href="#示例-2">示例 2</a></li>
+    <li><a href="#示例-3">示例 3</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#group">Group</a></li>
+    <li><a href="#withcontext">WithContext</a></li>
+    <li><a href="#go">Go</a></li>
+    <li><a href="#setlimit">SetLimit</a></li>
+    <li><a href="#trygo">TryGo</a></li>
+    <li><a href="#wait">Wait</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/go-map-yuan-ma-yue-du/" class="no-underline">go map源码阅读</a>
+          <br />
+        
+          <a href="/posts/go-containerheap-yuan-ma-yue-du/" class="no-underline">go container/heap 源码阅读</a>
+          <br />
+        
+          <a href="/posts/2021-2-24-go-container-list-source-code/" class="no-underline">go container/list 源码分析【未完】</a>
+          <br />
+        
+          <a href="/posts/block-code/" class="no-underline">一段莫名阻塞的 reflect 代码</a>
+          <br />
+        
+          <a href="/posts/gmp-mian-shi-ti/" class="no-underline">GMP 面试题</a>
+          <br />
+        
+          <a href="/posts/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/" class="no-underline">两个 main goroutine 操作一个 channel 会怎样</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

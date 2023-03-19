@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>剑指offer on /dev/null</title>
+    <link>/tags/%E5%89%91%E6%8C%87offer/</link>
+    <description>Recent content in 剑指offer on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Wed, 21 Jul 2021 21:07:14 +0000</lastBuildDate><atom:link href="/tags/%E5%89%91%E6%8C%87offer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>剑指 Offer 40. 最小的 k 个数</title>
+      <link>/posts/jian-zhi-offer-40-zui-xiao-de-k-ge-shu/</link>
+      <pubDate>Wed, 21 Jul 2021 21:07:14 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-40-zui-xiao-de-k-ge-shu/</guid>
+      <description>输入整数数组 arr ，找出其中最小的 k 个数</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 68 - I. 二叉搜索树的最近公共祖先</title>
+      <link>/posts/jian-zhi-offer-68-i-er-cha-sou-suo-shu-de-zui-jin-gong-gong-zu-xian/</link>
+      <pubDate>Sun, 09 May 2021 11:22:20 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-68-i-er-cha-sou-suo-shu-de-zui-jin-gong-gong-zu-xian/</guid>
+      <description>给定一个二叉搜索树, 找到该树中两个指定节点的最近公共祖先。
+百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x， 满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 57 - II. 和为s的连续正数序列</title>
+      <link>/posts/jian-zhi-offer-57-ii-he-wei-s-de-lian-xu-zheng-shu-xu-lie/</link>
+      <pubDate>Tue, 04 May 2021 11:52:11 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-57-ii-he-wei-s-de-lian-xu-zheng-shu-xu-lie/</guid>
+      <description>输入一个正整数 target ，输出所有和为 target 的连续正整数序列（至少含有两个数）。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 67. 把字符串转换成整数</title>
+      <link>/posts/jian-zhi-offer-67-ba-zi-fu-chuan-zhuan-huan-cheng-zheng-shu/</link>
+      <pubDate>Wed, 21 Apr 2021 22:12:13 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-67-ba-zi-fu-chuan-zhuan-huan-cheng-zheng-shu/</guid>
+      <description>写一个函数 StrToInt，实现把字符串转换成整数这个功能。不能使用 atoi 或者其他类似的库函数。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 53 - I. 在排序数组中查找数字 I</title>
+      <link>/posts/2021-3-17-offer-53-search-sort-array1/</link>
+      <pubDate>Fri, 16 Apr 2021 19:41:09 +0000</pubDate>
+      
+      <guid>/posts/2021-3-17-offer-53-search-sort-array1/</guid>
+      <description>题目描述 统计一个数字在排序数组中出现的次数。
+示例 1:
+输入: nums = [5,7,7,8,8,10], target = 8 输出: 2 示例 2:</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 52. 两个链表的第一个公共节点</title>
+      <link>/posts/2021-3-23-offer-52-get-intersection-node/</link>
+      <pubDate>Fri, 16 Apr 2021 19:39:31 +0000</pubDate>
+      
+      <guid>/posts/2021-3-23-offer-52-get-intersection-node/</guid>
+      <description>题目描述 输入两个链表，找出它们的第一个公共节点。	编写一个程序，找到两个单链表相交的起始节点。
+如下面的两个链表：
+a1 -&amp;gt; a2 ↘ c1 -&amp;gt; c2 -&amp;gt; c3 b1 -&amp;gt; b2 -&amp;gt; b3 ↗ 在节点 c1 开始相交。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 11. 旋转数组的最小数字</title>
+      <link>/posts/2021-3-6-offer-11-retate-array-min-num/</link>
+      <pubDate>Fri, 16 Apr 2021 19:28:50 +0000</pubDate>
+      
+      <guid>/posts/2021-3-6-offer-11-retate-array-min-num/</guid>
+      <description>题目描述 把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。输入一个递增排序的数组的一个旋转，输出旋转数组的最小元素。例如，数组 [3,4,5,1,2] 为 [1,2,3,4,5] 的一个旋转，该数组的最小值为1。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 68 - II. 二叉树的最近公共祖先</title>
+      <link>/posts/2021-4-3-offer-68-lowest-common-ancestor/</link>
+      <pubDate>Fri, 16 Apr 2021 19:27:28 +0000</pubDate>
+      
+      <guid>/posts/2021-4-3-offer-68-lowest-common-ancestor/</guid>
+      <description>题目描述 给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖 先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 04. 二维数组中的查找</title>
+      <link>/posts/jian-zhi-offer-04-er-wei-shu-zu-zhong-de-cha-zhao/</link>
+      <pubDate>Fri, 16 Apr 2021 19:17:34 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-04-er-wei-shu-zu-zhong-de-cha-zhao/</guid>
+      <description>题目描述 在一个 n * m 的二维数组中，每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个高效的函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 48. 最长不含重复字符的子字符串</title>
+      <link>/posts/jian-zhi-offer-48-zui-chang-bu-han-chong-fu-zi-fu-de-zi-zi-fu-chuan/</link>
+      <pubDate>Fri, 16 Apr 2021 15:58:39 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-48-zui-chang-bu-han-chong-fu-zi-fu-de-zi-zi-fu-chuan/</guid>
+      <description>题目描述 请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。
+示例 1:
+输入: &amp;quot;abcabcbb&amp;quot; 输出: 3 解释: 因为无重复字符的最长子串是 &amp;quot;abc&amp;quot;，所以其长度为 3。 示例 2:</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 50. 第一个只出现一次的字符（书中为35题）</title>
+      <link>/posts/jian-zhi-offer-50-di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-shu-zhong-wei-35-ti/</link>
+      <pubDate>Fri, 16 Apr 2021 15:55:30 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-50-di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-shu-zhong-wei-35-ti/</guid>
+      <description>题目描述 在字符串 s 中找出第一个只出现一次的字符。如果没有，返回一个单空格。 s 只包含小写字母。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 22. 链表中倒数第k个节点</title>
+      <link>/posts/jian-zhi-offer-22-lian-biao-zhong-dao-shu-di-k-ge-jie-dian/</link>
+      <pubDate>Fri, 16 Apr 2021 15:53:20 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-22-lian-biao-zhong-dao-shu-di-k-ge-jie-dian/</guid>
+      <description>题目描述 输入一个链表，输出该链表中倒数第k个节点。为了符合大多数人的习惯，本题从1开始计数，即链表的尾节点是倒数第1个节点。例如，一个链表有6个节点，从头节点开始，它们的值依次是1、2、3、4、5、6。这个链表的倒数第3个节点是值为4的节点。
+示例：
+给定一个链表: 1-&amp;gt;2-&amp;gt;3-&amp;gt;4-&amp;gt;5, 和 k = 2.</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 18. 删除链表的节点</title>
+      <link>/posts/jian-zhi-offer-18-shan-chu-lian-biao-de-jie-dian/</link>
+      <pubDate>Fri, 16 Apr 2021 15:42:54 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-18-shan-chu-lian-biao-de-jie-dian/</guid>
+      <description>题目描述 给定单向链表的头指针和一个要删除的节点的值，定义一个函数删除该节点。
+返回删除后的链表的头节点。
+注意：此题对比原题有改动
+示例 1:</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 03. 数组中重复的数字</title>
+      <link>/posts/jian-zhi-offer-03-shu-zu-zhong-chong-fu-de-shu-zi/</link>
+      <pubDate>Fri, 16 Apr 2021 15:38:03 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-03-shu-zu-zhong-chong-fu-de-shu-zi/</guid>
+      <description>题目描述 找出数组中重复的数字。
+在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。</description>
+    </item>
+    
+  </channel>
+</rss>

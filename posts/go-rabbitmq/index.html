@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>rabbitmq 学习笔记 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="本笔记主要记录 go rabbitmq 库的使用示例，同时结合学习 rabbitmq">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"rabbitmq 学习笔记",
+      "item":"/posts/go-rabbitmq/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/go-rabbitmq/"
+    },
+    "headline": "rabbitmq 学习笔记 | \/dev\/null","datePublished": "2022-07-14T14:30:52+00:00",
+    "dateModified": "2022-07-14T14:30:52+00:00",
+    "wordCount":  1497 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "本笔记主要记录 go rabbitmq 库的使用示例，同时结合学习 rabbitmq"
+}
+</script><meta property="og:title" content="rabbitmq 学习笔记 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/go-rabbitmq/" />
+
+
+
+
+<meta property="og:description" content="本笔记主要记录 go rabbitmq 库的使用示例，同时结合学习 rabbitmq" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-07-14T14:30:52&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-07-14T14:30:52&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="mq" />
+
+<meta property="article:tag" content="rabbitmq" />
+
+
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">rabbitmq 学习笔记</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-07-14</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>8分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <blockquote>
+<p>本笔记主要记录 go rabbitmq 库的使用示例，同时结合学习 rabbitmq</p>
+</blockquote>
+<h1 id="一个基本的发布订阅程序示例">一个基本的发布/订阅程序示例</h1>
+<p>首先可以通过一个最基础的程序，来一览 rabbitmq 的大致面貌：</p>
+<h2 id="生产者">生产者</h2>
+<p>代码如下：</p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;bufio&quot;
+	amqp &quot;github.com/rabbitmq/amqp091-go&quot;
+	&quot;log&quot;
+	&quot;os&quot;
+)
+
+func Assert(err error, msg string) {
+	if err != nil {
+		log.Panicf(&quot;%s: %s&quot;, msg, err)
+	}
+}
+
+func main() {
+	// 1. 尝试连接 RabbitMQ，建立连接
+	// 该连接抽象了套接字连接，并为我们处理协议版本协商和认证等。
+	conn, err := amqp.Dial(&quot;amqp://guest:guest@localhost:5672/&quot;)
+	Assert(err, &quot;Failed to connect to RabbitMQ&quot;)
+	defer conn.Close()
+
+	// 2. 接下来，我们创建一个通道，大多数 API 都是用过该通道操作的。
+	ch, err := conn.Channel()
+	Assert(err, &quot;Failed to open a channel&quot;)
+	defer ch.Close()
+
+	// 3. 声明消息要发送到的队列
+	q, err := ch.QueueDeclare(
+		&quot;hello&quot;, // name
+		false,   // durable 是否为持久化队列
+		false,   // delete when unused
+		false,   // exclusive
+		false,   // no-wait
+		nil,     // arguments
+	)
+	Assert(err, &quot;Failed to declare a queue&quot;)
+
+	log.Printf(&quot;Enter q or Q to exit.&quot;)
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		if scanner.Err() != nil {
+			Assert(scanner.Err(), &quot;read stdin error&quot;)
+		}
+		body := scanner.Bytes()
+		if string(body) == &quot;q&quot; || string(body) == &quot;Q&quot; {
+			log.Printf(&quot;bye^&quot;)
+			break
+		}
+		// 4.将消息发布到声明的队列
+		err = ch.Publish(
+			&quot;&quot;,     // exchange
+			q.Name, // routing key
+			false, // mandatory
+			false, // immediate
+			amqp.Publishing{
+				ContentType: &quot;text/plain&quot;,
+				Body:        body,
+				// 是否持久化消息，瞬态（0 或 1）或持久（2）
+				DeliveryMode: amqp.Transient,
+			})
+		Assert(err, &quot;Failed to publish a message&quot;)
+	}
+}
+</code></pre>
+<h2 id="消费者">消费者</h2>
+<pre><code class="language-go">package main
+
+import (
+	amqp &quot;github.com/rabbitmq/amqp091-go&quot;
+	&quot;log&quot;
+)
+
+func Assert(err error, msg string) {
+	if err != nil {
+		log.Panicf(&quot;%s: %s&quot;, msg, err)
+	}
+}
+
+func main() {
+	conn, err := amqp.Dial(&quot;amqp://guest:guest@localhost:5672/&quot;)
+	Assert(err, &quot;Failed to connect to RabbitMQ&quot;)
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	Assert(err, &quot;Failed to open a channel&quot;)
+	defer ch.Close()
+
+	q, err := ch.QueueDeclare(
+		&quot;hello&quot;, // name
+		false,   // durable
+		false,   // delete when unused
+		false,   // exclusive
+		false,   // no-wait
+		nil,     // arguments
+	)
+	Assert(err, &quot;Failed to declare a queue&quot;)
+
+
+	msgs, err := ch.Consume(
+		q.Name, // queue
+		&quot;&quot;,     // consumer
+		true,   // auto-ack
+		false,  // exclusive
+		false,  // no-local
+		false,  // no-wait
+		nil,    // args
+	)
+	Assert(err, &quot;Failed to register a consumer&quot;)
+
+	var forever chan struct{}
+
+	go func() {
+		for d := range msgs {
+			log.Printf(&quot;Received a message: %s&quot;, d.Body)
+		}
+	}()
+
+	log.Printf(&quot; [*] Waiting for messages. To exit press CTRL+C&quot;)
+	&lt;-forever
+}
+
+</code></pre>
+<h2 id="核心方法">核心方法</h2>
+<p>通过上面的程序，可以看到上面代码中有几个核心方法：</p>
+<h3 id="queuedeclare">QueueDeclare</h3>
+<p>用于创建一个 <strong>队列</strong>，或者连接到一个已存在的队列，需要提供以下参数：</p>
+<ul>
+<li>name：指定队列的名称，如果留空且执行的是创建操作，则会随机分配一个名称</li>
+<li>durable：是否持久化</li>
+<li>autoDelete: 是否自动删除队列，如果为 true 表示没有消息也没有消费者连接自动删除队列</li>
+<li>exclusive: 是否独占，即当前声明队列的连接关闭后即被删除</li>
+<li>noWait: 是否等待服务器返回 ok</li>
+<li>args:</li>
+</ul>
+<h3 id="consume">Consume</h3>
+<ul>
+<li>queue：要消费的队列的名字</li>
+<li>consumer：</li>
+<li>autoAck：如果为 true，代表 mq 会自动把发送出去的消息置为确认，不会考虑消费者是否真正的消费了这条消息</li>
+<li>exclusive</li>
+<li>noLocal</li>
+<li>noWait</li>
+<li>args</li>
+</ul>
+<h3 id="publish">Publish</h3>
+<ul>
+<li>exchange：交换机的名称，用于确定消息要投放到哪个交换机</li>
+<li>key：路由键，类似路由的功能，可以为一个交换机定义多个路由键，通过不同路由键连接到不同的队列</li>
+<li>mandatory ：</li>
+<li>immediate ：</li>
+<li>msg：要推送的消息，字节类型</li>
+</ul>
+<h1 id="临时队列">临时队列</h1>
+<h1 id="exchange-交换器">exchange 交换器</h1>
+<p>exchange 是消息交换机，它指定消息按什么规则,路由到哪个队列。</p>
+<p>比如下图，x 就是一个交换机，它定义了 3 个 routing_key，routing_key 就是上面说的规则，不同的 routing_key 关联到不同的队列，在下图中，orange 这个 key 关联到了队列 Q1，black 和 green 这两个 key 关联到了队列 Q2，消费者可以根据 routing_key 来消费不同的队列。</p>
+<p><img src="https://www.liwenzhou.com/images/Go/rabbitmq/tutorials04/direct-exchange.png" alt=""></p>
+<p>exchange 的程序大致流程是：</p>
+<p>生产者：</p>
+<ol>
+<li>定义或者连接一个 exchange</li>
+<li>推送消息到这个 exchange</li>
+</ol>
+<p>消费者：</p>
+<ol>
+<li>定义一个队列</li>
+<li>将队列和上面的 exchange 绑定</li>
+<li>然后就可以从队列中消费了</li>
+</ol>
+<p>其实上面的流程不是固定的，只需要记住一个固定的规则即可：<strong>消费者只能从队列消费，队列必须绑定一个 exchange</strong>，所以队列的定义和绑定（也就是消费者流程的 1，2 步）完全也可以让生产者去做，消费者直接进行消费就可以了，只要保证 rabbitmq 中存在这个已经绑定到 exchange 的队列即可。</p>
+<p>这里可能会有一个疑问：在文章最开始的示例中，并没有创建一个 exchange，也没有进行绑定操作，生产者和消费者都是直接操作队列，这是如何做到的呢？其实在 rabbitmq 中存在一个 <strong>默认的 exchange</strong>，如果没有指定 exchange，那么就会使用这个默认交换器，对于 routing key 也是一样的，如果没有指定，则使用默认的。</p>
+<p>绑定调用的函数是 QueueBind，其签名如下：</p>
+<h3 id="queuebind">QueueBind</h3>
+<ul>
+<li>name</li>
+<li>key</li>
+<li>exchange</li>
+<li>noWait</li>
+<li>args</li>
+</ul>
+<p>exchange 有多种类型，下面会详细介绍，可以抽象出一个通用的程序，通过命令行参数来定义不同的 exchange</p>
+<h2 id="通用代码">通用代码</h2>
+<h3 id="生产者-1">生产者</h3>
+<pre><code class="language-go">package main
+
+import (
+	&quot;bufio&quot;
+	&quot;bytes&quot;
+	&quot;errors&quot;
+	&quot;flag&quot;
+	amqp &quot;github.com/rabbitmq/amqp091-go&quot;
+	&quot;log&quot;
+	&quot;os&quot;
+)
+
+type ExchangeKind = string
+
+const (
+	ExchangeKind_Direct  ExchangeKind = &quot;direct&quot;
+	ExchangeKind_Topic   ExchangeKind = &quot;topic&quot;
+	ExchangeKind_Headers ExchangeKind = &quot;headers&quot;
+	ExchangeKind_Fanout  ExchangeKind = &quot;fanout&quot;
+)
+
+func Assert(err error, msg string) {
+	if err != nil {
+		log.Panicf(&quot;%s: %s&quot;, msg, err)
+	}
+}
+
+// 检查输入的 exchange kind 是否合法
+func checkExchangeKind(kind string) error {
+	m := map[string]bool{
+		ExchangeKind_Direct:  true,
+		ExchangeKind_Topic:   true,
+		ExchangeKind_Headers: true,
+		ExchangeKind_Fanout:  true,
+	}
+	if exist := m[kind]; exist {
+		return nil
+	}
+	return errors.New(&quot;not found this kind&quot;)
+}
+
+func main() {
+	log.Printf(&quot;usage: ./main -e [exchange name] -k [exchange kind]&quot;)
+	var (
+		exchangeName = flag.String(&quot;e&quot;, &quot;&quot;, &quot;exchange name&quot;)
+		exchangeKind = flag.String(&quot;k&quot;, &quot;&quot;, &quot;exchange kind&quot;)
+	)
+	flag.Parse()
+
+	if err := checkExchangeKind(*exchangeKind); err != nil {
+		Assert(err, &quot;check exchange kind error: &quot;)
+	}
+	log.Printf(&quot;exchangeName: %v, exchangeKind: %v\n&quot;,
+		*exchangeName, *exchangeKind)
+
+	// 1. 尝试连接 RabbitMQ，建立连接
+	// 该连接抽象了套接字连接，并为我们处理协议版本协商和认证等。
+	conn, err := amqp.Dial(&quot;amqp://guest:guest@localhost:5672/&quot;)
+	Assert(err, &quot;Failed to connect to RabbitMQ&quot;)
+	defer conn.Close()
+
+	// 2. 接下来，我们创建一个通道，大多数 API 都是用过该通道操作的。
+	ch, err := conn.Channel()
+	Assert(err, &quot;Failed to open a channel&quot;)
+	defer ch.Close()
+
+	// 声明一个交换器 exchange
+	err = ch.ExchangeDeclare(
+		*exchangeName, // name 交换器名
+		*exchangeKind, // type 交换器类型
+		true,          // durable
+		false,         // auto-deleted
+		false,         // internal
+		false,         // no-wait
+		nil,           // arguments
+	)
+	Assert(err, &quot;Failed to declare a exchange&quot;)
+
+	log.Printf(&quot;Enter q or Q to exit.&quot;)
+	log.Printf(&quot;usage: &lt;routing_key&gt;:&lt;message&gt;&quot;)
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		if scanner.Err() != nil {
+			Assert(scanner.Err(), &quot;read stdin error&quot;)
+		}
+		body := scanner.Bytes()
+		if string(body) == &quot;q&quot; || string(body) == &quot;Q&quot; {
+			log.Printf(&quot;bye^&quot;)
+			break
+		}
+    // 输入的格式：&lt;路由键&gt;:&lt;消息实体&gt;
+		before, after, found := bytes.Cut(body, []byte(&quot;:&quot;))
+		if !found {
+			log.Printf(&quot;usage: &lt;routing_key&gt;:&lt;message&gt;&quot;)
+			continue
+		}
+		log.Printf(&quot;routingKey: %s, message: %s\n&quot;, before, after)
+
+		// 4.将消息发布到 exchange 而不是某个单独的队列
+		err = ch.Publish(
+			*exchangeName,  // exchange
+			string(before), // routing key
+			false,          // mandatory
+			false,          // immediate
+			amqp.Publishing{
+				ContentType: &quot;text/plain&quot;,
+				Body:        after,
+				// 是否持久化消息，瞬态（0 或 1）或持久（2）
+				DeliveryMode: amqp.Transient,
+			})
+		Assert(err, &quot;Failed to publish a message&quot;)
+	}
+}
+</code></pre>
+<p>使用方法：</p>
+<pre><code class="language-shell">./producer_exchange -e [exchange name] -k [exchange kind]
+</code></pre>
+<p>使用示例：</p>
+<pre><code class="language-shell"># 推送消息到名为 logs_direct ，类型为 direct 的 exchange
+./producer_exchange -e logs_direct -k direct
+
+# 推送消息到名为 logs_topic ，类型为 topic 的 exchange
+./producer_exchange -e logs_topic -k topic
+</code></pre>
+<h3 id="消费者-1">消费者</h3>
+<pre><code class="language-go">package main
+
+import (
+	&quot;flag&quot;
+	&quot;fmt&quot;
+	amqp &quot;github.com/rabbitmq/amqp091-go&quot;
+	&quot;log&quot;
+	. &quot;rabbitmq&quot;
+	&quot;strings&quot;
+)
+
+
+type routingKeys []string
+
+func (s *routingKeys) String() string {
+	return fmt.Sprintf(&quot;%v&quot;, *s)
+}
+
+func (s *routingKeys) Set(value string) error {
+	ss := strings.Split(value, &quot;,&quot;)
+	*s = append(*s, ss...)
+	return nil
+}
+
+func Assert(err error, msg string) {
+	if err != nil {
+		log.Panicf(&quot;%s: %s&quot;, msg, err)
+	}
+}
+
+
+func main() {
+	log.Printf(`
+	usage: ./main 
+	-q [queue name] 
+	-e [exchange name] 
+	-r [routing key, can provide more, use ',' to sep, 
+		example: info,error,warning (don't have space) ]
+`)
+	var (
+		exchangeName = flag.String(&quot;e&quot;, &quot;&quot;, &quot;exchange name&quot;)
+		queueName    = flag.String(&quot;q&quot;, &quot;&quot;, &quot;queue name&quot;)
+		rks          routingKeys
+	)
+	flag.Var(&amp;rks, &quot;r&quot;, &quot;routing key&quot;)
+	flag.Parse()
+
+	log.Printf(&quot;queueName: %v, exchangeName: %v, routingKey: %v\n&quot;,
+		*queueName, *exchangeName, &amp;rks)
+
+	conn, err := amqp.Dial(&quot;amqp://guest:guest@localhost:5672/&quot;)
+	Assert(err, &quot;Failed to connect to RabbitMQ&quot;)
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	Assert(err, &quot;Failed to open a channel&quot;)
+	defer ch.Close()
+
+	// 声明一个临时队列，一旦消费者断开连接，该队列就会被删除
+	q, err := ch.QueueDeclare(
+		*queueName, // name 空字符串作为队列名称，表示使用随机名称
+		false,      // durable
+		false,      // delete when unused
+		true,       // exclusive 独占队列（当前声明队列的连接关闭后即被删除）
+		false,      // no-wait
+		nil,        // arguments
+	)
+	Assert(err, &quot;Failed to declare a queue&quot;)
+
+	if len(rks) == 0 {
+		err = ch.QueueBind(
+			q.Name,
+			&quot;&quot;,
+			*exchangeName,
+			false,
+			nil,
+		)
+		Assert(err, &quot;Failed to bind a queue&quot;)
+	} else {
+		for _, key := range rks {
+			// 将 queue 绑定到对应的 exchange，使用 exchangeName + routingKeys 进行匹配
+			err = ch.QueueBind(
+				q.Name,
+				key,
+				*exchangeName,
+				false,
+				nil,
+			)
+			Assert(err, &quot;Failed to bind a queue&quot;)
+		}
+	}
+
+	msgs, err := ch.Consume(
+		q.Name, // queue
+		&quot;&quot;,     // consumer
+		true,   // auto-ack
+		false,  // exclusive
+		false,  // no-local
+		false,  // no-wait
+		nil,    // args
+	)
+	Assert(err, &quot;Failed to register a consumer&quot;)
+
+	var forever chan struct{}
+
+	go func() {
+		for d := range msgs {
+			// 如果您调用 Channel.Consume 时将 autoAck 设置为 true，那么服务器将自动确认
+			// 每条消息，并且不应调用此方法。否则，您必须在成功处理此交付后调用 Delivery.Ack。
+			// 参数是什么意思？
+			// d.Ack(false)
+			log.Printf(&quot;Received a message: %s&quot;, d.Body)
+		}
+	}()
+
+	log.Printf(&quot; [*] Waiting for messages. To exit press CTRL+C&quot;)
+	&lt;-forever
+}
+</code></pre>
+<p>使用方法：</p>
+<pre><code class="language-shell">usage: ./main 
+	-q [queue name] 
+	-e [exchange name] 
+	-r [routing key, 可以提供多个, 使用 , 来分隔, 比如: info,error,warning (注意 , 前后不要有空格) ]
+</code></pre>
+<p>使用示例：</p>
+<pre><code class="language-shell">// ./consumer_exchange -e logs_direct -r error
+// ./consumer_exchange -e logs_direct -r error,info,warning
+//
+// ./consumer_exchange -e logs_topic -r &quot;*.orange.*&quot;
+// ./consumer_exchange -e logs_topic -r &quot;*.*.rabbit&quot;,&quot;lazy.#&quot;
+</code></pre>
+<h2 id="fanout">fanout</h2>
+<p>fanout 类型的 exchange 提供广播功能，即将消息投递到所有与该 exchange 所绑定的 queue 上，此时指定的 routing key 会被忽略</p>
+<h3 id="示例">示例</h3>
+<p>这里直接使用上面的通用代码，只要在运行时指定不同的 flag 即可</p>
+<h4 id="生产者-2">生产者</h4>
+<pre><code class="language-shell">./producer_exchange -e logs -k fanout
+</code></pre>
+<h4 id="消费者-1-1">消费者 1</h4>
+<p>因为 fanout 会忽略 routing key，所以 -r 也不需要指定了</p>
+<pre><code class="language-shell">./consumer_exchange -e logs
+</code></pre>
+<h4 id="消费者-2">消费者 2</h4>
+<pre><code class="language-shell">./consumer_exchange -e logs 
+</code></pre>
+<p>先执行生产者，再执行消费者1，2</p>
+<p>生产者执行后在终端输入消息（消息格式是 &lt;路由键&gt;:&lt;消息&gt;，因为是 fanout 类型，所以无需指定路由键）：</p>
+<pre><code class="language-shell">$ ./producer_exchange -e logs -k fanout 
+2022/07/24 12:16:22 usage: ./main -e [exchange name] -k [exchange kind]
+2022/07/24 12:16:22 exchangeName: logs, exchangeKind: fanout
+2022/07/24 12:16:22 Enter q or Q to exit.
+2022/07/24 12:16:22 usage: &lt;routing_key&gt;:&lt;message&gt;
+:123
+2022/07/24 12:20:27 routingKey: , message: 123
+
+</code></pre>
+<p>之后观察两个消费者的 terminal，发现都收到了消息：</p>
+<pre><code class="language-shell">$ ./consumer_exchange -e logs 
+2022/07/24 12:20:23 
+        usage: ./main 
+        -q [queue name] 
+        -e [exchange name] 
+        -r [routing key, can provide more, use ',' to sep, 
+                example: info,error,warning (don't have space) ]
+2022/07/24 12:20:23 queueName: , exchangeName: logs, routingKey: []
+2022/07/24 12:20:23  [*] Waiting for messages. To exit press CTRL+C
+2022/07/24 12:20:27 Received a message: 123
+</code></pre>
+<h2 id="direct">direct</h2>
+<p>direct 类型的 exchange 会严格按照 routing key 进行精准匹配</p>
+<h2 id="topic">topic</h2>
+<p>topic 类型的 exchange 提供了 routing key 的通配符匹配功能，支持 * 和 # 语法，&quot;#&quot; 代表匹配一个或多个单词，&quot;*&quot; 则匹配不多不少刚好一个单词</p>
+<h3 id="示例-1">示例</h3>
+<p>这里直接使用上面的通用代码，只要在运行时指定不同的 flag 即可</p>
+<h4 id="生产者-3">生产者</h4>
+<pre><code class="language-shell">$ ./producer_exchange -e logs_topic -k topic
+# 开始输入
+quick.orange.rabbit:666
+lazy.orange.elephant:aaa
+quick.orange.fox:888
+</code></pre>
+<h4 id="消费者-1-2">消费者 1</h4>
+<p>这个消费者消费 routing key 匹配 <code>*.orange.*</code>  的消息，表示单词个数必须是 3 个，且中间的必须是 orange</p>
+<pre><code class="language-shell">$ ./consumer_exchange -e logs_topic -r &quot;*.orange.*&quot;
+</code></pre>
+<h4 id="消费者-2-1">消费者 2</h4>
+<p>注意这里要用 &quot;&quot; 将 routing key 包裹起来，否则 * 会被 shell 错误解析</p>
+<p><code>*.*.rabbit</code>	表示单词个数必须是 3 个，且最后一个单词必须是 rabbit</p>
+<p><code>lazy.#</code> 表示的是只要第一个单词为 lazy 即可，之后的内容忽略</p>
+<pre><code class="language-shell">$ ./consumer_exchange -e logs_topic -r &quot;*.*.rabbit&quot;,&quot;lazy.#&quot;
+</code></pre>
+<p>匹配情况：</p>
+<pre><code>//    &gt; quick.orange.rabbit:666							=&gt; 		*.orange.*  | *.*.rabbit
+//		&gt; lazy.orange.elephant:aaa						=&gt;		*.orange.*
+//		&gt; quick.orange.fox:888								=&gt;		*.orange.*
+//		&gt; lazy.brown.fox:666									=&gt;		lazy.#
+//		&gt; lazy.pink.rabbit:xxx								=&gt;		lazy.# | *.*.rabbit
+//		&gt; quick.brown.fox:yyy									=&gt;
+//		&gt; orange:ccc													=&gt;
+// 		&gt; quick.orange.male.rabbit:bbb				=&gt;
+//		&gt; lazy.orange.male.rabbit:ooo					=&gt;		lazy.#
+//		&gt; lazy.orange.male.rabbit.io:zzz			=&gt;		lazy.#
+</code></pre>
+<p>可以按照上表的内容自己实践一下，看看不同的 routing_key 会传递给哪个消费者</p>
+<h1 id="延迟队列">延迟队列</h1>
+<p>延迟队列可以用于订单超时取消的场景，可以用 rabbitmq 的死信队列来实现一个延迟队列。</p>
+<p><strong>死信队列</strong>，顾名思义，就是用来存储那些无法被消费的，已经“死掉“的消息，和普通队列一样，也是由 exchange、routing_key 和 queue 三大组件构成的。</p>
+<p>什么条件下会将消息放到死信队列？</p>
+<ul>
+<li>消息被拒绝，并且 requeue 参数为 false，这个参数代表是否将被拒绝的消息重新放回队列，让其他消费者进行消费</li>
+<li>消息的 TTL 过期</li>
+<li>队列达到最大长度或队列空间已满，此时需要 queue 的拒绝策略设置为 reject-public-dlx，后续投递至该队列的消息会重新投递到死信队列中</li>
+</ul>
+<p>这里需要注意的一点是：消息的 TTL 和消息的 ACK 是不相干的，比如设置了消息的 TTL 为 5s，但是消息超过 5s 没有回复 ACK，此时是不会判定这条消息过期的，引用书上的一段话：<strong>RabbitMQ 不会为未确认的消息设置过期时间，它判断此消息是否需要重新投递给消费者的唯一依据是消费该消息的消费者连接是否己经断开，这么设计的原因是 RabbitMQ 允许消费者费一条消息的时间可以很久很久。</strong></p>
+<p>消息过期的依据是：如果一条消息超过 TTL 还没有被消费，则判断为过期。而 ACK 是在已经消费的情况下才能回复的东西，所以这两个东西当然不相干。</p>
+<p>之所以会记录上面的问题，是因为我在写代码时犯了这个错误，我在消费者开了两个线程，分别消费普通队列和死信队列，生产者这边会先将消息投放到普通队列，然后我的逻辑是消息普通队列的时候加一个随机的 sleep，让部分消息的 ACK 超过 TTL 的时间，从而让消息超时进入死信队列，但是运行时我发现消息始终不会进入死信队列，除非是直接结束掉消费者进程，然后生产者这边投放几条消息，等过了 TTL 时间后再运行消费者进程，此时就会从死信队列里消费到过期消息。</p>
+<p><strong>实现延迟队列的基本逻辑</strong></p>
+<p>生产者：</p>
+<ol>
+<li>创建一个正常交换机</li>
+<li>创建一个死信交换机</li>
+<li>创建一个正常队列，并绑定正常交换机和 routing_key，同时设置以下几个参数：</li>
+</ol>
+<pre><code>&quot;x-message-ttl&quot;:             5000,            // 消息过期时间,毫秒
+&quot;x-dead-letter-exchange&quot;:    dlxExchangeName, // 指定死信交换机
+&quot;x-dead-letter-routing-key&quot;: dlxRoutingKey,   // 指定死信 routing-key
+</code></pre>
+<ol start="4">
+<li>创建一个死信队列，并绑定死信交换机和 routing_key</li>
+<li>推送消息到正常交换机</li>
+</ol>
+<p>消费者：</p>
+<p>因为队列和交换机都已经由生产者创建好了，所以消费者这边直接消费即可，并且只需要从死信交换机进行消费即可，这样一来，生产者放到正常队列里的消息在 TTL 之后过期，会放到死信队列，这样消费者就可以直接进行消费了。</p>
+<p>比如订单超时未支付自动取消的场景，当用户提交订单时，生产者将订单信息放到正常队列，同时设置过期时间，当到达时间后进入死信队列，消费者这边就可以开始进行消费了，具体的业务逻辑这里就不展开了，比如可以查询一下订单 ID，看支付状态是否为未支付，如果未支付就说明可以取消这个订单了。</p>
+<h1 id="架构及组件">架构及组件</h1>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/mq/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#mq</a>
+    
+    <a href="/tags/rabbitmq/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#rabbitmq</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/minikube_wen_ti_hui_zong/" class="block">minikube 问题汇总</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/tls_wo_shou/" class="block">TLS 握手流程</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#生产者">生产者</a></li>
+    <li><a href="#消费者">消费者</a></li>
+    <li><a href="#核心方法">核心方法</a>
+      <ul>
+        <li><a href="#queuedeclare">QueueDeclare</a></li>
+        <li><a href="#consume">Consume</a></li>
+        <li><a href="#publish">Publish</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#queuebind">QueueBind</a></li>
+      </ul>
+    </li>
+    <li><a href="#通用代码">通用代码</a>
+      <ul>
+        <li><a href="#生产者-1">生产者</a></li>
+        <li><a href="#消费者-1">消费者</a></li>
+      </ul>
+    </li>
+    <li><a href="#fanout">fanout</a>
+      <ul>
+        <li><a href="#示例">示例</a>
+          <ul>
+            <li><a href="#生产者-2">生产者</a></li>
+            <li><a href="#消费者-1-1">消费者 1</a></li>
+            <li><a href="#消费者-2">消费者 2</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#direct">direct</a></li>
+    <li><a href="#topic">topic</a>
+      <ul>
+        <li><a href="#示例-1">示例</a>
+          <ul>
+            <li><a href="#生产者-3">生产者</a></li>
+            <li><a href="#消费者-1-2">消费者 1</a></li>
+            <li><a href="#消费者-2-1">消费者 2</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

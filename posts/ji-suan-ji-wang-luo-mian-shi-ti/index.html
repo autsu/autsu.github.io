@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>计算机网络面试题 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="TCP 相关 1. 说说 TIME_WAIT 及其作用 当一端 主动 断开连接并发送最后一次挥手后，该端状态变为 TIME_WAIT ，此时会等待 2 MSL （MSL 是 Maximum Segment Lifetime，译为“报文最大生存时间”，可为 30s，1min 或 2min。） 作用：">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"计算机网络面试题",
+      "item":"/posts/ji-suan-ji-wang-luo-mian-shi-ti/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/ji-suan-ji-wang-luo-mian-shi-ti/"
+    },
+    "headline": "计算机网络面试题 | \/dev\/null","datePublished": "2022-01-28T23:45:48+00:00",
+    "dateModified": "2022-01-28T23:45:48+00:00",
+    "wordCount":  328 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "TCP 相关 1. 说说 TIME_WAIT 及其作用 当一端 主动 断开连接并发送最后一次挥手后，该端状态变为 TIME_WAIT ，此时会等待 2 MSL （MSL 是 Maximum Segment Lifetime，译为“报文最大生存时间”，可为 30s，1min 或 2min。） 作用："
+}
+</script><meta property="og:title" content="计算机网络面试题 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/ji-suan-ji-wang-luo-mian-shi-ti/" />
+
+
+
+
+<meta property="og:description" content="TCP 相关 1. 说说 TIME_WAIT 及其作用 当一端 主动 断开连接并发送最后一次挥手后，该端状态变为 TIME_WAIT ，此时会等待 2 MSL （MSL 是 Maximum Segment Lifetime，译为“报文最大生存时间”，可为 30s，1min 或 2min。） 作用：" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-01-28T23:45:48&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-01-28T23:45:48&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="面经" />
+
+<meta property="article:tag" content="计算机网络" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/gmp-mian-shi-ti/" />
+
+<meta property="og:see_also" content="/posts/wo-de-mian-jing/" />
+
+<meta property="og:see_also" content="/posts/ke-kao-chuan-shu-de-shi-xian-ji-zhi-ting-zhi-deng-dai-xie-yi-swstop-and-wait/" />
+
+<meta property="og:see_also" content="/posts/mysql-mian-jing/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">计算机网络面试题</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-01-28</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>2分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h1 id="tcp-相关">TCP 相关</h1>
+<h2 id="1-说说-time_wait-及其作用">1. 说说 TIME_WAIT 及其作用</h2>
+<p>当一端 <strong>主动</strong> 断开连接并发送最后一次挥手后，该端状态变为 <code>TIME_WAIT</code> ，此时会等待 2 MSL （MSL 是  Maximum Segment Lifetime，译为“报文最大生存时间”，可为 30s，1min 或 2min。）
+作用：</p>
+<ol>
+<li>
+<p>避免新旧连接混淆
+如果一个 tcp 连接被关闭了，紧接着马上又有一个相同四元组的 tcp 连接建立了，且此时刚好旧连接中有一个延迟的报文到达了，那么这个旧报文就会错误的被新连接接收（seq 对新连接恰好有效），进而可能会产生一些诡异或者错误的现象。TIME_WAIT 可以在一定程度确保这些延迟的旧报文在网络中消失。</p>
+</li>
+<li>
+<p>确保双方的连接都可以正常关闭
+假设 A 主动关闭，那么根据四次挥手可知，最后一次挥手，A 需要发送一个 ACK 给 B，如果发送之后没有 <code>TIME_WAIT</code>，而是直接 <code>CLOSED</code>，那么如果该 ACK 丢失，B 会因为超时而重发 FIN，但是因为 A 已经关闭了，所以会回复一个 RST，B 就会认为发生了错误，实际上并没有。如果 A 在发送最后一个 ACK 后进入 <code>TIME_WAIT</code> 等待一段时间，那么 B 的重传 FIN 就可以被正常接收了。</p>
+</li>
+</ol>
+<p>也有一些博客说，客户端四次挥手的最后一个 ACK 报文如果在网络中被丢失了，此时如果客户端 <code>TIME_WAIT</code> 过短或没有，则就直接进入了 <code>CLOSED</code> 状态了，那么服务端则会一直处在 <code>LASE_ACK</code> 状态。
+当客户端发起建立连接的 SYN 请求报文后，服务端会发送 RST 报文给客户端，连接建立的过程就会被终止。</p>
+<h2 id="2-tcp-如何保证可靠性">2. TCP 如何保证可靠性</h2>
+<h2 id="3-三次握手对应到-socket-函数">3. 三次握手对应到 socket 函数</h2>
+<h2 id="4-四次挥手对应到-socket-函数">4. 四次挥手对应到 socket 函数</h2>
+<p>主动关闭方调用 close 发送第一次挥手
+被动关闭方调用 close 发送第三次挥手
+<img src="https://youseebiggirl.github.io/post-images/1643911879647.png" alt=""></p>
+<h2 id="5-为什么断开连接需要四次挥手">5. 为什么断开连接需要四次挥手</h2>
+<h2 id="6-三次握手为什么需要-3-次2-次或者-4-次不行吗">6. 三次握手为什么需要 3 次？2 次或者 4 次不行吗</h2>
+<p><strong>2 次：无法阻止历史连接，造成资源浪费</strong>
+<img src="https://youseebiggirl.github.io/post-images/1643774767968.png" alt="">
+图片来源：https://blog.csdn.net/qq_34827674/article/details/122040501</p>
+<p>在上面的图片中，服务端一收到 SYN 就建立连接，无法辨认该 SYN 是否是旧连接，只有在收到客户端的 RST 后才知道，导致白白创建了一条连接</p>
+<p><img src="https://youseebiggirl.github.io/post-images/1643775093372.png" alt="">
+图片来源：https://blog.csdn.net/qq_34827674/article/details/122040501</p>
+<p>可以看到，在三次握手的情况下， 可以在服务端建立连接之前，阻止掉历史连接，从而保证建立的连接不是历史连接。</p>
+<p><strong>4 次：既然 3 次已经可以保证连接正常建立了，就没必要再多加一次了</strong></p>
+<h2 id="7-tcp-的拥塞控制">7. TCP 的拥塞控制</h2>
+<h1 id="http-相关">HTTP 相关</h1>
+<h2 id="1--http-10112030">1.  HTTP 1.0，1.1，2.0，3.0</h2>
+<h3 id="http-10">HTTP 1.0</h3>
+<p>采用短连接，也就是每次请求都需要与服务器建立一次连接，服务器处理完成后便断开连接。无状态：即每次请求完成后就会断开连接，每个连接断开后都无法获取上次连接的状态和信息。
+存在的问题：</p>
+<ol>
+<li>
+<p>无法复用连接，每次发送请求，都需要进行一次TCP连接，而TCP的连接释放过程又是比较费事的。这种无连接的特性会使得网络的利用率变低。</p>
+</li>
+<li>
+<p>队头阻塞(head of line blocking)，由于HTTP1.0规定下一个请求必须在前一个请求响应到达之前才能发送，假设前一个请求响应一直不到达，那么下一个请求就不发送，后面的请求就阻塞了。</p>
+</li>
+<li>
+<p>不支持断点续传，也就是说，每次都会传送全部的页面和数据。</p>
+</li>
+</ol>
+<h3 id="http-11">HTTP 1.1</h3>
+<ol>
+<li>
+<p>长连接：HTTP 1.1 默认支持 keep-alive 的长连接模式，解决了 1.0 中无法复用 TCP 连接的问题，当本次请求结束后不会断开连接并保持本次连接的状态与信息，客户端与服务端都有权取消该模式。</p>
+</li>
+<li>
+<p>管道化：多个请求不用排队发送，但是服务端必须按照发送的顺序进行相应，所以并没有完全解决 HTTP 1.0 的队头阻塞问题。举例：假设文件A中有三个静态文件D,E和F，虽然管道化技术使E不需要等待D请求完成并接收到响应后再开始请求，F也同理，但是最后服务端还是需要按照发送请求时的顺序来依次给出响应，这时候依旧会发生阻塞。 原因是 HTTP1.1 的请求和响应并没有序号标识，所以无法将乱序的响应与请求对应起来。</p>
+</li>
+<li>
+<p>基于长连接的模式就可以实现断点续传的功能了，这样对大文件的传输和下载会更加友好，同时HTTP1.1在请求头中引入了range头域，它允许只请求资源的某部分，此时的返回码是206</p>
+</li>
+</ol>
+<h3 id="http-2">HTTP 2</h3>
+<p>（参考 <a href="https://blog.csdn.net/qq_34827674/article/details/115188949">https://blog.csdn.net/qq_34827674/article/details/115188949</a>）</p>
+<ol>
+<li>头部压缩：在 HTTP 1/1.1 中，可以通过指定 <code>Content-Encoding</code> 来设置 body 的压缩方式，比如 gzip，但是 header 部分不能进行压缩，且 header 部分存在几个问题：1. 使用 ASCII 码，效率低 2. 可能很多请求的 header 的字段值都是相同的，比较冗余 3. 存在一些固定字段，比如 Cookie</li>
+</ol>
+<p>解决方式：
+<strong>静态编码表</strong>
+<img src="https://youseebiggirl.github.io/post-images/1644679813525.png" alt="">
+静态编码表为一些常见的 Header 进行了映射，用一个 index 来标识，比如在上图中，:method GET 使用 2 来代替，这样传输就会节省很多字节，服务器在接收到报文后，通过静态编码表就可以获取到相应的信息。
+但是也会发现一个问题，一些 index 是没有 header value 的，这是因为这些 Value 并不是固定的而是变化的，这些 Value 都会经过 Huffman 编码后，才会发送出去。具体的编码方式参考上面给出来的原文链接。</p>
+<p><strong>动态编码表</strong>
+静态表只包含了 61 种高频出现在头部的字符串，不在静态表范围内的头部字符串就要自行构建动态表，它的 Index 从 62 起步，会在编码解码的时候随时更新。</p>
+<p>比如发送的报文包含这样一个头部：XXX: YYY，那么客户端和服务端都会在各自的动态编码表中添加这一 header，并且用一个 index 标识，如果客户端之后要再次发送该头部，那么只需要发送对应得 index 即可。</p>
+<p>使得动态表生效有一个前提：<strong>必须同一个连接上，重复传输完全相同的 HTTP 头部。</strong> 如果消息字段在 1 个连接上只发送了 1 次，或者重复传输时，字段总是略有变化，动态表就无法被充分利用了。</p>
+<p>因此，随着在同一 HTTP/2 连接上发送的报文越来越多，客户端和服务器双方的「字典」积累的越来越多，理论上最终每个头部字段都会变成 1 个字节的 Index，这样便避免了大量的冗余数据的传输，大大节约了带宽。</p>
+<p>动态表的弊端是：随着表字段的增长，占用的内存也会越来越大，为了解决该问题，Web 服务器都会提供类似 http2_max_requests 的配置，用于限制一个连接上能够传输的请求数量，避免动态表无限增大，请求数量到达上限后，就会关闭 HTTP/2 连接来释放内存。</p>
+<ol start="2">
+<li>
+<p>二进制帧</p>
+</li>
+<li>
+<p>多路复用
+为了解决 HTTP 1/1.1 中的对头阻塞问题，HTTP 2 使用了**流（stream）**的概念，每一次请求对应一个流，有一个唯一的 ID，用来区分不同的请求，多个 stream 复用一条 TCP 连接，达到并发的效果。在每个 stream 中还有多个 <strong>message</strong>，<strong>message</strong> 对应 HTTP1 中的请求或响应，有 header 和 body 组成。message 中有一个或多个 <strong>frame</strong>（帧），frame 是 HTTP2 的最小单位，以二进制压缩格式存放 HTTP1 中的内容。一个请求的数据会被分成多个帧，方便进行数据分割传输，每个帧都唯一属于某一个流ID，将帧按照流ID进行分组，即可分离出不同的请求。这样同一个TCP连接中就可以同时并发多个请求，不同请求的帧数据可穿插在一起，根据流ID分组即可。</p>
+</li>
+</ol>
+<p>HTTP2 依然存在的问题：TCP 的队头阻塞
+如果HTTP/2连接双方的网络中有一个数据包丢失，或者任何一方的网络出现中断，整个TCP连接就会暂停，丢失的数据包需要被重新传输。 因为TCP是一个按序传输的链条，因此如果其中一个点丢失了，链路上之后的内容就都需要等待。 这种单个数据包造成的阻塞，就是TCP上的队头阻塞（head of line blocking）。</p>
+<h3 id="http-3">HTTP 3</h3>
+<p>TODO</p>
+<h2 id="http-状态码1xx-5xx">HTTP 状态码，1xx-5xx</h2>
+<p>1xx：表示已接收请求，需要继续发送请求
+2xx：表示成功处理了请求
+3xx：表示需要进行重定向
+4xx：表示请求不能被理解、处理
+5xx：表示服务器在处理请求时发生了内部错误，这些错误可能是服务器本身的错误，而不是请求出错</p>
+<h2 id="输入-url-到浏览器的过程">输入 url 到浏览器的过程</h2>
+<ol>
+<li>
+<p><del>首先需要确保本机拥有一个 IP 地址，如果没有，则需要通过 DHCP 获取一个 IP，获取流程如下：</del></p>
+<p><del>1.1 本机生成一个 DHCP 请求报文，放入到一个目的端口为 67，源端口为 68 的 UDP 报文中</del></p>
+<p><del>1.2 再将这个 UDP 报文放到一个目的地址为 255.255.255.255 （广播地址）和源地址为 0.0.0.0 （无 IP 地址）的 IP 报文中</del></p>
+<p><del>1.3 再将这个 IP 报文放到一个以太网帧中，该以太网帧的目的 MAC 地址为 FF:FF:FF:FF:FF:FF（表示广播给局域网内的所有主机），   	  源 MAC 地址为 00:16:D3:23:68:8A</del></p>
+<p><del>1.4</del></p>
+</li>
+</ol>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/%E9%9D%A2%E7%BB%8F/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#面经</a>
+    
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#计算机网络</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/close_wait-he-fin_wait_2/" class="block">TCP CLOSE_WAIT 和 FIN_WAIT_2</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/gmp-mian-shi-ti/" class="block">GMP 面试题</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-说说-time_wait-及其作用">1. 说说 TIME_WAIT 及其作用</a></li>
+    <li><a href="#2-tcp-如何保证可靠性">2. TCP 如何保证可靠性</a></li>
+    <li><a href="#3-三次握手对应到-socket-函数">3. 三次握手对应到 socket 函数</a></li>
+    <li><a href="#4-四次挥手对应到-socket-函数">4. 四次挥手对应到 socket 函数</a></li>
+    <li><a href="#5-为什么断开连接需要四次挥手">5. 为什么断开连接需要四次挥手</a></li>
+    <li><a href="#6-三次握手为什么需要-3-次2-次或者-4-次不行吗">6. 三次握手为什么需要 3 次？2 次或者 4 次不行吗</a></li>
+    <li><a href="#7-tcp-的拥塞控制">7. TCP 的拥塞控制</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#1--http-10112030">1.  HTTP 1.0，1.1，2.0，3.0</a>
+      <ul>
+        <li><a href="#http-10">HTTP 1.0</a></li>
+        <li><a href="#http-11">HTTP 1.1</a></li>
+        <li><a href="#http-2">HTTP 2</a></li>
+        <li><a href="#http-3">HTTP 3</a></li>
+      </ul>
+    </li>
+    <li><a href="#http-状态码1xx-5xx">HTTP 状态码，1xx-5xx</a></li>
+    <li><a href="#输入-url-到浏览器的过程">输入 url 到浏览器的过程</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/gmp-mian-shi-ti/" class="no-underline">GMP 面试题</a>
+          <br />
+        
+          <a href="/posts/wo-de-mian-jing/" class="no-underline">我的面经</a>
+          <br />
+        
+          <a href="/posts/ke-kao-chuan-shu-de-shi-xian-ji-zhi-ting-zhi-deng-dai-xie-yi-swstop-and-wait/" class="no-underline">可靠传输的实现机制 —— 停止-等待协议SW（Stop-and-Wait）</a>
+          <br />
+        
+          <a href="/posts/mysql-mian-jing/" class="no-underline">MySQL 面经汇总</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

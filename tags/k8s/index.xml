@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>k8s on /dev/null</title>
+    <link>/tags/k8s/</link>
+    <description>Recent content in k8s on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Mon, 10 Oct 2022 22:11:10 +0000</lastBuildDate><atom:link href="/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>k8s Secret</title>
+      <link>/posts/k8s-secret/</link>
+      <pubDate>Mon, 10 Oct 2022 22:11:10 +0000</pubDate>
+      
+      <guid>/posts/k8s-secret/</guid>
+      <description>Opaque Secret 要求 value 必须是 base64 编码的</description>
+    </item>
+    
+    <item>
+      <title>k8s client-go 源码阅读</title>
+      <link>/posts/client-go-yuan-ma/</link>
+      <pubDate>Fri, 07 Oct 2022 12:57:11 +0000</pubDate>
+      
+      <guid>/posts/client-go-yuan-ma/</guid>
+      <description>架构 Informers 由几个核心的组件构成：
+Reflector：负责从 api-server list（全量拉取数据） and watch（监听数据变更） DeltaFIFO：一个存储事件的队列，里面记录了事件的类型 Indexer：存储数据，数据来源是从 DeltaFIFO 中 pop 出来的，然后会根据事件类型进行对于的操作 sharedProcessor：用于运行用户设置的事件回调函数，里面用 map 存储了所有的 listener，每次调用 AddEventHandler 都会创建一个 listener，同时这个函数可以调用多次，也就是创建多个 listener，当发送事件时，会调用所有的 listener 的对应回调函数 controller：上面提到的 Reflector、DeltaFIFO、Indexer 各自有各自的作用，但是它们彼此之间还没有关联起来，而 controller 就是负责这件事的，它是这 3 个组件的 master，让它们可以协同运作，大致流程是：当 Reflector watch 到事件时会将其保存到 DeltaFIFO 中，controller 这件会持续从 DeltaFIFO 中 pop 元素，然后根据事件类型对 indexer 进行相应操作（add、update、delete），使得 indexer 中的数据和 api-server 中的一致，同时还会调用 sharedProcessor 的对应回调，来完成用户设置的对应事件操作。 informers/factory.</description>
+    </item>
+    
+    <item>
+      <title>kubebuilder 实践</title>
+      <link>/posts/kubebuilder/</link>
+      <pubDate>Mon, 03 Oct 2022 22:08:11 +0000</pubDate>
+      
+      <guid>/posts/kubebuilder/</guid>
+      <description>快速入门 下载 kubebuiler $ os=$(go env GOOS) $ arch=$(go env GOARCH) $ curl -L -o kubebuilder https://go.</description>
+    </item>
+    
+    <item>
+      <title>k8s StatefulSet</title>
+      <link>/posts/k8s-statefulset/</link>
+      <pubDate>Sun, 11 Sep 2022 23:43:10 +0000</pubDate>
+      
+      <guid>/posts/k8s-statefulset/</guid>
+      <description>创建一个 handless service：
+kubia-service-headless.yaml
+apiVersion: v1 kind: Service metadata: name: kubia spec: clusterIP: None selector: app: kubia ports: - name: http port: 80 运行：</description>
+    </item>
+    
+    <item>
+      <title>k8s ConfigMap</title>
+      <link>/posts/k8s-configmap/</link>
+      <pubDate>Tue, 07 Jun 2022 19:17:35 +0000</pubDate>
+      
+      <guid>/posts/k8s-configmap/</guid>
+      <description>引子 做过开发的同学都遇到过给程序进行配置的场景，比如非常常见的配置文件，将 Mysql 的地址、端口、用户名、密码等信息写到一个配置文件里，然后程序内部通过读取这个配置文件来获取信息，防止了硬编码信息到程序内部，这样如果发生变动只需要修改配置文件即可，无需重新编译整个程序；另一种常见的方式是运行程序时指定参数来进行配置，比如 Go 标准库里的 flag 包就可以方便的进行参数指定，然后运行时只要使用诸如 go run main.</description>
+    </item>
+    
+    <item>
+      <title>k8s namespace</title>
+      <link>/posts/k8s-namespace/</link>
+      <pubDate>Tue, 31 May 2022 11:31:39 +0000</pubDate>
+      
+      <guid>/posts/k8s-namespace/</guid>
+      <description>简介 Namespace 是对一组资源和对象的抽象集合，比如可以用来将系统内部的对象划分为不同的项目组或用户组。常见的 pods, services, replication controllers 和 deployments 等都是属于某一个 namespace 的（默认是default），而 node, persistentVolumes 等则不属于任何 namespace。</description>
+    </item>
+    
+    <item>
+      <title>k8s 卷</title>
+      <link>/posts/k8s-juan/</link>
+      <pubDate>Fri, 20 May 2022 19:41:35 +0000</pubDate>
+      
+      <guid>/posts/k8s-juan/</guid>
+      <description>为什么需要卷 pod 类似逻辑主机，在逻辑主机中运行的进程共享诸如 CPU、RAM、网络接口等资源。有时候人们会期望进程也能共享磁盘，但是因为 pod 中运行的是一个个容器，而每个容器都有自己独立的文件系统（因为文件系统来自于容器镜像），所以不能共享磁盘。有时候可能存在这样一种需求：pod 中某个容器存储的数据需要持久化，但是因为容器存在挂掉的可能，如果挂掉后会新创建一个 pod 来顶替，但是因为 pod 因为无法共享磁盘，导致无法继承先前 pod 里存储的数据，先前的那部分数据就永久丢失了。</description>
+    </item>
+    
+    <item>
+      <title>k8s Deployment</title>
+      <link>/posts/k8s-deployment/</link>
+      <pubDate>Fri, 13 May 2022 10:53:35 +0000</pubDate>
+      
+      <guid>/posts/k8s-deployment/</guid>
+      <description>deplopyment 用于 pod 的更新相关操作。
+如何更新 pod 更新是一个非常常见的场景，比如：当前 pod 运行的是某个 v1 版本的镜像，一个月后该镜像发布了 v2 版本，此时想将所有的 pod 更新到 v2 版本，该怎么做呢？</description>
+    </item>
+    
+    <item>
+      <title>k8s service</title>
+      <link>/posts/k8s-service/</link>
+      <pubDate>Sun, 08 May 2022 15:46:11 +0000</pubDate>
+      
+      <guid>/posts/k8s-service/</guid>
+      <description>什么是 service pod 往往需要与集群内的其他 pod 进行通信，可能也有外部的客户端需要访问集群中的 pod，如果需要管理员手动将 pod 的地址提供给访问者，那就太麻烦了，而且在 k8s 中 pod 的地址是不确定的、变动的：pod 可能被 rc、rs 缩减，或者发生异常下线，或者节点异常。所以 k8s 需要提供一种统一的对外访问的资源类型，也就是 service。</description>
+    </item>
+    
+    <item>
+      <title>k8s nginx pod 的 containerPort 问题</title>
+      <link>/posts/k8s-nginx-pod-de-containerport-wen-ti/</link>
+      <pubDate>Sun, 08 May 2022 15:42:32 +0000</pubDate>
+      
+      <guid>/posts/k8s-nginx-pod-de-containerport-wen-ti/</guid>
+      <description>问题重现 有如下 yaml：
+apiVersion: v1 kind: Pod metadata: name: nginx labels: app: nginx spec: containers: - name: nginx image: nginx:alpine ports: - containerPort: 8080 hostPort: 9527 此时 curl nodeIP:9527 会发现报 Connection refused 错误，使用 kubectl exec -it nginx -- curl localhost:8080 也是如此</description>
+    </item>
+    
+    <item>
+      <title>k8s DaemonSet</title>
+      <link>/posts/k8s-daemonset/</link>
+      <pubDate>Sat, 07 May 2022 22:59:38 +0000</pubDate>
+      
+      <guid>/posts/k8s-daemonset/</guid>
+      <description>顾名思义，daemon 代表守护程序，所以 DaemonSet （简称 ds）会在每个节点上运行一个专门的 pod，这个 pod 是特殊的，比如资源监控器或者日志收集器，或者 k8s 自己的 kube-proxy。与 rc 或者 rs 不同，这两个会随机地分布在整个集群中，比如副本数量为 5，一共有 4 个节点，可能会在节点 1 创建两个副本，节点 2 创建 1 个副本，节点 4 创建 2 个副本，但 DaemonSet 会保证这 4 个节点各自都有一个副本。</description>
+    </item>
+    
+    <item>
+      <title>k8s ReplicaSet</title>
+      <link>/posts/k8s-replicaset/</link>
+      <pubDate>Sat, 07 May 2022 11:12:35 +0000</pubDate>
+      
+      <guid>/posts/k8s-replicaset/</guid>
+      <description>本篇笔记摘自 《Kubernetes in Aciton 》</description>
+    </item>
+    
+    <item>
+      <title>k8s ReplicationController</title>
+      <link>/posts/k8s-replicationcontroller/</link>
+      <pubDate>Fri, 06 May 2022 21:28:06 +0000</pubDate>
+      
+      <guid>/posts/k8s-replicationcontroller/</guid>
+      <description>本篇笔记摘自 《Kubernetes in Aciton 》</description>
+    </item>
+    
+    <item>
+      <title>k8s 存活探针</title>
+      <link>/posts/k8s-cun-huo-tan-zhen/</link>
+      <pubDate>Fri, 06 May 2022 16:40:35 +0000</pubDate>
+      
+      <guid>/posts/k8s-cun-huo-tan-zhen/</guid>
+      <description>本篇笔记摘自 《Kubernetes in Aciton 》4.</description>
+    </item>
+    
+    <item>
+      <title>k8s pod</title>
+      <link>/posts/k8s-pod-bi-ji/</link>
+      <pubDate>Wed, 04 May 2022 23:39:39 +0000</pubDate>
+      
+      <guid>/posts/k8s-pod-bi-ji/</guid>
+      <description>本篇笔记摘自 《Kubernetes in Aciton 》第三章：pod：运行于 Kubernetes 中的容器</description>
+    </item>
+    
+  </channel>
+</rss>

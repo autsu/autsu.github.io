@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>Redis 持久化之 AOF 与 RDB | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="RDB RDB 可以将某个时间点上的数据库状态保存到一个 RDB 文件中（该文件的文件名可以在 redis.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Redis 持久化之 AOF 与 RDB",
+      "item":"/posts/redis-chi-jiu-hua-zhi-aof-yu-rdb/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/redis-chi-jiu-hua-zhi-aof-yu-rdb/"
+    },
+    "headline": "Redis 持久化之 AOF 与 RDB | \/dev\/null","datePublished": "2021-08-02T12:03:42+00:00",
+    "dateModified": "2021-08-02T12:03:42+00:00",
+    "wordCount":  411 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "RDB RDB 可以将某个时间点上的数据库状态保存到一个 RDB 文件中（该文件的文件名可以在 redis."
+}
+</script><meta property="og:title" content="Redis 持久化之 AOF 与 RDB | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/redis-chi-jiu-hua-zhi-aof-yu-rdb/" />
+
+
+
+
+<meta property="og:description" content="RDB RDB 可以将某个时间点上的数据库状态保存到一个 RDB 文件中（该文件的文件名可以在 redis." />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-08-02T12:03:42&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-08-02T12:03:42&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="Redis" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/2020-11-7-docker-redis-config/" />
+
+<meta property="og:see_also" content="/posts/2018-11-7-redis/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">Redis 持久化之 AOF 与 RDB</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2021-08-02</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>2分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h1 id="rdb">RDB</h1>
+<p><code>RDB</code> 可以将某个时间点上的数据库状态保存到一个 <code>RDB</code> 文件中（该文件的文件名可以在 redis.conf 中的 <code>dbfilename</code> 进行配置，默认为 <code>dump.rdb</code>），该文件是一个经过压缩的二进制文件，里面保存了数据库中的键值对，通过该文件可以还原生成 <code>RDB</code> 文件的数据库状态。</p>
+<h2 id="如何使用">如何使用</h2>
+<p>使用 <code>SAVE</code> 或者 <code>BGSAVE</code> 来生成 RDB 文件，二者的区别是 <code>SAVE</code> 会阻塞进程直到 <code>RDB</code> 文件创建完毕为止，阻塞期间不能处理任何请求，而 <code>BGSAVE</code> 会 <code>fork</code> 一个子进程取创建 <code>RDB</code>，不会阻塞主进程。</p>
+<h2 id="rdb-的坑">RDB 的坑</h2>
+<h3 id="1-生成的-dumprdb-所在位置">1. 生成的 dump.rdb 所在位置</h3>
+<blockquote>
+<p>在 <code>redis.conf</code> 中指明：</p>
+<pre><code># The working directory.
+#
+# The DB will be written inside this directory, with the filename specified
+# above using the 'dbfilename' configuration directive.
+#
+# The Append Only File will also be created inside this directory.
+#
+# Note that you must specify a directory here, not a file name.
+dir /usr/local/var/db/redis/
+</code></pre>
+<p>一些博客中说的是在 <code>redis-cli</code> 中使用 <code>config get dir</code> 查看，但是</p>
+</blockquote>
+<h3 id="2-客户端执行-shutdown-或者-直接-ctrlc-退出服务端会自动-save">2. 客户端执行 shutdown 或者 直接 ctrl+c 退出服务端，会自动 save</h3>
+<p>当时我想做一个测试：先 <code>set</code> 几条数据，然后执行 <code>save</code> 对这几条将数据持久化，再执行 <code>flushdb</code> 清空数据库，当再次启动 <code>redis-server</code> 时，会读取 <code>dump.rdb</code> ，将 <code>set</code> 的那几条数据恢复过来。</p>
+<blockquote>
+<p>tips: <code>flushdb</code> 清空数据库后不会执行 save，而 <code>flushall</code> 清空后会执行 save</p>
+</blockquote>
+<p>然而当我实践时却事与愿违，<code>redis-server</code> 的启动日志上显示了读取 <code>rdb</code>，但使用 <code>keys *</code> 却显示 empty，起初以为是自己对 <code>rdb</code> 工作机制不够了解，找了半天资料，最后才发现是因为退出会自动执行 <code>save</code>，当退出时，<code>redis-server</code> 输出如下：</p>
+<pre><code class="language-shell">56163:M 02 Aug 2021 16:20:34.361 # User requested shutdown...
+56163:M 02 Aug 2021 16:20:34.361 * Saving the final RDB snapshot before exiting.
+56163:M 02 Aug 2021 16:20:34.362 * DB saved on disk
+56163:M 02 Aug 2021 16:20:34.362 # Redis is now ready to exit, bye bye...
+</code></pre>
+<p>所以出现上面情况的原因在于，<code>redis-server</code> 退出时自动执行 save，将当前执行过 <code>flushdb</code> 命令的数据库又持久化了一份，并覆盖掉了之前的 RDB 文件。</p>
+<p>解决方法：让 <code>redis-server</code> 非正常退出即可，比如使用 <code>kill -9</code> （ <code>kill</code> 是无效的）。</p>
+<h1 id="aof">AOF</h1>
+<p>与 <code>RDB</code> 持久化通过保存数据库中的键值对来记录数据库状态不同，<code>AOF</code> 持久化是通过保存 <code>Redis</code> 服务器所执行的<strong>写命令</strong>来记录数据库状态的。</p>
+<p><code>AOF</code> 默认关闭，要想开启需要修改 <code>redis.conf</code> 中的 <code>appendonly</code> 为 <code>yes</code>。和 <code>RDB</code> 一样，当 Redis 退出时，会自动进行持久化：</p>
+<pre><code class="language-shell">56925:M 02 Aug 2021 17:21:03.892 # User requested shutdown...
+56925:M 02 Aug 2021 17:21:03.892 * Calling fsync() on the AOF file.
+56925:M 02 Aug 2021 17:21:03.892 * Saving the final RDB snapshot before exiting.
+56925:M 02 Aug 2021 17:21:03.892 * DB saved on disk
+56925:M 02 Aug 2021 17:21:03.892 * Removing the pid file.
+56925:M 02 Aug 2021 17:21:03.893 # Redis is now ready to exit, bye bye...
+</code></pre>
+<p><code>AOF</code> 生成的默认文件名为 <code>appendonly.aof</code>，其中保存的是协议化后的写命令，是文本文件，所以可以使用 <code>cat</code> 打印查看，该 <code>db</code> 存储了两个<code>key</code>：a:b 和 b:b，其对应的 AOF 文件如下：</p>
+<pre><code class="language-shell">*2
+$6
+SELECT
+$1
+0
+*3
+$3
+set
+$1
+a
+$1
+a
+*3
+$3
+set
+$1
+b
+$1
+b
+</code></pre>
+<h2 id="如何使用-1">如何使用</h2>
+<p>通过 <code>BGREWRITEAOF </code> 命令进行持久化。</p>
+<h2 id="aof-持久化的实现">AOF 持久化的实现</h2>
+<p><code>AOF</code> 持久化功能的实现可以分为 <strong>命令追加（append）</strong>、<strong>文件写入</strong>，<strong>文件同步（sync）</strong> 三个步骤。</p>
+<ol>
+<li>命令追加：服务器在执行完一个写命令后，会以协议格式追加到 <code>aof_buf</code> 缓冲区的末尾。</li>
+<li>文件写入：此时不会把数据直接写入到 <code>AOF</code> 文件，而是先将 <code>aof_buf</code> 中的数据保存到一个内存缓冲区。</li>
+<li>文件同步：将内存缓冲区的数据写入到 <code>AOF</code> 文件中。</li>
+</ol>
+<p>这里要注意写入和同步的区别</p>
+<h3 id="写入和同步的区别">写入和同步的区别</h3>
+<p>在现代 OS 中，为了提高文件的写入操作，当用户调用到 <code>write</code> 函数将数据写入文件时，<code>os</code> 先将数据写入到一个内存缓冲区里，正常是等到缓冲区满了或是规定时间到了，才真正地将缓冲区里的数据写入磁盘，这时才是持久化完成。</p>
+<p>类似你用记事本写东西一样，写完之后你会 Ctrl+v（保存），但是在没执行 Ctrl+v 的时候你也能看到自己写的，这时因为保存在内存缓冲区里了，然后你保存了，这才保存到磁盘了，所以我们可以把你写东西当做是对 <code>aof</code> 文件的写入，你执行 Ctrl+v 才是同步到磁盘操作。</p>
+<p>这样虽然大大提高了效率，但是很不安全，在你写了好多字时，卡，忽然电脑停机了，写的东西全没了，就问你气不气？</p>
+<p>所以 <code>appendfsync</code> 的选项值中的 <code>always</code>、<code>everysec</code> 都可以强制让 OS 立即将缓冲区里的数据写入硬盘。<code>always</code> 是写到缓冲区了立马就同步到磁盘，<code>everysec</code> 是写到缓冲区的数据每秒就同步一次，丢失了也就丢失了上一秒内的数据，也不是很气。</p>
+<p>写入同步的策略取决于配置文件中的 <code>appendfsync</code> 选项，在 <strong>Redis 设计与实现</strong> 中有详细说明，这里就不介绍了。</p>
+<h2 id="aof-重写">AOF 重写</h2>
+<p>TODO</p>
+<h3 id="一个问题子进程在重写过程中父进程依然可以写入新的-kv此时会怎么处理">一个问题：子进程在重写过程中，父进程依然可以写入新的 kv，此时会怎么处理？</h3>
+<p><strong>重写过程中，主进程依然可以正常处理命令</strong>，那问题来了，重写 AOF 日志过程中，如果主进程修改了已经存在 key-value，那么会发生写时复制，此时这个 key-value 数据在子进程的内存数据就跟主进程的内存数据不一致了，这时要怎么办呢？</p>
+<p>为了解决这种数据不一致问题，Redis 设置了一个 <strong>AOF 重写缓冲区</strong>，这个缓冲区在创建 bgrewriteaof 子进程之后开始使用。</p>
+<p>在重写 AOF 期间，当 Redis 执行完一个写命令之后，它会<strong>同时将这个写命令写入到 「AOF 缓冲区」和 「AOF 重写缓冲区」</strong>。</p>
+<p>当子进程完成 AOF 重写工作（<em>扫描数据库中所有数据，逐一把内存数据的键值对转换成一条命令，再将命令记录到重写日志</em>）后，会向主进程发送一条信号，信号是进程间通讯的一种方式，且是异步的。</p>
+<p>主进程收到该信号后，会调用一个信号处理函数，该函数主要做以下工作：</p>
+<ul>
+<li>将 AOF 重写缓冲区中的所有内容追加到新的 AOF 的文件中，使得新旧两个 AOF 文件所保存的数据库状态一致；</li>
+<li>新的 AOF 的文件进行改名，覆盖现有的 AOF 文件。</li>
+</ul>
+<p>信号函数执行完后，主进程就可以继续像往常一样处理命令了。</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/redis/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#Redis</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/teng-xun-2020-bi-shi-ti-ya-suo-suan-fa/" class="block">[牛客][腾讯2020笔试题] 第一题. 压缩算法</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/ke-kao-chuan-shu-de-shi-xian-ji-zhi-ting-zhi-deng-dai-xie-yi-swstop-and-wait/" class="block">可靠传输的实现机制 —— 停止-等待协议SW（Stop-and-Wait）</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#如何使用">如何使用</a></li>
+    <li><a href="#rdb-的坑">RDB 的坑</a>
+      <ul>
+        <li><a href="#1-生成的-dumprdb-所在位置">1. 生成的 dump.rdb 所在位置</a></li>
+        <li><a href="#2-客户端执行-shutdown-或者-直接-ctrlc-退出服务端会自动-save">2. 客户端执行 shutdown 或者 直接 ctrl+c 退出服务端，会自动 save</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#如何使用-1">如何使用</a></li>
+    <li><a href="#aof-持久化的实现">AOF 持久化的实现</a>
+      <ul>
+        <li><a href="#写入和同步的区别">写入和同步的区别</a></li>
+      </ul>
+    </li>
+    <li><a href="#aof-重写">AOF 重写</a>
+      <ul>
+        <li><a href="#一个问题子进程在重写过程中父进程依然可以写入新的-kv此时会怎么处理">一个问题：子进程在重写过程中，父进程依然可以写入新的 kv，此时会怎么处理？</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/2020-11-7-docker-redis-config/" class="no-underline">docker 下的 redis 如何挂载外部配置和数据</a>
+          <br />
+        
+          <a href="/posts/2018-11-7-redis/" class="no-underline">Xshell连接及docker、redis安装</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

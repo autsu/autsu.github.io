@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>输入 url 到浏览器显示网页，期间发生了什么？（未完） | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="从请求 URL 中获取请求域名，通过 DNS 获取域名对应的 IP 地址">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"输入 url 到浏览器显示网页，期间发生了什么？（未完）",
+      "item":"/posts/url_dao_xian_shi_wang_ye_fa_shen_le_shen_me/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/url_dao_xian_shi_wang_ye_fa_shen_le_shen_me/"
+    },
+    "headline": "输入 url 到浏览器显示网页，期间发生了什么？（未完） | \/dev\/null","datePublished": "2022-07-14T14:30:52+00:00",
+    "dateModified": "2022-07-14T14:30:52+00:00",
+    "wordCount":  180 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "从请求 URL 中获取请求域名，通过 DNS 获取域名对应的 IP 地址"
+}
+</script><meta property="og:title" content="输入 url 到浏览器显示网页，期间发生了什么？（未完） | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/url_dao_xian_shi_wang_ye_fa_shen_le_shen_me/" />
+
+
+
+
+<meta property="og:description" content="从请求 URL 中获取请求域名，通过 DNS 获取域名对应的 IP 地址" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-07-14T14:30:52&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-07-14T14:30:52&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="计算机网络" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/tls_wo_shou/" />
+
+<meta property="og:see_also" content="/posts/127.0.0.1_localhost_0.0.0.0/" />
+
+<meta property="og:see_also" content="/posts/so_reuseaddr-he-so_reuseport-shi-jian/" />
+
+<meta property="og:see_also" content="/posts/close_wait-he-fin_wait_2/" />
+
+<meta property="og:see_also" content="/posts/ji-suan-ji-wang-luo-mian-shi-ti/" />
+
+<meta property="og:see_also" content="/posts/ke-kao-chuan-shu-de-shi-xian-ji-zhi-ting-zhi-deng-dai-xie-yi-swstop-and-wait/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class="lg:col-start-2 bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">输入 url 到浏览器显示网页，期间发生了什么？（未完）</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-07-14</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>1分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <ol>
+<li>
+<p>从请求 URL 中获取请求域名，通过 DNS 获取域名对应的 IP 地址</p>
+<ol>
+<li>
+<p>首先需要知道 DNS <strong>域名服务器</strong> 的 IP 地址，这样才能给它发送 DNS 请求报文，而根据网络模型，光有 IP 地址是不够的，还需要知道 MAC 地址才能构建数据链路层的报文，所以需要通过 ARP 协议来根据 IP 获取对应的 MAC 地址。域名服务器的 IP 地址一般是默认配置好的，所以这里假定已经知道了 IP 地址，只需要获取 MAC 地址。</p>
+<p>首先，主机会先检查一下自己的 ARP 表，看看有没有该 IP 缓存记录，有的话可以直接获取到对应的 MAC 地址，如果没有，就需要构建一个 ARP 请求报文，源 IP 和源 MAC 填写自己的，目的 IP 填写域名服务器的，目的 MAC 填写广播地址（FF-FF-FF-FF-FF-FF-FF），然后这个报文会发送给当前子网的所有主机，每个主机会查看报文里的目的 IP 地址是否与自己的 IP 地址相同，如果相同的话，就会回复 ARP 响应报文，里面有自己的 MAC 地址；如果不相同则会直接丢弃报文。主机获得域名服务器的 MAC 地址后，记录到自己的 ARP 表中，至此，主机已经获取到域名服务器的 MAC 地址了。</p>
+</li>
+<li>
+<p>知道了域名服务器的 IP 地址和 MAC 地址后，就可以向其发送 DNS 请求报文了，DNS 请求报文在运输层被封装为 UDP 用户数据报，目的端口号为 53；UDP 用户数据报在网络层被封装为 IP 数据包，目的 IP 地址为域名服务器的 IP 地址；IP 数据报被封装在以太单播帧中发送，目的 MAC 地址为之前 ARP 请求获得的 MAC 地址，该单播帧通过交换机转发给本地域名服务器，本地域名服务器在收到报文后逐层解封，知道这是一个 DNS 请求，于是进入域名解析阶段。<del>给主机发送 DNS 响应报文，里面包含了域名对应的 IP 地址。</del></p>
+</li>
+</ol>
+</li>
+<li>
+<p>域名解析</p>
+<ol>
+<li>根据域名的层级关系，由大到小为：<strong>根域、顶级域、权威域</strong>，层级代表的意思是：<del>高层级里面保存了下一层级的域名到 IP 的映射记录</del>，对应到域名是从右往左，也就是右边最大，左边最小，比如 <a href="https://www.baidu.com">www.baidu.com</a> 这个域名，（最高层的根域在这个域名里没有体现出来，看了下别的博客，说的是实际是最后还有一个隐藏的 . 代表的就是根域名，这里暂时先不研究了），根域里保存的下一级顶级域的记录，也就是最右边的 .com 的记录，而 .com 又保存了 baidu.com 这个权威域的记录，最终再从 baidu.com 这个权威域里面找到最终的域名 <a href="https://www.baidu.com">www.baidu.com</a> 的记录</li>
+</ol>
+</li>
+<li>
+<p>构建 HTTP 请求报文</p>
+</li>
+<li>
+<p>运输层封装应用层的 HTTP 报文</p>
+<ol>
+<li>因为 HTTP 底层使用的运输层协议是 TCP，所以会将应用层的报文封装到一个 TCP 报文中，然后添加上 TCP 的报文头，目的端口通过请求的 URL 获取，如果没有指定，则使用 HTTP 默认的 80 端口，或者 HTTPS 的默认端口 443，源端口取决于是否显式指定，如果没有则会由系统随机分配一个。</li>
+<li>然后就可以发起三次握手来建立连接了</li>
+</ol>
+</li>
+<li>
+<p>网络层封装传输层的 TCP 报文</p>
+<ol>
+<li>和运输层类似，将 TCP 报文封装到一个 IP 数据报中，添加上 IP 的报文头，源地址填写自己的 IP，目的地址填写之前从 DNS 获取到的 IP</li>
+</ol>
+</li>
+<li>
+<p>MAC</p>
+<ol>
+<li>可以通过 ARP 获取请求 IP 对应的 MAC 地址，这里有个问题：ARP 只能在一个子网内工作，如果请求的 IP 不是一个子网内的，此时该如何获取对应的 MAC 地址呢？原来在每个子网中，都配置了一台网关路由器，它连接了其他几个子网的交换机，当请求的 IP 不属于同一个子网时，就需要这台网关路由器来做转发（也就是将 MAC 地址填写为这个网关路由器的 MAC 地址），传递到另一个子网，具体如何转发取决于路由表，整个流程就像坐公交使用地图导航一样，选择一条路径，在不同的公交站间穿梭前进，网络也是这样的，多个子网相互连接组成一个大网络，数据报在这些互联的子网中选择一条道路前进，经过一个个子网，最终到达目的地。这里也发现了一个问题：**在网络包传输的过程中，源 IP 和目标 IP 始终是不会变的，一直变化的是 MAC 地址，因为需要 MAC 地址在以太网内进行两个设备之间的包传输。**可能这也是为什么需要 IP 和 MAC 两个地址的一点原因。</li>
+</ol>
+</li>
+</ol>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#计算机网络</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/tls_wo_shou/" class="block">TLS 握手流程</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/go-mutex-yuan-ma/" class="block">go mutex 原理</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+
+    
+    
+      <div
+        class="lg:col-start-2 bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/tls_wo_shou/" class="no-underline">TLS 握手流程</a>
+          <br />
+        
+          <a href="/posts/127.0.0.1_localhost_0.0.0.0/" class="no-underline">127.0.0.1，localhost，0.0.0.0 的区别（包含虚拟网卡相关操作）</a>
+          <br />
+        
+          <a href="/posts/so_reuseaddr-he-so_reuseport-shi-jian/" class="no-underline">SO_REUSEADDR 和 SO_REUSEPORT 实践</a>
+          <br />
+        
+          <a href="/posts/close_wait-he-fin_wait_2/" class="no-underline">TCP CLOSE_WAIT 和 FIN_WAIT_2</a>
+          <br />
+        
+          <a href="/posts/ji-suan-ji-wang-luo-mian-shi-ti/" class="no-underline">计算机网络面试题</a>
+          <br />
+        
+          <a href="/posts/ke-kao-chuan-shu-de-shi-xian-ji-zhi-ting-zhi-deng-dai-xie-yi-swstop-and-wait/" class="no-underline">可靠传输的实现机制 —— 停止-等待协议SW（Stop-and-Wait）</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

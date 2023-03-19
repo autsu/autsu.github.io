@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>grpc on /dev/null</title>
+    <link>/tags/grpc/</link>
+    <description>Recent content in grpc on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Tue, 31 Aug 2021 17:16:04 +0000</lastBuildDate><atom:link href="/tags/grpc/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Mac 下构建基于 C&#43;&#43; 的 gRPC</title>
+      <link>/posts/mac-xia-gou-jian-ji-yu-c-de-grpc/</link>
+      <pubDate>Tue, 31 Aug 2021 17:16:04 +0000</pubDate>
+      
+      <guid>/posts/mac-xia-gou-jian-ji-yu-c-de-grpc/</guid>
+      <description>来源于官方文档（https://grpc.io/docs/languages/cpp/quickstart/），但是其中有一些坑，特此记录，系统为 macOS 11.0.1 (20B29)：
+1. 设置目录（很重要，必须执行该步骤） 选择一个目录来保存本地安装的软件包。此页面假定环境变量MY_INSTALL_DIR包含此目录路径。例如：</description>
+    </item>
+    
+  </channel>
+</rss>

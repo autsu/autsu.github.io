@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>数组 on /dev/null</title>
+    <link>/tags/%E6%95%B0%E7%BB%84/</link>
+    <description>Recent content in 数组 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Fri, 16 Apr 2021 19:41:09 +0000</lastBuildDate><atom:link href="/tags/%E6%95%B0%E7%BB%84/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>剑指 Offer 53 - I. 在排序数组中查找数字 I</title>
+      <link>/posts/2021-3-17-offer-53-search-sort-array1/</link>
+      <pubDate>Fri, 16 Apr 2021 19:41:09 +0000</pubDate>
+      
+      <guid>/posts/2021-3-17-offer-53-search-sort-array1/</guid>
+      <description>题目描述 统计一个数字在排序数组中出现的次数。
+示例 1:
+输入: nums = [5,7,7,8,8,10], target = 8 输出: 2 示例 2:</description>
+    </item>
+    
+    <item>
+      <title>leetcode 15. 三数之和</title>
+      <link>/posts/2021-3-24-leet-15-three-sum/</link>
+      <pubDate>Fri, 16 Apr 2021 19:38:53 +0000</pubDate>
+      
+      <guid>/posts/2021-3-24-leet-15-three-sum/</guid>
+      <description>题目描述 给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三 个元素 a，b，c ，使得 a + b + c = 0 请你找出所有和为 0 且不重复的三元组。</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 56. 合并区间</title>
+      <link>/posts/2021-3-26-leet-56-merge-interval/</link>
+      <pubDate>Fri, 16 Apr 2021 19:35:46 +0000</pubDate>
+      
+      <guid>/posts/2021-3-26-leet-56-merge-interval/</guid>
+      <description>题目描述 以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] = [starti, endi] 。 请你合并所有重叠的区间，并返回一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 04. 二维数组中的查找</title>
+      <link>/posts/jian-zhi-offer-04-er-wei-shu-zu-zhong-de-cha-zhao/</link>
+      <pubDate>Fri, 16 Apr 2021 19:17:34 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-04-er-wei-shu-zu-zhong-de-cha-zhao/</guid>
+      <description>题目描述 在一个 n * m 的二维数组中，每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个高效的函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 03. 数组中重复的数字</title>
+      <link>/posts/jian-zhi-offer-03-shu-zu-zhong-chong-fu-de-shu-zi/</link>
+      <pubDate>Fri, 16 Apr 2021 15:38:03 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-03-shu-zu-zhong-chong-fu-de-shu-zi/</guid>
+      <description>题目描述 找出数组中重复的数字。
+在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。</description>
+    </item>
+    
+  </channel>
+</rss>

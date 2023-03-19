@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>k3s on /dev/null</title>
+    <link>/tags/k3s/</link>
+    <description>Recent content in k3s on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Fri, 08 Apr 2022 15:27:41 +0000</lastBuildDate><atom:link href="/tags/k3s/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>k3s 踩坑记录</title>
+      <link>/posts/k3s/</link>
+      <pubDate>Fri, 08 Apr 2022 15:27:41 +0000</pubDate>
+      
+      <guid>/posts/k3s/</guid>
+      <description>安装： curl -sfL https://rancher-mirror.rancher.cn/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh -s - --write-kubeconfig-mode 666 &amp;ndash;write-kubeconfig-mode设置读写权限，否则每次 kubectl 都要 sudo，同时使用国内镜像进行下载</description>
+    </item>
+    
+  </channel>
+</rss>

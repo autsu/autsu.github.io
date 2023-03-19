@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>k8s | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="Eureka is a elegant and powerful theme for Hugo.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Tags",
+      "item":"/tags/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"k8s",
+      "item":"/tags/k8s/"}]
+}
+</script>
+
+
+
+
+<script type="application/ld+json">
+{
+    "@context":"https://schema.org",
+    "@type":"ItemList",
+    "itemListElement":[{
+            "@type":"ListItem",
+            "position":  1 ,
+            "name": "k8s Secret",
+            "description": "Opaque Secret 要求 value 必须是 base64 编码的",
+            "url": "/posts/k8s-secret/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "k8s client-go 源码阅读",
+            "description": "架构 Informers 由几个核心的组件构成：\nReflector：负责从 api-server list（全量拉取数据） and watch（监听数据变更） DeltaFIFO：一个存储事件的队列，里面记录了事件的类型 Indexer：存储数据，数据来源是从 DeltaFIFO 中 pop 出来的，然后会根据事件类型进行对于的操作 sharedProcessor：用于运行用户设置的事件回调函数，里面用 map 存储了所有的 listener，每次调用 AddEventHandler 都会创建一个 listener，同时这个函数可以调用多次，也就是创建多个 listener，当发送事件时，会调用所有的 listener 的对应回调函数 controller：上面提到的 Reflector、DeltaFIFO、Indexer 各自有各自的作用，但是它们彼此之间还没有关联起来，而 controller 就是负责这件事的，它是这 3 个组件的 master，让它们可以协同运作，大致流程是：当 Reflector watch 到事件时会将其保存到 DeltaFIFO 中，controller 这件会持续从 DeltaFIFO 中 pop 元素，然后根据事件类型对 indexer 进行相应操作（add、update、delete），使得 indexer 中的数据和 api-server 中的一致，同时还会调用 sharedProcessor 的对应回调，来完成用户设置的对应事件操作。 informers/factory.",
+            "url": "/posts/client-go-yuan-ma/"
+        },{
+            "@type":"ListItem",
+            "position":  3 ,
+            "name": "kubebuilder 实践",
+            "description": "快速入门 下载 kubebuiler $ os=$(go env GOOS) $ arch=$(go env GOARCH) $ curl -L -o kubebuilder https://go.",
+            "url": "/posts/kubebuilder/"
+        },{
+            "@type":"ListItem",
+            "position":  4 ,
+            "name": "k8s StatefulSet",
+            "description": "创建一个 handless service：\nkubia-service-headless.yaml\napiVersion: v1 kind: Service metadata: name: kubia spec: clusterIP: None selector: app: kubia ports: - name: http port: 80 运行：",
+            "url": "/posts/k8s-statefulset/"
+        },{
+            "@type":"ListItem",
+            "position":  5 ,
+            "name": "k8s ConfigMap",
+            "description": "引子 做过开发的同学都遇到过给程序进行配置的场景，比如非常常见的配置文件，将 Mysql 的地址、端口、用户名、密码等信息写到一个配置文件里，然后程序内部通过读取这个配置文件来获取信息，防止了硬编码信息到程序内部，这样如果发生变动只需要修改配置文件即可，无需重新编译整个程序；另一种常见的方式是运行程序时指定参数来进行配置，比如 Go 标准库里的 flag 包就可以方便的进行参数指定，然后运行时只要使用诸如 go run main.",
+            "url": "/posts/k8s-configmap/"
+        },{
+            "@type":"ListItem",
+            "position":  6 ,
+            "name": "k8s namespace",
+            "description": "简介 Namespace 是对一组资源和对象的抽象集合，比如可以用来将系统内部的对象划分为不同的项目组或用户组。常见的 pods, services, replication controllers 和 deployments 等都是属于某一个 namespace 的（默认是default），而 node, persistentVolumes 等则不属于任何 namespace。",
+            "url": "/posts/k8s-namespace/"
+        },{
+            "@type":"ListItem",
+            "position":  7 ,
+            "name": "k8s 卷",
+            "description": "为什么需要卷 pod 类似逻辑主机，在逻辑主机中运行的进程共享诸如 CPU、RAM、网络接口等资源。有时候人们会期望进程也能共享磁盘，但是因为 pod 中运行的是一个个容器，而每个容器都有自己独立的文件系统（因为文件系统来自于容器镜像），所以不能共享磁盘。有时候可能存在这样一种需求：pod 中某个容器存储的数据需要持久化，但是因为容器存在挂掉的可能，如果挂掉后会新创建一个 pod 来顶替，但是因为 pod 因为无法共享磁盘，导致无法继承先前 pod 里存储的数据，先前的那部分数据就永久丢失了。",
+            "url": "/posts/k8s-juan/"
+        },{
+            "@type":"ListItem",
+            "position":  8 ,
+            "name": "k8s Deployment",
+            "description": "deplopyment 用于 pod 的更新相关操作。\n如何更新 pod 更新是一个非常常见的场景，比如：当前 pod 运行的是某个 v1 版本的镜像，一个月后该镜像发布了 v2 版本，此时想将所有的 pod 更新到 v2 版本，该怎么做呢？",
+            "url": "/posts/k8s-deployment/"
+        },{
+            "@type":"ListItem",
+            "position":  9 ,
+            "name": "k8s service",
+            "description": "什么是 service pod 往往需要与集群内的其他 pod 进行通信，可能也有外部的客户端需要访问集群中的 pod，如果需要管理员手动将 pod 的地址提供给访问者，那就太麻烦了，而且在 k8s 中 pod 的地址是不确定的、变动的：pod 可能被 rc、rs 缩减，或者发生异常下线，或者节点异常。所以 k8s 需要提供一种统一的对外访问的资源类型，也就是 service。",
+            "url": "/posts/k8s-service/"
+        },{
+            "@type":"ListItem",
+            "position":  10 ,
+            "name": "k8s nginx pod 的 containerPort 问题",
+            "description": "问题重现 有如下 yaml：\napiVersion: v1 kind: Pod metadata: name: nginx labels: app: nginx spec: containers: - name: nginx image: nginx:alpine ports: - containerPort: 8080 hostPort: 9527 此时 curl nodeIP:9527 会发现报 Connection refused 错误，使用 kubectl exec -it nginx -- curl localhost:8080 也是如此",
+            "url": "/posts/k8s-nginx-pod-de-containerport-wen-ti/"
+        },{
+            "@type":"ListItem",
+            "position":  11 ,
+            "name": "k8s DaemonSet",
+            "description": "顾名思义，daemon 代表守护程序，所以 DaemonSet （简称 ds）会在每个节点上运行一个专门的 pod，这个 pod 是特殊的，比如资源监控器或者日志收集器，或者 k8s 自己的 kube-proxy。与 rc 或者 rs 不同，这两个会随机地分布在整个集群中，比如副本数量为 5，一共有 4 个节点，可能会在节点 1 创建两个副本，节点 2 创建 1 个副本，节点 4 创建 2 个副本，但 DaemonSet 会保证这 4 个节点各自都有一个副本。",
+            "url": "/posts/k8s-daemonset/"
+        },{
+            "@type":"ListItem",
+            "position":  12 ,
+            "name": "k8s ReplicaSet",
+            "description": "本篇笔记摘自 《Kubernetes in Aciton 》",
+            "url": "/posts/k8s-replicaset/"
+        },{
+            "@type":"ListItem",
+            "position":  13 ,
+            "name": "k8s ReplicationController",
+            "description": "本篇笔记摘自 《Kubernetes in Aciton 》",
+            "url": "/posts/k8s-replicationcontroller/"
+        },{
+            "@type":"ListItem",
+            "position":  14 ,
+            "name": "k8s 存活探针",
+            "description": "本篇笔记摘自 《Kubernetes in Aciton 》4.",
+            "url": "/posts/k8s-cun-huo-tan-zhen/"
+        },{
+            "@type":"ListItem",
+            "position":  15 ,
+            "name": "k8s pod",
+            "description": "本篇笔记摘自 《Kubernetes in Aciton 》第三章：pod：运行于 Kubernetes 中的容器",
+            "url": "/posts/k8s-pod-bi-ji/"
+        }
+    ]
+}
+</script><meta property="og:title" content="k8s | /dev/null" />
+<meta property="og:type" content="website" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/tags/k8s/" />
+
+
+
+
+
+<meta property="og:description" content="Eureka is a elegant and powerful theme for Hugo." />
+
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="og:updated_time" content="2022-10-10T22:11:10&#43;00:00" />
+
+
+
+<meta property="article:section" content="tags" />
+
+
+<link rel="alternate" type="application/rss+xml" href="/tags/k8s/index.xml" title="/dev/null" />
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+<article class="mx-6 my-8">
+    <h1 class="font-bold text-3xl text-primary-text"><i class="fas fa-tag fa-fw" aria-hidden="true"></i>&nbsp;k8s</h1>
+    <div class="bg-secondary-bg rounded " style="padding: 3rem!important;margin-top: 30px;">
+        <div class="overflow-hidden archive" style="font-size:15px;line-height: 2;padding-bottom: 0.8em"><h3 style="font-size: 1.5em;">2022</h3><article class="archive-item">
+                        <a href="/posts/k8s-secret/" class="archive-item-link">
+                            >>&nbsp 10-10&nbsp&nbsp&nbspk8s Secret</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/client-go-yuan-ma/" class="archive-item-link">
+                            >>&nbsp 10-07&nbsp&nbsp&nbspk8s client-go 源码阅读</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/kubebuilder/" class="archive-item-link">
+                            >>&nbsp 10-03&nbsp&nbsp&nbspkubebuilder 实践</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/k8s-statefulset/" class="archive-item-link">
+                            >>&nbsp 09-11&nbsp&nbsp&nbspk8s StatefulSet</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/k8s-configmap/" class="archive-item-link">
+                            >>&nbsp 06-07&nbsp&nbsp&nbspk8s ConfigMap</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/k8s-namespace/" class="archive-item-link">
+                            >>&nbsp 05-31&nbsp&nbsp&nbspk8s namespace</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/k8s-juan/" class="archive-item-link">
+                            >>&nbsp 05-20&nbsp&nbsp&nbspk8s 卷</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/k8s-deployment/" class="archive-item-link">
+                            >>&nbsp 05-13&nbsp&nbsp&nbspk8s Deployment</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/k8s-service/" class="archive-item-link">
+                            >>&nbsp 05-08&nbsp&nbsp&nbspk8s service</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/k8s-nginx-pod-de-containerport-wen-ti/" class="archive-item-link">
+                            >>&nbsp 05-08&nbsp&nbsp&nbspk8s nginx pod 的 containerPort 问题</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/k8s-daemonset/" class="archive-item-link">
+                            >>&nbsp 05-07&nbsp&nbsp&nbspk8s DaemonSet</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/k8s-replicaset/" class="archive-item-link">
+                            >>&nbsp 05-07&nbsp&nbsp&nbspk8s ReplicaSet</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/k8s-replicationcontroller/" class="archive-item-link">
+                            >>&nbsp 05-06&nbsp&nbsp&nbspk8s ReplicationController</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/k8s-cun-huo-tan-zhen/" class="archive-item-link">
+                            >>&nbsp 05-06&nbsp&nbsp&nbspk8s 存活探针</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/k8s-pod-bi-ji/" class="archive-item-link">
+                            >>&nbsp 05-04&nbsp&nbsp&nbspk8s pod</a>
+                        
+                    </article></div>
+    </div>
+</article>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

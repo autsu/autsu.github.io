@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>linux clone() 的坑 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="环境：
+MacBook m1
+Ubuntu 20.04.4 LTS（使用 cat /etc/issue 查看），基于 multipass 创建">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"linux clone() 的坑",
+      "item":"/posts/linux-clone-de-keng/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/linux-clone-de-keng/"
+    },
+    "headline": "linux clone() 的坑 | \/dev\/null","datePublished": "2022-05-11T17:57:22+00:00",
+    "dateModified": "2022-05-11T17:57:22+00:00",
+    "wordCount":  744 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "环境：\nMacBook m1\nUbuntu 20.04.4 LTS（使用 cat \/etc\/issue 查看），基于 multipass 创建"
+}
+</script><meta property="og:title" content="linux clone() 的坑 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/linux-clone-de-keng/" />
+
+
+
+
+<meta property="og:description" content="环境：
+MacBook m1
+Ubuntu 20.04.4 LTS（使用 cat /etc/issue 查看），基于 multipass 创建" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-05-11T17:57:22&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-05-11T17:57:22&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="linux" />
+
+<meta property="article:tag" content="issues" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/linux-pi-liang-kill-jin-cheng/" />
+
+<meta property="og:see_also" content="/posts/git-push-error-remote-fatal-error-in-commit_refs/" />
+
+<meta property="og:see_also" content="/posts/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/" />
+
+<meta property="og:see_also" content="/posts/linux-gao-xing-neng-fu-wu-qi-bian-cheng-yue-du-bi-ji-di-wu-zhang-linux-wang-luo-bian-cheng-ji-chu-api/" />
+
+<meta property="og:see_also" content="/posts/parallels-desktop-16-wang-luo-chu-shi-hua-shi-bai-he-bu-neng-lian-jie-usb-she-bei-jie-jue-fang-fa/" />
+
+<meta property="og:see_also" content="/posts/goji-yi-ci-defer-cuo-wu/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class="lg:col-start-2 bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">linux clone() 的坑</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-05-11</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>4分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <p>环境：</p>
+<p>MacBook m1</p>
+<p>Ubuntu 20.04.4 LTS（使用 cat /etc/issue 查看），基于 multipass 创建</p>
+<p>在阅读**《深入剖析Kubernetes》-张磊——白话容器基础（三）：深入理解容器镜像**，文中提供了一个 namespace 的示例代码：</p>
+<pre><code class="language-c">#define _GNU_SOURCE
+#include &lt;sys/mount.h&gt; 
+#include &lt;sys/types.h&gt;
+#include &lt;sys/wait.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;sched.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;unistd.h&gt;
+#define STACK_SIZE (1024 * 1024)
+static char container_stack[STACK_SIZE];
+char* const container_args[] = {
+  &quot;/bin/bash&quot;,
+  NULL
+};
+
+int container_main(void* arg)
+{  
+  printf(&quot;Container - inside the container!\n&quot;);
+  execv(container_args[0], container_args);
+  printf(&quot;Something's wrong!\n&quot;);
+  return 1;
+}
+
+int main()
+{
+  printf(&quot;Parent - start a container!\n&quot;);
+  int container_pid = clone(container_main, container_stack+STACK_SIZE, CLONE_NEWNS | SIGCHLD , NULL);
+  waitpid(container_pid, NULL, 0);
+  printf(&quot;Parent - container stopped!\n&quot;);
+  return 0;
+}
+
+</code></pre>
+<p>但是在我的机器上无法运行，输出为：</p>
+<pre><code class="language-shell">Parent - start a container!
+Parent - container stopped!
+</code></pre>
+<p>可以看到，传入 clone 的回调函数没有被执行， 因为 Container - inside the container! 没有被输出。</p>
+<p>在main 函数的 waitpid调用后面添加一下错误信息：</p>
+<pre><code class="language-c">if (WIFEXITED(status) != 1) { // 子进程非正常退出
+        printf(&quot;error!&quot;);
+        printf(&quot;%d\n&quot;, WTERMSIG(status)); // 输出信号类型
+}
+</code></pre>
+<p>WTERMSIG 会输出信号类型，输出为 7，查了一下，意思是 SIGBUS，这是个什么玩意呢？查了一下资料，大概是内存错误、对齐错误什么的，完全看不懂，也不知道如何解决。。。</p>
+<p>注：使用 gdb 进行调试也可以：</p>
+<pre><code class="language-shell">$ gdb ns_err
+GNU gdb (Ubuntu 9.2-0ubuntu1~20.04.1) 9.2
+(gdb) set follow-fork-mode child
+(gdb) r
+Starting program: /home/ubuntu/codetest/ns_err
+Parent - start a container!
+[Attaching after process 192301 fork to child process 192304]
+[New inferior 2 (process 192304)]
+[Detaching after fork from parent process 192301]
+containerPid: 192304
+[Inferior 1 (process 192301) detached]
+
+Thread 2.1 &quot;ns_err&quot; received signal SIGBUS, Bus error.
+[Switching to process 192304]
+0x0000000000400738 in container_main ()
+</code></pre>
+<p>也可以看到 <code>&quot;ns_err&quot; received signal SIGBUS, Bus error.</code> 这句话</p>
+<p>最后还是从官方文档查到了答案，不得不说还是官方文档最为靠谱</p>
+<p><a href="https://man7.org/linux/man-pages/man2/clone.2.html">https://man7.org/linux/man-pages/man2/clone.2.html</a></p>
+<p>最下面有一个 example，把这段代码 copy 到本地，发现居然可以成功运行：</p>
+<pre><code class="language-c">#define _GNU_SOURCE
+       #include &lt;sys/wait.h&gt;
+       #include &lt;sys/utsname.h&gt;
+       #include &lt;sched.h&gt;
+       #include &lt;string.h&gt;
+       #include &lt;stdint.h&gt;
+       #include &lt;stdio.h&gt;
+       #include &lt;stdlib.h&gt;
+       #include &lt;unistd.h&gt;
+       #include &lt;sys/mman.h&gt;
+
+       #define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE); \
+                               } while (0)
+
+       static int              /* Start function for cloned child */
+       childFunc(void *arg)
+       {
+           struct utsname uts;
+
+           /* Change hostname in UTS namespace of child. */
+
+           if (sethostname(arg, strlen(arg)) == -1)
+               errExit(&quot;sethostname&quot;);
+
+           /* Retrieve and display hostname. */
+
+           if (uname(&amp;uts) == -1)
+               errExit(&quot;uname&quot;);
+           printf(&quot;uts.nodename in child:  %s\n&quot;, uts.nodename);
+
+           /* Keep the namespace open for a while, by sleeping.
+              This allows some experimentation--for example, another
+              process might join the namespace. */
+
+           sleep(200);
+
+           return 0;           /* Child terminates now */
+       }
+
+       #define STACK_SIZE (1024 * 1024)    /* Stack size for cloned child */
+
+       int
+       main(int argc, char *argv[])
+       {
+           char *stack;                    /* Start of stack buffer */
+           char *stackTop;                 /* End of stack buffer */
+           pid_t pid;
+           struct utsname uts;
+
+           if (argc &lt; 2) {
+               fprintf(stderr, &quot;Usage: %s &lt;child-hostname&gt;\n&quot;, argv[0]);
+               exit(EXIT_SUCCESS);
+           }
+
+           /* Allocate memory to be used for the stack of the child. */
+
+           stack = mmap(NULL, STACK_SIZE, PROT_READ | PROT_WRITE,
+                        MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0);
+           if (stack == MAP_FAILED)
+               errExit(&quot;mmap&quot;);
+
+           stackTop = stack + STACK_SIZE;  /* Assume stack grows downward */
+
+           /* Create child that has its own UTS namespace;
+              child commences execution in childFunc(). */
+
+           pid = clone(childFunc, stackTop, CLONE_NEWUTS | SIGCHLD, argv[1]);
+           if (pid == -1)
+               errExit(&quot;clone&quot;);
+           printf(&quot;clone() returned %jd\n&quot;, (intmax_t) pid);
+
+           /* Parent falls through to here */
+
+           sleep(1);           /* Give child time to change its hostname */
+
+           /* Display hostname in parent's UTS namespace. This will be
+              different from hostname in child's UTS namespace. */
+
+           if (uname(&amp;uts) == -1)
+               errExit(&quot;uname&quot;);
+           printf(&quot;uts.nodename in parent: %s\n&quot;, uts.nodename);
+
+           if (waitpid(pid, NULL, 0) == -1)    /* Wait for child */
+               errExit(&quot;waitpid&quot;);
+           printf(&quot;child has terminated\n&quot;);
+
+           exit(EXIT_SUCCESS);
+       }
+</code></pre>
+<p>不同之处在于这几句话：</p>
+<pre><code class="language-c">stack = mmap(NULL, STACK_SIZE, PROT_READ | PROT_WRITE,
+                        MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0);
+           if (stack == MAP_FAILED)
+               errExit(&quot;mmap&quot;);
+
+           stackTop = stack + STACK_SIZE;  /* Assume stack grows downward */
+
+           /* Create child that has its own UTS namespace;
+              child commences execution in childFunc(). */
+
+           pid = clone(childFunc, stackTop, CLONE_NEWUTS | SIGCHLD, argv[1]);
+</code></pre>
+<p>它是通过 mmap 申请的内存</p>
+<p>现在使用相同的方式，修改一下之前的代码：</p>
+<pre><code class="language-c">#define _GNU_SOURCE
+#include &lt;sys/mount.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/wait.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;sched.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/mman.h&gt;
+#include &lt;stdlib.h&gt;
+
+#define STACK_SIZE (1024 * 1024)
+#define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE); \
+                               } while (0)
+static char container_stack[STACK_SIZE];
+char* const container_args[] = {
+  &quot;/bin/bash&quot;,
+  NULL
+};
+
+int container_main(void* arg)
+{
+  printf(&quot;Container - inside the container!\n&quot;);
+  //
+  //mount(&quot;&quot;, &quot;/&quot;, NULL, MS_PRIVATE, &quot;&quot;);
+  //mount(&quot;none&quot;, &quot;/tmp&quot;, &quot;tmpfs&quot;, 0, &quot;&quot;);
+  execv(container_args[0], container_args);
+  printf(&quot;Something's wrong!\n&quot;);
+  return 1;
+}
+
+int main()
+{
+  char *stack;                    /* Start of stack buffer */
+  char *stackTop;                 /* End of stack buffer */
+  printf(&quot;Parent - start a container!\n&quot;);
+  stack = mmap(NULL, STACK_SIZE, PROT_READ | PROT_WRITE,
+                        MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0);
+  if (stack == MAP_FAILED)
+               errExit(&quot;mmap&quot;);
+
+  stackTop = stack + STACK_SIZE;
+  int container_pid = clone(container_main, stackTop, CLONE_NEWNS|SIGCHLD , NULL);
+  printf(&quot;containerPid: %d\n&quot;, container_pid);
+  int status;
+  waitpid(container_pid, &amp;status, 0);
+  if (WIFEXITED(status) != 1) {
+        printf(&quot;error!&quot;);
+        printf(&quot;%d\n&quot;, WTERMSIG(status));
+  }
+  printf(&quot;Parent - container stopped!\n&quot;);
+  return 0;
+}
+</code></pre>
+<p>接下来就是见证奇迹的时刻了！</p>
+<pre><code class="language-shell">$ ./a.out
+Parent - start a container!
+containerPid: 192918
+Container - inside the container!
+$ exit
+Parent - container stopped!
+</code></pre>
+<p>没有报错了，成功进入容器，问题终于解决了。</p>
+<p>至于为什么需要使用 mmap，作为一个菜鸡目前还没有头绪，后续再进行研究</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/linux/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#linux</a>
+    
+    <a href="/tags/issues/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#issues</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/ssh-shu-ru-qia-dun/" class="block">ssh 输入卡顿</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/http_mime_sniff/" class="block">HTTP MIME 嗅探 [待完善]</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+
+    
+    
+      <div
+        class="lg:col-start-2 bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/linux-pi-liang-kill-jin-cheng/" class="no-underline">Linux 批量 kill 进程</a>
+          <br />
+        
+          <a href="/posts/git-push-error-remote-fatal-error-in-commit_refs/" class="no-underline">git push error: remote: fatal error in commit_refs</a>
+          <br />
+        
+          <a href="/posts/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/" class="no-underline">两个 main goroutine 操作一个 channel 会怎样</a>
+          <br />
+        
+          <a href="/posts/linux-gao-xing-neng-fu-wu-qi-bian-cheng-yue-du-bi-ji-di-wu-zhang-linux-wang-luo-bian-cheng-ji-chu-api/" class="no-underline">【Linux 高性能服务器编程】阅读笔记 第五章 -- Linux 网络编程基础 api</a>
+          <br />
+        
+          <a href="/posts/parallels-desktop-16-wang-luo-chu-shi-hua-shi-bai-he-bu-neng-lian-jie-usb-she-bei-jie-jue-fang-fa/" class="no-underline">Parallels Desktop 16 网络初始化失败和不能连接USB设备解决方法</a>
+          <br />
+        
+          <a href="/posts/goji-yi-ci-defer-cuo-wu/" class="no-underline">go：记一次 defer 错误</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

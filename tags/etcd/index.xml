@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>etcd on /dev/null</title>
+    <link>/tags/etcd/</link>
+    <description>Recent content in etcd on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Fri, 16 Apr 2021 19:46:44 +0000</lastBuildDate><atom:link href="/tags/etcd/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>etcd 错误：context deadline exceeded</title>
+      <link>/posts/2020-10-17-etcd-error/</link>
+      <pubDate>Fri, 16 Apr 2021 19:46:44 +0000</pubDate>
+      
+      <guid>/posts/2020-10-17-etcd-error/</guid>
+      <description>etcd 远程操作失败：Error: context deadline exceeded 在服务器启动 etcd，并在本地机器通过 etcdctl &amp;ndash;endpoints=http://ip:2379 put name &amp;ldquo;123&amp;rdquo; 命令，在服务器的 etcd 中创建一对键值对， 如下图所示：</description>
+    </item>
+    
+    <item>
+      <title>docker 安装 etcd</title>
+      <link>/posts/2020-11-6-docker-etcd/</link>
+      <pubDate>Fri, 06 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2020-11-6-docker-etcd/</guid>
+      <description>docker 安装 etcd 创建一个 sh 文件</description>
+    </item>
+    
+  </channel>
+</rss>

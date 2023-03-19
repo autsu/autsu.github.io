@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>go 交换 container/list 的值 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="场景 在 LeetCode 255.用队列实现栈 这道题里，需要用到两个队列来实现一个栈，并且在算法流程中，需要交换这两个队列的内容，例如：队列 A =&gt; [1, 2, 3]，队列 B =&gt; [555]，交换后：A =&gt; [555]，B =&gt; [1, 2, 3]。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"go 交换 container/list 的值",
+      "item":"/posts/2021-2-24-go-container-list-swap/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/2021-2-24-go-container-list-swap/"
+    },
+    "headline": "go 交换 container\/list 的值 | \/dev\/null","datePublished": "2020-02-24T00:00:00+00:00",
+    "dateModified": "2020-02-24T00:00:00+00:00",
+    "wordCount":  374 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "场景 在 LeetCode 255.用队列实现栈 这道题里，需要用到两个队列来实现一个栈，并且在算法流程中，需要交换这两个队列的内容，例如：队列 A =\u0026gt; [1, 2, 3]，队列 B =\u0026gt; [555]，交换后：A =\u0026gt; [555]，B =\u0026gt; [1, 2, 3]。"
+}
+</script><meta property="og:title" content="go 交换 container/list 的值 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/2021-2-24-go-container-list-swap/" />
+
+
+
+
+<meta property="og:description" content="场景 在 LeetCode 255.用队列实现栈 这道题里，需要用到两个队列来实现一个栈，并且在算法流程中，需要交换这两个队列的内容，例如：队列 A =&gt; [1, 2, 3]，队列 B =&gt; [555]，交换后：A =&gt; [555]，B =&gt; [1, 2, 3]。" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2020-02-24T00:00:00&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2020-02-24T00:00:00&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="go" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/2021-2-24-go-container-list-source-code/" />
+
+<meta property="og:see_also" content="/posts/2021-1-24-go-post-request/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">go 交换 container/list 的值</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2020-02-24</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>2分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h2 id="场景">场景</h2>
+<p>在 <strong>LeetCode 255.用队列实现栈</strong> 这道题里，需要用到两个队列来实现一个栈，并且在算法流程中，需要交换这两个队列的内容，例如：队列 A  =&gt; [1, 2, 3]，队列 B =&gt; [555]，交换后：A =&gt; [555]，B =&gt; [1, 2, 3]。</p>
+<p>go 标准库中并没有提供队列的实现，但是提供了 container/list 这样一个双向链表，所以可以用 list 来模拟一个队列，定义如下结构体：</p>
+<pre><code class="language-go">type MyStack struct {
+    Queue1 *list.List	// 队列 1
+    Queue2 *list.List	// 队列 2
+}
+</code></pre>
+<p>在 <code>push</code> 方法中需要交换两个队列的内容：</p>
+<h3 id="写法1">写法1</h3>
+<pre><code class="language-go">func (this *MyStack) Push(x int) {
+  // 省略其他代码
+  // 在这里交换值
+  this.Queue1, this.Queue2 = this.Queue2, this.Queue1
+}
+</code></pre>
+<p>上面的代码是可以正确运行的，这里的交换语句让 Queue1 重新指向了另一个 list，Queue2 也同样如此，例如：Queue1 =&gt; 0x0001，Queue2 =&gt; 0x0013，交换后：Queue1 =&gt; 0x0013，Queue2 =&gt; 0x0001，这里仅仅是改变了结构体成员属性的值（指向），并没有对属性 list 内部进行更改。</p>
+<h3 id="写法2">写法2</h3>
+<p>为了让代码更简洁一些，我尝试用两个变量保存 this.Queue1和 this.Queue2：</p>
+<pre><code class="language-go">func (this *MyStack) Push(x int) {
+  q1 := this.Queue1
+  q2 := this.Queue2
+  // 省略其他代码
+  // 在这里交换值
+  q1, q2 = q2, q1
+}
+</code></pre>
+<p>上面这段代码会出错，因为这里的交换的是仅仅两个变量 q1 和 q2 的值，并没有对结构体中的属性造成影响。</p>
+<h3 id="写法3">写法3</h3>
+<pre><code class="language-go">func (this *MyStack) Push(x int) {
+  q1 := this.Queue1
+  q2 := this.Queue2
+  // 省略其他代码
+  // 在这里交换值
+  *q1, *q2 = *q2, *q1
+}
+</code></pre>
+<p>因为 q1 和 q2 都是指针变量，所以可以通过 *<strong>取内容符</strong> 来交换值，就和交换两个指针参数值一样，看起来也没有任何问题，但是运行结果却诡异的出现了死循环，而且排查了许久都找不到原因。</p>
+<h2 id="测试">测试</h2>
+<p><strong>Struct ll</strong>  定义一个类似的结构体：</p>
+<pre><code class="language-go">type ll struct {
+	l1 *list.List
+	l2 *list.List
+}
+</code></pre>
+<p><strong>swap()</strong> 类似 <strong>方法三</strong> 中的取值交换方式：</p>
+<pre><code class="language-go">func swap(l1, l2 *list.List) {
+	*l1, *l2 = *l2, *l1
+}
+</code></pre>
+<p><strong>_print</strong> 定义一个输出函数用来友好输出链表，输出值的同时也输出地址值：</p>
+<pre><code class="language-go">func _print(name string, l *list.List) {
+	fmt.Print(name + &quot;: &quot;)
+	for i := l.Front(); i != nil; i = i.Next() {
+		fmt.Printf(&quot;%v[%p] -&gt; \t&quot;, i.Value, i)
+	}
+	fmt.Println()
+}
+</code></pre>
+<p>测试代码：</p>
+<pre><code class="language-go">	// 创建两个 list
+	l1 := list.New()
+	l2 := list.New()
+	
+// 为两个链表添加值，l1: 1 -&gt; 2 -&gt; 3，l2: 666
+	l1.PushBack(1)
+	l1.PushBack(2)
+	l1.PushBack(3)
+	l2.PushBack(666)
+
+	// 输出交换前的值
+	fmt.Println(&quot;before: &quot;)
+	_print(&quot;l1&quot;, l1)
+	_print(&quot;l2&quot;, l2)
+
+	// 交换函数
+	swap(l1, l2)
+	// 输出交换后的值
+	fmt.Println(&quot;after: &quot;)
+	_print(&quot;l1&quot;, l1)
+	_print(&quot;l2&quot;, l2)
+</code></pre>
+<p>运行结果：</p>
+<pre><code>before: 
+l1: 1[0xc00009cde0] -&gt; 	2[0xc00009ce10] -&gt; 	3[0xc00009ce40] -&gt; 	
+l2: 666[0xc00009ce70] -&gt; 	
+
+after: 
+l1: 666[0xc00009ce70] -&gt; 	
+l2: 1[0xc00009cde0] -&gt; 	2[0xc00009ce10] -&gt; 	3[0xc00009ce40] -&gt; 	
+</code></pre>
+<p>两个链表的值确实已经发生了改变，但是为什么在 <strong>方法 3</strong> 中会产生诡异的错误呢？继续尝试追加值：</p>
+<pre><code class="language-go">	// 交换完之后 pushback
+	fmt.Println(&quot;after swap pushback: &quot;)
+	l2.PushBack(555)
+	l1.PushBack(6)
+	// 输出两个链表
+	_print(&quot;l1&quot;, l1)
+	_print(&quot;l2&quot;, l2)
+</code></pre>
+<p>运行结果：</p>
+<pre><code>after swap pushback: 
+l1: 666[0xc000104e70] -&gt; 	6[0xc000104ed0] -&gt; 	555[0xc000104ea0] -&gt; 	&lt;nil&gt;[0xc000104db0] -&gt; 	
+l2: 1[0xc000104de0] -&gt; 	2[0xc000104e10] -&gt; 	3[0xc000104e40] -&gt; 
+</code></pre>
+<p>上面的代码向 l1 尾部添加了 元素 6，向 l2 尾部添加元素 555，正确结果应该是：</p>
+<p>l1:  666 -&gt; 6</p>
+<p>l2:  1 -&gt; 2 -&gt; 3 -&gt; 555</p>
+<p>但运行结果却十分诡异：</p>
+<p>l1:  666 -&gt; 6 -&gt; 555 -&gt; nil</p>
+<p>l2:  1 -&gt; 2 -&gt; 3</p>
+<p>本来应该添加到 l2 的 555 被添加到了 l1，并且 l1 还多了一个 额外的 nil</p>
+<h2 id="分析">分析</h2>
+<p>结合源码进行了分析（不一定正确）</p>
+<p><img src="https://zengh1.github.io/post-images/1618573823911.png" alt=""></p>
+<p>至于为什么会出现 <strong>测试</strong> 中的诡异情况，发现自己水平有限，画图画的晕头转向，找不出一个合理的原因，只能草草归结于 <strong>list 的环形被破坏，导致产生无法预料的结果</strong>。</p>
+<h2 id="总结">总结</h2>
+<p>写法1 <code>this.Queue1, this.Queue2 = this.Queue2, this.Queue1</code>  只是交换了结构体属性 q1 和 q2 的指向，没有对 list 内部进行修改，而 写法3 <code>*this.Queue1, *this.Queue2 = *this.Queue2, *this.Queue1</code> 则是直接对 list 内部进行了修改，所以产生了无法预料的后果，这也充分说明了指针的危险性。</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/go/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#go</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/2021-2-24-go-container-list-source-code/" class="block">go container/list 源码分析【未完】</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/2021-1-24-go-post-request/" class="block">go 发送 post 请求</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#场景">场景</a>
+      <ul>
+        <li><a href="#写法1">写法1</a></li>
+        <li><a href="#写法2">写法2</a></li>
+        <li><a href="#写法3">写法3</a></li>
+      </ul>
+    </li>
+    <li><a href="#测试">测试</a></li>
+    <li><a href="#分析">分析</a></li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/2021-2-24-go-container-list-source-code/" class="no-underline">go container/list 源码分析【未完】</a>
+          <br />
+        
+          <a href="/posts/2021-1-24-go-post-request/" class="no-underline">go 发送 post 请求</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

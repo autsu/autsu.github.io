@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>双指针 on /dev/null</title>
+    <link>/tags/%E5%8F%8C%E6%8C%87%E9%92%88/</link>
+    <description>Recent content in 双指针 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Fri, 16 Apr 2021 19:38:53 +0000</lastBuildDate><atom:link href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>leetcode 15. 三数之和</title>
+      <link>/posts/2021-3-24-leet-15-three-sum/</link>
+      <pubDate>Fri, 16 Apr 2021 19:38:53 +0000</pubDate>
+      
+      <guid>/posts/2021-3-24-leet-15-three-sum/</guid>
+      <description>题目描述 给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三 个元素 a，b，c ，使得 a + b + c = 0 请你找出所有和为 0 且不重复的三元组。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 04. 二维数组中的查找</title>
+      <link>/posts/jian-zhi-offer-04-er-wei-shu-zu-zhong-de-cha-zhao/</link>
+      <pubDate>Fri, 16 Apr 2021 19:17:34 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-04-er-wei-shu-zu-zhong-de-cha-zhao/</guid>
+      <description>题目描述 在一个 n * m 的二维数组中，每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个高效的函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 22. 链表中倒数第k个节点</title>
+      <link>/posts/jian-zhi-offer-22-lian-biao-zhong-dao-shu-di-k-ge-jie-dian/</link>
+      <pubDate>Fri, 16 Apr 2021 15:53:20 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-22-lian-biao-zhong-dao-shu-di-k-ge-jie-dian/</guid>
+      <description>题目描述 输入一个链表，输出该链表中倒数第k个节点。为了符合大多数人的习惯，本题从1开始计数，即链表的尾节点是倒数第1个节点。例如，一个链表有6个节点，从头节点开始，它们的值依次是1、2、3、4、5、6。这个链表的倒数第3个节点是值为4的节点。
+示例：
+给定一个链表: 1-&amp;gt;2-&amp;gt;3-&amp;gt;4-&amp;gt;5, 和 k = 2.</description>
+    </item>
+    
+  </channel>
+</rss>

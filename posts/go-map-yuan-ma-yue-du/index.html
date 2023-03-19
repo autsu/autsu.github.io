@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>go map源码阅读 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="看看 map 这个重要数据结构在 go 中是如何实现的">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"go map源码阅读",
+      "item":"/posts/go-map-yuan-ma-yue-du/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/go-map-yuan-ma-yue-du/"
+    },
+    "headline": "go map源码阅读 | \/dev\/null","datePublished": "2021-07-29T20:37:56+00:00",
+    "dateModified": "2021-07-29T20:37:56+00:00",
+    "wordCount":  3395 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "看看 map 这个重要数据结构在 go 中是如何实现的"
+}
+</script><meta property="og:title" content="go map源码阅读 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/go-map-yuan-ma-yue-du/" />
+
+
+
+
+<meta property="og:description" content="看看 map 这个重要数据结构在 go 中是如何实现的" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-07-29T20:37:56&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-07-29T20:37:56&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="go" />
+
+<meta property="article:tag" content="源码" />
+
+<meta property="article:tag" content="数据结构" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/go-containerheap-yuan-ma-yue-du/" />
+
+<meta property="og:see_also" content="/posts/2021-2-24-go-container-list-source-code/" />
+
+<meta property="og:see_also" content="/posts/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/" />
+
+<meta property="og:see_also" content="/posts/goji-yi-ci-defer-cuo-wu/" />
+
+<meta property="og:see_also" content="/posts/goiocopy-de-keng/" />
+
+<meta property="og:see_also" content="/posts/2021-3-13-byte-array/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">go map源码阅读</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2021-07-29</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>16分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <p>看看 map 这个重要数据结构在 go 中是如何实现的</p>
+<!-- more -->
+<h1 id="hmap">hmap</h1>
+<p>map 的结构体</p>
+<pre><code class="language-go">// A header for a Go map.
+type hmap struct {
+	// count 代表哈希表中的元素个数，调用len(map)时，返回的就是该字段值。
+	//
+	// Note: the format of the hmap is also encoded in cmd/compile/internal/reflectdata/reflect.go.
+	// Make sure this stays in sync with the compiler's definition.
+	count int // # live cells == size of map.  Must be first (used by len() builtin)
+	flags uint8
+
+	// B 桶的数目是 2 的 B 次幂，因为选择桶使用的是与运算的方法
+	B uint8 // log_2 of # of buckets (can hold up to loadFactor * 2^B items)
+
+	// 使用的溢出桶的数量
+	noverflow uint16 // approximate number of overflow buckets; see incrnoverflow for details
+
+	// hash0 是哈希的种子，它能为哈希函数的结果引入随机性，这个值在创建哈希表时确定，
+	// 并在调用哈希函数时作为参数传入
+	hash0 uint32 // hash seed
+
+	// buckets 桶的位置，实际类型为 []bmap
+	buckets unsafe.Pointer // array of 2^B Buckets. may be nil if count==0.
+
+	// oldbuckets 用于在扩容阶段保存旧桶的位置
+	// 如果 oldbuckets == nil，则代表以及迁移完成
+	// 判断函数为 growing()
+	oldbuckets unsafe.Pointer // previous bucket array of half the size, non-nil only when growing
+
+	// 记录渐进式扩容阶段下一个要迁移的旧桶编号
+	// 何为渐进式？
+	// 如果触发扩容，此时不会一次性把 kv 全部从旧桶迁移到新桶，而是当执行插入（包括修改）、删除操作时，
+	// 对一部分 kv 进行迁移，这样就可以把迁移的时间分摊到多次 map 操作中，防止瞬间性能抖动
+	// ps: 每次最多只会搬迁 2 个 bucket，迁移是否完成的判断依据是 oldbuckets 字段是否为空
+	nevacuate uintptr // progress counter for evacuation (buckets less than this have been evacuated)
+
+	// 指向一个 mapextra，mapextra 里面记录的是溢出桶的相关信息
+	extra *mapextra // optional fields
+}
+</code></pre>
+<h1 id="bmap">bmap</h1>
+<p><code>bmap</code> 是一个桶，编译期间会动态地创建一个新的结构：</p>
+<blockquote>
+<p>来自 Go 语言设计与实现：
+runtime.bmap 中的其他字段在运行时也都是通过计算内存地址的方式访问的，
+所以它的定义中就不包含这些字段，不过我们能根据编译期间的 cmd/compile/internal/gc.bmap
+函数重建它的结构</p>
+</blockquote>
+<p>但是在 go 1.16 中没有找到这个函数，所以在其他博客找了这个结构体，如下：</p>
+<pre><code class="language-go">type bmap struct {
+    topbits  [8]uint8
+    keys     [8]keytype
+    values   [8]valuetype
+    pad      uintptr
+    overflow uintptr
+}
+</code></pre>
+<p>桶中存放 kv 的方式如下：</p>
+<p>计算出的<code>hash 值</code>的高八位为 <code>tophash</code>，用于在一个独立的桶中区别出键，低位用于选择桶，
+例如下面是一个计算出来的 <code> hash</code>：</p>
+<blockquote>
+<p>高 8 位 <strong>66883387</strong>    391851     <strong>01010</strong>  低 5 位</p>
+</blockquote>
+<p>当 <code>B</code> 等于 5 时，那么我们选择的哈希值低位也是 5 位，即 01010，它的十进制值为 10，代表 10 号桶。
+再用哈希值的高 8 位，找到此 <code>key</code> 在桶中的位置。</p>
+<p>桶里面会最多装 8 个 <code>key/value</code>，这些 <code> key</code> 之所以会落入同一个桶，是因为它们经过哈希计算后，哈希结果的 低B位是相同的，而多个 key 装入一个桶就是 go 用来处理  <strong>hash 冲突</strong> 的方式。在桶内，会根据 <code>key</code> 的 <code>hash</code> 值的高 8 位作为 <code>tophash</code>，<code>tophash</code> 的作用是在一个独立的桶中区别出键，可以在查找 <code>key</code> 时进行快速判断，快速的原因在于：</p>
+<blockquote>
+<p>在某个 <code>bmap</code> 里快速判等<code> key</code> 时使用，若 hash 高八位不相等就不用进一步比较 <code>key</code> 是否相等了，判断<code> key</code> 是否相等会根据 <code>key</code> 的类型找到对应的<code>equal</code> 函数，然后调用函数拿到判等结果；而判断 <code>tophash</code> 就没那么复杂了。来源：https://www.bilibili.com/video/BV1Sp4y1U7dJ，【Golang】Map长啥样儿？里的评论</p>
+</blockquote>
+<p>计算 tophash 的函数是：func tophash(hash uintptr) uint8</p>
+<p>bmap 的结构图示：
+<img src="https://zengh1.github.io/post-images/1627563904668.webp" alt=""></p>
+<p>在8个键值对数据后面有一个overflow指针，因为桶中最多只能装 8 个键值对，如果有多余的键值对落到了当前桶，那么就需要再构建一个桶（称为溢出桶），通过 overflow 指针链接起来。</p>
+<pre><code class="language-go">// A bucket for a Go map.
+type bmap struct {
+	// tophash generally contains the top byte of the hash value
+	// for each key in this bucket. If tophash[0] &lt; minTopHash,
+	// tophash[0] is a bucket evacuation state instead.
+	tophash [bucketCnt]uint8
+	// Followed by bucketCnt keys and then bucketCnt elems.
+	// NOTE: packing all the keys together and then all the elems together makes the
+	// code a bit more complicated than alternating key/elem/key/elem/... but it allows
+	// us to eliminate padding which would be needed for, e.g., map[int64]int8.
+	// Followed by an overflow pointer.
+}
+</code></pre>
+<h1 id="创建-map">创建 map</h1>
+<pre><code class="language-go">// map 初始化的流程：
+// 1. 入参校验，判断 key 的类型是否合法，必须为可比较类型
+// 2. 底层调用 makemap 函数，计算得到合适的 B，map 容量最多可容纳 6.5 * 2^B 个元素，
+// 	  6.5 为装载因子阈值常量。
+// 装载因子的计算公式是：装载因子 = 填入表中的元素个数/散列表的长度，装载因子越大，说明空闲位置越少，冲突越多，散列表的性能会下降
+
+// makemap implements Go map creation for make(map[k]v, hint).
+// If the compiler has determined that the map or the first bucket
+// can be created on the stack, h and/or bucket may be non-nil.
+// If h != nil, the map can be created directly in h.
+// If h.buckets != nil, bucket pointed to can be used as the first bucket.
+func makemap(t *maptype, hint int, h *hmap) *hmap {
+	//println(&quot;[make map] start...&quot;)
+	// 1. 计算哈希占用的内存是否溢出或者超出能分配的最大值
+	mem, overflow := math.MulUintptr(uintptr(hint), t.bucket.size)
+	if overflow || mem &gt; maxAlloc {
+		hint = 0
+	}
+	//println(&quot;[make map] cap: &quot;, hint, &quot;, use mem: &quot;, mem)
+	//log.Printf(&quot;[make map] cap: %d, use mem: %d \n&quot;, hint, mem)
+
+	// initialize Hmap
+	if h == nil {
+		h = new(hmap)
+	}
+	// 2. 调用 runtime.fastrand 获取一个随机的哈希种子
+	h.hash0 = fastrand()
+
+	// Find the size parameter B which will hold the requested # of elements.
+	// For hint &lt; 0 overLoadFactor returns false since hint &lt; bucketCnt.
+	B := uint8(0)
+
+	// 3. 根据传入的 hint 计算出需要的最小需要的桶的数量
+	for overLoadFactor(hint, B) {
+		B++
+	}
+	//println(&quot;B is &quot;, B)
+	//log.Printf(&quot;B is %d, that mean the total bocket number is 2^B = %v \n&quot;, B, math2.Pow(2, float64(B)))
+	h.B = B
+
+	// 分配初始哈希表
+	// 如果 B 为 0，那么 buckets 字段后续会在 mapassign（map 的添加函数） 方法中 lazily 分配
+	//
+	// allocate initial hash table
+	// if B == 0, the buckets field is allocated lazily later (in mapassign)
+	// If hint is large zeroing this memory could take a while.
+	if h.B != 0 {
+		var nextOverflow *bmap
+		// 4. 使用 runtime.makeBucketArray 创建用于保存桶的数组
+		// runtime.makeBucketArray 会根据传入的 B 计算出的需要创建的桶数量
+		// 并在内存中分配一片连续的空间用于存储数据
+		h.buckets, nextOverflow = makeBucketArray(t, h.B, nil)
+		if nextOverflow != nil {
+			h.extra = new(mapextra)
+			h.extra.nextOverflow = nextOverflow
+		}
+	}
+
+	return h
+}
+</code></pre>
+<h1 id="创建保存桶的数组">创建保存桶的数组</h1>
+<pre><code class="language-go">// makeBucket 为 map 创建用于保存 buckets 的数组。
+// 当桶的数量小于 24 时，由于数据较少、使用溢出桶的可能性较低，会省略创建的过程以减少额外开销；
+// 当桶的数量多于 24 时，会额外创建 2^B − 4 个溢出桶；
+//
+// makeBucketArray initializes a backing array for map buckets.
+// 1&lt;&lt;b is the minimum number of buckets to allocate.
+// dirtyalloc should either be nil or a bucket array previously
+// allocated by makeBucketArray with the same t and b parameters.
+// If dirtyalloc is nil a new backing array will be alloced and
+// otherwise dirtyalloc will be cleared and reused as backing array.
+func makeBucketArray(t *maptype, b uint8, dirtyalloc unsafe.Pointer) (buckets unsafe.Pointer, nextOverflow *bmap) {
+	base := bucketShift(b)
+	nbuckets := base
+	// 对于小的 b 值（小于4），即桶的数量小于 16 时，使用溢出桶的可能性很小。
+	// 对于此情况，就避免计算开销。
+	// For small b, overflow buckets are unlikely.
+	// Avoid the overhead of the calculation.
+	if b &gt;= 4 {
+		// 当桶的数量大于等于 16 个时，正常情况下就会额外创建 2^(b-4) 个溢出桶
+		// Add on the estimated number of overflow buckets
+		// required to insert the median number of elements
+		// used with this value of b.
+		nbuckets += bucketShift(b - 4)
+		sz := t.bucket.size * nbuckets
+		up := roundupsize(sz)
+		if up != sz {
+			nbuckets = up / t.bucket.size
+		}
+	}
+
+	// 这里，dirtyalloc 分两种情况。如果它为 nil，则会分配一个新的底层数组。
+	// 如果它不为 nil，则它指向的是曾经分配过的底层数组，该底层数组是由之前同
+	// 样的 t 和 b 参数通过 makeBucketArray 分配的，如果数组不为空，需要把
+	// 该数组之前的数据清空并复用。
+	if dirtyalloc == nil {
+		buckets = newarray(t.bucket, int(nbuckets))
+	} else {
+		// dirtyalloc was previously generated by
+		// the above newarray(t.bucket, int(nbuckets))
+		// but may not be empty.
+		buckets = dirtyalloc
+		size := t.bucket.size * nbuckets
+		if t.bucket.ptrdata != 0 {
+			memclrHasPointers(buckets, size)
+		} else {
+			memclrNoHeapPointers(buckets, size)
+		}
+	}
+
+	// 即 b 大于等于 4 的情况下，会预分配一些溢出桶。
+	// 为了把跟踪这些溢出桶的开销降至最低，使用了以下约定：
+	// 如果预分配的溢出桶的 overflow 指针为 nil，那么可以通过指针碰撞（bumping the pointer）获得更多可用桶。
+	//（关于指针碰撞：假设内存是绝对规整的，所有用过的内存都放在一边，空闲的内存放在另一边，中间放着一个指针作为
+	// 分界点的指示器，那所分配内存就仅仅是把那个指针向空闲空间那边挪动一段与对象大小相等的距离，这种分配方式称为“指针碰撞”）
+	// 对于最后一个溢出桶，需要一个安全的非 nil 指针指向它。
+	if base != nbuckets {
+		// We preallocated some overflow buckets.
+		// To keep the overhead of tracking these overflow buckets to a minimum,
+		// we use the convention that if a preallocated overflow bucket's overflow
+		// pointer is nil, then there are more available by bumping the pointer.
+		// We need a safe non-nil pointer for the last overflow bucket; just use buckets.
+		nextOverflow = (*bmap)(add(buckets, base*uintptr(t.bucketsize)))
+		last := (*bmap)(add(buckets, (nbuckets-1)*uintptr(t.bucketsize)))
+		last.setoverflow(t, (*bmap)(buckets))
+	}
+	return buckets, nextOverflow
+}
+</code></pre>
+<h1 id="查找">查找</h1>
+<p>查找有两个函数，<code>mapaccess1</code> 对应 <code>h[key]</code> 这种形式，<code>mapaccess2</code> 对应 <code>v, ok := h[key]</code> ，ok 表示该 key 是否存在。</p>
+<h2 id="mapaccess1">mapaccess1</h2>
+<pre><code class="language-go">// map 查找 key
+//
+// mapaccess1 returns a pointer to h[key].  Never returns nil, instead
+// it will return a reference to the zero object for the elem type if
+// the key is not in the map.
+// NOTE: The returned pointer may keep the whole map live, so don't
+// hold onto it for very long.
+func mapaccess1(t *maptype, h *hmap, key unsafe.Pointer) unsafe.Pointer {
+	if raceenabled &amp;&amp; h != nil {
+		callerpc := getcallerpc()
+		pc := funcPC(mapaccess1)
+		racereadpc(unsafe.Pointer(h), callerpc, pc)
+		raceReadObjectPC(t.key, key, callerpc, pc)
+	}
+	if msanenabled &amp;&amp; h != nil {
+		msanread(key, t.key.size)
+	}
+
+	// 如果 map 为空或者元素个数为 0，返回零值
+	if h == nil || h.count == 0 {
+		if t.hashMightPanic() {
+			t.hasher(key, 0) // see issue 23734
+		}
+		return unsafe.Pointer(&amp;zeroVal[0])
+	}
+
+	// 写和读冲突，即并发操作
+	if h.flags&amp;hashWriting != 0 {
+		throw(&quot;concurrent map read and map write&quot;)
+	}
+
+	// 计算哈希值，并且加入 hash0 引入随机性
+	// 不同类型的 key，会使用不同的 hash 算法
+	hash := t.hasher(key, uintptr(h.hash0))
+	m := bucketMask(h.B)
+
+	// b 就是 bucket 的地址
+	b := (*bmap)(add(h.buckets, (hash&amp;m)*uintptr(t.bucketsize)))
+	// 如果 oldbuckets 不为空，那么证明 map 发生了扩容
+	// 如果有扩容发生，老的 buckets 中的数据可能还未搬迁至新的 buckets 里
+	// 所以需要先在老的 buckets 中找
+	if c := h.oldbuckets; c != nil {
+		if !h.sameSizeGrow() {
+			// There used to be half as many buckets; mask down one more power of two.
+			m &gt;&gt;= 1
+		}
+		oldb := (*bmap)(add(c, (hash&amp;m)*uintptr(t.bucketsize)))
+		if !evacuated(oldb) {
+			b = oldb
+		}
+	}
+
+	// 计算出当前 key 的高 8 位的 hash，也就是 tophash
+	top := tophash(hash)
+bucketloop:
+	// 双重循环遍历：外层循环是从桶到溢出桶遍历；内层是桶中的 cell 遍历
+	// 跳出循环的条件有三种：
+	// 第一种是已经找到 key 值；
+	// 第二种是当前桶再无溢出桶；
+	// 第三种是当前桶中有 cell 位的 tophash 值是 emptyRest
+	// 它代表此时的桶后面的 cell 还未利用，所以无需再继续遍历。
+
+	// 前面已经通过 hash 值的低位确定是几号桶了，但是桶可能还连接着溢出桶，所以使用 for 循序
+	// 来遍历该桶以及其连接的溢出桶
+	for ; b != nil; b = b.overflow(t) {
+		// 每个桶内最多存放 8 个 key/value，每个 kv 对应一个 tophash，所以
+		// 遍历这 8 个 tophash 来查找 key
+		for i := uintptr(0); i &lt; bucketCnt; i++ {
+			// tophash 不匹配
+			if b.tophash[i] != top {
+				// 如果是 emptyRest，代表此时的桶后面的 cell 还未利用，所以无需再继续遍历
+				if b.tophash[i] == emptyRest {
+					break bucketloop
+				}
+				// 继续查找
+				continue
+			}
+			// 到这里说明找到了 key，得到 key 的地址
+			k := add(unsafe.Pointer(b), dataOffset+i*uintptr(t.keysize))
+			if t.indirectkey() {
+				k = *((*unsafe.Pointer)(k))
+			}
+			// tophash 相同还需要判断 key 是否相等
+			// 如果 key 也相同则代表找到了，返回
+			// 如果 key 不相同，则进入下轮循环
+			if t.key.equal(key, k) {
+				e := add(unsafe.Pointer(b), dataOffset+bucketCnt*uintptr(t.keysize)+i*uintptr(t.elemsize))
+				if t.indirectelem() {
+					e = *((*unsafe.Pointer)(e))
+				}
+				return e
+			}
+		}
+	}
+	// 所有的 bucket 都未找到，则返回零值
+	return unsafe.Pointer(&amp;zeroVal[0])
+}
+</code></pre>
+<h2 id="mapaccess2">mapaccess2</h2>
+<pre><code class="language-go">func mapaccess2(t *maptype, h *hmap, key unsafe.Pointer) (unsafe.Pointer, bool) {
+	if raceenabled &amp;&amp; h != nil {
+		callerpc := getcallerpc()
+		pc := funcPC(mapaccess2)
+		racereadpc(unsafe.Pointer(h), callerpc, pc)
+		raceReadObjectPC(t.key, key, callerpc, pc)
+	}
+	if msanenabled &amp;&amp; h != nil {
+		msanread(key, t.key.size)
+	}
+	if h == nil || h.count == 0 {
+		if t.hashMightPanic() {
+			t.hasher(key, 0) // see issue 23734
+		}
+		return unsafe.Pointer(&amp;zeroVal[0]), false
+	}
+	if h.flags&amp;hashWriting != 0 {
+		throw(&quot;concurrent map read and map write&quot;)
+	}
+	hash := t.hasher(key, uintptr(h.hash0))
+	m := bucketMask(h.B)
+	b := (*bmap)(add(h.buckets, (hash&amp;m)*uintptr(t.bucketsize)))
+	if c := h.oldbuckets; c != nil {
+		if !h.sameSizeGrow() {
+			// There used to be half as many buckets; mask down one more power of two.
+			m &gt;&gt;= 1
+		}
+		oldb := (*bmap)(add(c, (hash&amp;m)*uintptr(t.bucketsize)))
+		if !evacuated(oldb) {
+			b = oldb
+		}
+	}
+	top := tophash(hash)
+bucketloop:
+	for ; b != nil; b = b.overflow(t) {
+		for i := uintptr(0); i &lt; bucketCnt; i++ {
+			if b.tophash[i] != top {
+				if b.tophash[i] == emptyRest {
+					break bucketloop
+				}
+				continue
+			}
+			k := add(unsafe.Pointer(b), dataOffset+i*uintptr(t.keysize))
+			if t.indirectkey() {
+				k = *((*unsafe.Pointer)(k))
+			}
+			if t.key.equal(key, k) {
+				e := add(unsafe.Pointer(b), dataOffset+bucketCnt*uintptr(t.keysize)+i*uintptr(t.elemsize))
+				if t.indirectelem() {
+					e = *((*unsafe.Pointer)(e))
+				}
+				return e, true
+			}
+		}
+	}
+	return unsafe.Pointer(&amp;zeroVal[0]), false
+}
+</code></pre>
+<h1 id="添加">添加</h1>
+<pre><code class="language-go">// map 的添加函数
+// Like mapaccess, but allocates a slot for the key if it is not present in the map.
+func mapassign(t *maptype, h *hmap, key unsafe.Pointer) unsafe.Pointer {
+	//println(&quot;insert key into map...&quot;)
+	// 如果 h 是空指针，赋值会引起 panic
+	// 例如以下语句
+	// var m map[string]int
+	// m[&quot;k&quot;] = 1
+	if h == nil {
+		panic(plainError(&quot;assignment to entry in nil map&quot;))
+	}
+	if raceenabled {
+		callerpc := getcallerpc()
+		pc := funcPC(mapassign)
+		racewritepc(unsafe.Pointer(h), callerpc, pc)
+		raceReadObjectPC(t.key, key, callerpc, pc)
+	}
+	if msanenabled {
+		msanread(key, t.key.size)
+	}
+
+	// 有其他 goroutine 正在往 map 中写 key，会抛出以下错误
+	if h.flags&amp;hashWriting != 0 {
+		throw(&quot;concurrent map writes&quot;)
+	}
+
+	// 通过 key 和哈希种子，算出对应哈希值
+	hash := t.hasher(key, uintptr(h.hash0))
+	//println(&quot;this key hash is &quot;, hash)
+
+	// 将 flags 的值与 hashWriting 做按位或运算
+	// 因为在当前 goroutine 可能还未完成 key 的写入，再次调用 t.hasher 会发生 panic。
+	// Set hashWriting after calling t.hasher, since t.hasher may panic,
+	// in which case we have not actually done a write.
+	h.flags ^= hashWriting
+
+	if h.buckets == nil {
+		h.buckets = newobject(t.bucket) // newarray(t.bucket, 1)
+	}
+
+again:
+	// bucketMask 返回值是 2 的 B 次方减 1
+	// 因此，通过 hash 值与 bucketMask 返回值做按位与操作，
+	// 返回的在 buckets 数组中的第几号桶
+	bucket := hash &amp; bucketMask(h.B)
+	//println(&quot;this key will store in bucket &quot;, bucket)
+	// 如果 map 正在搬迁（即 h.oldbuckets != nil）中,则同时进行搬迁工作
+	// 这里涉及到了渐进式扩容这一概念，即扩容不是一次性迁移所有键，而是在其他
+	// 操作中进行小部分迁移
+	if h.growing() {
+		//println(&quot;the map is growing!&quot;)
+		growWork(t, h, bucket)
+	}
+	// 计算出上面求出的第几号 bucket 的内存位置
+	b := (*bmap)(add(h.buckets, bucket*uintptr(t.bucketsize)))
+	// 计算出 tophash
+	top := tophash(hash)
+	//println(&quot;this key's tophash is: &quot;, top)
+
+	// 是否当前 key 是否已经添加成功了，如果为 nil 则表示未成功
+	var inserti *uint8
+	var insertk unsafe.Pointer // key 的地址
+	var elem unsafe.Pointer    // value 的地址
+bucketloop:
+	for {
+		// 遍历桶中的 8 个 cell，找到一个空位插入
+		for i := uintptr(0); i &lt; bucketCnt; i++ {
+			//println(&quot;cur bucket tophash is &quot;, b.tophash[i])
+			// 如果当前 cell 的 tophash 不等于当前 key 的 tophash
+			if b.tophash[i] != top {
+				//println(&quot;b.tophash[i] != top&quot;)
+				// 如果 cell 位为空，那么就可以在对应位置进行插入
+				if isEmpty(b.tophash[i]) &amp;&amp; inserti == nil {
+					inserti = &amp;b.tophash[i] // 更新 inserti，表示已经添加成功
+					insertk = add(unsafe.Pointer(b), dataOffset+i*uintptr(t.keysize))
+					elem = add(unsafe.Pointer(b), dataOffset+bucketCnt*uintptr(t.keysize)+i*uintptr(t.elemsize))
+				}
+				// emptyRest 表示当前 cell 及之后都为空，此时已经找到空位了，
+				// 所以没必要再遍历了
+				if b.tophash[i] == emptyRest {
+					break bucketloop
+				}
+				continue
+			}
+			// 第二种情况是 cell 位的 tophash 值和当前的 tophash 值相等
+			k := add(unsafe.Pointer(b), dataOffset+i*uintptr(t.keysize))
+			if t.indirectkey() {
+				k = *((*unsafe.Pointer)(k))
+			}
+			// 即使当前 cell 位的 tophash 值相等，不一定它对应的 key 也是相等的，
+			// 所以还要做一个 key 值判断，key 值不同则 continue 继续寻找空位
+			if !t.key.equal(key, k) {
+				//println(&quot;tophash equal but key not equal&quot;)
+				continue
+			}
+			// 如果已经有该 key 了，就更新它
+			// already have a mapping for key. Update it.
+			if t.needkeyupdate() {
+				//println(&quot;tophash equal and key equal, update the value&quot;)
+				typedmemmove(t.key, k, key)
+			}
+			// 这里获取到了要插入 key 对应的 value 的内存地址
+			elem = add(unsafe.Pointer(b), dataOffset+bucketCnt*uintptr(t.keysize)+i*uintptr(t.elemsize))
+			// 如果顺利到这，就直接跳到 done 的结束逻辑中去
+			goto done
+		}
+		//println(&quot;range this bucket over, not find empty cell to insert key, continue range overflow buckets&quot;)
+		// 如果桶中的 8 个 cell 遍历完，还未找到对应的空 cell 或覆盖 cell，
+		// 那么就进入它的溢出桶中去遍历
+		ovf := b.overflow(t)
+		// 如果连溢出桶中都没有找到合适的 cell，跳出循环
+		if ovf == nil {
+			//println(&quot;overflow buckets not find empty cell, need grow&quot;)
+			break
+		}
+		b = ovf
+	}
+
+	// 在已有的桶和溢出桶中都未找到合适的 cell 供 key 写入，那么有可能会触发以下两种情况
+	// 情况一：
+	// 判断当前 map 的装载因子是否达到设定的 6.5 阈值，或者当前 map 的溢出桶数量是否过多。
+	// 如果存在这两种情况之一，则进行扩容操作。
+	// hashGrow() 实际并未完成扩容，对哈希表数据的搬迁（复制）操作是通过 growWork() 来完成的。
+	// 重新跳入 again 逻辑，在进行完 growWork() 操作后，再次遍历新的桶。
+
+	// Did not find mapping for key. Allocate new cell &amp; add entry.
+
+	// If we hit the max load factor or we have too many overflow buckets,
+	// and we're not already in the middle of growing, start growing.
+	if !h.growing() &amp;&amp; (overLoadFactor(h.count+1, h.B) || tooManyOverflowBuckets(h.noverflow, h.B)) {
+		hashGrow(t, h)
+		goto again // Growing the table invalidates everything, so try again
+	}
+
+	// 情况二：
+	// 在不满足情况一的条件下，会为当前桶再新建溢出桶，并将 tophash，
+	// key 插入到新建溢出桶的对应内存的 0 号位置
+	if inserti == nil {
+		// The current bucket and all the overflow buckets connected to it are full, allocate a new one.
+		newb := h.newoverflow(t, b)
+		inserti = &amp;newb.tophash[0]
+		insertk = add(unsafe.Pointer(newb), dataOffset)
+		elem = add(insertk, bucketCnt*uintptr(t.keysize))
+	}
+
+	// 在插入位置存入新的 key 和 value
+	// store new key/elem at insert position
+	if t.indirectkey() {
+		kmem := newobject(t.key)
+		*(*unsafe.Pointer)(insertk) = kmem
+		insertk = kmem
+	}
+	if t.indirectelem() {
+		vmem := newobject(t.elem)
+		*(*unsafe.Pointer)(elem) = vmem
+	}
+	typedmemmove(t.key, insertk, key)
+	*inserti = top
+	// map 中的 key 数量 + 1
+	h.count++
+
+done:
+	if h.flags&amp;hashWriting == 0 {
+		throw(&quot;concurrent map writes&quot;)
+	}
+	h.flags &amp;^= hashWriting
+	if t.indirectelem() {
+		elem = *((*unsafe.Pointer)(elem))
+	}
+	return elem
+}
+</code></pre>
+<h1 id="删除">删除</h1>
+<pre><code class="language-go">func mapdelete(t *maptype, h *hmap, key unsafe.Pointer) {
+	if raceenabled &amp;&amp; h != nil {
+		callerpc := getcallerpc()
+		pc := funcPC(mapdelete)
+		racewritepc(unsafe.Pointer(h), callerpc, pc)
+		raceReadObjectPC(t.key, key, callerpc, pc)
+	}
+	if msanenabled &amp;&amp; h != nil {
+		msanread(key, t.key.size)
+	}
+	if h == nil || h.count == 0 {
+		if t.hashMightPanic() {
+			t.hasher(key, 0) // see issue 23734
+		}
+		return
+	}
+	if h.flags&amp;hashWriting != 0 {
+		throw(&quot;concurrent map writes&quot;)
+	}
+
+	hash := t.hasher(key, uintptr(h.hash0))
+
+	// Set hashWriting after calling t.hasher, since t.hasher may panic,
+	// in which case we have not actually done a write (delete).
+	h.flags ^= hashWriting
+
+	bucket := hash &amp; bucketMask(h.B)
+	if h.growing() {
+		growWork(t, h, bucket)
+	}
+	b := (*bmap)(add(h.buckets, bucket*uintptr(t.bucketsize)))
+	bOrig := b
+	top := tophash(hash)
+search:
+	for ; b != nil; b = b.overflow(t) {
+		for i := uintptr(0); i &lt; bucketCnt; i++ {
+			if b.tophash[i] != top {
+				if b.tophash[i] == emptyRest {
+					break search
+				}
+				continue
+			}
+			k := add(unsafe.Pointer(b), dataOffset+i*uintptr(t.keysize))
+			k2 := k
+			if t.indirectkey() {
+				k2 = *((*unsafe.Pointer)(k2))
+			}
+			if !t.key.equal(key, k2) {
+				continue
+			}
+			// Only clear key if there are pointers in it.
+			if t.indirectkey() {
+				*(*unsafe.Pointer)(k) = nil
+			} else if t.key.ptrdata != 0 {
+				memclrHasPointers(k, t.key.size)
+			}
+			e := add(unsafe.Pointer(b), dataOffset+bucketCnt*uintptr(t.keysize)+i*uintptr(t.elemsize))
+			if t.indirectelem() {
+				*(*unsafe.Pointer)(e) = nil
+			} else if t.elem.ptrdata != 0 {
+				memclrHasPointers(e, t.elem.size)
+			} else {
+				memclrNoHeapPointers(e, t.elem.size)
+			}
+			b.tophash[i] = emptyOne
+			// If the bucket now ends in a bunch of emptyOne states,
+			// change those to emptyRest states.
+			// It would be nice to make this a separate function, but
+			// for loops are not currently inlineable.
+			if i == bucketCnt-1 {
+				if b.overflow(t) != nil &amp;&amp; b.overflow(t).tophash[0] != emptyRest {
+					goto notLast
+				}
+			} else {
+				if b.tophash[i+1] != emptyRest {
+					goto notLast
+				}
+			}
+			for {
+				b.tophash[i] = emptyRest
+				if i == 0 {
+					if b == bOrig {
+						break // beginning of initial bucket, we're done.
+					}
+					// Find previous bucket, continue at its last entry.
+					c := b
+					for b = bOrig; b.overflow(t) != c; b = b.overflow(t) {
+					}
+					i = bucketCnt - 1
+				} else {
+					i--
+				}
+				if b.tophash[i] != emptyOne {
+					break
+				}
+			}
+		notLast:
+			h.count--
+			// Reset the hash seed to make it more difficult for attackers to
+			// repeatedly trigger hash collisions. See issue 25237.
+			if h.count == 0 {
+				h.hash0 = fastrand()
+			}
+			break search
+		}
+	}
+
+	if h.flags&amp;hashWriting == 0 {
+		throw(&quot;concurrent map writes&quot;)
+	}
+	h.flags &amp;^= hashWriting
+}
+</code></pre>
+<h1 id="扩容">扩容</h1>
+<p>扩容策略分以下两种情况：</p>
+<ol>
+<li>
+<p>判断已经达到装载因子的临界点，即元素个数 &gt;= 桶（bucket）总数 * 6.5，这时候说明大部分的桶可能都快满了（即平均每个桶存储的键值对达到6.5个），如果插入新元素，有大概率需要挂在溢出桶（overflow bucket）上，判断
+函数为 <code>overLoadFactor</code></p>
+</li>
+<li>
+<p>判断溢出桶是否太多，当桶总数 &lt; 2 ^ 15 时，如果溢出桶总数 &gt;= 桶总数，
+则认为溢出桶过多。当桶总数 &gt;= 2 ^ 15 时，直接与 2 ^ 15 比较，当溢出
+桶总数 &gt;= 2 ^ 15 时，即认为溢出桶太多了，判断函数：<code>tooManyOverflowBuckets</code></p>
+<p>在某些场景下，比如不断的增删，这样会造成 overflow 的 bucket 数量增多，但负载因子
+又不高，未达不到第 1 点的临界值，就不能触发扩容来缓解这种情况。这样会造成桶的使用率不高，
+值存储得比较稀疏，查找插入效率会变得非常低，因此有了第 2 点判断指标。这就像是一座空城，房
+子很多，但是住户很少，都分散了，找起人来很困难</p>
+<p>两种情况官方采用了不同的解决方案</p>
+<p>针对 1，将 B + 1（桶数量为 2 ^ B，B+1 则代表翻倍），新建一个 buckets 数组，
+新的 buckets 大小是原来的 2 倍，然后旧 buckets 数据搬迁到新的 buckets。该方法我们称之为增量扩容。</p>
+<p>针对 2，并不扩大容量，buckets 数量维持不变，重新做一遍类似增量扩容的搬迁动作，把松散的键值对
+重新排列一次，把在 overflow bucket 中的 key 移动到 bucket 中来以使 bucket 的使用率
+更高，进而保证更快的存取。该方法我们称之为等量扩容。</p>
+</li>
+</ol>
+<h2 id="判断扩容条件函数">判断扩容条件函数</h2>
+<h3 id="toomanyoverflowbuckets">tooManyOverflowBuckets</h3>
+<p>判断溢出桶是否太多，当桶总数 &lt; 2 ^ 15 时，如果溢出桶总数 &gt;= 桶总数，则认为溢出桶过多。当桶总数 &gt;= 2 ^ 15 时，直接与 2 ^ 15 比较，当溢出桶总数 &gt;= 2 ^ 15 时，即认为溢出桶太多了。</p>
+<pre><code class="language-go">// tooManyOverflowBuckets reports whether noverflow buckets is too many for a map with 1&lt;&lt;B buckets.
+// Note that most of these overflow buckets must be in sparse use;
+// if use was dense, then we'd have already triggered regular map growth.
+func tooManyOverflowBuckets(noverflow uint16, B uint8) bool {
+	// If the threshold is too low, we do extraneous work.
+	// If the threshold is too high, maps that grow and shrink can hold on to lots of unused memory.
+	// &quot;too many&quot; means (approximately) as many overflow buckets as regular buckets.
+	// See incrnoverflow for more details.
+	if B &gt; 15 {
+		B = 15
+	}
+	// The compiler doesn't see here that B &lt; 16; mask B to generate shorter shift code.
+	return noverflow &gt;= uint16(1)&lt;&lt;(B&amp;15)
+}
+</code></pre>
+<h3 id="overloadfactor">overLoadFactor</h3>
+<p>判断已经达到装载因子的临界点，即元素个数 &gt;= 桶（bucket）总数 * 6.5，这时候说明大部分的桶可能都快满了
+（即平均每个桶存储的键值对达到 6.5 个），如果插入新元素，有大概率需要挂在溢出桶（overflow bucket）上。</p>
+<pre><code class="language-go">// overLoadFactor reports whether count items placed in 1&lt;&lt;B buckets is over loadFactor.
+func overLoadFactor(count int, B uint8) bool {
+	return count &gt; bucketCnt &amp;&amp; uintptr(count) &gt; loadFactorNum*(bucketShift(B)/loadFactorDen)
+}
+</code></pre>
+<h2 id="扩容函数">扩容函数</h2>
+<h3 id="hashgrow">hashGrow</h3>
+<pre><code class="language-go">// hashGrow() 函数实际上并没有真正地“搬迁”，它只是分配好了新的 buckets，并将老的 buckets
+// 挂到了 hmap.oldbuckets 字段上。
+func hashGrow(t *maptype, h *hmap) {
+	// If we've hit the load factor, get bigger.
+	// Otherwise, there are too many overflow buckets,
+	// so keep the same number of buckets and &quot;grow&quot; laterally.
+	bigger := uint8(1)
+
+	// 如果没有达到负载因子临界点，则设置为等量扩容
+	if !overLoadFactor(h.count+1, h.B) {
+		bigger = 0 // bigger 设置为 0
+		h.flags |= sameSizeGrow
+	}
+	// 记录老 buckets 的位置
+	oldbuckets := h.buckets
+	// 分配一个新的数组用来存放新桶
+	newbuckets, nextOverflow := makeBucketArray(t, h.B+bigger, nil)
+
+	flags := h.flags &amp;^ (iterator | oldIterator)
+	if h.flags&amp;iterator != 0 {
+		flags |= oldIterator
+	}
+	// commit the grow (atomic wrt gc)
+	h.B += bigger
+	h.flags = flags
+	h.oldbuckets = oldbuckets
+	h.buckets = newbuckets
+	h.nevacuate = 0
+	h.noverflow = 0
+
+	if h.extra != nil &amp;&amp; h.extra.overflow != nil {
+		// Promote current overflow buckets to the old generation.
+		if h.extra.oldoverflow != nil {
+			throw(&quot;oldoverflow is not nil&quot;)
+		}
+		h.extra.oldoverflow = h.extra.overflow
+		h.extra.overflow = nil
+	}
+	if nextOverflow != nil {
+		if h.extra == nil {
+			h.extra = new(mapextra)
+		}
+		h.extra.nextOverflow = nextOverflow
+	}
+
+	// the actual copying of the hash table data is done incrementally
+	// by growWork() and evacuate().
+}
+</code></pre>
+<h3 id="growwork">growWork</h3>
+<pre><code class="language-go">// 真正搬迁 buckets 的动作在 growWork() 函数中，而调用 growWork() 函数的动作是在
+// mapassign() 和 mapdelete() 函数中。也就是插入（包括修改）、删除 key 的时候，都
+// 会尝试进行搬迁 buckets 的工作。它们会先检查 oldbuckets 是否搬迁完毕（检查 oldbuckets
+// 是否为 nil），再决定是否进行搬迁工作。
+// growWork 会搬迁 0~2 个桶
+func growWork(t *maptype, h *hmap, bucket uintptr) {
+	// make sure we evacuate the oldbucket corresponding
+	// to the bucket we're about to use
+	evacuate(t, h, bucket&amp;h.oldbucketmask())
+
+	// evacuate one more oldbucket to make progress on growing
+	if h.growing() { // 再多搬迁一个桶
+		evacuate(t, h, h.nevacuate)
+	}
+}
+</code></pre>
+<h1 id="疑问">疑问</h1>
+<ol>
+<li>如果两个 key 落入同一个桶，且恰巧它们的 <code>tophash</code> 也相同，此时的<code>添加</code>和<code>查找</code>流程会怎样？</li>
+</ol>
+<blockquote>
+<p>对于 <code>查找</code> 而言，如果 <code>tophash</code> 相同还会进一步判断 <code>key</code> 是否相同，如果 <code>key</code> 相同则返回，不同则继续查找。</p>
+<p><code>添加</code> 也是类似的，如果 <code>tophash</code> 和 <code>key</code> 都相同，说明该 <code>key</code> 已经存在，会执行更新操作，否则继续寻找空位，也就是说，在一个桶中可能出现相同相同的 <code>tophash</code>。</p>
+</blockquote>
+<ol start="2">
+<li>go map 的负载因子是多少？</li>
+</ol>
+<blockquote>
+<p>负载因子是 <code>6.5</code>，在源码中表现为：</p>
+<pre><code class="language-go">// Maximum average load of a bucket that triggers growth is 6.5.
+// Represent as loadFactorNum/loadFactorDen, to allow integer math.
+loadFactorNum = 13
+loadFactorDen = 2
+</code></pre>
+</blockquote>
+<h1 id="参考">参考</h1>
+<p>Go是如何设计Map的 — 机器铃砍菜刀，https://mp.weixin.qq.com/s/q3qyc5uf3IMVt4KQD12IKQ</p>
+<p>【Golang】Map长啥样儿？— 幼麟实验室，https://www.bilibili.com/video/BV1Sp4y1U7dJ</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/go/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#go</a>
+    
+    <a href="/tags/%E6%BA%90%E7%A0%81/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#源码</a>
+    
+    <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#数据结构</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/ke-kao-chuan-shu-de-shi-xian-ji-zhi-ting-zhi-deng-dai-xie-yi-swstop-and-wait/" class="block">可靠传输的实现机制 —— 停止-等待协议SW（Stop-and-Wait）</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/leetcode-25-k-ge-yi-zu-fan-zhuan-lian-biao/" class="block">leetcode 25. K 个一组翻转链表</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#mapaccess1">mapaccess1</a></li>
+    <li><a href="#mapaccess2">mapaccess2</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#判断扩容条件函数">判断扩容条件函数</a>
+      <ul>
+        <li><a href="#toomanyoverflowbuckets">tooManyOverflowBuckets</a></li>
+        <li><a href="#overloadfactor">overLoadFactor</a></li>
+      </ul>
+    </li>
+    <li><a href="#扩容函数">扩容函数</a>
+      <ul>
+        <li><a href="#hashgrow">hashGrow</a></li>
+        <li><a href="#growwork">growWork</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/go-containerheap-yuan-ma-yue-du/" class="no-underline">go container/heap 源码阅读</a>
+          <br />
+        
+          <a href="/posts/2021-2-24-go-container-list-source-code/" class="no-underline">go container/list 源码分析【未完】</a>
+          <br />
+        
+          <a href="/posts/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/" class="no-underline">【两万字长文带你深入Go语言GC源码——腾讯技术工程】阅读笔记</a>
+          <br />
+        
+          <a href="/posts/goji-yi-ci-defer-cuo-wu/" class="no-underline">go：记一次 defer 错误</a>
+          <br />
+        
+          <a href="/posts/goiocopy-de-keng/" class="no-underline">go：http.Request.Body 第二次读取为空 </a>
+          <br />
+        
+          <a href="/posts/2021-3-13-byte-array/" class="no-underline">go 字节数组错误：\u0001</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

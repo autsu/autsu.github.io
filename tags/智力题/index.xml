@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>智力题 on /dev/null</title>
+    <link>/tags/%E6%99%BA%E5%8A%9B%E9%A2%98/</link>
+    <description>Recent content in 智力题 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Tue, 15 Jun 2021 11:18:00 +0000</lastBuildDate><atom:link href="/tags/%E6%99%BA%E5%8A%9B%E9%A2%98/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>25匹马的角逐</title>
+      <link>/posts/25-pi-ma-de-jiao-zhu/</link>
+      <pubDate>Tue, 15 Jun 2021 11:18:00 +0000</pubDate>
+      
+      <guid>/posts/25-pi-ma-de-jiao-zhu/</guid>
+      <description>25 匹马，5条跑道，每个跑道最多能有 1 匹马进行比赛，（就是说最多同时可以有 5 匹马一起比赛）， 不能使用计时器，且每匹马的速度都很稳定（意思是在上一场比赛中 A 马比 B 马快，则下一场比赛中A马 依然比 B 马快），问最少比多少次能比出前3名和前5名？</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>go | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="Eureka is a elegant and powerful theme for Hugo.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Tags",
+      "item":"/tags/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"go",
+      "item":"/tags/go/"}]
+}
+</script>
+
+
+
+
+<script type="application/ld+json">
+{
+    "@context":"https://schema.org",
+    "@type":"ItemList",
+    "itemListElement":[{
+            "@type":"ListItem",
+            "position":  1 ,
+            "name": "一个 EOF 引发的低级错误",
+            "description": "今天更新了一下之前写的 tcp server，结果测试的时候发现了一个十分诡异的 BUG：客户端这边发送完数据，进程都已经退出了，但是服务端却依然源源不断的接收到客户端发来的数据，而且数据包的大小都为 0，这个 BUG 花费了我大半天的时间，终于找到了问题所在，特此记录。",
+            "url": "/posts/eof_cuo_wu/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "一个 go nil pointer 错误记录",
+            "description": "看看下面这段代码的运行结果是什么？\npackage main import ( \u0026quot;fmt\u0026quot; \u0026quot;net\u0026quot; ) func main() { lis, err := net.",
+            "url": "/posts/go_nil_pointer/"
+        },{
+            "@type":"ListItem",
+            "position":  3 ,
+            "name": "go binary 使用指南 ",
+            "description": "一个示例 demo：\npackage main import ( \u0026quot;bytes\u0026quot; \u0026quot;encoding/binary\u0026quot; \u0026quot;fmt\u0026quot; \u0026quot;io\u0026quot; ) type I interface { Do() } type S struct { Id int64 Name [10]byte } func (s *S) Do() { fmt.",
+            "url": "/posts/go_binary/"
+        },{
+            "@type":"ListItem",
+            "position":  4 ,
+            "name": "为什么 go 需要 nil chan",
+            "description": "如果没有调用 make 来对一个 chan 进行初始化，那么这个 chan 就是 nil chan。",
+            "url": "/posts/wei-shen-me-go-you-nil-chan/"
+        },{
+            "@type":"ListItem",
+            "position":  5 ,
+            "name": "go mutex 原理",
+            "description": "参考： https://www.bilibili.com/video/BV15V411n7fM?p=2\u0026amp;spm_id_from=pageDriver\u0026amp;vd_source=2ff613424b86c58a71ba91b7304ffe9b\n总览 mutex 的数据结构：",
+            "url": "/posts/go-mutex-yuan-ma/"
+        },{
+            "@type":"ListItem",
+            "position":  6 ,
+            "name": "go chan 原理（人话版）",
+            "description": "chan 原理（人话版） 说明：这里只是用大白话来阐述 chan 的大致原理，不保证严谨性，也不考虑一些繁枝细节（比如 sudog，gopark，goready），仅作为一个简单的参考理解，如果想深入理解 chan 的底层实现，请自行参阅其他博客",
+            "url": "/posts/go-chan-yuan-ma/"
+        },{
+            "@type":"ListItem",
+            "position":  7 ,
+            "name": "go 熔断器 gobreaker 源码阅读",
+            "description": "该文章仅作为本人笔记，不具备太大的参考价值\n该文章着重记录源码，没有对熔断器这一概念做过多理念上的说明解释\n该文章排版、思路较为混乱，后续可能会进行修改\n示例 官方示例 官方示例有点太简单了，完全无法体会到 熔断 这一概念",
+            "url": "/posts/gobreaker/"
+        },{
+            "@type":"ListItem",
+            "position":  8 ,
+            "name": "go 文件操作的\"坑\"之 Seek()",
+            "description": "引子 最近买了块机械硬盘作为仓库盘，用硬盘盒连接到 mac，但是这块硬盘貌似有休眠机制（不确定），如果一段时间没有读写操作就会停转，等到需要操作时才会唤醒，唤醒会有比较明显的磁盘启动声音，并且需要等待 5s 左右才能使用。",
+            "url": "/posts/go_seek/"
+        },{
+            "@type":"ListItem",
+            "position":  9 ,
+            "name": "go gc 白话版",
+            "description": "主流的垃圾回收算法 引用计数法 根据对象自身的引用计数来回收，当引用计数归零时进行回收，但是计数频繁更新会带来更多开销，且无法解决循环引用的问题。\n优点：简单直接，回收速度快 缺点：需要额外的空间存放计数，无法处理循环引用的情况； 标记清除法 标记出所有不需要回收的对象，在标记完成后统一回收掉所有未被标记的对象。",
+            "url": "/posts/go-gc/"
+        },{
+            "@type":"ListItem",
+            "position":  10 ,
+            "name": "Go errgroup 使用",
+            "description": "简介 errgroup 是 WaitGroup 的强化版，其在 WaitGroup 的基础上添加了错误处理的功能：如果一组 goroutine 中的某一个发生了错误，那么后续的所有 gorouine 都不会被执行。",
+            "url": "/posts/errgroup/"
+        },{
+            "@type":"ListItem",
+            "position":  11 ,
+            "name": "一段莫名阻塞的 reflect 代码",
+            "description": "package main import ( \u0026quot;fmt\u0026quot; \u0026quot;reflect\u0026quot; ) type I interface { Do() } type S struct{} func (s *S) Do() {} func EnforcePtr(obj interface{}) { v := reflect.",
+            "url": "/posts/block-code/"
+        },{
+            "@type":"ListItem",
+            "position":  12 ,
+            "name": "GMP 面试题",
+            "description": "Goroutine 阻塞的话，是不是对应的 M 也会阻塞 如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么这个 G 会被标记为 runnable 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。",
+            "url": "/posts/gmp-mian-shi-ti/"
+        },{
+            "@type":"ListItem",
+            "position":  13 ,
+            "name": "两个 main goroutine 操作一个 channel 会怎样",
+            "description": "引子 定义一个全局变量 chan，然后创建两个 main goroutine，一个往全局 chan 里发送数据，一个从全局 chan 里读取数据，会发生什么？",
+            "url": "/posts/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/"
+        },{
+            "@type":"ListItem",
+            "position":  14 ,
+            "name": "go map源码阅读",
+            "description": "看看 map 这个重要数据结构在 go 中是如何实现的",
+            "url": "/posts/go-map-yuan-ma-yue-du/"
+        },{
+            "@type":"ListItem",
+            "position":  15 ,
+            "name": "go container/heap 源码阅读",
+            "description": "heap（堆），是一个用数组表示的完全二叉树，常用于构建优先队列，排序和快速找出一个集合中的最小值（或者最大值）。在 go 标准库下的 container 包中提供了这种数据结构。",
+            "url": "/posts/go-containerheap-yuan-ma-yue-du/"
+        }
+    ]
+}
+</script><meta property="og:title" content="go | /dev/null" />
+<meta property="og:type" content="website" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/tags/go/" />
+
+
+
+
+
+<meta property="og:description" content="Eureka is a elegant and powerful theme for Hugo." />
+
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="og:updated_time" content="2022-09-06T02:28:52&#43;00:00" />
+
+
+
+<meta property="article:section" content="tags" />
+
+
+<link rel="alternate" type="application/rss+xml" href="/tags/go/index.xml" title="/dev/null" />
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+<article class="mx-6 my-8">
+    <h1 class="font-bold text-3xl text-primary-text"><i class="fas fa-tag fa-fw" aria-hidden="true"></i>&nbsp;go</h1>
+    <div class="bg-secondary-bg rounded " style="padding: 3rem!important;margin-top: 30px;">
+        <div class="overflow-hidden archive" style="font-size:15px;line-height: 2;padding-bottom: 0.8em"><h3 style="font-size: 1.5em;">2022</h3><article class="archive-item">
+                        <a href="/posts/eof_cuo_wu/" class="archive-item-link">
+                            >>&nbsp 09-06&nbsp&nbsp&nbsp一个 EOF 引发的低级错误</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/go_nil_pointer/" class="archive-item-link">
+                            >>&nbsp 09-05&nbsp&nbsp&nbsp一个 go nil pointer 错误记录</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/go_binary/" class="archive-item-link">
+                            >>&nbsp 08-08&nbsp&nbsp&nbspgo binary 使用指南 </a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/wei-shen-me-go-you-nil-chan/" class="archive-item-link">
+                            >>&nbsp 07-18&nbsp&nbsp&nbsp为什么 go 需要 nil chan</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/go-mutex-yuan-ma/" class="archive-item-link">
+                            >>&nbsp 07-12&nbsp&nbsp&nbspgo mutex 原理</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/go-chan-yuan-ma/" class="archive-item-link">
+                            >>&nbsp 06-26&nbsp&nbsp&nbspgo chan 原理（人话版）</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/gobreaker/" class="archive-item-link">
+                            >>&nbsp 06-11&nbsp&nbsp&nbspgo 熔断器 gobreaker 源码阅读</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/go_seek/" class="archive-item-link">
+                            >>&nbsp 06-08&nbsp&nbsp&nbspgo 文件操作的"坑"之 Seek()</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/go-gc/" class="archive-item-link">
+                            >>&nbsp 06-01&nbsp&nbsp&nbspgo gc 白话版</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/errgroup/" class="archive-item-link">
+                            >>&nbsp 05-28&nbsp&nbsp&nbspGo errgroup 使用</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/block-code/" class="archive-item-link">
+                            >>&nbsp 05-13&nbsp&nbsp&nbsp一段莫名阻塞的 reflect 代码</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/gmp-mian-shi-ti/" class="archive-item-link">
+                            >>&nbsp 01-26&nbsp&nbsp&nbspGMP 面试题</a>
+                        
+                    </article><h3 style="font-size: 1.5em;">2021</h3><article class="archive-item">
+                        <a href="/posts/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/" class="archive-item-link">
+                            >>&nbsp 08-08&nbsp&nbsp&nbsp两个 main goroutine 操作一个 channel 会怎样</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/go-map-yuan-ma-yue-du/" class="archive-item-link">
+                            >>&nbsp 07-29&nbsp&nbsp&nbspgo map源码阅读</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/go-containerheap-yuan-ma-yue-du/" class="archive-item-link">
+                            >>&nbsp 07-22&nbsp&nbsp&nbspgo container/heap 源码阅读</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/" class="archive-item-link">
+                            >>&nbsp 06-04&nbsp&nbsp&nbsp【两万字长文带你深入Go语言GC源码——腾讯技术工程】阅读笔记</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/goji-yi-ci-defer-cuo-wu/" class="archive-item-link">
+                            >>&nbsp 04-23&nbsp&nbsp&nbspgo：记一次 defer 错误</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/goiocopy-de-keng/" class="archive-item-link">
+                            >>&nbsp 04-17&nbsp&nbsp&nbspgo：http.Request.Body 第二次读取为空 </a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/2021-3-13-byte-array/" class="archive-item-link">
+                            >>&nbsp 04-16&nbsp&nbsp&nbspgo 字节数组错误：\u0001</a>
+                        
+                    </article><h3 style="font-size: 1.5em;">2020</h3><article class="archive-item">
+                        <a href="/posts/2021-2-24-go-container-list-swap/" class="archive-item-link">
+                            >>&nbsp 02-24&nbsp&nbsp&nbspgo 交换 container/list 的值</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/2021-2-24-go-container-list-source-code/" class="archive-item-link">
+                            >>&nbsp 02-24&nbsp&nbsp&nbspgo container/list 源码分析【未完】</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/2021-1-24-go-post-request/" class="archive-item-link">
+                            >>&nbsp 01-24&nbsp&nbsp&nbspgo 发送 post 请求</a>
+                        
+                    </article></div>
+    </div>
+</article>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

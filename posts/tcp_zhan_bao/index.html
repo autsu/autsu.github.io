@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>tcp 粘包/拆包问题 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="简介 tcp 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 tcp 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"tcp 粘包/拆包问题",
+      "item":"/posts/tcp_zhan_bao/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/tcp_zhan_bao/"
+    },
+    "headline": "tcp 粘包\/拆包问题 | \/dev\/null","datePublished": "2022-09-05T00:51:45+00:00",
+    "dateModified": "2022-09-05T00:51:45+00:00",
+    "wordCount":  867 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "简介 tcp 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 tcp 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。"
+}
+</script><meta property="og:title" content="tcp 粘包/拆包问题 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/tcp_zhan_bao/" />
+
+
+
+
+<meta property="og:description" content="简介 tcp 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 tcp 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-09-05T00:51:45&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-09-05T00:51:45&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="tcp" />
+
+
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">tcp 粘包/拆包问题</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-09-05</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>5分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h1 id="简介">简介</h1>
+<p>tcp 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 tcp 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。</p>
+<p>tcp 的流式传输，简单的说就是没有消息边界记录，比如发送端为了将多个发往接收端的包，更有效的发到对方，使用了优化方法（Nagle算法），将多次间隔较小、数据量小的数据包，合并成一个大的数据包发送(把发送端的缓冲区填满一次性发送。这样接收端收到的整个数据中其实是包含了多个小包，需要将数据拆分，还原成小包，从而才能进行处理，但因为没有消息边界记录，所以如何还原就成了一个问题。</p>
+<p>在上面的例子中，tcp 将多次写入缓冲区的数据包合并为一次发送，就是 <strong>粘包</strong> 问题。</p>
+<p>此外 tcp 还存在 <strong>拆包</strong> 问题，就是发送包的大小超过了缓冲区大小或者 MSS，比如发送端使用 protobuf 编码数据，然后使用 tcp 进行传输，这个编码的数据大小是 10000 byte，超过了 tcp 的发送缓存区大小 5000 byte（随便写的数字），一次性无法全部发送，所以便会发生拆包，分两次发送，接收端这边第一次只收到了 5000 byte 数据，因为数据使用 protobuf 编码的，不同于文本消息，必须要拿到不多不少刚刚好的 10000 byte 大小的数据，才能反序列化出原始的数据，但因为 tcp 不记录消息长度，所以接收端这边无法知道到底要拿多少数据，这也是一个问题。</p>
+<p>可以看到发生粘包和拆包的原因都是因为 tcp 不记录消息边界（也就是消息长度），既然 tcp 自身不记录，那就只能用户自己解决了，比如写一个协议，为消息添加上消息头，在消息头中记录消息的长度，然后将消息头 + 消息本体作为一个整体发送，（这里的消息头是需要定长的，比如固定为 10 byte），接收端这边根据协议定义，去读取这个定长的消息头，从里面获取到消息本体的长度，现在知道了消息的长度就好解决上面的问题了。</p>
+<h1 id="拆包演示程序">拆包演示程序</h1>
+<p>下面先使用一个错误的 protobuf 的示例程序来演示一下拆包问题：</p>
+<h2 id="server-端">server 端</h2>
+<p>server 负责读取报文，然后通过 proto.Unmarshal 还原出原始的数据。其中将缓冲区大小设置为了 client 要发送的大小 279896。</p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+	&quot;net&quot;
+	&quot;protobuftest/pb/pbfile&quot;
+
+	&quot;google.golang.org/protobuf/proto&quot;
+)
+
+func main() {
+	lis, err := net.Listen(&quot;tcp&quot;, &quot;:7788&quot;)
+	assert(err, &quot;listen error: %v&quot;)
+
+	for {
+		conn, err := lis.Accept()
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		for {
+			// b := make([]byte, 1024)	// proto: cannot parse invalid wire-format data
+			b := make([]byte, 279896)
+			n, err := conn.Read(b)
+			if err != nil {
+				fmt.Println(err)
+				break
+			}
+			fmt.Printf(&quot;read %v bytes\n&quot;, n)
+
+			var m pbfile.Message
+			if err := proto.Unmarshal(b, &amp;m); err != nil {
+				fmt.Println(err)
+				break
+			}
+			fmt.Println(m.Uid)
+		}
+	}
+}
+
+func assert(err error, format string) {
+	if err != nil {
+		panic(fmt.Sprintf(format, err.Error()))
+	}
+}
+</code></pre>
+<h2 id="client-端">client 端</h2>
+<p>client 使用 protobuf 序列化 struct pbfile.Message，然后使用 tcp 发送，这个 struct 中有一个 Data 字段，这里我将一张 140k 的图片读取出来，然后将 Data 字段设置为读取出的 []byte 。</p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+	&quot;google.golang.org/protobuf/proto&quot;
+	&quot;google.golang.org/protobuf/types/known/wrapperspb&quot;
+	&quot;net&quot;
+	&quot;os&quot;
+	&quot;path/filepath&quot;
+	&quot;protobuftest/pb/pbfile&quot;
+)
+
+func main() {
+	home := os.Getenv(&quot;HOME&quot;)
+	fp := filepath.Join(home, &quot;Downloads/jDKUARa.jpg&quot;)
+
+	f, err := os.Open(fp)
+	assert(err, &quot;open file error: %v&quot;)
+	defer f.Close()
+
+	file, err := os.ReadFile(fp)
+	assert(err, &quot;read file error: %v&quot;)
+
+	msg := pbfile.Message{
+		Uid:         wrapperspb.UInt64(10086),
+		Data:        file,
+		MessageType: wrapperspb.String(&quot;image&quot;),
+	}
+
+	conn, err := net.Dial(&quot;tcp&quot;, &quot;:7788&quot;)
+	assert(err, &quot;dial error: %v&quot;)
+	defer conn.Close()
+
+	b, err := proto.Marshal(&amp;msg)
+	assert(err, &quot;proto marshal error: %v&quot;)
+	fmt.Printf(&quot;proto marshal size: %v\n&quot;, len(b))
+
+	n, err := conn.Write(b)
+	assert(err, &quot;write to conn error: %v&quot;)
+	fmt.Printf(&quot;write %v bytes\n&quot;, n)
+}
+
+func assert(err error, format string) {
+	if err != nil {
+		panic(fmt.Sprintf(format, err.Error()))
+	}
+}
+</code></pre>
+<h2 id="proto">proto</h2>
+<pre><code class="language-protobuf">syntax=&quot;proto3&quot;;
+option go_package = &quot;/pbfile&quot;;
+import &quot;google/protobuf/wrappers.proto&quot;;
+
+message Message {
+  google.protobuf.UInt64Value uid = 1;
+  bytes data = 2;
+  google.protobuf.StringValue messageType = 3;
+}
+</code></pre>
+<h2 id="运行结果">运行结果</h2>
+<p>分别运行 server 和 client，输出：</p>
+<pre><code class="language-shell"># client
+$ ./client
+proto marshal size: 279896
+write 279896 bytes
+
+# server
+$ ./server          
+read 81660 bytes
+proto: cannot parse invalid wire-format data
+</code></pre>
+<p>可以看到 client 这边发送了 279896 字节的数据，但是 server 这边只读到了 81660 字节，因为 protobuf 使用二进制编码，所以如果数据不完整会无法解析，从而报错：<code>proto: cannot parse invalid wire-format data</code></p>
+<p>部分测试结果可以印证这一点，只要读取的长度不等于 279896 就会解析失败：</p>
+<pre><code class="language-shell">read 97992 bytes
+proto: cannot parse invalid wire-format data
+read 81660 bytes
+proto: cannot parse invalid wire-format data
+read 130656 bytes
+proto: cannot parse invalid wire-format data
+</code></pre>
+<p>但是有时候又是正常的：</p>
+<pre><code class="language-shell"># client
+$ ./client
+proto marshal size: 279896
+write 279896 bytes
+
+# server
+$ read 279896 bytes
+value:10086
+EOF
+</code></pre>
+<blockquote>
+<h2 id="疑问">疑问</h2>
+<p>这里有个疑问，既然 server 的缓冲区已经将长度设置为了 279896，刚好等于 client 要发送的包的大小，但是为什么会出现没有读取满的情况？</p>
+<p>可能是因为：发送方虽然发送了 279896 长度的数据，但是这些数据不会直接通过网络传输，而是先添加到 socket 发送缓冲区，至于什么时候发送，发送多少，都是由系统内核来决定的，所以会出现诸如上面这种没有完全发完的情况，偶尔又会出现全部发送的情况。</p>
+</blockquote>
+<h1 id="粘包演示程序">粘包演示程序</h1>
+<h2 id="server">server</h2>
+<p>服务端试图从收到的包中反序列化出原始数据。</p>
+<pre><code class="language-go">func main() {
+	lis, err := net.Listen(&quot;tcp&quot;, &quot;:7788&quot;)
+	assert(err, &quot;listen error: %v&quot;)
+
+	for {
+		conn, err := lis.Accept()
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		for {
+			b := make([]byte, 1024)
+			n, err := conn.Read(b)
+			if err != nil {
+				fmt.Println(err)
+				break
+			}
+			fmt.Printf(&quot;read %v bytes\n&quot;, n)
+
+			var m pbfile.Message
+			if err := proto.Unmarshal(b, &amp;m); err != nil {
+				fmt.Println(err)
+				break
+			}
+			fmt.Println(m.Uid)
+		}
+	}
+}
+</code></pre>
+<h2 id="client">client</h2>
+<p>客户端发送 10 条消息，每条消息设置不同的 Uid，且序列化的对象都比较小。</p>
+<pre><code class="language-go">func main() {
+	conn, err := net.Dial(&quot;tcp&quot;, &quot;:7788&quot;)
+	assert(err, &quot;dial error: %v&quot;)
+	defer conn.Close()
+
+  var totalN int 
+	for i := 0; i &lt; 10; i++ {
+		msg := pbfile.Message{
+			Uid:         wrapperspb.UInt64(uint64(i)),
+			Data:        []byte(&quot;hello&quot;),
+			MessageType: wrapperspb.String(&quot;text&quot;),
+		}
+
+		b, err := proto.Marshal(&amp;msg)
+		assert(err, &quot;proto marshal error: %v&quot;)
+		fmt.Printf(&quot;proto marshal size: %v\n&quot;, len(b))
+
+		n, err := conn.Write(b)
+    totalN += n
+		assert(err, &quot;write to conn error: %v&quot;)
+		fmt.Printf(&quot;write %v bytes\n&quot;, n)
+	}
+  fmt.Printf(&quot;total write %v bytes\n&quot;, totalN)
+}
+</code></pre>
+<h2 id="运行结果-1">运行结果</h2>
+<pre><code class="language-shell">$ go run server.go
+read 74 bytes
+proto: cannot parse invalid wire-format data
+
+$ go run client.go                                           
+proto marshal size: 17
+write 17 bytes
+proto marshal size: 19
+write 19 bytes
+proto marshal size: 19
+write 19 bytes
+proto marshal size: 19
+write 19 bytes
+proto marshal size: 19
+write 19 bytes
+proto marshal size: 19
+write 19 bytes
+proto marshal size: 19
+write 19 bytes
+proto marshal size: 19
+write 19 bytes
+proto marshal size: 19
+write 19 bytes
+proto marshal size: 19
+write 19 bytes
+total write 188 bytes
+</code></pre>
+<p>可以看到客户端这边每次发送的报文长度基本都是 19 ，只有第一次是 17，一共发送了 188 bytes 的数据，而服务端这边，第一次从连接中接收到的数据大小是 74 bytes，这显然是有几个包 “粘” 在了一起，最终显然也是无法反序列化成功的。</p>
+<h1 id="解决方法">解决方法</h1>
+<p>我写了一个简单的 tcp server 库，里面解决了上面的粘包拆包问题，思路是自定义一个协议，协议的头部记录了数据的长度，然后接收端在收到报文后，先解析出头部，获取到数据的长度，在进行下一步读取。为了保证读满，可以使用 io.ReadFull 这个函数，大致的读取逻辑如下：</p>
+<p>首先是读取协议头部的函数：</p>
+<pre><code class="language-go">func (t *TCPConn) UnpackHeader(d *DataPack) (*Message, error) {
+	head := make([]byte, d.HeadSize())
+
+	_, err := io.ReadFull(t.socketConn, head)
+	if err != nil {
+		if err != io.EOF {
+			log.Println(&quot;read head error: &quot;, err)
+		}
+		return nil, err
+	}
+
+	body, err := d.UnPack(head)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+</code></pre>
+<p>然后是读取数据：</p>
+<pre><code class="language-go">func (t *TCPConn) Receive() (*Message, error) {
+	pack := NewDataPack()
+	header, err := t.UnpackHeader(pack)
+	if err != nil {
+		return nil, err
+  }
+  
+  dataLen := header.dataLen
+  
+  var (
+		tmpBuf = make([]byte, 0, 4096)
+		needN  = dataLen // 还剩多少需要读取
+		readN  int64     // 总共需要读取多少
+	)
+  
+  for {
+		buf := make([]byte, needN)
+		// 必须读满 len(buf)，否则返回一个 err
+		n, err := io.ReadFull(t.socketConn, buf)
+
+		// 没有读满 buf
+		if err != nil {
+			// 虽然没读满，但是返回了 EOF 错误，说明没有数据可读了，可能是对方已经断开了连接，
+			// 此时就不需要再尝试读取了
+			if err == io.EOF {
+				return nil, err
+			}
+			// 将当前读的这部分添加到 tmp 中，暂时保存
+			tmpBuf = append(tmpBuf, buf[:n]...)
+			needN -= uint64(n) // 更新 needN 的值
+			readN += int64(n)
+			continue
+		}
+		// 读满了
+		tmpBuf = append(tmpBuf, buf...)
+		readN += int64(n)
+
+		if readN == int64(dataLen) {
+			break
+		}
+	}
+	m := NewMessage(tmpBuf, msgType)
+	return m, nil
+}
+</code></pre>
+<p>测试了前面的粘包拆包代码，发现结果都正确，说明可以解决这类问题，但是目前测试的依据较少，也可能不一定准确。</p>
+<p>附：</p>
+<p><a href="https://github.com/autsu/revrespct">项目地址</a></p>
+<p><a href="https://github.com/autsu/revrespct/tree/master/testdata">用 protobuf 来进行粘包拆包的测试代码</a></p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/tcp/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#tcp</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/eof_cuo_wu/" class="block">一个 EOF 引发的低级错误</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/go_nil_pointer/" class="block">一个 go nil pointer 错误记录</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#server-端">server 端</a></li>
+    <li><a href="#client-端">client 端</a></li>
+    <li><a href="#proto">proto</a></li>
+    <li><a href="#运行结果">运行结果</a></li>
+    <li><a href="#疑问">疑问</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#server">server</a></li>
+    <li><a href="#client">client</a></li>
+    <li><a href="#运行结果-1">运行结果</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

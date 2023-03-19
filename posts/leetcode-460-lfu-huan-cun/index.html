@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>LeetCode 460. LFU 缓存 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="最不经常使用（LFU）缓存算法
+请你为 最不经常使用（LFU）缓存算法设计并实现数据结构。
+实现 LFUCache 类：">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"LeetCode 460. LFU 缓存",
+      "item":"/posts/leetcode-460-lfu-huan-cun/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/leetcode-460-lfu-huan-cun/"
+    },
+    "headline": "LeetCode 460. LFU 缓存 | \/dev\/null","datePublished": "2021-06-16T21:52:51+00:00",
+    "dateModified": "2021-06-16T21:52:51+00:00",
+    "wordCount":  668 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "最不经常使用（LFU）缓存算法\n请你为 最不经常使用（LFU）缓存算法设计并实现数据结构。\n实现 LFUCache 类："
+}
+</script><meta property="og:title" content="LeetCode 460. LFU 缓存 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/leetcode-460-lfu-huan-cun/" />
+
+
+
+
+<meta property="og:description" content="最不经常使用（LFU）缓存算法
+请你为 最不经常使用（LFU）缓存算法设计并实现数据结构。
+实现 LFUCache 类：" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-06-16T21:52:51&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-06-16T21:52:51&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="LFU" />
+
+
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">LeetCode 460. LFU 缓存</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2021-06-16</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>4分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <p>最不经常使用（LFU）缓存算法</p>
+<!-- more -->
+<blockquote>
+<p>请你为 最不经常使用（LFU）缓存算法设计并实现数据结构。</p>
+<p>实现 LFUCache 类：</p>
+<p>LFUCache(int capacity) - 用数据结构的容量 capacity 初始化对象
+int get(int key) - 如果键存在于缓存中，则获取键的值，否则返回 -1。
+void put(int key, int value) - 如果键已存在，则变更其值；如果键不存在，请插入键值对。当缓存达到其容量时，则应该在插入新项之前，使最不经常使用的项无效。在此问题中，当存在平局（即两个或更多个键具有相同使用频率）时，应该去除 最近最久未使用 的键。
+注意「项的使用次数」就是自插入该项以来对其调用 get 和 put 函数的次数之和。使用次数会在对应项被移除后置为 0 。</p>
+<p>为了确定最不常使用的键，可以为缓存中的每个键维护一个 使用计数器 。使用计数最小的键是最久未使用的键。</p>
+<p>当一个键首次插入到缓存中时，它的使用计数器被设置为 1 (由于 put 操作)。对缓存中的键执行 get 或 put 操作，使用计数器的值将会递增。</p>
+<p> </p>
+<p>示例：</p>
+<p>输入：
+[&ldquo;LFUCache&rdquo;, &ldquo;put&rdquo;, &ldquo;put&rdquo;, &ldquo;get&rdquo;, &ldquo;put&rdquo;, &ldquo;get&rdquo;, &ldquo;get&rdquo;, &ldquo;put&rdquo;, &ldquo;get&rdquo;, &ldquo;get&rdquo;, &ldquo;get&rdquo;]
+[[2], [1, 1], [2, 2], [1], [3, 3], [2], [3], [4, 4], [1], [3], [4]]
+输出：
+[null, null, null, 1, null, -1, 3, null, -1, 3, 4]</p>
+<p>解释：
+// cnt(x) = 键 x 的使用计数
+// cache=[] 将显示最后一次使用的顺序（最左边的元素是最近的）
+LFUCache lFUCache = new LFUCache(2);
+lFUCache.put(1, 1);   // cache=[1,_], cnt(1)=1
+lFUCache.put(2, 2);   // cache=[2,1], cnt(2)=1, cnt(1)=1
+lFUCache.get(1);       // 返回 1
+// cache=[1,2], cnt(2)=1, cnt(1)=2
+lFUCache.put(3, 3);   // 去除键 2 ，因为 cnt(2)=1 ，使用计数最小
+// cache=[3,1], cnt(3)=1, cnt(1)=2
+lFUCache.get(2);       // 返回 -1（未找到）
+lFUCache.get(3);       // 返回 3
+// cache=[3,1], cnt(3)=2, cnt(1)=2
+lFUCache.put(4, 4);   // 去除键 1 ，1 和 3 的 cnt 相同，但 1 最久未使用
+// cache=[4,3], cnt(4)=1, cnt(3)=2
+lFUCache.get(1);      // 返回 -1（未找到）
+lFUCache.get(3);      // 返回 3
+// cache=[3,4], cnt(4)=1, cnt(3)=3
+lFUCache.get(4);      // 返回 4
+// cache=[3,4], cnt(4)=2, cnt(3)=3</p>
+<p>提示：</p>
+<p>0 &lt;= capacity, key, value &lt;= 104
+最多调用 105 次 get 和 put 方法</p>
+<p>进阶：你可以为这两种操作设计时间复杂度为 O(1) 的实现吗？</p>
+</blockquote>
+<h2 id="方法1双哈希表链表">方法1	双哈希表+链表</h2>
+<p>哈希表1：</p>
+<p>key 记录使用次数</p>
+<p>value 为一条链表</p>
+<p>因为可能有多个键使用次数相同，所以用链表将这些相同频次的键连接起来，此外，该链表也可以记录这些键的使用时间，链表头为最近使用过的，链表尾为<strong>最近最久未使用</strong>的。当需要淘汰键时，移除链表尾即可，当需要插入时，添加到链表头。</p>
+<p>哈希表2：</p>
+<p>key 	与键相同，做快速映射</p>
+<p>value  为链表中的一个节点</p>
+<p>此外，还需要一个 min 值来保存全局最少使用次数，当需要淘汰时便。</p>
+<h3 id="大体思路">大体思路</h3>
+<p>由题可知，当执行 get 和 put 操作时，都会使得键的使用次数增加，而使用次数增加后，就需要从当前链表移动到其他链表中，操作思路为：先获取到当前键的使用次数，通过 <strong>哈希表1</strong> 定位到所在链表，并从中移除，再通过<strong>哈希表1</strong> 获取 使用次数+1 处的链表，并将键添加到链表头，（这两步都需要注意映射的链表是否为 null，否则会导致空指针错误），此外还需要更新该 key 的使用次数。</p>
+<p>get 首先从 <strong>哈希表2</strong> 中查找，如果找到了，则执行上面的移动操作，并返回值，未找到则返回 -1。</p>
+<p>put 首先需要查找是否存在，如果存在则只更新 value，同时执行移动操作，返回。如果不存在，则需要先判断是否需要淘汰，淘汰可以通过全局最少使用次数 min 从 <strong>哈希表1</strong> 中定位到链表，并移除该链表的尾元素，同时也要从 <strong>哈希表2</strong> 中移除。如果不需要淘汰，则直接添加到两个哈希表即可，因为是新值，所以使用次数为 1，要将 min 置为 1。</p>
+<p>这里还有一个问题，如何更新 min 的值呢？当需要移动时，检查一下移动后，该链表长度是否为 0，如果为空则更新 min。例如：</p>
+<p>哈希表1 情况如下：</p>
+<p>1 -&gt; [3, 3]
+2 -&gt; [1, 1]
+此时 min = 1</p>
+<p>当执行 get 3 操作时：
+2 -&gt; [3, 3] -&gt; [1, 1]
+此时应该更新 min = 2</p>
+<p>当 [3, 3] 从 1 移动到 2 后，1 对应的链表长度为 0，且 [3, 3] 的使用次数 = min = 1，所以需要将 min 更新为 2。</p>
+<p><img src="https://zengh1.github.io/post-images/1623900640431.png" alt=""></p>
+<h2 id="代码">代码：</h2>
+<pre><code class="language-go">package lfu
+
+import &quot;container/list&quot;
+
+type LFUCache struct {
+	// 记录出现次数，key 为次数，value 为链表，
+	// 因为同一个次数可能有多个值，按照规定，次数相同时按使用时间来比较，
+	// 所以用链表来记录顺序，新节点插入到链表头，当需要淘汰时，淘汰链表尾
+	cm map[int]*list.List
+
+	// 以键值 key 为索引，每个索引存放对应缓存在 cm 中链表里的内存地址
+	m map[int]*list.Element
+
+	// 最大容量
+	cap int
+
+	// 全局最少使用次数，当需要执行淘汰操作时，通过该变量可以在 O(1) 内定位到 cm 的对应链表
+	min int
+}
+
+// node 链表中存储的值
+type node struct {
+	key int
+	val int
+	cnt int // 使用次数
+}
+
+func Constructor(capacity int) LFUCache {
+	return LFUCache{
+		cm:  make(map[int]*list.List),
+		m:   make(map[int]*list.Element),
+		cap: capacity,
+		min: 0,
+	}
+}
+
+func (c *LFUCache) Get(key int) int {
+	if c.cap == 0 {
+		return -1
+	}
+	if e, ok := c.m[key]; ok {
+		n := e.Value.(*node)
+
+		// 将 n 从旧的链表中移除，因为 get() 后其使用次数增加了
+		if c.cm[n.cnt] != nil {
+			c.cm[n.cnt].Remove(e)
+		}
+
+		// 如果移除后旧链表为空，则更新全局最小使用次数 min
+		if c.cm[n.cnt] == nil || c.cm[n.cnt].Len() == 0 {
+			// 链表为空了，cm 保存也就没意义了，可以从 cm 中删除
+			delete(c.cm, n.cnt)
+			if c.min == n.cnt {
+				c.min++
+			}
+		}
+
+		// 更新 n 的使用次数
+		n.cnt++
+
+		// 获取新的链表，并将 n 添加到头部
+		if c.cm[n.cnt] == nil {
+			c.cm[n.cnt] = list.New()
+		}
+		ele := c.cm[n.cnt].PushFront(n)
+		// 更新 m 中的信息
+		c.m[key] = ele
+
+		return e.Value.(*node).val
+	}
+	return -1
+}
+
+func (c *LFUCache) Put(key int, value int) {
+	// 需要先判断是否存在，再判断容量是否溢出，例如
+	// LFU 容量为 2，现有如下数据：
+	// 1 -&gt; [1,5] -&gt; [2,6]     // 使用 1 次对应的链表
+	// 此时 push [1,2]，如果先判断容量溢出，则会触发移除操作，
+	// 将 [2,6] 移除，导致结果为 1 -&gt; [1,2] -&gt; [1,5]，
+	// 正确结果应该为：
+	// 1 -&gt; [2,6]
+	// 2 -&gt; [1,2]
+
+	// 如果该 key 已经存在
+	if no, ok := c.m[key]; ok {
+		n := no.Value.(*node)
+
+		if c.cm[n.cnt] != nil {
+			c.cm[n.cnt].Remove(no)
+		}
+
+		if c.cm[n.cnt] == nil || c.cm[n.cnt].Len() == 0 {
+			delete(c.cm, n.cnt)
+			if c.min == n.cnt {
+				c.min++
+			}
+		}
+
+		n.cnt++       // 使用次数 +1
+		n.val = value // 更新 val
+
+		if c.cm[n.cnt] == nil {
+			c.cm[n.cnt] = list.New()
+		}
+		ele := c.cm[n.cnt].PushFront(n)
+		c.m[key] = ele
+		return
+	}
+
+	// 如果添加该节点后容量溢出，则需要淘汰使用次数最少的节点
+	if len(c.m) == c.cap {
+		// 根据 min 字段，取出最小使用次数对应的链表
+		l := c.cm[c.min]
+		if l != nil {
+			//fmt.Println(l.Back())
+			// 该链表的最后一个即为最长时间未使用的节点，将其移除
+			rm := l.Remove(l.Back())
+			// 同时也从 m 中移除
+			delete(c.m, rm.(*node).key)
+		}
+	}
+
+	// key 不存在
+	n := &amp;node{
+		key: key,
+		val: value,
+		cnt: 1,
+	}
+
+	if _, ok := c.cm[1]; !ok {
+		c.cm[1] = list.New()
+	}
+
+	l := c.cm[1]
+	// 添加到计数链表中
+	node := l.PushFront(n)
+	// 添加到 m 中
+	c.m[key] = node
+	// 更新全局最小使用次数 min 为 1
+	c.min = 1
+}
+
+</code></pre>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/lfu/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#LFU</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/leetcode-43-zi-fu-chuan-xiang-cheng/" class="block">LeetCode 43. 字符串相乘</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/25-pi-ma-de-jiao-zhu/" class="block">25匹马的角逐</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#方法1双哈希表链表">方法1	双哈希表+链表</a>
+      <ul>
+        <li><a href="#大体思路">大体思路</a></li>
+      </ul>
+    </li>
+    <li><a href="#代码">代码：</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

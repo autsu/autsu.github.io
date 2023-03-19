@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>Mysql 最左前缀原则失效 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="引子 （以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看）
+有如下表，结构如下：">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Mysql 最左前缀原则失效",
+      "item":"/posts/mysql-zui-zuo-qian-zhui-yuan-ze-shi-xiao/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/mysql-zui-zuo-qian-zhui-yuan-ze-shi-xiao/"
+    },
+    "headline": "Mysql 最左前缀原则失效 | \/dev\/null","datePublished": "2021-08-07T11:17:51+00:00",
+    "dateModified": "2021-08-07T11:17:51+00:00",
+    "wordCount":  875 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "引子 （以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看）\n有如下表，结构如下："
+}
+</script><meta property="og:title" content="Mysql 最左前缀原则失效 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/mysql-zui-zuo-qian-zhui-yuan-ze-shi-xiao/" />
+
+
+
+
+<meta property="og:description" content="引子 （以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看）
+有如下表，结构如下：" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-08-07T11:17:51&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-08-07T11:17:51&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="mysql" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/mysql-mian-jing/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">Mysql 最左前缀原则失效</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2021-08-07</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>5分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h1 id="引子">引子</h1>
+<p>（以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看）</p>
+<p>有如下表，结构如下：</p>
+<pre><code>+-------+-------------+------+-----+---------+----------------+
+| Field | Type        | Null | Key | Default | Extra          |
++-------+-------------+------+-----+---------+----------------+
+| id    | int         | NO   | PRI | NULL    | auto_increment |
+| name  | varchar(50) | YES  | MUL | NULL    |                |
+| age   | int         | YES  |     | NULL    |                |
++-------+-------------+------+-----+---------+----------------+
+</code></pre>
+<p>创建一个 (name, age) 联合索引，并执行下面的 SQL 语句：</p>
+<pre><code class="language-sql"> explain select * from stu_join_index where age = '12';
+</code></pre>
+<p>运行后发现 <code>type</code> 为 <code>index</code>，这代表这次查询走了索引。</p>
+<p>（2022.3.20 更新：index 代表的是会对整个索引树进行扫描，其实也等同于全表查询，至于 index 相比 all 效率会不会更高，查阅了一些资料，都说 index 效率要更快一些）</p>
+<pre><code>+----+-------------+----------------+------------+-------+---------------+----------+---------+------+------+----------+--------------------------+
+| id | select_type | table          | partitions | type  | possible_keys | key      | key_len | ref  | rows | filtered | Extra                    |
++----+-------------+----------------+------------+-------+---------------+----------+---------+------+------+----------+--------------------------+
+|  1 | SIMPLE      | stu_join_index | NULL       | index | name_age      | name_age | 212     | NULL |    5 |    20.00 | Using where; Using index |
++----+-------------+----------------+------------+-------+---------------+----------+---------+------+------+----------+--------------------------+
+</code></pre>
+<p>这就奇怪了，按照 Mysql 最左前缀原则，建立的索引是 (name, age) ，应该只有（name），（name，age）会走索引啊？再尝试查询一下（age, name），看会不会走索引：</p>
+<pre><code class="language-sql">explain select * from stu_join_index where age = '12' and name = 'aa';
+</code></pre>
+<pre><code>+----+-------------+----------------+------------+-------+---------------+----------+---------+------+------+----------+--------------------------+
+| id | select_type | table          | partitions | type  | possible_keys | key      | key_len | ref  | rows | filtered | Extra                    |
++----+-------------+----------------+------------+-------+---------------+----------+---------+------+------+----------+--------------------------+
+|  1 | SIMPLE      | stu_join_index | NULL       | index | name_age      | name_age | 212     | NULL |    5 |    20.00 | Using where; Using index |
++----+-------------+----------------+------------+-------+---------------+----------+---------+------+------+----------+--------------------------+
+</code></pre>
+<p>可以看到这里依然走了索引。</p>
+<p>补充：<code>Extra</code> 显示的是 <code>Using where; Using index</code>，其中的 <code>Using index</code> 代表：从表中仅使用索引树中的信息就能获取查询语句的列的信息, 而不必进行其他额外查找（seek）去读取实际的行记录。当查询的列是单个索引的部分的列时, 可以使用此策略。（简单的翻译就是：使用索引来直接获取列的数据，而不需回表，即覆盖索引）。</p>
+<p>后来在网上找到了一个同样问题的文章（https://segmentfault.com/a/1190000022690969），他的情况和我一样，创建了一张表，表中总共有四个字段。 id 为主键，还有一个由 name，age，address 组成的联合索引，当他执行下面的 SQL 时：</p>
+<pre><code class="language-sql">EXPLAIN select * from user where address='beijing';
+</code></pre>
+<p>同样发现 <code>type</code> 字段为 <code>index</code>。</p>
+<p>最终在评论区找到了答案：</p>
+<blockquote>
+<p>总结下，不是最左原则失效了。是因为一开始设计的字段只有四个：(id,name,age,address)，此时的联
+合索引是（name, age, address），id 自带一个主键索引。相当于，四个字段都有索引。因为覆盖索引
+的缘故，怎么查都会走索引。当增加一个字段（use）后，该字段没有索引，因此 select * 的时候不会
+触发覆盖索引，因此不会走索引。但是如果只查询 select name,age,address,id 的话依然会走索引</p>
+</blockquote>
+<p>于是我进行了进一步测试，为表添加一个字段并插入一条数据：</p>
+<pre><code class="language-sql">alter table stu_join_index add column score int;
+update stu_join_index set score = 90 where name = 'aa';
+</code></pre>
+<p>此时的表信息：</p>
+<pre><code>+----+------+------+-------+
+| id | name | age  | score |
++----+------+------+-------+
+|  1 | aa   |   12 |    90 |
+|  2 | bb   |   22 |  NULL |
+|  3 | cc   |   66 |  NULL |
+|  4 | dd   |   88 |  NULL |
+|  5 | ee   |   23 |  NULL |
++----+------+------+-------+
+</code></pre>
+<p>此时执行 (score, age)，看看结果如何：</p>
+<pre><code class="language-sql">explain select * from stu_join_index where score = 90 and age = 12;
+</code></pre>
+<pre><code>+----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+| id | select_type | table          | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |
++----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+|  1 | SIMPLE      | stu_join_index | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    5 |    20.00 | Using where |
++----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+</code></pre>
+<p>此时 <code>type</code> 变为了 <code>ALL</code>，代表要扫描全表。</p>
+<p>因为 (name, age) 相当于创建了 name 单列索引和 (name, age) 联合索引。对于多个字段的联合索引，也同理。如 index(a, b, c) 联合索引，则相当于创建了 a 单列索引，(a, b) 联合索引，和 (a, b, c )联合索引。 (score, age) 既没有联合索引，各自也没有单列索引，所以自然要扫描全表。</p>
+<h1 id="一些疑问">一些疑问</h1>
+<h2 id="1-where-条件只有-name">1. where 条件只有 name</h2>
+<p>如果 <code>where</code> 条件只有 <code>score</code> ，或者只有 <code>age</code> ，结果会怎样呢？</p>
+<pre><code class="language-sql">explain select * from stu_join_index where age = '12';
+explain select * from stu_join_index where score = 90;
+</code></pre>
+<p>运行结果：</p>
+<pre><code>+----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+| id | select_type | table          | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |
++----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+|  1 | SIMPLE      | stu_join_index | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    5 |    20.00 | Using where |
++----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+</code></pre>
+<p>结果会扫描全表。这时因为 <code>socre</code> 和 <code>age</code> 都没有单列索引。</p>
+<p>但是当 <code>where</code> 条件只有 <code>name</code> 时会怎样呢？</p>
+<pre><code class="language-sql">explain select * from stu_join_index where name = 'aa';
+</code></pre>
+<p>运行结果：</p>
+<pre><code>+----+-------------+----------------+------------+------+---------------+----------+---------+-------+------+----------+-------+
+| id | select_type | table          | partitions | type | possible_keys | key      | key_len | ref   | rows | filtered | Extra |
++----+-------------+----------------+------------+------+---------------+----------+---------+-------+------+----------+-------+
+|  1 | SIMPLE      | stu_join_index | NULL       | ref  | name_age      | name_age | 203     | const |    1 |   100.00 | NULL  |
++----+-------------+----------------+------------+------+---------------+----------+---------+-------+------+----------+-------+
+</code></pre>
+<p>此时 <code>type</code> 为 <code>ref</code>，在上面已经说过，(name, age) 联合索引会同时创建一个 <code>name</code> 单列索引。但是这里为什么是 <code>ref</code> 而不是 <code>index</code> 呢？</p>
+<blockquote>
+<p><code>ref</code> 使用非唯一索引扫描或唯一索引的前缀扫描，返回匹配某个单独值的记录行。</p>
+<p>出现该连接类型的条件是： 查找条件列使用了索引而且不为主键和unique。其实，意思就是虽然使用了索引，但该索引列的值并不唯一，有重复。这样即使使用索引快速查找到了第一条数据，仍然不能停止，要进行目标值附近的小范围扫描。但它的好处是它并不需要扫全表，因为索引是有序的，即便有重复值，也是在一个非常小的范围内扫描。</p>
+</blockquote>
+<p>我的猜测：</p>
+<p><del>在没有添加 <code>score</code> 字段前，联合索引 (name, age) 是覆盖索引，但是添加了 <code>score</code> 后便不再是覆盖索引了</del></p>
+<p>覆盖索引依然是 <code>ref</code></p>
+<h2 id="2-为什么-name-为非字符串时不走索引">2. 为什么 name 为非字符串时不走索引</h2>
+<p>在 1 中提到，</p>
+<pre><code class="language-sql">explain select * from stu_join_index where name = 'aa';
+</code></pre>
+<p>的 <code>type</code> 为 <code>ref</code>，那么如果把查询条件改为非字符串会怎样呢？（name 为 varchar 类型）</p>
+<pre><code class="language-sql">explain select * from stu_join_index where name = 1;
+</code></pre>
+<p>结果：</p>
+<pre><code>+----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+| id | select_type | table          | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |
++----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+|  1 | SIMPLE      | stu_join_index | NULL       | ALL  | name_age      | NULL | NULL    | NULL |    5 |    20.00 | Using where |
++----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+</code></pre>
+<p>结果变为了 <code>ALL</code>，为什么不是字符串就会索引失效呢？</p>
+<p><strong>回答</strong></p>
+<p>在博客 <a href="https://blog.csdn.net/qq_28194001/article/details/90488782">https://blog.csdn.net/qq_28194001/article/details/90488782</a> 中得出结论：</p>
+<blockquote>
+<ol>
+<li>当我们使用的字段是数值类型时，加引号或者不加引号（sql中单引号和双引号实现相同效果）都不影响
+索引的使用</li>
+<li>当我们的字段是字符串类型时，不加引号的查询无法使用索引，加引号的查询才可正常使用索引</li>
+</ol>
+</blockquote>
+<h2 id="3">3.</h2>
+<p>再来看一种情况：
+此时执行 (name, score, age)，看看结果如何：</p>
+<pre><code class="language-sql">explain select * from stu_join_index where name = 'aa' and score = 90 and age = 12;
+</code></pre>
+<pre><code>+----+-------------+----------------+------------+------+---------------+----------+---------+-------------+------+----------+-------------+
+| id | select_type | table          | partitions | type | possible_keys | key      | key_len | ref         | rows | filtered | Extra       |
++----+-------------+----------------+------------+------+---------------+----------+---------+-------------+------+----------+-------------+
+|  1 | SIMPLE      | stu_join_index | NULL       | ref  | name_age      | name_age | 208     | const,const |    1 |    20.00 | Using where |
++----+-------------+----------------+------------+------+---------------+----------+---------+-------------+------+----------+-------------+
+</code></pre>
+<p>这里明明不符合最左前缀原则，为什么 <code>type</code> 会是  <code>ref</code>？</p>
+<h2 id="4">4.</h2>
+<p>再次执行下面的语句（在文章一开始还没有添加 score 字段时，执行过该语句）：</p>
+<pre><code class="language-sql">explain select * from stu_join_index where age = '12' and name = 'aa';
+</code></pre>
+<pre><code>+----+-------------+----------------+------------+------+---------------+----------+---------+-------------+------+----------+-------+
+| id | select_type | table          | partitions | type | possible_keys | key      | key_len | ref         | rows | filtered | Extra |
++----+-------------+----------------+------------+------+---------------+----------+---------+-------------+------+----------+-------+
+|  1 | SIMPLE      | stu_join_index | NULL       | ref  | name_age      | name_age | 208     | const,const |    1 |   100.00 | NULL  |
++----+-------------+----------------+------------+------+---------------+----------+---------+-------------+------+----------+-------+
+</code></pre>
+<p>为什么加了 <code>score</code> 字段后， <code>type</code> 从 <code>index</code> 变为了 <code>ref</code>？</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/mysql/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#mysql</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/" class="block">两个 main goroutine 操作一个 channel 会怎样</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/jin-cheng-jian-tong-xin-de-fang-shi/" class="block">进程间通信的方式</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-where-条件只有-name">1. where 条件只有 name</a></li>
+    <li><a href="#2-为什么-name-为非字符串时不走索引">2. 为什么 name 为非字符串时不走索引</a></li>
+    <li><a href="#3">3.</a></li>
+    <li><a href="#4">4.</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/mysql-mian-jing/" class="no-underline">MySQL 面经汇总</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

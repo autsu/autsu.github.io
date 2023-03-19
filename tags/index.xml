@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on /dev/null</title>
+    <link>/tags/</link>
+    <description>Recent content in Tags on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Mon, 10 Oct 2022 22:11:10 +0000</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>k8s</title>
+      <link>/tags/k8s/</link>
+      <pubDate>Mon, 10 Oct 2022 22:11:10 +0000</pubDate>
+      
+      <guid>/tags/k8s/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>docker</title>
+      <link>/tags/docker/</link>
+      <pubDate>Thu, 29 Sep 2022 00:14:11 +0000</pubDate>
+      
+      <guid>/tags/docker/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>issue</title>
+      <link>/tags/issue/</link>
+      <pubDate>Sat, 10 Sep 2022 19:41:35 +0000</pubDate>
+      
+      <guid>/tags/issue/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>linux</title>
+      <link>/tags/linux/</link>
+      <pubDate>Tue, 06 Sep 2022 22:37:45 +0000</pubDate>
+      
+      <guid>/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>go</title>
+      <link>/tags/go/</link>
+      <pubDate>Tue, 06 Sep 2022 02:28:52 +0000</pubDate>
+      
+      <guid>/tags/go/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tcp</title>
+      <link>/tags/tcp/</link>
+      <pubDate>Mon, 05 Sep 2022 00:51:45 +0000</pubDate>
+      
+      <guid>/tags/tcp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>epoll</title>
+      <link>/tags/epoll/</link>
+      <pubDate>Fri, 02 Sep 2022 12:32:45 +0000</pubDate>
+      
+      <guid>/tags/epoll/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>多路复用</title>
+      <link>/tags/%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/</link>
+      <pubDate>Fri, 02 Sep 2022 12:32:45 +0000</pubDate>
+      
+      <guid>/tags/%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>操作系统</title>
+      <link>/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link>
+      <pubDate>Wed, 31 Aug 2022 00:59:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>缓存</title>
+      <link>/tags/%E7%BC%93%E5%AD%98/</link>
+      <pubDate>Sat, 27 Aug 2022 23:49:10 +0000</pubDate>
+      
+      <guid>/tags/%E7%BC%93%E5%AD%98/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>设计</title>
+      <link>/tags/%E8%AE%BE%E8%AE%A1/</link>
+      <pubDate>Sat, 27 Aug 2022 23:49:10 +0000</pubDate>
+      
+      <guid>/tags/%E8%AE%BE%E8%AE%A1/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>面经</title>
+      <link>/tags/%E9%9D%A2%E7%BB%8F/</link>
+      <pubDate>Thu, 18 Aug 2022 22:12:52 +0000</pubDate>
+      
+      <guid>/tags/%E9%9D%A2%E7%BB%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>堆</title>
+      <link>/tags/%E5%A0%86/</link>
+      <pubDate>Wed, 17 Aug 2022 23:02:26 +0000</pubDate>
+      
+      <guid>/tags/%E5%A0%86/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>计算机网络</title>
+      <link>/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</link>
+      <pubDate>Tue, 02 Aug 2022 19:04:52 +0000</pubDate>
+      
+      <guid>/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>issues</title>
+      <link>/tags/issues/</link>
+      <pubDate>Thu, 14 Jul 2022 14:30:52 +0000</pubDate>
+      
+      <guid>/tags/issues/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>minikube</title>
+      <link>/tags/minikube/</link>
+      <pubDate>Thu, 14 Jul 2022 14:30:52 +0000</pubDate>
+      
+      <guid>/tags/minikube/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mq</title>
+      <link>/tags/mq/</link>
+      <pubDate>Thu, 14 Jul 2022 14:30:52 +0000</pubDate>
+      
+      <guid>/tags/mq/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rabbitmq</title>
+      <link>/tags/rabbitmq/</link>
+      <pubDate>Thu, 14 Jul 2022 14:30:52 +0000</pubDate>
+      
+      <guid>/tags/rabbitmq/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>源码</title>
+      <link>/tags/%E6%BA%90%E7%A0%81/</link>
+      <pubDate>Tue, 12 Jul 2022 22:09:40 +0000</pubDate>
+      
+      <guid>/tags/%E6%BA%90%E7%A0%81/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>gc</title>
+      <link>/tags/gc/</link>
+      <pubDate>Wed, 01 Jun 2022 22:15:39 +0000</pubDate>
+      
+      <guid>/tags/gc/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kqueue</title>
+      <link>/tags/kqueue/</link>
+      <pubDate>Sat, 28 May 2022 01:10:35 +0000</pubDate>
+      
+      <guid>/tags/kqueue/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>HTTP</title>
+      <link>/tags/http/</link>
+      <pubDate>Sun, 08 May 2022 15:46:11 +0000</pubDate>
+      
+      <guid>/tags/http/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>multipass</title>
+      <link>/tags/multipass/</link>
+      <pubDate>Sun, 08 May 2022 15:46:11 +0000</pubDate>
+      
+      <guid>/tags/multipass/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>vscode</title>
+      <link>/tags/vscode/</link>
+      <pubDate>Sun, 10 Apr 2022 13:44:05 +0000</pubDate>
+      
+      <guid>/tags/vscode/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>k3s</title>
+      <link>/tags/k3s/</link>
+      <pubDate>Fri, 08 Apr 2022 15:27:41 +0000</pubDate>
+      
+      <guid>/tags/k3s/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mysql</title>
+      <link>/tags/mysql/</link>
+      <pubDate>Sat, 26 Mar 2022 22:35:02 +0000</pubDate>
+      
+      <guid>/tags/mysql/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>虚拟机</title>
+      <link>/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/</link>
+      <pubDate>Mon, 17 Jan 2022 14:57:10 +0000</pubDate>
+      
+      <guid>/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>转载</title>
+      <link>/tags/%E8%BD%AC%E8%BD%BD/</link>
+      <pubDate>Mon, 17 Jan 2022 14:57:10 +0000</pubDate>
+      
+      <guid>/tags/%E8%BD%AC%E8%BD%BD/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>笔记</title>
+      <link>/tags/%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Tue, 19 Oct 2021 20:15:04 +0000</pubDate>
+      
+      <guid>/tags/%E7%AC%94%E8%AE%B0/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>汇编</title>
+      <link>/tags/%E6%B1%87%E7%BC%96/</link>
+      <pubDate>Mon, 04 Oct 2021 11:57:14 +0000</pubDate>
+      
+      <guid>/tags/%E6%B1%87%E7%BC%96/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>回溯法</title>
+      <link>/tags/%E5%9B%9E%E6%BA%AF%E6%B3%95/</link>
+      <pubDate>Sat, 25 Sep 2021 22:27:33 +0000</pubDate>
+      
+      <guid>/tags/%E5%9B%9E%E6%BA%AF%E6%B3%95/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>c&#43;&#43;</title>
+      <link>/tags/c&#43;&#43;/</link>
+      <pubDate>Tue, 31 Aug 2021 17:16:04 +0000</pubDate>
+      
+      <guid>/tags/c&#43;&#43;/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>grpc</title>
+      <link>/tags/grpc/</link>
+      <pubDate>Tue, 31 Aug 2021 17:16:04 +0000</pubDate>
+      
+      <guid>/tags/grpc/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Redis</title>
+      <link>/tags/redis/</link>
+      <pubDate>Tue, 17 Aug 2021 11:50:56 +0000</pubDate>
+      
+      <guid>/tags/redis/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>数据结构</title>
+      <link>/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>
+      <pubDate>Tue, 17 Aug 2021 11:50:56 +0000</pubDate>
+      
+      <guid>/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>跳表</title>
+      <link>/tags/%E8%B7%B3%E8%A1%A8/</link>
+      <pubDate>Tue, 17 Aug 2021 11:50:56 +0000</pubDate>
+      
+      <guid>/tags/%E8%B7%B3%E8%A1%A8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>滑动窗口</title>
+      <link>/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</link>
+      <pubDate>Thu, 12 Aug 2021 23:10:22 +0000</pubDate>
+      
+      <guid>/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Git</title>
+      <link>/tags/git/</link>
+      <pubDate>Wed, 11 Aug 2021 12:37:33 +0000</pubDate>
+      
+      <guid>/tags/git/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>二分查找</title>
+      <link>/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/</link>
+      <pubDate>Fri, 06 Aug 2021 00:38:41 +0000</pubDate>
+      
+      <guid>/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>队列</title>
+      <link>/tags/%E9%98%9F%E5%88%97/</link>
+      <pubDate>Wed, 04 Aug 2021 20:20:51 +0000</pubDate>
+      
+      <guid>/tags/%E9%98%9F%E5%88%97/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>栈</title>
+      <link>/tags/%E6%A0%88/</link>
+      <pubDate>Wed, 04 Aug 2021 20:20:51 +0000</pubDate>
+      
+      <guid>/tags/%E6%A0%88/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>笔试题</title>
+      <link>/tags/%E7%AC%94%E8%AF%95%E9%A2%98/</link>
+      <pubDate>Tue, 03 Aug 2021 22:53:02 +0000</pubDate>
+      
+      <guid>/tags/%E7%AC%94%E8%AF%95%E9%A2%98/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>字符串</title>
+      <link>/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/</link>
+      <pubDate>Tue, 03 Aug 2021 21:38:24 +0000</pubDate>
+      
+      <guid>/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>链表</title>
+      <link>/tags/%E9%93%BE%E8%A1%A8/</link>
+      <pubDate>Thu, 29 Jul 2021 10:05:08 +0000</pubDate>
+      
+      <guid>/tags/%E9%93%BE%E8%A1%A8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>算法</title>
+      <link>/tags/%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Wed, 28 Jul 2021 18:19:37 +0000</pubDate>
+      
+      <guid>/tags/%E7%AE%97%E6%B3%95/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>topK</title>
+      <link>/tags/topk/</link>
+      <pubDate>Wed, 21 Jul 2021 21:07:14 +0000</pubDate>
+      
+      <guid>/tags/topk/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>剑指offer</title>
+      <link>/tags/%E5%89%91%E6%8C%87offer/</link>
+      <pubDate>Wed, 21 Jul 2021 21:07:14 +0000</pubDate>
+      
+      <guid>/tags/%E5%89%91%E6%8C%87offer/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>排序</title>
+      <link>/tags/%E6%8E%92%E5%BA%8F/</link>
+      <pubDate>Wed, 21 Jul 2021 21:07:14 +0000</pubDate>
+      
+      <guid>/tags/%E6%8E%92%E5%BA%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>动态规划</title>
+      <link>/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</link>
+      <pubDate>Thu, 01 Jul 2021 09:42:46 +0000</pubDate>
+      
+      <guid>/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>LFU</title>
+      <link>/tags/lfu/</link>
+      <pubDate>Wed, 16 Jun 2021 21:52:51 +0000</pubDate>
+      
+      <guid>/tags/lfu/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>智力题</title>
+      <link>/tags/%E6%99%BA%E5%8A%9B%E9%A2%98/</link>
+      <pubDate>Tue, 15 Jun 2021 11:18:00 +0000</pubDate>
+      
+      <guid>/tags/%E6%99%BA%E5%8A%9B%E9%A2%98/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>二叉搜索树</title>
+      <link>/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/</link>
+      <pubDate>Sun, 09 May 2021 11:22:20 +0000</pubDate>
+      
+      <guid>/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>广度优先搜索</title>
+      <link>/tags/%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/</link>
+      <pubDate>Sun, 02 May 2021 10:02:50 +0000</pubDate>
+      
+      <guid>/tags/%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>哈希表</title>
+      <link>/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/</link>
+      <pubDate>Sun, 02 May 2021 10:02:50 +0000</pubDate>
+      
+      <guid>/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>深度优先搜索</title>
+      <link>/tags/%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/</link>
+      <pubDate>Sun, 02 May 2021 10:02:50 +0000</pubDate>
+      
+      <guid>/tags/%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>自动机</title>
+      <link>/tags/%E8%87%AA%E5%8A%A8%E6%9C%BA/</link>
+      <pubDate>Wed, 21 Apr 2021 22:12:13 +0000</pubDate>
+      
+      <guid>/tags/%E8%87%AA%E5%8A%A8%E6%9C%BA/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>gdb</title>
+      <link>/tags/gdb/</link>
+      <pubDate>Fri, 16 Apr 2021 19:48:15 +0000</pubDate>
+      
+      <guid>/tags/gdb/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>etcd</title>
+      <link>/tags/etcd/</link>
+      <pubDate>Fri, 16 Apr 2021 19:46:44 +0000</pubDate>
+      
+      <guid>/tags/etcd/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>程序员面试金典</title>
+      <link>/tags/%E7%A8%8B%E5%BA%8F%E5%91%98%E9%9D%A2%E8%AF%95%E9%87%91%E5%85%B8/</link>
+      <pubDate>Fri, 16 Apr 2021 19:41:48 +0000</pubDate>
+      
+      <guid>/tags/%E7%A8%8B%E5%BA%8F%E5%91%98%E9%9D%A2%E8%AF%95%E9%87%91%E5%85%B8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>数组</title>
+      <link>/tags/%E6%95%B0%E7%BB%84/</link>
+      <pubDate>Fri, 16 Apr 2021 19:41:09 +0000</pubDate>
+      
+      <guid>/tags/%E6%95%B0%E7%BB%84/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>双指针</title>
+      <link>/tags/%E5%8F%8C%E6%8C%87%E9%92%88/</link>
+      <pubDate>Fri, 16 Apr 2021 19:38:53 +0000</pubDate>
+      
+      <guid>/tags/%E5%8F%8C%E6%8C%87%E9%92%88/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>二叉树</title>
+      <link>/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/</link>
+      <pubDate>Fri, 16 Apr 2021 19:34:52 +0000</pubDate>
+      
+      <guid>/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>递归</title>
+      <link>/tags/%E9%80%92%E5%BD%92/</link>
+      <pubDate>Fri, 16 Apr 2021 19:27:28 +0000</pubDate>
+      
+      <guid>/tags/%E9%80%92%E5%BD%92/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>全排列</title>
+      <link>/tags/%E5%85%A8%E6%8E%92%E5%88%97/</link>
+      <pubDate>Fri, 16 Apr 2021 19:26:43 +0000</pubDate>
+      
+      <guid>/tags/%E5%85%A8%E6%8E%92%E5%88%97/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>lru</title>
+      <link>/tags/lru/</link>
+      <pubDate>Fri, 16 Apr 2021 14:45:38 +0000</pubDate>
+      
+      <guid>/tags/lru/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>资源库</title>
+      <link>/tags/%E8%B5%84%E6%BA%90%E5%BA%93/</link>
+      <pubDate>Thu, 23 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E8%B5%84%E6%BA%90%E5%BA%93/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Gridea</title>
+      <link>/tags/gridea/</link>
+      <pubDate>Wed, 12 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/gridea/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

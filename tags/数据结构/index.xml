@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>数据结构 on /dev/null</title>
+    <link>/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>
+    <description>Recent content in 数据结构 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Tue, 17 Aug 2021 11:50:56 +0000</lastBuildDate><atom:link href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis zset 源码阅读</title>
+      <link>/posts/redis-zset-yuan-ma-yue-du/</link>
+      <pubDate>Tue, 17 Aug 2021 11:50:56 +0000</pubDate>
+      
+      <guid>/posts/redis-zset-yuan-ma-yue-du/</guid>
+      <description>types zskiplistNode typedef struct zskiplistNode { sds ele; // 成员 double score; // 分值 struct zskiplistNode *backward; // 后退指针 // 层 struct zskiplistLevel { struct zskiplistNode *forward; // 前进指针 unsigned long span; // 跨度 } level[]; } zskiplistNode; zskiplist typedef struct zskiplist { struct zskiplistNode *header, *tail; unsigned long length; int level; // 当前跳跃表内，层数最大的那个节点的层数 } zskiplist; zset typedef struct zset { dict *dict; zskiplist *zsl; } zset; functions zslCreate /* Create a new skiplist.</description>
+    </item>
+    
+    <item>
+      <title>go map源码阅读</title>
+      <link>/posts/go-map-yuan-ma-yue-du/</link>
+      <pubDate>Thu, 29 Jul 2021 20:37:56 +0000</pubDate>
+      
+      <guid>/posts/go-map-yuan-ma-yue-du/</guid>
+      <description>看看 map 这个重要数据结构在 go 中是如何实现的</description>
+    </item>
+    
+    <item>
+      <title>go container/heap 源码阅读</title>
+      <link>/posts/go-containerheap-yuan-ma-yue-du/</link>
+      <pubDate>Thu, 22 Jul 2021 14:16:49 +0000</pubDate>
+      
+      <guid>/posts/go-containerheap-yuan-ma-yue-du/</guid>
+      <description>heap（堆），是一个用数组表示的完全二叉树，常用于构建优先队列，排序和快速找出一个集合中的最小值（或者最大值）。在 go 标准库下的 container 包中提供了这种数据结构。</description>
+    </item>
+    
+  </channel>
+</rss>

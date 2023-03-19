@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>k8s pod | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="本篇笔记摘自 《Kubernetes in Aciton 》第三章：pod：运行于 Kubernetes 中的容器">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"k8s pod",
+      "item":"/posts/k8s-pod-bi-ji/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/k8s-pod-bi-ji/"
+    },
+    "headline": "k8s pod | \/dev\/null","datePublished": "2022-05-04T23:39:39+00:00",
+    "dateModified": "2022-05-04T23:39:39+00:00",
+    "wordCount":  881 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "本篇笔记摘自 《Kubernetes in Aciton 》第三章：pod：运行于 Kubernetes 中的容器"
+}
+</script><meta property="og:title" content="k8s pod | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/k8s-pod-bi-ji/" />
+
+
+
+
+<meta property="og:description" content="本篇笔记摘自 《Kubernetes in Aciton 》第三章：pod：运行于 Kubernetes 中的容器" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-05-04T23:39:39&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-05-04T23:39:39&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="k8s" />
+
+
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">k8s pod</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-05-04</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>5分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <blockquote>
+<p>本篇笔记摘自 《Kubernetes in Aciton 》第三章：<code>pod：运行于 Kubernetes 中的容器</code></p>
+</blockquote>
+<h1 id="什么是-pod">什么是 pod</h1>
+<p>pod 是 k8s 的最基本构建模块，他是多个容器的集合（当然也可以只有1个容器），一个 pod 里的所有容器都会运行在同一个节点上，不存在一个 pod 中的容器 A 在节点 1 运行，容器 B 在节点 2 运行这种情况。</p>
+<p><strong>为何不将所有进程放到一个容器中？</strong></p>
+<p>容器被设计为每个容器只运行一个进程(除非进程本身产生子进程)。 如果在单个容器中运行多个不相关的进程，那么保持所有进程运行、 管理它们的日志等将会是我们的责任。 例如，我们需要包含一种在进程崩溃时能够自动重启的机制。同时这些进程都将记录到相同的标准输出中， 而此时我们将很难确定每个进程分别记录了什么。</p>
+<p>综上所述， 我们需要让每个进程运行在自己的容器中， 而这就是 Docker 和 Kubernetes 期望使用的方式。</p>
+<p><strong>隔离性</strong>：pod 中的容器互相之间并不是完全隔离的，它们共享相同的主机名和网络接口，也能使用 ipc 进行通信。进程和文件系统也可以共享，但这两个需要做一些额外的操作。因为共享网络接口，所以也共享相同的 IP 地址和端口，这代表一个 pod 中不同容器的进程不能绑定到同一个端口号，此外容器可以通过 localhost 与同一 pod 中的其他容器进行通信。</p>
+<p><strong>pod 间通信</strong>：k8s 集群中的所有 pod 都在同一个共享网络地址空间中，所以 pod 间可以通过 IP 进行相互访问</p>
+<p><strong>总结</strong>：pod 类似于一台物理机或者虚拟机，只是其每个进程都封装在一个容器中，同时比较轻量，开销小</p>
+<h1 id="通过-pod-合理管理容器">通过 pod 合理管理容器</h1>
+<h2 id="每个-pod-只包含紧密相关的组件或进程">每个 pod 只包含紧密相关的组件或进程</h2>
+<p>pod 有一条总的原则：应该将应用程序组织到多个 pod 中， 而 <strong>每个 pod 只包含紧密相关的组件或进程</strong>，而不是将所有程序都放到一个 pod。</p>
+<p>原因有几下几点：</p>
+<ol>
+<li><strong>最大程度利用节点</strong>，比如现在有一个前端应用和一个后端应用，以及一个双节点的 k8s 集群，此时应该将前端 pod 放到一个节点，后端 pod 放到另一个节点，而不是将前后端放到一个 pod 中。</li>
+<li><strong>方便扩缩容</strong>，pod 是 k8s 的扩缩容基本单位，它只能扩缩整个 pod，不能扩缩某个容器，如果一个 pod 中同时存放了前后端程序，那么如果发生扩容，会导致前后端同时扩容，但可能我只想让后端进行扩容（这是很正常的，毕竟前后端的需求不同）。</li>
+</ol>
+<h2 id="何时在-pod-中使用多个容器"><strong>何时在 pod 中使用多个容器</strong></h2>
+<p>举个例子：有两个容器，一个负责对外提供文件访问服务，一个负责从外部下载资源到文件（sidecar容器），这两个容器间是紧密关联的，此时便可以放到一个 pod 中。</p>
+<h2 id="如果一个-pod-中存在多个容器而其中有一个容器挂掉了此时会如何处理">如果一个 pod 中存在多个容器，而其中有一个容器挂掉了，此时会如何处理？</h2>
+<p>可以使用存活探针，为每个容器设置不同的探测方案，比如可以使用 tcp 探针，让 pod 中的每个容器暴露一个端口，然后存活探针分别尝试与这些端口建立连接，如果其中有一个端口建立连接失败，则说明容器出现了问题，然后 k8s 就会删除这个有问题的 pod，并新建一个相同的 pod 替代。</p>
+<h1 id="相关命令">相关命令</h1>
+<p><strong>查看一个 pod 的 yaml 定义</strong></p>
+<pre><code class="language-shell">$ kubectl get po [pod name] -o [yaml|json]
+</code></pre>
+<p>-o 可以输入 yaml 或者 json</p>
+<p><strong>查看 pod yaml 的字段含义</strong></p>
+<pre><code class="language-shell">$ kubectl explain pods
+</code></pre>
+<p><strong>创建 pod</strong></p>
+<pre><code class="language-shell">$ kubectl [create|apply] -f [srcFile]
+</code></pre>
+<p>通过 srcFile 来创建 pod，该文件可以是 yaml 或者 json</p>
+<p>**查看当前的 pod **</p>
+<pre><code class="language-shell">$ kubectl get pods
+</code></pre>
+<p><strong>获取 pod 日志</strong></p>
+<pre><code class="language-shell">$ kubectl logs [podName]
+</code></pre>
+<p>获取指定容器的日志</p>
+<pre><code class="language-shell">$ kubectl logs [podName] -c [containerName]
+</code></pre>
+<p><strong>更新 pod</strong></p>
+<p>修改 yaml 后重新执行</p>
+<pre><code class="language-shell">$ kubectl apply -f [srcFile]
+</code></pre>
+<p>这只适用于更改 Pod 中容器（包括工作容器与初始化容器）的镜像，以及 activeDeadlineSeconds （对 Job 类型的 Pod 定义失败重试的最大时间）， tolerations （Pod 对污点的容忍）</p>
+<p>如果是其他情况，则需要删除后重新创建容器</p>
+<blockquote>
+<p>Kubernetes 对 Pod 的更新做了限制，除了更改 Pod 中容器（包括工作容器与初始化容器）的镜像，以及 activeDeadlineSeconds （对 Job 类型的 Pod 定义失败重试的最大时间）， tolerations （Pod 对污点的容忍），修改其它部分将不会产生作用，如我们可以尝试在前面 Pod 定义文档 pod-test.yaml 中将宿主机端口 8081 改为 8082，重新执行 <code>kubectl apply</code>， 将提示如下错误：</p>
+<pre><code class="language-shell">The Pod &quot;nginx&quot; is invalid: spec: Forbidden: pod updates may not change fields other than `spec.containers[*].image`, `spec.initContainers[*].image`, `spec.activeDeadlineSeconds`, `spec.tolerations` (only additions to existing tolerations) or `spec.terminationGracePeriodSeconds` (allow it to be set to 1 if it was previously negative)
+</code></pre>
+</blockquote>
+<p><strong>删除 pod</strong></p>
+<pre><code class="language-shell">$ kubectl delete [podName]
+</code></pre>
+<h1 id="pod-提供对外访问">pod 提供对外访问</h1>
+<p>对外访问 pod 的最普遍方式是使用 service，但 service 是一个相当重要的内容，所以会另起一篇笔记，在本篇笔记中只会记录除 service 外的方式，这些方式并不常用，仅作为记录。</p>
+<h2 id="hostnetwork">hostNetwork</h2>
+<p>在 yaml 中添加 hostNetwork: true 字段：</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  hostNetwork: true
+  containers:
+  - name: nginx
+    image: nginx
+</code></pre>
+<p>执行 yaml：</p>
+<pre><code class="language-shell">$ kubectl apply -f hostnetwork.yaml
+</code></pre>
+<p>查看 pod：</p>
+<pre><code class="language-shell">$ kubectl get po -o wide
+NAME      READY   STATUS    RESTARTS   AGE   IP             NODE       NOMINATED NODE   READINESS GATES
+nginx     1/1     Running   0          18m   192.168.49.2   minikube   &lt;none&gt;           &lt;none&gt;
+</code></pre>
+<p>此时通过 pod IP 就可以进行访问了：</p>
+<pre><code class="language-shell">$ curl 192.168.49.2
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+&lt;style&gt;
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Welcome to nginx!&lt;/h1&gt;
+</code></pre>
+<h2 id="hostport">HostPort</h2>
+<p>参考 <strong>pod 实战</strong> 部分</p>
+<h2 id="port-forward">port-forward</h2>
+<p>使用 kubectl 自带的端口转发命令：</p>
+<pre><code class="language-shell">$ kubectl port-forward [podName] [对外暴露的端口]:[pod内部端口]
+</code></pre>
+<p>比如在我的电脑上实践（访问这个 pod 会输出一句谚语，参考书上的 p168）：</p>
+<pre><code class="language-shell">$ kubectl port-forward fortune 8080:80
+Forwarding from 127.0.0.1:8080 -&gt; 80
+Forwarding from [::1]:8080 -&gt; 80
+</code></pre>
+<p>此时上面的 shell 会阻塞，新开一个 shell，执行 curl：</p>
+<pre><code class="language-shell">$ curl http://localhost:8080
+Q:	How many psychiatrists does it take to change a light bulb?
+A:	Only one, but it takes a long time, and the light bulb has
+	to really want to change.
+</code></pre>
+<blockquote>
+<p>🤔️ 疑问：</p>
+<p>1）curl 必须要添加 http 协议才行，如果只是 curl localhost 8080 会报错：curl: (7) Failed to connect to localhost port 80: Connection refused，这是为什么？</p>
+<p>😅 格式错误，应该是 curl localhost:8080，curl http://localhost:8080 和 curl localhost:8080 实际是一样的</p>
+<p>2）此外，我在宿主机用 curl 虚拟机IP:8080 也无法成功访问，只有在虚拟机内部才行</p>
+</blockquote>
+<h1 id="pod-实战">pod 实战</h1>
+<p>通过实战创建一个 nginx pod</p>
+<p>nginx yaml 如下：</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx:alpine
+    ports:
+    - containerPort: 80
+      hostPort: 8080
+</code></pre>
+<p>创建 pod</p>
+<pre><code class="language-shell">$ kubectl apply -f nginx_pod.yaml
+</code></pre>
+<p>等待一会，直到创建完成</p>
+<pre><code class="language-shell">$ kubectl get pods
+NAME    READY   STATUS              RESTARTS   AGE
+nginx   0/1     ContainerCreating   0          2s
+</code></pre>
+<pre><code class="language-shell">NAME    READY   STATUS    RESTARTS   AGE
+nginx   1/1     Running   0          2m17s
+</code></pre>
+<p>在 yaml 中设置了 <code>hostPort</code> 为 8080，代表对外暴露 8080 端口，映射到容器内部的 80 端口，此时便可以通过 IP:8080 进行访问了，如果不设置 <code>hostPort</code>，那么需要使用 <code> kubectl exec -it nginx sh</code>  进入容器内部，执行 <code> curl localhost</code>，可以看到 nginx 欢迎页的 HTML 代码。</p>
+<p><img src="https://autsu.github.io/post-images/1651804699715.jpg" alt=""></p>
+<h1 id="标签">标签</h1>
+<p>标签用来为 pod 进行分类。</p>
+<p>有几种方式可以为 pod 创建标签：</p>
+<ol>
+<li>在 yaml 中的 metadata labels 中指定，标签是 key:value 的方式，key 需要全局唯一，比如在上面 nginx yaml 中，添加了一个 app: nginx 标签。</li>
+<li>使用 <code>kubectl label po nginx key=value</code> 添加标签</li>
+</ol>
+<p>pod 的 key 必须唯一，否则报错：</p>
+<pre><code class="language-shell">$ kubectl label po nginx key=value1
+error: 'key' already has a value (value), and --overwrite is false
+</code></pre>
+<p>查看 pod 的所有标签：</p>
+<pre><code class="language-shell">$ kubectl get po --show-labels
+NAME    READY   STATUS    RESTARTS   AGE    LABELS
+nginx   1/1     Running   0          118m   app=nginx,key=value
+</code></pre>
+<p>查看 pod 的某个标签：</p>
+<pre><code class="language-shell">$ kubectl get po -L app,key
+NAME    READY   STATUS    RESTARTS   AGE    APP     KEY
+nginx   1/1     Running   0          120m   nginx   value
+</code></pre>
+<p>修改 pod 的标签：</p>
+<pre><code class="language-shell">$ kubectl label po nginx key=value1 --overwrite
+pod/nginx labeled
+
+$ kubectl get po --show-labels
+NAME    READY   STATUS    RESTARTS   AGE    LABELS
+nginx   1/1     Running   0          122m   app=nginx,key=value1
+</code></pre>
+<p>指定 <code>--overwrite</code> 进行修改</p>
+<h1 id="将-pod-调度到特定节点">将 pod 调度到特定节点</h1>
+<p>可以为某个 node 设置一个标签，然后在 pod yaml 中指定 spec.nodeSelector ，保证 pod 被调度到符合其需求的节点。</p>
+<p>通过以下命令为 node 设置标签：</p>
+<pre><code class="language-shell">$ kubectl label node [nodeName] [key=value]
+</code></pre>
+<p>pod yaml 指定被调度节点：</p>
+<pre><code class="language-yaml">apiVersion: vl 
+kind: Pod 
+metadata:
+	name: kubia-gpu 
+spec:
+	nodeSelector:
+		gpu: &quot;true&quot; 
+	containers:
+	- image: luksa/kubia
+		name: kubia
+</code></pre>
+<p>以上会保证该 pod 被调度到 gpu=true 的节点上，通过 nodeSelector 指定。</p>
+<h1 id="pod-如何调度">pod 如何调度</h1>
+<p>之前实验使用的都是单节点方式，所以没在意 pod 是如何调度的，后来用 kind 搭建了一个 3 节点的 k8s 集群后才意识到这个问题，所以做了一个实验：</p>
+<p>当前集群的 node：</p>
+<pre><code class="language-shell">$ kubectl get node -o wide | awk '{printf &quot;%-30s%-15s\n&quot;, $1, $6}'
+NAME                          INTERNAL-IP
+kind-control-plane            172.18.0.2
+kind-worker                   172.18.0.4
+kind-worker2                  172.18.0.3
+</code></pre>
+<p>创建 3 个 nginx pod（使用 deployment）</p>
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - image: nginx
+          name: nginx
+</code></pre>
+<p>查看 po：</p>
+<pre><code class="language-shell">$ kubectl get po -o wide | awk '{printf &quot;%-30s%-15s\n&quot;, $1,$9}'
+NAME                          NODE
+nginx-66b9cc684d-8l7hg        kind-worker2
+nginx-66b9cc684d-flj48        kind-worker
+nginx-66b9cc684d-hxzc9        kind-worker
+</code></pre>
+<p>发现这三个 pod 都被调度到 worker 节点，没有被调度到 <code>kind-control-plane</code> 节点，网上查阅资料，得知 pod 的调度是由 kube-scheduler 来执行的，有一系列规则来完成这件事，比如官方文档里所描述的：</p>
+<blockquote>
+<p>kube-scheduler 给一个 pod 做调度选择包含两个步骤：</p>
+<ol>
+<li>过滤</li>
+<li>打分</li>
+</ol>
+<p>过滤阶段会将所有满足 Pod 调度需求的 Node 选出来。 例如，PodFitsResources 过滤函数会检查候选 Node 的可用资源能否满足 Pod 的资源请求。 在过滤之后，得出一个 Node 列表，里面包含了所有可调度节点；通常情况下， 这个 Node 列表包含不止一个 Node。如果这个列表是空的，代表这个 Pod 不可调度。</p>
+<p>在打分阶段，调度器会为 Pod 从所有可调度节点中选取一个最合适的 Node。 根据当前启用的打分规则，调度器会给每一个可调度节点进行打分。</p>
+<p>最后，kube-scheduler 会将 Pod 调度到得分最高的 Node 上。 如果存在多个得分最高的 Node，kube-scheduler 会从中随机选取一个。</p>
+</blockquote>
+<p>鉴于目前实力有限，无法摸清具体的流程，待我日后研究再详细展开（）</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/k8s/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#k8s</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/k8s-cun-huo-tan-zhen/" class="block">k8s 存活探针</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/vscode-xuan-zhong-wen-ben-shi-hua-dong-su-du-guo-kuai/" class="block">vscode 选中文本时滑动速度过快</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#每个-pod-只包含紧密相关的组件或进程">每个 pod 只包含紧密相关的组件或进程</a></li>
+    <li><a href="#何时在-pod-中使用多个容器"><strong>何时在 pod 中使用多个容器</strong></a></li>
+    <li><a href="#如果一个-pod-中存在多个容器而其中有一个容器挂掉了此时会如何处理">如果一个 pod 中存在多个容器，而其中有一个容器挂掉了，此时会如何处理？</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#hostnetwork">hostNetwork</a></li>
+    <li><a href="#hostport">HostPort</a></li>
+    <li><a href="#port-forward">port-forward</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

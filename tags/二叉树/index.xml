@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>二叉树 on /dev/null</title>
+    <link>/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/</link>
+    <description>Recent content in 二叉树 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Fri, 16 Apr 2021 19:34:52 +0000</lastBuildDate><atom:link href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>求二叉树根节点到指定节点的路径</title>
+      <link>/posts/2021-3-27-find-binarytree-root-to-node-path/</link>
+      <pubDate>Fri, 16 Apr 2021 19:34:52 +0000</pubDate>
+      
+      <guid>/posts/2021-3-27-find-binarytree-root-to-node-path/</guid>
+      <description>算法描述 这不是一道力扣或者剑指上的原题，但却是二叉树问题的一个基础核心算法，适用于许多二叉树类型的题目，比如 剑指 Offer 68 - II.</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 68 - II. 二叉树的最近公共祖先</title>
+      <link>/posts/2021-4-3-offer-68-lowest-common-ancestor/</link>
+      <pubDate>Fri, 16 Apr 2021 19:27:28 +0000</pubDate>
+      
+      <guid>/posts/2021-4-3-offer-68-lowest-common-ancestor/</guid>
+      <description>题目描述 给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖 先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”</description>
+    </item>
+    
+  </channel>
+</rss>

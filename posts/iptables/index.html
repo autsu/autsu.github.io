@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>linux iptables | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="参考：
+https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2
+规则相关命令 查看规则 # 查看 filter 表的所有规则，-t 后面跟表名 $ iptables -t filter -L # 查看 raw 表的所有规则 $ iptables -t raw -L # 查看 filter 表（-t 缺省时，默认为 filter 表）的 INPUT 链上的所有规则 $ iptables -L INPUT # 加 -v 可以输出更详细的信息 $ iptables -vL INPUT # 加 -n 会直接输出 IP 地址，不加的话会继续转换，比如 0.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"linux iptables",
+      "item":"/posts/iptables/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/iptables/"
+    },
+    "headline": "linux iptables | \/dev\/null","datePublished": "2022-05-16T10:53:35+00:00",
+    "dateModified": "2022-05-16T10:53:35+00:00",
+    "wordCount":  858 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "参考：\nhttps:\/\/www.zsythink.net\/archives\/category\/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3\/iptables\/page\/2\n规则相关命令 查看规则 # 查看 filter 表的所有规则，-t 后面跟表名 $ iptables -t filter -L # 查看 raw 表的所有规则 $ iptables -t raw -L # 查看 filter 表（-t 缺省时，默认为 filter 表）的 INPUT 链上的所有规则 $ iptables -L INPUT # 加 -v 可以输出更详细的信息 $ iptables -vL INPUT # 加 -n 会直接输出 IP 地址，不加的话会继续转换，比如 0."
+}
+</script><meta property="og:title" content="linux iptables | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/iptables/" />
+
+
+
+
+<meta property="og:description" content="参考：
+https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2
+规则相关命令 查看规则 # 查看 filter 表的所有规则，-t 后面跟表名 $ iptables -t filter -L # 查看 raw 表的所有规则 $ iptables -t raw -L # 查看 filter 表（-t 缺省时，默认为 filter 表）的 INPUT 链上的所有规则 $ iptables -L INPUT # 加 -v 可以输出更详细的信息 $ iptables -vL INPUT # 加 -n 会直接输出 IP 地址，不加的话会继续转换，比如 0." />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-05-16T10:53:35&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-05-16T10:53:35&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="linux" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/linux-clone-de-keng/" />
+
+<meta property="og:see_also" content="/posts/linux-pi-liang-kill-jin-cheng/" />
+
+<meta property="og:see_also" content="/posts/linux-gao-xing-neng-fu-wu-qi-bian-cheng-yue-du-bi-ji-di-wu-zhang-linux-wang-luo-bian-cheng-ji-chu-api/" />
+
+<meta property="og:see_also" content="/posts/2021-1-19-soft-hard-link/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">linux iptables</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-05-16</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>5分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <blockquote>
+<p>参考：</p>
+<p><a href="https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2">https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2</a></p>
+</blockquote>
+<h1 id="规则相关命令">规则相关命令</h1>
+<h2 id="查看规则">查看规则</h2>
+<pre><code class="language-shell"># 查看 filter 表的所有规则，-t 后面跟表名
+$ iptables -t filter -L 
+
+# 查看 raw 表的所有规则
+$ iptables -t raw -L    
+
+# 查看 filter 表（-t 缺省时，默认为 filter 表）的 INPUT 链上的所有规则
+$ iptables -L INPUT     
+
+# 加 -v 可以输出更详细的信息
+$ iptables -vL INPUT    
+
+# 加 -n 会直接输出 IP 地址，不加的话会继续转换，比如 0.0.0.0 会转换为 anywhere
+$ iptables -nL INPUT    
+
+# 为输出的规则列表添加序号
+$ iptables --line -L INPUT 
+</code></pre>
+<h2 id="操作规则">操作规则</h2>
+<h3 id="清空规则">清空规则</h3>
+<pre><code class="language-shell"># 清空 filter 表 INPUT 链中的规则
+$ iptables -F INPUT
+</code></pre>
+<h3 id="添加规则">添加规则</h3>
+<pre><code class="language-shell">$ iptables -t filter -I INPUT -s 192.168.64.1 -j DROP
+</code></pre>
+<p>上面的命令表示：在 filter 表的 INPUT 链中添加一条规则：丢弃（DROP）源地址为 192.168.64.1 的报文</p>
+<p>每个参数的意思：</p>
+<p>-t：指定要操作的表，此处指定了操作 filter 表，不使用 -t 选项指定表时，默认为操作 filter 表</p>
+<p>-I：指明将 ”规则” 插入至哪个链中，即添加规则</p>
+<p>-s：指明“匹配条件”中的”源地址”，如果报文的源地址属于-s对应的地址，那么报文则满足匹配条件</p>
+<p>-j：指明当”匹配条件”被满足时，所对应的动作</p>
+<p>测试：</p>
+<p>上面添加的 192.168.64.1是我的宿主机 ip，现在用宿主机来访问一下这台设置了规则的虚拟机：</p>
+<pre><code class="language-shell">$ ping 192.168.64.5 # ping 虚拟机
+PING 192.168.64.5 (192.168.64.5): 56 data bytes
+Request timeout for icmp_seq 0
+Request timeout for icmp_seq 1
+Request timeout for icmp_seq 2
+</code></pre>
+<p>发现已经无法访问了。（之后发现 ssh 给断了，虚拟机也进不去了，用的是 multipass😅）</p>
+<p>添加规则的同时可以指定其插入的位置，不同的位置会影响规则的执行。具体的例子可以参考 <a href="https://www.zsythink.net/archives/1517">https://www.zsythink.net/archives/1517</a>，大致流程是：已经设置了一条 drop 规则，如果追加一条相同 ip，但是 accept 的规则，发现依然无法 ping 通，因为 drop 在前 accept 在后；但是如果将 accept 插入到头部，那么 INPUT 链会先执行 accept 规则，数据包就会被放行，因为报文已经被放行了，所以，即使第二条 drop 规则能够匹配到刚才”放行”的报文，也没有机会再对刚才的报文进行丢弃操作了。</p>
+<pre><code class="language-shell"># -A 追加一条规则（append），也就是添加到末尾
+$ iptables -A INPUT -s 192.168.64.1 -j ACCEPT
+
+# -I 添加到头部
+$ iptables -I INPUT -s 192.168.64.1 -j ACCEPT
+
+# 插入到规则的下标 2 处
+$ iptables -I INPUT 2 -s 192.168.64.1 -j ACCEPT
+</code></pre>
+<h3 id="删除规则">删除规则</h3>
+<p><strong>根据规则编号删除</strong>（指定 &ndash;line ）</p>
+<pre><code class="language-shell">$ iptables -t filter -D INPUT 3
+</code></pre>
+<p>上面的命令会删除 filter 表的 INPUT 链的第 3 条规则</p>
+<p><strong>根据匹配条件删除</strong></p>
+<pre><code class="language-shell">$ iptables -D INPUT -s 192.168.64.1 -j ACCEPT
+</code></pre>
+<p>上述命令表示删除 INPUT 链中源地址为 192.168.64.1，动作为 ACCEPT 的规则</p>
+<p><strong>清空链上的规则</strong></p>
+<pre><code class="language-shell"># 清空 filter 表 INPUT 链中的规则
+$ iptables -F INPUT
+</code></pre>
+<p><strong>清空表的所有规则</strong></p>
+<pre><code class="language-shell"># 不指定链名
+$ iptables -F
+</code></pre>
+<h1 id="自定义链">自定义链</h1>
+<p>自定义链用于对规则的管理，这里我有一个疑问，iptables 的 <strong>表</strong> 已经是对规则的一种分类管理了，为什么还需要自定义链呢？我暂时的理解是，虽然表已经进行了分类，但是粒度还是比较粗，比如 filter 表只是负责过滤功能，但是过滤功能可能还需要进行进一步分类，比如有针对 HTTP 的过滤规则，有针对 SSH 的过滤规则，</p>
+<h2 id="创建">创建</h2>
+<p>实验的两台机器 IP 为：192.168.1.110 和 192.168.1.103，在 110 上设置一条自定义链，规则是阻止 103 这台机器来访问 8080 端口，8080 运行了一个 web 程序，访问会返回 “Hello”</p>
+<p>首先创建一条名为 IN_WEB 的自定义链</p>
+<pre><code class="language-shell">$ iptables -t filter -N IN_WEB
+</code></pre>
+<p>为该链设置规则，对 <strong>源地址</strong> 为  192.168.1.103 的连接进行 <strong>REJECT</strong> （拒绝）处理</p>
+<pre><code class="language-shell">$ iptables -t filter -I IN_WEB -s 192.168.1.103 -j REJECT
+</code></pre>
+<p>查看 filter 中的规则，使用 IN_WEB 进行过滤</p>
+<pre><code class="language-shell">$ iptables -t filter --line -nvL IN_WEB
+Chain IN_WEB (0 references)
+num   pkts bytes target     prot opt in     out     source               destination
+1        0     0 REJECT     all  --  *      *       192.168.1.103        0.0.0.0/0            reject-with icmp-port-unreachable
+</code></pre>
+<p>自定义链不能直接使用，需要将其添加到一条 <strong>默认链</strong> 中， 将该链添加到 INPUT 链中，这代表该条链用于接收到数据时</p>
+<pre><code class="language-shell">$ iptables -I INPUT -p tcp --dport 8080 -j IN_WEB
+</code></pre>
+<p>查看</p>
+<pre><code class="language-shell">$ iptables -t filter --line -nvL IN_WEB
+Chain IN_WEB (1 references)
+ pkts bytes target     prot opt in     out     source               destination
+    0     0 REJECT     all  --  *      *       192.168.1.103        0.0.0.0/0            reject-with icmp-port-unreachable
+</code></pre>
+<p>此时使用 103 的机器访问 110 的 8080 端口：</p>
+<pre><code class="language-shell">$ curl 192.168.1.110:8080
+curl: (7) Failed to connect to 192.168.1.110 port 8080 after 37 ms: Connection refused
+</code></pre>
+<p>报错 “Connection refused”（连接被拒绝），这个错误见得也比较多了，当访问的端口没有被程序监听时，也会报这个错误。此时说明拦截规则已经成功。</p>
+<p>110 的 9090 端口上也运行了一个 web 程序，访问一下看看是不是只拦截了 8080 端口：</p>
+<pre><code class="language-shell">$ curl 192.168.1.110:9090
+Hello%
+</code></pre>
+<p>9090 可以正常访问，说明拦截规则成功。</p>
+<h2 id="删除">删除</h2>
+<p>删除自定义链需要满足两个条件</p>
+<p>1、自定义链没有被引用</p>
+<p>2、自定义链中没有任何规则</p>
+<p>自定义链被放置在 INPUT 上，首先查看 INPUT 的所有规则，并删除属于自定义链的规则</p>
+<pre><code class="language-shell">$ iptables -nvL INPUT # 查看 INPUT 链上的所有规则
+Chain INPUT (policy ACCEPT 4397 packets, 972K bytes)
+ pkts bytes target     prot opt in     out     source               destination
+    0     0 IN_WEB     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:80
+ 7753 1508K KUBE-ROUTER-INPUT  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kube-router netpol - 4IA2OSFRMVNDXBVV */
+    0     0 IN_WEB     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:80
+    1    64 IN_WEB     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:5555
+    
+$ iptables -D INPUT 7 # 删除规则，数字是上面列表的序号，根据自己的实际情况来指定
+
+$ iptables --line-number -vL INPUT # 使用 --line-numbers 可以显示规则的编号，这样删除起来更方便
+Chain INPUT (policy ACCEPT 2702 packets, 895K bytes)
+num   pkts bytes target     prot opt in     out     source               destination
+1     5865 1470K KUBE-ROUTER-INPUT  all  --  any    any     anywhere             anywhere             /* kube-router netpol - 4IA2OSFRMVNDXBVV */
+2     2702  895K KUBE-FIREWALL  all  --  any    any     anywhere             anywhere
+3     2702  895K KUBE-NODEPORTS  all  --  any    any     anywhere             anywhere             /* kubernetes health check service ports */
+4        0     0 KUBE-EXTERNAL-SERVICES  all  --  any    any     anywhere             anywhere             ctstate NEW /* kubernetes externally-visible service portals */
+
+$ iptables -F IN_WEB # 清空 filter 表上的 IN_WEB 链上的所有规则（不指定 -t 时默认为 filter 表）
+$ iptables -X IN_WEB # 删除链
+$ iptables -t filter --line -nvL IN_WEB # 再次查看该链，发现已经无法输出信息了，说明删除成功
+iptables v1.8.7 (nf_tables): chain `IN_WEB' in table `filter' is incompatible, use 'nft' tool.
+</code></pre>
+<h1 id="负载均衡">负载均衡</h1>
+<p><a href="https://vflong.github.io/sre/network/2020/02/23/turning-iptables-into-a-tcp-load-balancer.html">https://vflong.github.io/sre/network/2020/02/23/turning-iptables-into-a-tcp-load-balancer.html</a></p>
+<h1 id="实践">实践</h1>
+<h2 id="dnt-转发">DNT 转发</h2>
+<p>流程：有两台机器 192.168.64.4 （简称 4）和 192.168.64.1（简称 1），4 上的 8080 和 9090 端口运行了两个 tcp 程序，连接到 8080 时会返回消息： ”8080“，连接到 9090 时会返回消息 ”9090“，这里通过 iptables 设置 nat 转发，将访问 8080 的连接转发到 9090，也就是 DNAT（D 代表 dst，目标），修改报文的目标地址。</p>
+<p>添加规则：</p>
+<pre><code class="language-shell">$ iptables -t nat -A PREROUTING -p tcp -d 192.168.64.4 --dport 8080 -j DNAT --to 192.168.64.4:9090
+</code></pre>
+<p>在 nat 表的 PREROUTING 链中添加一条规则，将目标地址为 192.168.64.4，协议为 tcp 的请求转发（DNAT）到 192.168.64.4 （本机）的 9090 端口</p>
+<p>查看规则：</p>
+<pre><code class="language-shell">$ iptables -t nat -nL PREROUTING
+DNAT       tcp  --  0.0.0.0/0            192.168.64.4         tcp dpt:8080 to:192.168.64.4:9090
+</code></pre>
+<p>在 1 上执行 nc：</p>
+<pre><code class="language-shell">$ nc 192.168.64.4 8080
+9090
+</code></pre>
+<p>访问的是 8080 端口，返回的消息是 9090，说明转发成功。</p>
+<p>这两个程序还会记录访问的 IP 地址，查看日志：</p>
+<pre><code class="language-shell">$ cat 8080
+
+$ cat 9090
+2022/05/19 15:41:44 192.168.64.1:63310
+</code></pre>
+<p>8080 的日志为空，说明该请求被 iptables <strong>拦截</strong> 后转发给了 9090</p>
+<p>附代码：</p>
+<pre><code class="language-go">package main
+
+import (
+        &quot;net&quot;
+        &quot;log&quot;
+)
+
+func main() {
+        l, err := net.Listen(&quot;tcp&quot;, &quot;:8080&quot;)
+        assert(err)
+
+        for {
+                conn, err := l.Accept()
+                assert(err)
+                log.Println(conn.RemoteAddr())
+                conn.Write([]byte(&quot;8080&quot;))
+        }
+}
+
+func assert(err error) {
+        if err != nil {
+                panic(err)
+        }
+}
+</code></pre>
+<pre><code class="language-go">package main
+
+import (
+        &quot;net&quot;
+        &quot;log&quot;
+)
+
+func main() {
+        l, err := net.Listen(&quot;tcp&quot;, &quot;:9090&quot;)
+        assert(err)
+
+        for {
+                conn, err := l.Accept()
+                assert(err)
+                log.Println(conn.RemoteAddr())
+                conn.Write([]byte(&quot;9090&quot;))
+        }
+}
+
+func assert(err error) {
+        if err != nil {
+                panic(err)
+        }
+}
+</code></pre>
+<p>使用 nohup 部署：</p>
+<pre><code class="language-shell">$ go build tcp_8080.go
+$ go build tcp_9090.go
+$ nohup ./tcp_8080 &gt; 8080 &amp;
+$ nohup ./tcp_9090 &gt; 9090 &amp;
+</code></pre>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/linux/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#linux</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/mac-shang-zhi-zuo-windows/" class="block">在 mac 上制作 windows10 启动盘，亲测可用</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/k8s-deployment/" class="block">k8s Deployment</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#查看规则">查看规则</a></li>
+    <li><a href="#操作规则">操作规则</a>
+      <ul>
+        <li><a href="#清空规则">清空规则</a></li>
+        <li><a href="#添加规则">添加规则</a></li>
+        <li><a href="#删除规则">删除规则</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#创建">创建</a></li>
+    <li><a href="#删除">删除</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#dnt-转发">DNT 转发</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/linux-clone-de-keng/" class="no-underline">linux clone() 的坑</a>
+          <br />
+        
+          <a href="/posts/linux-pi-liang-kill-jin-cheng/" class="no-underline">Linux 批量 kill 进程</a>
+          <br />
+        
+          <a href="/posts/linux-gao-xing-neng-fu-wu-qi-bian-cheng-yue-du-bi-ji-di-wu-zhang-linux-wang-luo-bian-cheng-ji-chu-api/" class="no-underline">【Linux 高性能服务器编程】阅读笔记 第五章 -- Linux 网络编程基础 api</a>
+          <br />
+        
+          <a href="/posts/2021-1-19-soft-hard-link/" class="no-underline">硬链接和软链接</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

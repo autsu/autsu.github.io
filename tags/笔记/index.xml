@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>笔记 on /dev/null</title>
+    <link>/tags/%E7%AC%94%E8%AE%B0/</link>
+    <description>Recent content in 笔记 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Tue, 19 Oct 2021 20:15:04 +0000</lastBuildDate><atom:link href="/tags/%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL实战笔记 20讲幻读是什么</title>
+      <link>/posts/mysql-shi-zhan-bi-ji-20-jiang-huan-du-shi-shi-me/</link>
+      <pubDate>Tue, 19 Oct 2021 20:15:04 +0000</pubDate>
+      
+      <guid>/posts/mysql-shi-zhan-bi-ji-20-jiang-huan-du-shi-shi-me/</guid>
+      <description>全文基于此表：
+CREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) DEFAULT NULL, PRIMARY KEY (`id`), KEY `c` (`c`) ) ENGINE=InnoDB; insert into t values(0,0,0),(5,5,5), (10,10,10),(15,15,15),(20,20,20),(25,25,25); 1.</description>
+    </item>
+    
+    <item>
+      <title>【两万字长文带你深入Go语言GC源码——腾讯技术工程】阅读笔记</title>
+      <link>/posts/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/</link>
+      <pubDate>Fri, 04 Jun 2021 21:29:45 +0000</pubDate>
+      
+      <guid>/posts/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/</guid>
+      <description>作者：luozhiyun 博客：https://www.luozhiyun.com/archives/475 本文使用的 Go 的源码1.</description>
+    </item>
+    
+    <item>
+      <title>【Linux 高性能服务器编程】阅读笔记 第五章 -- Linux 网络编程基础 api</title>
+      <link>/posts/linux-gao-xing-neng-fu-wu-qi-bian-cheng-yue-du-bi-ji-di-wu-zhang-linux-wang-luo-bian-cheng-ji-chu-api/</link>
+      <pubDate>Sat, 29 May 2021 19:27:47 +0000</pubDate>
+      
+      <guid>/posts/linux-gao-xing-neng-fu-wu-qi-bian-cheng-yue-du-bi-ji-di-wu-zhang-linux-wang-luo-bian-cheng-ji-chu-api/</guid>
+      <description>1. 字节序 字节序：内存中存储多个字节的方式。
+例如一个 16 进制数，它由两个字节组成，内存中存储这两个字节有两种方式，分别为大端字节序和小端 字节序。</description>
+    </item>
+    
+  </channel>
+</rss>

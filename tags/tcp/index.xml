@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>tcp on /dev/null</title>
+    <link>/tags/tcp/</link>
+    <description>Recent content in tcp on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Mon, 05 Sep 2022 00:51:45 +0000</lastBuildDate><atom:link href="/tags/tcp/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>tcp 粘包/拆包问题</title>
+      <link>/posts/tcp_zhan_bao/</link>
+      <pubDate>Mon, 05 Sep 2022 00:51:45 +0000</pubDate>
+      
+      <guid>/posts/tcp_zhan_bao/</guid>
+      <description>简介 tcp 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 tcp 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。</description>
+    </item>
+    
+  </channel>
+</rss>

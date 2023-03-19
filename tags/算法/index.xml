@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>算法 on /dev/null</title>
+    <link>/tags/%E7%AE%97%E6%B3%95/</link>
+    <description>Recent content in 算法 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Wed, 28 Jul 2021 18:19:37 +0000</lastBuildDate><atom:link href="/tags/%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[编程题]二叉树的下一个结点</title>
+      <link>/posts/bian-cheng-ti-er-cha-shu-de-xia-yi-ge-jie-dian/</link>
+      <pubDate>Wed, 28 Jul 2021 18:19:37 +0000</pubDate>
+      
+      <guid>/posts/bian-cheng-ti-er-cha-shu-de-xia-yi-ge-jie-dian/</guid>
+      <description>给定二叉树其中的一个结点，请找出其中序遍历顺序的下一个结点并且返回。
+注意，树中的结点不仅包含左右子结点，而且包含指向父结点的指针。
+示例: 输入:{8,6,10,5,7,9,11},8 返回:9 解析:这个组装传入的子树根节点，其实就是整颗树，中序遍历{5,6,7,8,9,10,11}，根节点8的下一个节点就是9，应该返回{9,10,11}，后台只打印子树的下一个节点，所以只会打印9，如下图，其实都有指向左右孩子的指针，还有指向父节点的指针，下图没有画出来 特别说明：leetcode 上没有这道题，测评请前往牛客，评测地址：https://www.</description>
+    </item>
+    
+    <item>
+      <title>求二叉树根节点到指定节点的路径</title>
+      <link>/posts/2021-3-27-find-binarytree-root-to-node-path/</link>
+      <pubDate>Fri, 16 Apr 2021 19:34:52 +0000</pubDate>
+      
+      <guid>/posts/2021-3-27-find-binarytree-root-to-node-path/</guid>
+      <description>算法描述 这不是一道力扣或者剑指上的原题，但却是二叉树问题的一个基础核心算法，适用于许多二叉树类型的题目，比如 剑指 Offer 68 - II.</description>
+    </item>
+    
+    <item>
+      <title>leetcode 46.全排列【未完】</title>
+      <link>/posts/2021-4-6-leet-46-quan-pai-lie/</link>
+      <pubDate>Fri, 16 Apr 2021 19:26:43 +0000</pubDate>
+      
+      <guid>/posts/2021-4-6-leet-46-quan-pai-lie/</guid>
+      <description>题目描述 算法设计 方法1 回溯法，使用 bool 数组记录每个数是否被访问 cpp 版本：</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 22. 链表中倒数第k个节点</title>
+      <link>/posts/jian-zhi-offer-22-lian-biao-zhong-dao-shu-di-k-ge-jie-dian/</link>
+      <pubDate>Fri, 16 Apr 2021 15:53:20 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-22-lian-biao-zhong-dao-shu-di-k-ge-jie-dian/</guid>
+      <description>题目描述 输入一个链表，输出该链表中倒数第k个节点。为了符合大多数人的习惯，本题从1开始计数，即链表的尾节点是倒数第1个节点。例如，一个链表有6个节点，从头节点开始，它们的值依次是1、2、3、4、5、6。这个链表的倒数第3个节点是值为4的节点。
+示例：
+给定一个链表: 1-&amp;gt;2-&amp;gt;3-&amp;gt;4-&amp;gt;5, 和 k = 2.</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 18. 删除链表的节点</title>
+      <link>/posts/jian-zhi-offer-18-shan-chu-lian-biao-de-jie-dian/</link>
+      <pubDate>Fri, 16 Apr 2021 15:42:54 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-18-shan-chu-lian-biao-de-jie-dian/</guid>
+      <description>题目描述 给定单向链表的头指针和一个要删除的节点的值，定义一个函数删除该节点。
+返回删除后的链表的头节点。
+注意：此题对比原题有改动
+示例 1:</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 03. 数组中重复的数字</title>
+      <link>/posts/jian-zhi-offer-03-shu-zu-zhong-chong-fu-de-shu-zi/</link>
+      <pubDate>Fri, 16 Apr 2021 15:38:03 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-03-shu-zu-zhong-chong-fu-de-shu-zi/</guid>
+      <description>题目描述 找出数组中重复的数字。
+在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。</description>
+    </item>
+    
+    <item>
+      <title>LeetCode146.LRU 缓存机制</title>
+      <link>/posts/leetcode146lru-huan-cun-ji-zhi/</link>
+      <pubDate>Fri, 16 Apr 2021 14:45:38 +0000</pubDate>
+      
+      <guid>/posts/leetcode146lru-huan-cun-ji-zhi/</guid>
+      <description>题目描述 运用你所掌握的数据结构，设计和实现一个 LRU (最近最少使用) 缓存机制。它应该支持以下操作： 获取数据 get 和 写入数据 put 。</description>
+    </item>
+    
+  </channel>
+</rss>

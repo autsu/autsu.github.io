@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>minikube 问题汇总 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="设置代理后，minikube kubectl 无响应 在给虚拟机设置了代理后，整个网络体验爽快多了，再也不用担心拉不下来包了。。。
+只需要将虚拟机的网络设置为桥接模式，然后开启 clashx 的 “允许局域网连接”（非常重要的一步，之前就是因为忽略了这一步，导致虚拟机无法使用宿主机代理），然后再点击 clashx 的 “复制终端代理命令”，将里面的 127.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"minikube 问题汇总",
+      "item":"/posts/minikube_wen_ti_hui_zong/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/minikube_wen_ti_hui_zong/"
+    },
+    "headline": "minikube 问题汇总 | \/dev\/null","datePublished": "2022-07-14T14:30:52+00:00",
+    "dateModified": "2022-07-14T14:30:52+00:00",
+    "wordCount":  700 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "设置代理后，minikube kubectl 无响应 在给虚拟机设置了代理后，整个网络体验爽快多了，再也不用担心拉不下来包了。。。\n只需要将虚拟机的网络设置为桥接模式，然后开启 clashx 的 “允许局域网连接”（非常重要的一步，之前就是因为忽略了这一步，导致虚拟机无法使用宿主机代理），然后再点击 clashx 的 “复制终端代理命令”，将里面的 127."
+}
+</script><meta property="og:title" content="minikube 问题汇总 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/minikube_wen_ti_hui_zong/" />
+
+
+
+
+<meta property="og:description" content="设置代理后，minikube kubectl 无响应 在给虚拟机设置了代理后，整个网络体验爽快多了，再也不用担心拉不下来包了。。。
+只需要将虚拟机的网络设置为桥接模式，然后开启 clashx 的 “允许局域网连接”（非常重要的一步，之前就是因为忽略了这一步，导致虚拟机无法使用宿主机代理），然后再点击 clashx 的 “复制终端代理命令”，将里面的 127." />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-07-14T14:30:52&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-07-14T14:30:52&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="minikube" />
+
+<meta property="article:tag" content="issues" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/linux-clone-de-keng/" />
+
+<meta property="og:see_also" content="/posts/git-push-error-remote-fatal-error-in-commit_refs/" />
+
+<meta property="og:see_also" content="/posts/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/" />
+
+<meta property="og:see_also" content="/posts/parallels-desktop-16-wang-luo-chu-shi-hua-shi-bai-he-bu-neng-lian-jie-usb-she-bei-jie-jue-fang-fa/" />
+
+<meta property="og:see_also" content="/posts/goji-yi-ci-defer-cuo-wu/" />
+
+<meta property="og:see_also" content="/posts/wei-shi-me-bu-neng-yong-bian-liang-bao-cun-die-dai-qi/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class="lg:col-start-2 bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">minikube 问题汇总</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-07-14</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>4分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h1 id="设置代理后minikube-kubectl-无响应">设置代理后，minikube kubectl 无响应</h1>
+<p>在给虚拟机设置了代理后，整个网络体验爽快多了，再也不用担心拉不下来包了。。。</p>
+<p>只需要将虚拟机的网络设置为桥接模式，然后开启 clashx 的 “允许局域网连接”（非常重要的一步，之前就是因为忽略了这一步，导致虚拟机无法使用宿主机代理），然后再点击 clashx 的 “复制终端代理命令”，将里面的 127.0.0.1 替换为宿主机的 ip，然后粘贴到虚拟机的终端上允许，即可成功开启代理。</p>
+<p>为了方便起见，可以封装成两个函数，放到 .zshrc（或者 .bashrc）里面：</p>
+<pre><code class="language-shell">host_ip=&quot;192.168.2.5&quot; # 宿主机 IP
+
+function proxy_on() {
+    export https_proxy=http://$host_ip:7890 http_proxy=http://$host_ip:7890 all_proxy=socks5://$host_ip:7890
+    # curl https://www.google.com/
+    # echo -e &quot;\n&quot;
+    echo -e &quot;\033[32m已开启代理\033[0m&quot;
+}
+
+function proxy_off() {
+    unset http_proxy
+    unset https_proxy
+    unset all_proxy
+    echo -e &quot;已关闭代理&quot;
+}
+</code></pre>
+<p>然后重新载入：</p>
+<pre><code class="language-shell">source ~/.zshrc
+</code></pre>
+<p>现在在终端可以输入 <code>proxy_on</code> 来开启代理了，同样可以输入 <code>proxy_off</code> 来关闭。</p>
+<p>但是之后发现了一个问题，kubectl 命令无响应，不管是使用 snap 下载的 kubectl，还是使用 minikube kubectl 下载的 kubectl 都是如此。</p>
+<p>如果执行 kubectl get po 会一直阻塞，但是 kubectl version 在等待一会后会返回错误信息：</p>
+<pre><code class="language-shell">$ minikube kubectl version
+WARNING: This version information is deprecated and will be replaced with the output from kubectl version --short.  Use --output=yaml|json to get the full version.
+Client Version: version.Info{Major:&quot;1&quot;, Minor:&quot;24&quot;, GitVersion:&quot;v1.24.3&quot;, GitCommit:&quot;aef86a93758dc3cb2c658dd9657ab4ad4afc21cb&quot;, GitTreeState:&quot;clean&quot;, BuildDate:&quot;2022-07-13T14:30:46Z&quot;, GoVersion:&quot;go1.18.3&quot;, Compiler:&quot;gc&quot;, Platform:&quot;linux/arm64&quot;}
+Kustomize Version: v4.5.4
+error: Get &quot;https://192.168.49.2:8443/version?timeout=32s&quot;: context deadline exceeded - error from a previous attempt: read tcp 192.168.2.2:35044-&gt;192.168.2.5:7890: read: connection reset by peer
+</code></pre>
+<p>看到这里的 192.168.2.2:35044-&gt;192.168.2.5:7890，我才发现有点不对劲，这不是我设置的代理地址吗？难道问题出在这里？</p>
+<p>然后查阅了一下 minikube 的官方文档，发现里面专门 <a href="https://minikube.sigs.k8s.io/docs/handbook/vpn_and_proxy/">有一节</a> 专门提到了代理的问题：</p>
+<p>里面特别提到了：</p>
+<blockquote>
+<p>如果需要 HTTP 代理来访问互联网，您可能需要使用环境变量将代理连接信息传递给 minikube 和 Docker：</p>
+<ul>
+<li><code>HTTP_PROXY</code>- 您的 HTTP 代理的 URL</li>
+<li><code>HTTPS_PROXY</code>- HTTPS 代理的 URL</li>
+<li><code>NO_PROXY</code>- 不应通过代理的主机的逗号分隔列表。</li>
+</ul>
+<p>这里的 NO_PROXY 变量很重要：如果不设置它，minikube 可能无法访问 VM 内的资源。minikube 使用四个默认 IP 范围，它们不应通过代理：</p>
+<ul>
+<li><strong>192.168.59.0/24</strong>：由 minikube VM 使用。可通过以下方式为某些管理程序配置<code>--host-only-cidr</code></li>
+<li><strong>192.168.39.0/24</strong>：由 minikube kvm2 驱动程序使用。</li>
+<li><strong>192.168.49.0/24</strong>：由 minikube docker 驱动程序的第一个集群使用。</li>
+<li><strong>10.96.0.0/12</strong>：由服务集群 IP 使用。可通过以下方式配置 <code>--service-cluster-ip-range</code></li>
+</ul>
+</blockquote>
+<p>并且给出了示例：</p>
+<pre><code class="language-shell">export HTTP_PROXY=http://&lt;proxy hostname:port&gt;
+export HTTPS_PROXY=https://&lt;proxy hostname:port&gt;
+export NO_PROXY=localhost,127.0.0.1,10.96.0.0/12,192.168.59.0/24,192.168.49.0/24,192.168.39.0/24
+</code></pre>
+<p>现在照猫画虎，修改之前的 proxy_on 函数（这里我同样删除了 all_proxy 配置，不知道这个配置是否有影响）：</p>
+<pre><code class="language-shell">host_ip=&quot;192.168.2.5&quot;
+
+function proxy_on() {
+    export no_proxy=localhost,127.0.0.1,10.96.0.0/12,192.168.59.0/24,192.168.49.0/24,192.168.39.0/24
+    export https_proxy=http://$host_ip:7890
+    export http_proxy=http://$host_ip:7890
+    # curl https://www.google.com/
+    # echo -e &quot;\n&quot;
+    echo -e &quot;\033[32m已开启代理\033[0m&quot;
+}
+</code></pre>
+<p>现在 kubectl 就可以正常使用了。</p>
+<p>更新：</p>
+<p>最近发现又出现这个问题了，我的 proxy_on 函数也没有发生任何修改，报错：</p>
+<pre><code class="language-shell">$ kubectl version
+WARNING: This version information is deprecated and will be replaced with the output from kubectl version --short.  Use --output=yaml|json to get the full version.
+Client Version: version.Info{Major:&quot;1&quot;, Minor:&quot;24&quot;, GitVersion:&quot;v1.24.4&quot;, GitCommit:&quot;95ee5ab382d64cfe6c28967f36b53970b8374491&quot;, GitTreeState:&quot;clean&quot;, BuildDate:&quot;2022-08-18T02:40:28Z&quot;, GoVersion:&quot;go1.18.5&quot;, Compiler:&quot;gc&quot;, Platform:&quot;linux/arm64&quot;}
+Kustomize Version: v4.5.4
+error: Get &quot;https://192.168.58.2:8443/version?timeout=32s&quot;: context deadline exceeded - error from a previous attempt: read tcp 192.168.2.4:45562-&gt;192.168.2.3:7890: read: connection reset by peer
+</code></pre>
+<p>这里我注意到了 &ldquo;https://192.168.58.2:8443/version?timeout=32s&rdquo; 这部分，发现请求的是 192.168.58.2 这个地址，我尝试将这个地址段（也就是 192.168.58.0/24）也添加到 no_proxy 列表中：</p>
+<pre><code class="language-shell">function proxy_on() {
+    export no_proxy=localhost,127.0.0.1,10.96.0.0/12,192.168.59.0/24,192.168.49.0/24,192.168.39.0/24,192.168.58.0/24
+    export https_proxy=http://$host_ip:7890
+    export http_proxy=http://$host_ip:7890
+    # curl https://www.google.com/
+    # echo -e &quot;\n&quot;
+    echo &quot;host_ip: $host_ip&quot;
+    echo -e &quot;\033[32m已开启代理\033[0m&quot;
+}
+</code></pre>
+<p>添加后 source .zshrc，proxy_off 一下，再重新 proxy_on，发现 kubectl 可以正常执行了。</p>
+<p>不过具体原因还不清楚，我的 minikube version 是 v1.26.1，是官方文档与这个版本不匹配吗？或者可能是因为 192.168.59.0 这个网段被占用了，导致 minikube 重新选择了 192.168.58.0 这个网段？暂时不知道原因，不过只要按照 kubectl version 里的报错信息，将请求的网段添加到 no_proxy 环境变量里就可以解决问题了。</p>
+<h1 id="minikube-无法启动">minikube 无法启动</h1>
+<p>重装了一下 docker，发现 minikube 无法启动了，部分报错信息如下：</p>
+<pre><code>[kubelet-check] Initial timeout of 40s passed.
+
+Unfortunately, an error has occurred:
+	timed out waiting for the condition
+
+This error is likely caused by:
+	- The kubelet is not running
+	- The kubelet is unhealthy due to a misconfiguration of the node in some way (required cgroups disabled)
+
+If you are on a systemd-powered system, you can try to troubleshoot the error with the following commands:
+	- 'systemctl status kubelet'
+	- 'journalctl -xeu kubelet'
+</code></pre>
+<p>解决方法，<a href="https://github.com/kubernetes/minikube/issues/14477">参考这里</a>：</p>
+<pre><code class="language-shell">$ minikube delete
+$ minikube start --kubernetes-version=v1.23.8
+</code></pre>
+<p>可能是 kubernetes 1.24 的问题导致的</p>
+<h1 id="创建-pod-错误error-imagepullbackoff">创建 pod 错误，Error: ImagePullBackOff</h1>
+<p>一个 redis yaml 如下：</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  containers:
+  - name: redis
+    image: redis
+    ports:
+    - containerPort: 6379
+      hostPort: 6379
+</code></pre>
+<p>这是我之前使用过的 redis yaml，yaml 本身应该没问题，但是 <code>kubectl apply -f redis.yaml</code> 后，pod 无法创建成功，处于 ImagePullBackOff 状态，查看 describe，报错信息：</p>
+<pre><code class="language-shell">Events:
+  Type     Reason     Age                     From               Message
+  ----     ------     ----                    ----               -------
+  Normal   Scheduled  9m47s                   default-scheduler  Successfully assigned default/redis to minikube
+  Warning  Failed     9m31s                   kubelet            Failed to pull image &quot;redis&quot;: rpc error: code = Unknown desc = Error response from daemon: Get &quot;https://registry-1.docker.io/v2/&quot;: context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+  Warning  Failed     8m21s (x2 over 9m2s)    kubelet            Failed to pull image &quot;redis&quot;: rpc error: code = Unknown desc = Error response from daemon: Get &quot;https://registry-1.docker.io/v2/&quot;: net/http: request canceled while waiting for connection (Client.Timeout exceeded while awaiting headers)
+  Normal   Pulling    7m26s (x4 over 9m47s)   kubelet            Pulling image &quot;redis&quot;
+  Warning  Failed     7m11s (x4 over 9m31s)   kubelet            Error: ErrImagePull
+  Warning  Failed     7m11s                   kubelet            Failed to pull image &quot;redis&quot;: rpc error: code = Unknown desc = Error response from daemon: Get &quot;https://registry-1.docker.io/v2/&quot;: dial tcp 54.242.59.189:443: i/o timeout
+  Warning  Failed     6m56s (x6 over 9m31s)   kubelet            Error: ImagePullBackOff
+  Normal   BackOff    4m37s (x14 over 9m31s)  kubelet            Back-off pulling image &quot;redis&quot;
+</code></pre>
+<p>但是我使用 docker pull redis 是成功的：</p>
+<pre><code class="language-shell">$ docker pull redis
+Using default tag: latest
+latest: Pulling from library/redis
+5b1423465504: Pull complete
+4216a986e3df: Pull complete
+f74254280149: Pull complete
+64dfe9963acc: Pull complete
+097894d6d055: Pull complete
+b9381c45e088: Pull complete
+Digest: sha256:495732ba570db6a3626370a1fb949e98273a13d41eb3e26f7ecb1f6e31ad4041
+Status: Downloaded newer image for redis:latest
+docker.io/library/redis:latest
+</code></pre>
+<p>而且我注意到 docker pull 的地址是 library/redis，而 k8s pod get 的地址是 registry-1.docker.io/v2/，因为虚拟机我挂了代理，应该也不是网络的问题。我又将 redis.yaml 里面的 spec.containers[0].image 改为了 library/redis，依旧创建失败，还是会 Get <a href="https://registry-1.docker.io/v2/">https://registry-1.docker.io/v2/</a> 这个地址。</p>
+<p>不知道问题出在哪里，试了下用 k3s 执行同样的操作，可以创建成功</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/minikube/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#minikube</a>
+    
+    <a href="/tags/issues/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#issues</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/wei-shen-me-go-you-nil-chan/" class="block">为什么 go 需要 nil chan</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/go-rabbitmq/" class="block">rabbitmq 学习笔记</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+
+    
+    
+      <div
+        class="lg:col-start-2 bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/linux-clone-de-keng/" class="no-underline">linux clone() 的坑</a>
+          <br />
+        
+          <a href="/posts/git-push-error-remote-fatal-error-in-commit_refs/" class="no-underline">git push error: remote: fatal error in commit_refs</a>
+          <br />
+        
+          <a href="/posts/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/" class="no-underline">两个 main goroutine 操作一个 channel 会怎样</a>
+          <br />
+        
+          <a href="/posts/parallels-desktop-16-wang-luo-chu-shi-hua-shi-bai-he-bu-neng-lian-jie-usb-she-bei-jie-jue-fang-fa/" class="no-underline">Parallels Desktop 16 网络初始化失败和不能连接USB设备解决方法</a>
+          <br />
+        
+          <a href="/posts/goji-yi-ci-defer-cuo-wu/" class="no-underline">go：记一次 defer 错误</a>
+          <br />
+        
+          <a href="/posts/wei-shi-me-bu-neng-yong-bian-liang-bao-cun-die-dai-qi/" class="no-underline">再探 for 循环</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>回溯法 on /dev/null</title>
+    <link>/tags/%E5%9B%9E%E6%BA%AF%E6%B3%95/</link>
+    <description>Recent content in 回溯法 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Sat, 25 Sep 2021 22:27:33 +0000</lastBuildDate><atom:link href="/tags/%E5%9B%9E%E6%BA%AF%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>39. 组合总和</title>
+      <link>/posts/39-zu-he-zong-he/</link>
+      <pubDate>Sat, 25 Sep 2021 22:27:33 +0000</pubDate>
+      
+      <guid>/posts/39-zu-he-zong-he/</guid>
+      <description>给定一个无重复元素的正整数数组 candidates 和一个正整数 target ，找出 candidates 中所有可以使数字和为目标数 target 的唯一组合。</description>
+    </item>
+    
+    <item>
+      <title>leetcode 78. 子集</title>
+      <link>/posts/leetcode-78-zi-ji/</link>
+      <pubDate>Thu, 03 Jun 2021 17:43:51 +0000</pubDate>
+      
+      <guid>/posts/leetcode-78-zi-ji/</guid>
+      <description>给你一个整数数组 nums ，数组中的元素 互不相同 。返回该数组所有可能的子集（幂集）。</description>
+    </item>
+    
+    <item>
+      <title>求二叉树根节点到指定节点的路径</title>
+      <link>/posts/2021-3-27-find-binarytree-root-to-node-path/</link>
+      <pubDate>Fri, 16 Apr 2021 19:34:52 +0000</pubDate>
+      
+      <guid>/posts/2021-3-27-find-binarytree-root-to-node-path/</guid>
+      <description>算法描述 这不是一道力扣或者剑指上的原题，但却是二叉树问题的一个基础核心算法，适用于许多二叉树类型的题目，比如 剑指 Offer 68 - II.</description>
+    </item>
+    
+    <item>
+      <title>leetcode 46.全排列【未完】</title>
+      <link>/posts/2021-4-6-leet-46-quan-pai-lie/</link>
+      <pubDate>Fri, 16 Apr 2021 19:26:43 +0000</pubDate>
+      
+      <guid>/posts/2021-4-6-leet-46-quan-pai-lie/</guid>
+      <description>题目描述 算法设计 方法1 回溯法，使用 bool 数组记录每个数是否被访问 cpp 版本：</description>
+    </item>
+    
+  </channel>
+</rss>

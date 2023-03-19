@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>深度优先搜索 on /dev/null</title>
+    <link>/tags/%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/</link>
+    <description>Recent content in 深度优先搜索 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Sun, 02 May 2021 10:02:50 +0000</lastBuildDate><atom:link href="/tags/%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode 690. 员工的重要性</title>
+      <link>/posts/leetcode-690-yuan-gong-de-chong-yao-xing/</link>
+      <pubDate>Sun, 02 May 2021 10:02:50 +0000</pubDate>
+      
+      <guid>/posts/leetcode-690-yuan-gong-de-chong-yao-xing/</guid>
+      <description>给定一个保存员工信息的数据结构，它包含了员工 唯一的 id ，重要度 和 直系下属的 id</description>
+    </item>
+    
+    <item>
+      <title>leetcode 394. 字符串解码</title>
+      <link>/posts/leetcode-394-zi-fu-chuan-jie-ma/</link>
+      <pubDate>Mon, 19 Apr 2021 18:57:01 +0000</pubDate>
+      
+      <guid>/posts/leetcode-394-zi-fu-chuan-jie-ma/</guid>
+      <description>题目描述 给定一个经过编码的字符串，返回它解码后的字符串。
+编码规则为: k[encoded_string]，表示其中方括号内部的 encoded_string 正好重复 k 次。注意 k 保证为正整数。</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>设计 on /dev/null</title>
+    <link>/tags/%E8%AE%BE%E8%AE%A1/</link>
+    <description>Recent content in 设计 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Sat, 27 Aug 2022 23:49:10 +0000</lastBuildDate><atom:link href="/tags/%E8%AE%BE%E8%AE%A1/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>如何保证缓存和数据库的一致性</title>
+      <link>/posts/huan_cun_yi_zhi_xing/</link>
+      <pubDate>Sat, 27 Aug 2022 23:49:10 +0000</pubDate>
+      
+      <guid>/posts/huan_cun_yi_zhi_xing/</guid>
+      <description>先更新数据库，再更新缓存 存在的问题：
+更新数据库成功，更新缓存失败
+并发情况下可能会存在问题，如下（纵轴代表时间线）：
+A B 更新 DB x = 1 更新 DB，x = 2 更新缓存，x = 2 更新缓存，x = 1 可以看到因为并发操作导致 A 把 B 的更新缓存结果给覆盖了，最终使得数据库结果（x = 2）和缓存结果（x = 1）不一致</description>
+    </item>
+    
+    <item>
+      <title>leetcode 225. 用队列实现栈</title>
+      <link>/posts/leetcode-225-yong-dui-lie-shi-xian-zhan/</link>
+      <pubDate>Wed, 04 Aug 2021 20:20:51 +0000</pubDate>
+      
+      <guid>/posts/leetcode-225-yong-dui-lie-shi-xian-zhan/</guid>
+      <description>请你仅使用两个队列实现一个后入先出（LIFO）的栈，并支持普通栈的全部四种操作（push、top、pop 和 empty）。
+实现 MyStack 类：</description>
+    </item>
+    
+    <item>
+      <title>leetcode 155. 最小栈</title>
+      <link>/posts/leetcode-155-zui-xiao-zhan/</link>
+      <pubDate>Wed, 04 Aug 2021 12:08:57 +0000</pubDate>
+      
+      <guid>/posts/leetcode-155-zui-xiao-zhan/</guid>
+      <description>设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈。</description>
+    </item>
+    
+    <item>
+      <title>leetcode 225. 用队列实现栈【未完】</title>
+      <link>/posts/leetcode-225-yong-dui-lie-shi-xian-zhan-wei-wan/</link>
+      <pubDate>Fri, 16 Apr 2021 19:21:36 +0000</pubDate>
+      
+      <guid>/posts/leetcode-225-yong-dui-lie-shi-xian-zhan-wei-wan/</guid>
+      <description>题目描述 请你仅使用两个队列实现一个后入先出（LIFO）的栈，并支持普通队列的全部四种操作（push、top、pop 和 empty）。
+实现 MyStack 类：</description>
+    </item>
+    
+  </channel>
+</rss>

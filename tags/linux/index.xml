@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>linux on /dev/null</title>
+    <link>/tags/linux/</link>
+    <description>Recent content in linux on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Tue, 06 Sep 2022 22:37:45 +0000</lastBuildDate><atom:link href="/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux 虚拟网络设备 veth-pair [未完]</title>
+      <link>/posts/linux_veth_pair/</link>
+      <pubDate>Tue, 06 Sep 2022 22:37:45 +0000</pubDate>
+      
+      <guid>/posts/linux_veth_pair/</guid>
+      <description>介绍 veth-pair 是什么 两个 namespace 间通信 直接连接 # 创建 2 个 namespace $ ip netns add ns1 $ ip netns add ns2 # 查看创建的 namespace $ ip netns ns2 ns1 # 创建一对 veth-pair veth0 veth1 $ ip l a veth0 type veth peer name veth1 # 也可以写成： # ip link add veth0 type veth peer name veth1 # 将 veth0 veth1 分别加入两个 ns $ ip l s veth0 netns ns1 $ ip l s veth1 netns ns2 # 给两个 veth0 veth1 配上 IP 并启用 $ ip netns exec ns1 ip a a 10.</description>
+    </item>
+    
+    <item>
+      <title>孤儿进程与僵尸进程</title>
+      <link>/posts/gu_er_jin_cheng_he_jiang_shi_jin_cheng/</link>
+      <pubDate>Wed, 31 Aug 2022 00:59:00 +0000</pubDate>
+      
+      <guid>/posts/gu_er_jin_cheng_he_jiang_shi_jin_cheng/</guid>
+      <description>来源：https://www.cnblogs.com/Anker/p/3271773.html
+基本概念 孤儿进程：一个父进程退出，而它的一个或多个子进程还在运行，那么那些子进程将成为孤儿进程。孤儿进程将被 init 进程(进程号为 1 )所收养，并由 init 进程对它们完成状态收集工作。</description>
+    </item>
+    
+    <item>
+      <title>linux iptables</title>
+      <link>/posts/iptables/</link>
+      <pubDate>Mon, 16 May 2022 10:53:35 +0000</pubDate>
+      
+      <guid>/posts/iptables/</guid>
+      <description>参考：
+https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2
+规则相关命令 查看规则 # 查看 filter 表的所有规则，-t 后面跟表名 $ iptables -t filter -L # 查看 raw 表的所有规则 $ iptables -t raw -L # 查看 filter 表（-t 缺省时，默认为 filter 表）的 INPUT 链上的所有规则 $ iptables -L INPUT # 加 -v 可以输出更详细的信息 $ iptables -vL INPUT # 加 -n 会直接输出 IP 地址，不加的话会继续转换，比如 0.</description>
+    </item>
+    
+    <item>
+      <title>linux clone() 的坑</title>
+      <link>/posts/linux-clone-de-keng/</link>
+      <pubDate>Wed, 11 May 2022 17:57:22 +0000</pubDate>
+      
+      <guid>/posts/linux-clone-de-keng/</guid>
+      <description>环境：
+MacBook m1
+Ubuntu 20.04.4 LTS（使用 cat /etc/issue 查看），基于 multipass 创建</description>
+    </item>
+    
+    <item>
+      <title>Linux 批量 kill 进程</title>
+      <link>/posts/linux-pi-liang-kill-jin-cheng/</link>
+      <pubDate>Tue, 21 Sep 2021 21:43:03 +0000</pubDate>
+      
+      <guid>/posts/linux-pi-liang-kill-jin-cheng/</guid>
+      <description>命令： ps -ef | grep name | grep -v grep | awk &#39;{print $2}&#39; | xargs kill 解释： ps -ef：查看全格式的全部进程</description>
+    </item>
+    
+    <item>
+      <title>【Linux 高性能服务器编程】阅读笔记 第五章 -- Linux 网络编程基础 api</title>
+      <link>/posts/linux-gao-xing-neng-fu-wu-qi-bian-cheng-yue-du-bi-ji-di-wu-zhang-linux-wang-luo-bian-cheng-ji-chu-api/</link>
+      <pubDate>Sat, 29 May 2021 19:27:47 +0000</pubDate>
+      
+      <guid>/posts/linux-gao-xing-neng-fu-wu-qi-bian-cheng-yue-du-bi-ji-di-wu-zhang-linux-wang-luo-bian-cheng-ji-chu-api/</guid>
+      <description>1. 字节序 字节序：内存中存储多个字节的方式。
+例如一个 16 进制数，它由两个字节组成，内存中存储这两个字节有两种方式，分别为大端字节序和小端 字节序。</description>
+    </item>
+    
+    <item>
+      <title>硬链接和软链接</title>
+      <link>/posts/2021-1-19-soft-hard-link/</link>
+      <pubDate>Sat, 11 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2021-1-19-soft-hard-link/</guid>
+      <description>Linux 的硬链接和软链接
+索引节点 在Linux的文件系统中，保存在磁盘分区中的文件不管是什么类型都给它分配一个编号，称为索引节点号(Inode Index)，可以通过 ls -li 查看每个文件的索引节点：</description>
+    </item>
+    
+  </channel>
+</rss>

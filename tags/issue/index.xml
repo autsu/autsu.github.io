@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>issue on /dev/null</title>
+    <link>/tags/issue/</link>
+    <description>Recent content in issue on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Sat, 10 Sep 2022 19:41:35 +0000</lastBuildDate><atom:link href="/tags/issue/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ubuntu arm64 使用 apt-get 安装 docker，以及 snap 的一些问题记录</title>
+      <link>/posts/ubuntu-arm64-an-zhuang-docker/</link>
+      <pubDate>Sat, 10 Sep 2022 19:41:35 +0000</pubDate>
+      
+      <guid>/posts/ubuntu-arm64-an-zhuang-docker/</guid>
+      <description>使用 snap 可以比较方便的安装 docker，但是有一次出现了 k8s pod 无法拉取镜像的问题，看了下 pod describe，发现是因为走代理的问题（我使用的是 ubuntu 虚拟机，连接宿主机的 clashx 进行代理），连接的代理是宿主机的老地址 192.</description>
+    </item>
+    
+    <item>
+      <title>GoLand/Idea 启动闪退，报错 NSInternalInconsistencyException 的解决方法</title>
+      <link>/posts/jetbrain_crash/</link>
+      <pubDate>Thu, 08 Sep 2022 00:55:11 +0000</pubDate>
+      
+      <guid>/posts/jetbrain_crash/</guid>
+      <description>环境：
+机器：MacBook Air (M1, 2020) 系统：MacOS 12.</description>
+    </item>
+    
+    <item>
+      <title>一个 EOF 引发的低级错误</title>
+      <link>/posts/eof_cuo_wu/</link>
+      <pubDate>Tue, 06 Sep 2022 02:28:52 +0000</pubDate>
+      
+      <guid>/posts/eof_cuo_wu/</guid>
+      <description>今天更新了一下之前写的 tcp server，结果测试的时候发现了一个十分诡异的 BUG：客户端这边发送完数据，进程都已经退出了，但是服务端却依然源源不断的接收到客户端发来的数据，而且数据包的大小都为 0，这个 BUG 花费了我大半天的时间，终于找到了问题所在，特此记录。</description>
+    </item>
+    
+    <item>
+      <title>一个 go nil pointer 错误记录</title>
+      <link>/posts/go_nil_pointer/</link>
+      <pubDate>Mon, 05 Sep 2022 00:51:45 +0000</pubDate>
+      
+      <guid>/posts/go_nil_pointer/</guid>
+      <description>看看下面这段代码的运行结果是什么？
+package main import ( &amp;quot;fmt&amp;quot; &amp;quot;net&amp;quot; ) func main() { lis, err := net.</description>
+    </item>
+    
+    <item>
+      <title>一段莫名阻塞的 reflect 代码</title>
+      <link>/posts/block-code/</link>
+      <pubDate>Fri, 13 May 2022 10:53:35 +0000</pubDate>
+      
+      <guid>/posts/block-code/</guid>
+      <description>package main import ( &amp;quot;fmt&amp;quot; &amp;quot;reflect&amp;quot; ) type I interface { Do() } type S struct{} func (s *S) Do() {} func EnforcePtr(obj interface{}) { v := reflect.</description>
+    </item>
+    
+  </channel>
+</rss>

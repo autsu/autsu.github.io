@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>k8s ConfigMap | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="引子 做过开发的同学都遇到过给程序进行配置的场景，比如非常常见的配置文件，将 Mysql 的地址、端口、用户名、密码等信息写到一个配置文件里，然后程序内部通过读取这个配置文件来获取信息，防止了硬编码信息到程序内部，这样如果发生变动只需要修改配置文件即可，无需重新编译整个程序；另一种常见的方式是运行程序时指定参数来进行配置，比如 Go 标准库里的 flag 包就可以方便的进行参数指定，然后运行时只要使用诸如 go run main.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"k8s ConfigMap",
+      "item":"/posts/k8s-configmap/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/k8s-configmap/"
+    },
+    "headline": "k8s ConfigMap | \/dev\/null","datePublished": "2022-06-07T19:17:35+00:00",
+    "dateModified": "2022-06-07T19:17:35+00:00",
+    "wordCount":  2366 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "引子 做过开发的同学都遇到过给程序进行配置的场景，比如非常常见的配置文件，将 Mysql 的地址、端口、用户名、密码等信息写到一个配置文件里，然后程序内部通过读取这个配置文件来获取信息，防止了硬编码信息到程序内部，这样如果发生变动只需要修改配置文件即可，无需重新编译整个程序；另一种常见的方式是运行程序时指定参数来进行配置，比如 Go 标准库里的 flag 包就可以方便的进行参数指定，然后运行时只要使用诸如 go run main."
+}
+</script><meta property="og:title" content="k8s ConfigMap | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/k8s-configmap/" />
+
+
+
+
+<meta property="og:description" content="引子 做过开发的同学都遇到过给程序进行配置的场景，比如非常常见的配置文件，将 Mysql 的地址、端口、用户名、密码等信息写到一个配置文件里，然后程序内部通过读取这个配置文件来获取信息，防止了硬编码信息到程序内部，这样如果发生变动只需要修改配置文件即可，无需重新编译整个程序；另一种常见的方式是运行程序时指定参数来进行配置，比如 Go 标准库里的 flag 包就可以方便的进行参数指定，然后运行时只要使用诸如 go run main." />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-06-07T19:17:35&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-06-07T19:17:35&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="k8s" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/k8s-namespace/" />
+
+<meta property="og:see_also" content="/posts/k8s-juan/" />
+
+<meta property="og:see_also" content="/posts/k8s-deployment/" />
+
+<meta property="og:see_also" content="/posts/k8s-service/" />
+
+<meta property="og:see_also" content="/posts/k8s-nginx-pod-de-containerport-wen-ti/" />
+
+<meta property="og:see_also" content="/posts/k8s-daemonset/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">k8s ConfigMap</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-06-07</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>12分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h1 id="引子">引子</h1>
+<p>做过开发的同学都遇到过给程序进行配置的场景，比如非常常见的配置文件，将 Mysql 的地址、端口、用户名、密码等信息写到一个配置文件里，然后程序内部通过读取这个配置文件来获取信息，防止了硬编码信息到程序内部，这样如果发生变动只需要修改配置文件即可，无需重新编译整个程序；另一种常见的方式是运行程序时指定参数来进行配置，比如 Go 标准库里的 flag 包就可以方便的进行参数指定，然后运行时只要使用诸如 <code>go run main.go -a 123 -b 456</code> 这样的方式，便可读取到配置信息，比如在这个例子里传递了两个参数：a=123，b=456</p>
+<p>那么在 k8s 中如何对容器进行配置呢？</p>
+<h2 id="在-docker-中定义命令与参数">在 docker 中定义命令与参数</h2>
+<p>容器中运行的完整指令由两部分组成：命令和参数，比如 <code>./main -a 123</code>，main 就是命令，-a 就是参数，在 Dockerfile 中分别对应的是 ENTRYPOINT（命令）和 CMD（参数）。</p>
+<p>实战：</p>
+<p>这个 image 会调用 fortuneloop.sh：</p>
+<pre><code class="language-dockerfile">FROM ubuntu:latest
+
+RUN apt-get update ; apt-get -y install fortune # 安装 fortune
+ADD fortuneloop.sh /bin/fortuneloop.sh
+
+ENTRYPOINT [&quot;/bin/fortuneloop.sh&quot;]
+CMD [&quot;10&quot;] # 每隔 10s 输出一次
+</code></pre>
+<p>这里指定了 ENTRYPOINT 和 CMD，等同于命令 <code>/bin/fortuneloop.sh 10</code></p>
+<p>附：fortuneloop.sh 文件内容如下：</p>
+<pre><code class="language-shell">#!/bin/bash
+trap &quot;exit&quot; SIGINT
+
+INTERVAL=$1 # 读取第一个参数，比如执行 fortuneloop.sh 10，那么 $1=10
+echo Configured to generate new fortune every $INTERVAL seconds
+
+mkdir -p /var/htdocs
+
+while :
+do
+  echo $(date) Writing fortune to /var/htdocs/index.html
+  /usr/games/fortune &gt; /var/htdocs/index.html # 执行 fortune 命令，将输出的内容写入到 index.html
+  sleep $INTERVAL # 睡眠指定的时间
+done
+</code></pre>
+<p>接下来构建并运行：</p>
+<pre><code class="language-shell"># 构建镜像
+$ docker build -t stdoutt/fortune-args-arm64 .
+
+# 运行
+$ docker run -it stdoutt/fortune-args-arm6
+
+# 观察效果
+# 每隔 10s 就会打印一次
+Configured to generate new fortune every 10 seconds
+Sun Sep 25 02:23:01 UTC 2022 Writing fortune to /var/htdocs/index.html
+Sun Sep 25 02:23:11 UTC 2022 Writing fortune to /var/htdocs/index.html
+</code></pre>
+<p>因为在 Dockerfile 的 CMD 中指定值为 10，所以默认会每隔 10 秒打印一次，也可以自己指定值将默认值覆盖掉：</p>
+<pre><code class="language-shell">$ docker run -it stdoutt/fortune-args-arm6 1
+Configured to generate new fortune every 1 seconds
+Sun Sep 25 02:24:55 UTC 2022 Writing fortune to /var/htdocs/index.html
+Sun Sep 25 02:24:56 UTC 2022 Writing fortune to /var/htdocs/index.html
+Sun Sep 25 02:24:57 UTC 2022 Writing fortune to /var/htdocs/index.html
+</code></pre>
+<p>现在每间隔 1s 就会打印一次</p>
+<h2 id="在-k8s-中定义命令与参数">在 k8s 中定义命令与参数</h2>
+<p>在 k8s 中定义容器时，可以覆盖掉镜像的 ENTRYPOINT 和 CMD，通过 command 和 args 来指定，类似一下这种形式：</p>
+<pre><code class="language-yaml">kind: Pod 
+spec:
+	containers:
+		- image: some/image
+			command: [&quot;/bin/command&quot;]  # 等同于 Dockerfile 中的 ENTRYPOINT
+			args: [&quot;argl&quot;, &quot;arg2&quot;, &quot;arg3&quot;] # 等同于 Dockerfile 中的 CMD
+</code></pre>
+<p>其中 command 等同于 Dockerfile 中的 ENTRYPOINT，args 等同于 Dockerfile 中的 CMD</p>
+<h3 id="实战">实战</h3>
+<p>yaml 如下：</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: fortune2s
+spec:
+  containers:
+  - image: stdoutt/fortune-args-arm64 # 注意此 image 仅适用于 arm64
+    args: [&quot;2&quot;] # 等同于 Dockerfile 中的 CMD
+    name: html-generator
+    volumeMounts:
+    - name: html
+      mountPath: /var/htdocs
+  - image: nginx:alpine
+    name: web-server
+    volumeMounts:
+    - name: html
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+    ports:
+    - containerPort: 80
+      protocol: TCP
+  volumes:
+  - name: html
+    emptyDir: {}
+</code></pre>
+<p>测试效果：</p>
+<pre><code class="language-shell"># 创建 pod
+$ kubectl apply -f fortune-pod-args.yaml
+pod/fortune2s created
+
+# 开启端口转发
+$ kubectl port-forward fortune2s 8080:80
+Forwarding from 127.0.0.1:8080 -&gt; 80
+Forwarding from [::1]:8080 -&gt; 80
+
+# 每隔 2s （和 args 中定义的一样）curl 一次，因为 args 也定义为 2s，代表每 2s 写入一次谚语，所以
+# 每次 curl 都应该输出不同的内容
+$ while true;do curl localhost:8080;sleep 2s;done
+Wagner's music is better than it sounds.
+		-- Mark Twain
+You plan things that you do not even attempt because of your extreme caution.
+You never hesitate to tackle the most difficult problems.
+The lovely woman-child Kaa was mercilessly chained to the cruel post of
+the warrior-chief Beast, with his barbarian tribe now stacking wood at
+her nubile feet, when the strong clear voice of the poetic and heroic
+Handsomas roared, 'Flick your Bic, crisp that chick, and you'll feel my
+steel through your last meal!'
+		-- Winning sentence, 1984 Bulwer-Lytton bad fiction contest.
+</code></pre>
+<h2 id="在容器定义中指定环境变量">在容器定义中指定环境变量</h2>
+<p><strong>Dockerfile</strong></p>
+<pre><code class="language-dockerfile">FROM ubuntu:latest
+
+RUN apt-get update ; apt-get -y install fortune
+ADD fortuneloop.sh /bin/fortuneloop.sh
+
+ENTRYPOINT [&quot;/bin/fortuneloop.sh&quot;]
+</code></pre>
+<p><strong>fortuneloop.sh</strong></p>
+<pre><code class="language-shell">#!/bin/bash
+trap &quot;exit&quot; SIGINT
+
+echo Configured to generate new fortune every $INTERVAL seconds
+
+mkdir -p /var/htdocs
+
+while :
+do
+  echo $(date) Writing fortune to /var/htdocs/index.html
+  /usr/games/fortune &gt; /var/htdocs/index.html
+  sleep $INTERVAL # 读取 INTERVAL 这个环境变量
+done
+</code></pre>
+<p><strong>fortune-pod-env.yaml</strong></p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: fortune-env
+spec:
+  containers:
+  - image: stdoutt/fortune-env-arm64 # 注意此 image 仅适用于 arm64
+    env: # 在这里设置环境变量，用于 fortuneloop.sh 的读取
+    - name: INTERVAL
+      value: &quot;5&quot;
+    name: html-generator
+    volumeMounts:
+    - name: html
+      mountPath: /var/htdocs
+  - image: nginx:alpine
+    name: web-server
+    volumeMounts:
+    - name: html
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+    ports:
+    - containerPort: 80
+      protocol: TCP
+  volumes:
+  - name: html
+    emptyDir: {}
+</code></pre>
+<p>测试效果：</p>
+<pre><code class="language-shell">$ kubectl apply -f fortune-env.yaml
+pod/fortune-env created
+
+$ kubectl get po
+NAME          READY   STATUS    RESTARTS   AGE
+fortune2s     2/2     Running   0          84m
+fortune-env   2/2     Running   0          18s
+
+$ kubectl port-forward fortune-env 8080:80
+Forwarding from 127.0.0.1:8080 -&gt; 80
+Forwarding from [::1]:8080 -&gt; 80
+
+$ while true;do curl localhost:8080;sleep 5s;done # sleep 同样的时间
+It may or may not be worthwhile, but it still has to be done.
+When I reflect upon the number of disagreeable people who I know who have gone
+to a better world, I am moved to lead a different life.
+		-- Mark Twain, &quot;Pudd'nhead Wilson's Calendar&quot;
+	
+# 这里额外测试一下，环境变量里设置的值是 5，也就是每 5s 生成一句新谚语并写入 index.html，
+# 但是这里每隔 1s 就 curl 一次，会发现前 5 此输出的内容都相同
+$ while true;do curl localhost:8080;sleep 1s;done
+You will be surrounded by luxury.
+You will be surrounded by luxury.
+You will be surrounded by luxury.
+You will be surrounded by luxury.
+You will be surrounded by luxury.
+Q:	What happens when four WASPs find themselves in the same room?
+A:	A dinner party.
+</code></pre>
+<h1 id="configmap">ConfigMap</h1>
+<p>上面的方式都是直接在 pod 中硬编码的，就像 <code>- name: INTERVAL  value: &quot;5&quot;</code> 这样，如果之后需要更改 value 的值，那么需要修改 pod 的 yaml，然后删除旧的重新创建新的（这里还待验证），比较麻烦。</p>
+<p>ConfigMap 将配置相关的内容抽取出来做成了一个单独的部分，然后 pod 再引用 ConfigMap 即可（又是万能的解决方法：加一层中间层），相比较直接在 pod spec 中的硬编码而言更加灵活。</p>
+<h2 id="命令">命令</h2>
+<p>使用 <code>create</code> 命令而不是 yaml 来创建一个 configmap（之后简称为 cm），通过 <code>--from-literal</code> 来指定键值对（kv），形式为：&ndash;from-literal=[key]=[value]</p>
+<pre><code class="language-shell">$ kubectl create configmap fortune-config --from-literal=sleep-interval=25
+configmap/fortune-config created
+</code></pre>
+<p>通过指定多个 <code>--from-literal</code> 来添加多个 kv：</p>
+<pre><code class="language-shell">$ kubectl create configmap myconfigmap --from-literal=foo=bar --from-literal=bar=baz --from-literal=one=two
+configmap/myconfigmap created
+</code></pre>
+<p>查看 cm 的 yaml：</p>
+<pre><code class="language-shell">$ kubectl get cm myconfigmap -o yaml
+apiVersion: v1
+data:
+  bar: baz
+  foo: bar
+  one: two
+kind: ConfigMap
+metadata:
+  creationTimestamp: &quot;2022-06-07T11:39:32Z&quot;
+  name: myconfigmap
+  namespace: default
+  resourceVersion: &quot;73938&quot;
+  uid: c9814e7e-f3f9-4149-8530-74ea963420d9
+</code></pre>
+<p>发现其实定义的 kv 都在 <code>data</code> 里，<code>metadata</code> 里唯一需要明确指定的是 <code>name</code>，所以通过 yaml 的形式来创建 cm 也比较简单</p>
+<p>如果添加两个同样的 key 会怎样？</p>
+<pre><code class="language-shell">$ kubectl create configmap fortune-config1 --from-literal=sleep-interval=25 --from-literal=sleep-interval=30
+error: cannot add key &quot;sleep-interval&quot;, another key by that name already exists in Data for ConfigMap &quot;fortune-config1&quot;
+</code></pre>
+<p>可以看到直接创建失败了</p>
+<p>cm 还可以将某个文件的内容作为 value 值，使用 <code>--from-file</code> 来引用文件：</p>
+<pre><code class="language-shell">$ kubectl create cm my-config --from-file=conf.conf
+configmap/my-config created
+</code></pre>
+<p><code>conf.conf</code> 内容如下：</p>
+<pre><code>a:a
+a:a
+b:b
+c:c
+d:d
+</code></pre>
+<p>查看该 cm 的 yaml：</p>
+<pre><code class="language-shell">$ kubectl get cm my-config -o yaml
+apiVersion: v1
+data:
+  conf.conf: |
+    a:a
+    b:b
+    c:c
+    d:d
+kind: ConfigMap
+metadata:
+  creationTimestamp: &quot;2022-06-07T12:58:09Z&quot;
+  name: my-config
+  namespace: default
+  resourceVersion: &quot;77327&quot;
+  uid: 2937d396-8692-4c16-8798-236fc4015299
+</code></pre>
+<p>发现这里是用文件名来做 key 的，value 就是文件的内容，只不过不是常规的 key:value 形式，而是在 key: 后多加了一个 |，之后才是 value</p>
+<p>同样也可以通过指定多个 <code>--from-file</code> 来引用多个文件作为 cm 的条目，比如（这里我还专门测试了一下该 flag 是否对文件后缀有要求，我传入了一个 txt，这不是常见的配置文件后缀）：</p>
+<pre><code class="language-shell">$ kubectl create cm my-config1 --from-file=conf.conf --from-file conf.txt
+configmap/my-config1 created
+</code></pre>
+<p>查看 yaml：</p>
+<pre><code class="language-shell">$ kubectl get cm my-config1 -o yaml
+apiVersion: v1
+data:
+  conf.conf: |
+    a:a
+    b:b
+    c:c
+    d:d
+  conf.txt: |
+    大数据断开了撒娇漏打卡所经历的卡所经历的
+kind: ConfigMap
+metadata:
+  creationTimestamp: &quot;2022-06-07T13:13:16Z&quot;
+  name: my-config1
+  namespace: default
+  resourceVersion: &quot;77980&quot;
+  uid: 3332d608-4184-48bc-8481-bd78ccf8b312
+</code></pre>
+<p>貌似这里是直接简单粗暴的把文件内容作为 value 了，至于文件后缀是什么，cm 不会去考虑，不过想想确实也只能这么做，毕竟配置文件后缀非常多，conf、yaml、toml 等等，可能还有一些冷门的格式，如果要专门维护一个允许的后缀列表显然太麻烦了，也没啥太大必要。</p>
+<p>上面的 key 都是直接使用文件名，如果想自行指定，可以使用类似下面的语句：</p>
+<pre><code class="language-shell">$ kubectl create cm my-config1 --from-file=myconf=conf.conf
+</code></pre>
+<p>这里设置 key 为 myconf，也就是说格式是：&ndash;from-file=[自定义 key 名]=[value]</p>
+<h2 id="给容器传递-configmap-作为环境变量">给容器传递 ConfigMap 作为环境变量</h2>
+<p><strong>fortune-pod-env-configmap.yaml</strong></p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: fortune-env-from-configmap
+spec:
+  containers:
+  - image: stdoutt/fortune-env-arm64 # 注意该 image 仅适用于 arm64
+    env:
+    - name: INTERVAL
+      valueFrom:
+        configMapKeyRef:
+          name: fortune-config
+          key: sleep-interval
+    name: html-generator
+    volumeMounts:
+    - name: html
+      mountPath: /var/htdocs
+  - image: nginx:alpine
+    name: web-server
+    volumeMounts:
+    - name: html
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+    ports:
+    - containerPort: 80
+      protocol: TCP
+  volumes:
+  - name: html
+    emptyDir: {}
+</code></pre>
+<h3 id="如果引用的-configmap-不存在会怎样">如果引用的 ConfigMap 不存在会怎样</h3>
+<p>测试：</p>
+<pre><code class="language-shell">$ kubectl apply -f fortune-pod-env-configmap.yaml
+pod/fortune-env-from-configmap created
+
+$ kubectl get po
+NAME                         READY   STATUS                       RESTARTS   AGE
+fortune2s                    2/2     Running                      0          117m
+fortune-env                  2/2     Running                      0          33m
+fortune-env-from-configmap   1/2     CreateContainerConfigError   0          2m27s
+</code></pre>
+<p>发现当前 pod 的状态是 CreateContainerConfigError，这是肯定的，env 会从名为 keyfortune-config 的 configMap 中读取，但是现在没有创建这个 configMap，所以当然无法正常启动</p>
+<p>查看 describe 也会发现有相应的警告：</p>
+<pre><code class="language-yaml">Warning  Failed     80s (x7 over 2m28s)  kubelet            Error: configmap &quot;fortune-config&quot; not found
+</code></pre>
+<p>需要创建一个 configMap 来解决：</p>
+<pre><code class="language-shell"># 创建一个 configMap，同时向其中写入 sleep-interval=5
+$ kubectl create configmap fortune-config --from-literal=sleep-interval=5
+configmap/fortune-config created
+
+# 在创建完 configMap 之后，之前的 pod 立马成功运行了
+$ kubectl get po
+NAME                         READY   STATUS    RESTARTS   AGE
+fortune2s                    2/2     Running   0          121m
+fortune-env                  2/2     Running   0          37m
+fortune-env-from-configmap   2/2     Running   0          7m3s
+</code></pre>
+<p>也就是说如果引用的 ConfigMap 不存在，那么 pod 会创建失败，当所需要的 ConfigMap 被创建后，这个失败的 pod 会自动重启，无须重新创建 pod。</p>
+<pre><code class="language-shell">$ kubectl port-forward fortune-env 8080:80
+Forwarding from 127.0.0.1:8080 -&gt; 80
+Forwarding from [::1]:8080 -&gt; 80
+
+$ while true;do curl localhost:8080;sleep 5s;done
+You'll feel much better once you've given up hope.
+When I reflect upon the number of disagreeable people who I know who have gone
+to a better world, I am moved to lead a different life.
+		-- Mark Twain, &quot;Pudd'nhead Wilson's Calendar&quot;
+</code></pre>
+<h2 id="给容器传递-configmap-作为参数">给容器传递 ConfigMap 作为参数</h2>
+<p>pod.spec.containers.args 不能直接引用 ConfigMap 中的条目，但是可以”曲线救国“，将 ConfigMap 中的条目设置为一个环境变量，然后再让 args 来引用这个环境变量，便可达到效果。</p>
+<p><strong>fortune-pod-args-configmap.yaml</strong></p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: fortune-args-from-configmap
+spec:
+  containers:
+  - image: stdoutt/fortune-args-arm64 # 注意该 image 仅适用于 arm64
+    env:
+    - name: INTERVAL # 这个环境变量引用了 fortune-config 中的 sleep-interval 条目
+      valueFrom: 
+        configMapKeyRef:
+          name: fortune-config
+          key: sleep-interval
+    args: [&quot;$(INTERVAL)&quot;] # 引用 INTERVAL 这个环境变量
+    name: html-generator
+    volumeMounts:
+    - name: html
+      mountPath: /var/htdocs
+  - image: nginx:alpine
+    name: web-server
+    volumeMounts:
+    - name: html
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+    ports:
+    - containerPort: 80
+      protocol: TCP
+  volumes:
+  - name: html
+    emptyDir: {}
+</code></pre>
+<p>测试效果：</p>
+<pre><code class="language-shell">$ kubectl apply -f fortune-pod-args-configmap.yaml
+pod/fortune-args-from-configmap created
+
+$ kubectl get po
+NAME                          READY   STATUS    RESTARTS   AGE
+fortune2s                     2/2     Running   0          7h13m
+fortune-env                   2/2     Running   0          5h49m
+fortune-env-from-configmap    2/2     Running   0          5h18m
+fortune-args-from-configmap   2/2     Running   0          5s
+
+$ kubectl port-forward fortune-env 8080:80
+Forwarding from 127.0.0.1:8080 -&gt; 80
+Forwarding from [::1]:8080 -&gt; 80
+
+$ while true;do curl localhost:8080;sleep 5s;done
+What good is an obscenity trial except to popularize literature?
+		-- Nero Wolfe, &quot;The League of Frightened Men&quot;
+They spell it &quot;da Vinci&quot; and pronounce it &quot;da Vinchy&quot;.  Foreigners
+always spell better than they pronounce.
+		-- Mark Twain
+Give your very best today.  Heaven knows it's little enough.
+</code></pre>
+<h2 id="使用-configmap-卷">使用 ConfigMap 卷</h2>
+<p><del>前面提到的环境变量或者是参数的方式比较适用于配置数量较少的情况，如果配置数量过多，那么就不太适合了，此外还有一些特殊的配置文件格式，比如 nginx ，也不太适合。</del>（待修改）</p>
+<p>还可以将 ConfigMap <del>挂载（感觉挂载这个词有点不太合适）</del> 做成一个 <strong>卷</strong>，然后pod 中的容器可以将这个卷挂载到自己的某个目录下，来完成配置，比如一个 nginx 容器可以将卷挂载到自己的 /etc/nginx/conf.d 目录下，就可以读取卷中的配置信息。</p>
+<p><strong>configMap卷会将 ConfigMap 中的每个条目均暴露成一个文件</strong>。 运行在容器中的进程可通过读取文件内容获得对应的条目值 。</p>
+<h3 id="实践">实践</h3>
+<p>创建一个文件夹 <strong>configmap-files</strong>：</p>
+<pre><code class="language-shell">$ mkdir configmap-files
+</code></pre>
+<p>然后向里面写入下面的这两个文件：</p>
+<p><strong>my-nginx-config.conf</strong></p>
+<pre><code class="language-nginx">server {
+    listen              80;
+    server_name         www.kubia-example.com;
+
+    gzip on;
+    gzip_types text/plain application/xml;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+
+}
+</code></pre>
+<p><strong>sleep-interval</strong></p>
+<pre><code>25
+</code></pre>
+<p>查看文件夹：</p>
+<pre><code class="language-shell">$ tree
+.
+├── my-nginx-config.conf
+└── sleep-interval
+</code></pre>
+<p>创建一个 cm，将这个文件夹作为 value</p>
+<pre><code class="language-shell">$ kubectl create configmap fortune-config --from-file=configmap-files
+error: failed to create configmap: configmaps &quot;fortune-config&quot; already exists
+</code></pre>
+<p>发现之前以及存在同名的 cm 了，看来重复创建 cm 不能覆盖更新，必须要删除旧的才能创建新的：</p>
+<pre><code class="language-shell">$ kubectl get cm
+NAME               DATA   AGE
+kube-root-ca.crt   1      21h
+fortune-config     1      6h4m
+
+$ kubectl delete cm fortune-config
+configmap &quot;fortune-config&quot; deleted
+
+$ kubectl create configmap fortune-config --from-file=configmap-files
+configmap/fortune-config created
+
+# 查看 cm
+$ kubectl get cm fortune-config -o yaml
+apiVersion: v1
+data:
+  my-nginx-config.conf: |
+    server {
+        listen              80;
+        server_name         www.kubia-example.com;
+
+        gzip on;
+        gzip_types text/plain application/xml;
+
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+        }
+
+    }
+  sleep-interval: |
+    25
+kind: ConfigMap
+metadata:
+  creationTimestamp: &quot;2022-09-25T11:05:49Z&quot;
+  name: fortune-config
+  namespace: default
+  resourceVersion: &quot;12886&quot;
+  uid: c9f5ee8a-9078-46cc-955a-3ec72c6ceb62
+</code></pre>
+<p>发现该 cm 有两个条目，条目名就是目标文件夹下的每个文件的文件名，value 就是文件内容</p>
+<p>接下来定义一个 pod，这个 pod 里的 nginx 容器会将 configMap 卷挂载到自己的 /etc/nginx/conf.d 目录下，而 nginx 会自动将该路径下的所有以 conf 为后缀的文件嵌入到默认配置文件中，而 configMap 卷里面刚好有我们定义的开启了 gzip 的配置文件 my-nginx-config.conf，nginx 读取这个文件来开启 gzip，而卷中的另一个文件 sleep-interval 因为不是以 conf 为后缀的，所以 nginx 不会将其内容嵌入到配置文件。</p>
+<p><strong>fortune-configmap-volume</strong></p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: fortune-configmap-volume
+spec:
+  containers:
+  - image: stdoutt/fortune-env-arm64
+    env:
+    - name: INTERVAL # 从 fortune-config 这个 configmap 中读取 sleep-interval，用其值填充环境变量 INTERVAL
+      valueFrom:
+        configMapKeyRef:
+          name: fortune-config
+          key: sleep-interval
+    name: html-generator
+    volumeMounts:
+    - name: html
+      mountPath: /var/htdocs
+  - image: nginx:alpine
+    name: web-server
+    volumeMounts:
+    - name: html
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+    - name: config
+      mountPath: /etc/nginx/conf.d # 将 config 卷挂载到该路径下
+      readOnly: true
+    - name: config
+      mountPath: /tmp/whole-fortune-config-volume # 将 config 卷挂载到该路径下
+      readOnly: true
+    ports:
+      - containerPort: 80
+        name: http
+        protocol: TCP
+  volumes:
+  - name: html
+    emptyDir: {}
+  - name: config # 定义一个名为 config 的卷，卷引用了 fortune-config 这个 cm 里的内容，会将每个条目做成一个文件
+    configMap:
+      name: fortune-config
+</code></pre>
+<p>测试效果：</p>
+<pre><code class="language-shell">$ kubectl apply -f fortune-pod-configmap-volume.yaml
+
+$ kubectl get po
+NAME                          READY   STATUS    RESTARTS   AGE
+fortune-configmap-volume      2/2     Running   0          13s
+
+$ kubectl port-forward fortune-configmap-volume 8080:80
+Forwarding from 127.0.0.1:8080 -&gt; 80
+Forwarding from [::1]:8080 -&gt; 80
+
+$ curl -H &quot;Accept-Encoding: gzip&quot; -I localhost:8080
+HTTP/1.1 200 OK
+Server: nginx/1.23.1
+Date: Sun, 25 Sep 2022 11:38:16 GMT
+Content-Type: text/html
+Last-Modified: Sun, 25 Sep 2022 11:38:06 GMT
+Connection: keep-alive
+ETag: W/&quot;63303d9e-135&quot;
+Content-Encoding: gzip # 这里说明已经开启了 gzip 压缩，配置文件已经生效
+</code></pre>
+<p>验证挂载：</p>
+<p>前面提到过 ConfigMap 卷会将 config 中的每个条目单独做成一个文件，我们实际验证一下：</p>
+<pre><code class="language-shell"># 进入 web-server 这个容器
+$ kubectl exec -it fortune-configmap-volume -c web-server -- /bin/sh
+# 看一下挂载路径
+/ # ls /tmp/whole-fortune-config-volume/
+my-nginx-config.conf  sleep-interval
+
+/ # ls /etc/nginx/conf.d
+my-nginx-config.conf  sleep-interval
+
+# 发现 configMap 卷全部都被挂载了，且里面有两个文件，每个文件对应 cm 中的一个条目
+
+# 输出一下文件内容
+/ # cat /etc/nginx/conf.d/sleep-interval
+25
+
+/ # cat /tmp/whole-fortune-config-volume/my-nginx-config.conf
+server {
+    listen              80;
+    server_name         www.kubia-example.com;
+
+    gzip on;
+    gzip_types text/plain application/xml;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+
+}
+</code></pre>
+<h3 id="只挂载-configmap-中的部分条目">只挂载 ConfigMap 中的部分条目</h3>
+<p>上面的例子存在一个问题：sleep-interval 这个配置文件也被挂载到了 nginx 的目录下，但是该配置文件与 nginx 是没任何关系的，为了解决这个问题，可以用指定 items 的方式，如下：</p>
+<p><strong>fortune-pod-configmap-volume-with-items</strong></p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: fortune-configmap-volume-with-items
+spec:
+  containers:
+  - image: stdoutt/fortune-env-arm64
+    name: html-generator
+    volumeMounts:
+    - name: html
+      mountPath: /var/htdocs
+  - image: nginx:alpine
+    name: web-server
+    volumeMounts:
+    - name: html
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+    - name: config
+      mountPath: /etc/nginx/conf.d/
+      readOnly: true
+    ports:
+    - containerPort: 80
+      protocol: TCP
+  volumes:
+  - name: html
+    emptyDir: {}
+  - name: config
+    configMap:
+      name: fortune-config
+      items:
+      - key: my-nginx-config.conf # 引用 cm 中的 my-nginx-config.conf 这条条目
+        path: gzip.conf # 将这条条目的内容放到一个名为 gzip.conf 的文件中
+</code></pre>
+<p>测试效果：</p>
+<pre><code class="language-shell">$ kubectl apply -f fortune-pod-configmap-volume-with-items
+
+$ kubectl get po
+NAME                                  READY   STATUS    RESTARTS   AGE
+fortune2s                             2/2     Running   0          10h
+fortune-env                           2/2     Running   0          8h
+fortune-env-from-configmap            2/2     Running   0          8h
+fortune-args-from-configmap           2/2     Running   0          171m
+fortune-configmap-volume              2/2     Running   0          92m
+fortune-configmap-volume-with-items   2/2     Running   0          14s
+
+$ kubectl exec -it fortune-configmap-volume-with-items -c web-server -- /bin/sh
+/ # ls /etc/nginx/
+conf.d/         fastcgi_params  modules/        scgi_params
+fastcgi.conf    mime.types      nginx.conf      uwsgi_params
+/ # ls /etc/nginx/conf.d
+gzip.conf
+/ # cat /etc/nginx/conf.d/gzip.conf
+server {
+    listen              80;
+    server_name         www.kubia-example.com;
+
+    gzip on;
+    gzip_types text/plain application/xml;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+
+}
+</code></pre>
+<p>可以看到挂载的目录 /etc/nginx/conf.d 下只有 gzip.conf 这一个文件了，之前的 sleep-interval 文件已经没有了，并且 gzip.conf 文件的内容就是 configMap 中 my-nginx-config.conf 这个条目的内容。</p>
+<h3 id="热更新">热更新</h3>
+<p>使用环境变量或者命令行参数作为配置源的弊端在于无法在进程运行时更新配置，也就是说如果配置信息发生了变化，需要重启应用来重新读取，达到更新的效果。 而将 ConfigMap 暴露为卷可以达到配置热更新的效果，也就是无须重新创建 pod 或者重启容器。</p>
+<p>使用 kubectl edit 修改 ConfigMap：</p>
+<pre><code class="language-shell">$ kubectl edit cm fortune-config
+
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this f
+# reopened with the relevant failures.
+#
+apiVersion: v1
+data:
+  my-nginx-config.conf: |
+    server {
+        listen              80;
+        server_name         www.kubia-example.com;
+
+        gzip on;
+        gzip_types text/plain application/xml;
+
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+        }
+
+    }
+  sleep-interval: |
+    25
+kind: ConfigMap
+metadata:
+  creationTimestamp: &quot;2022-09-25T11:05:49Z&quot;
+  name: fortune-config
+  namespace: default
+  resourceVersion: &quot;12886&quot;
+  uid: c9f5ee8a-9078-46cc-955a-3ec72c6ceb62
+~
+~
+~
+- /tmp/kubectl-edit-4270724913.yaml 12/29 41%
+</code></pre>
+<p>和 vim 一样，按下 i，将 <code>gzip on</code> 修改为 <code>gzip off</code>，然后 esc，输入 :wq，退出并保存，输出 <code>configmap/fortune-config edited</code></p>
+<p>查看修改是否生效：</p>
+<pre><code class="language-shell">$ kubectl exec -it fortune-configmap-volume-with-items -c web-server -- cat /etc/nginx/conf.d/gzip.conf
+server {
+    listen              80;
+    server_name         www.kubia-example.com;
+
+    gzip off;
+    gzip_types text/plain application/xml;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+
+}
+</code></pre>
+<p>发现修改已经生效</p>
+<p>配置文件已经修改，继续测试一下 nginx 这边是否生效：</p>
+<pre><code class="language-shell">$ kubectl port-forward fortune-configmap-volume 8080:80
+Forwarding from 127.0.0.1:8080 -&gt; 80
+Forwarding from [::1]:8080 -&gt; 80
+
+$ curl -H &quot;Accept-Encoding: gzip&quot; -I localhost:8080
+HTTP/1.1 200 OK
+Server: nginx/1.23.1
+Date: Sun, 25 Sep 2022 13:27:14 GMT
+Content-Type: text/html
+Last-Modified: Sun, 25 Sep 2022 13:26:55 GMT
+Connection: keep-alive
+ETag: W/&quot;6330571f-c6&quot;
+Content-Encoding: gzip
+</code></pre>
+<p>发现依然输出了 <code>Content-Encoding: gzip</code> ，这是因为虽然修改了配置文件，但是 nginx 并不会监听配置文件并作出响应，所以不会更新 gzip 的状态将其 off，需要手动通知 nginx ，告诉它配置文件发生了变化，需要你重新读取一下：</p>
+<pre><code class="language-shell">$ kubectl exec -it fortune-configmap-volume-with-items -c web-server -- nginx -s reload
+2022/09/25 13:30:40 [notice] 39#39: signal process started
+
+$ curl -H &quot;Accept-Encoding: gzip&quot; -I localhost:8080
+HTTP/1.1 200 OK
+Server: nginx/1.23.1
+Date: Sun, 25 Sep 2022 13:32:37 GMT
+Content-Type: text/html
+Content-Length: 27
+Last-Modified: Sun, 25 Sep 2022 13:32:37 GMT
+Connection: keep-alive
+ETag: &quot;63305875-1b&quot;
+Accept-Ranges: bytes
+</code></pre>
+<p>此时发现 <code>Content-Encoding: gzip</code> 已经没有了，表示 nginx 这边也已经生效了</p>
+<p>整个过程都没有重启或者重建过 pod，但是最终也达到了更新配置的效果，所以可以做到热更新。</p>
+<p>但是对 k8s 而言，它只是保证在更新 ConfigMap 后同步修改其对应的 ConfigMap 卷，但是对于引用这个 ConfigMap 的应用，k8s 就管不到了，如果应用不会对配置文件的修改作出响应，或者类似 nginx 提供一个重新载入的命令，那么可能最终还是需要重启或者重建 pod（个人猜测）</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/k8s/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#k8s</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/go_seek/" class="block">go 文件操作的&#34;坑&#34;之 Seek()</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/go-gc/" class="block">go gc 白话版</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#在-docker-中定义命令与参数">在 docker 中定义命令与参数</a></li>
+    <li><a href="#在-k8s-中定义命令与参数">在 k8s 中定义命令与参数</a>
+      <ul>
+        <li><a href="#实战">实战</a></li>
+      </ul>
+    </li>
+    <li><a href="#在容器定义中指定环境变量">在容器定义中指定环境变量</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#命令">命令</a></li>
+    <li><a href="#给容器传递-configmap-作为环境变量">给容器传递 ConfigMap 作为环境变量</a>
+      <ul>
+        <li><a href="#如果引用的-configmap-不存在会怎样">如果引用的 ConfigMap 不存在会怎样</a></li>
+      </ul>
+    </li>
+    <li><a href="#给容器传递-configmap-作为参数">给容器传递 ConfigMap 作为参数</a></li>
+    <li><a href="#使用-configmap-卷">使用 ConfigMap 卷</a>
+      <ul>
+        <li><a href="#实践">实践</a></li>
+        <li><a href="#只挂载-configmap-中的部分条目">只挂载 ConfigMap 中的部分条目</a></li>
+        <li><a href="#热更新">热更新</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/k8s-namespace/" class="no-underline">k8s namespace</a>
+          <br />
+        
+          <a href="/posts/k8s-juan/" class="no-underline">k8s 卷</a>
+          <br />
+        
+          <a href="/posts/k8s-deployment/" class="no-underline">k8s Deployment</a>
+          <br />
+        
+          <a href="/posts/k8s-service/" class="no-underline">k8s service</a>
+          <br />
+        
+          <a href="/posts/k8s-nginx-pod-de-containerport-wen-ti/" class="no-underline">k8s nginx pod 的 containerPort 问题</a>
+          <br />
+        
+          <a href="/posts/k8s-daemonset/" class="no-underline">k8s DaemonSet</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

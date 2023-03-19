@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>面经 on /dev/null</title>
+    <link>/tags/%E9%9D%A2%E7%BB%8F/</link>
+    <description>Recent content in 面经 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Thu, 18 Aug 2022 22:12:52 +0000</lastBuildDate><atom:link href="/tags/%E9%9D%A2%E7%BB%8F/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>面试题收集 1</title>
+      <link>/posts/mian_shi_ti_shou_ji1/</link>
+      <pubDate>Thu, 18 Aug 2022 22:12:52 +0000</pubDate>
+      
+      <guid>/posts/mian_shi_ti_shou_ji1/</guid>
+      <description>Go相关 map、channel、slice 的底层实现 map map 使用的是拉链法，用哈希桶来保存键值对，每个桶可以保存 8 个键值对，它会用哈希算法计算出 key 的 hash 值，然后用这个哈希值的高 8 位作为 tophash，用于在一个桶中区别出 key，然后桶的数量是 2^b ，用低 b 位来决定这个 key 放到哪个桶。每个桶还会连接一个溢出桶，如果一个桶已经满了，但是依然有 key 落入到这个桶，那么就会将其放到溢出桶中。</description>
+    </item>
+    
+    <item>
+      <title>计算机网络面试题</title>
+      <link>/posts/ji-suan-ji-wang-luo-mian-shi-ti/</link>
+      <pubDate>Fri, 28 Jan 2022 23:45:48 +0000</pubDate>
+      
+      <guid>/posts/ji-suan-ji-wang-luo-mian-shi-ti/</guid>
+      <description>TCP 相关 1. 说说 TIME_WAIT 及其作用 当一端 主动 断开连接并发送最后一次挥手后，该端状态变为 TIME_WAIT ，此时会等待 2 MSL （MSL 是 Maximum Segment Lifetime，译为“报文最大生存时间”，可为 30s，1min 或 2min。） 作用：</description>
+    </item>
+    
+    <item>
+      <title>GMP 面试题</title>
+      <link>/posts/gmp-mian-shi-ti/</link>
+      <pubDate>Wed, 26 Jan 2022 11:42:52 +0000</pubDate>
+      
+      <guid>/posts/gmp-mian-shi-ti/</guid>
+      <description>Goroutine 阻塞的话，是不是对应的 M 也会阻塞 如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么这个 G 会被标记为 runnable 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。</description>
+    </item>
+    
+    <item>
+      <title>我的面经</title>
+      <link>/posts/wo-de-mian-jing/</link>
+      <pubDate>Fri, 17 Sep 2021 18:32:23 +0000</pubDate>
+      
+      <guid>/posts/wo-de-mian-jing/</guid>
+      <description>2021.9.17 梦想工场 go 实习生
+现场面，只有纸和笔（吐槽：公司的大厦正好在装修，找了半天才找到，还好出门比较早，不然多半得迟到）</description>
+    </item>
+    
+    <item>
+      <title>MySQL 面经汇总</title>
+      <link>/posts/mysql-mian-jing/</link>
+      <pubDate>Sun, 25 Jul 2021 10:04:25 +0000</pubDate>
+      
+      <guid>/posts/mysql-mian-jing/</guid>
+      <description>MySQL 面经汇总，收集于牛客，不断更新中
+1. char 和 varchar 的区别 char 是固定长度，varchar 长度可变，存储时，前者不管实际存储数据的长度，直接规定 char 规定的长度分配存储空间；而后者会根据实际存储的数据分配最终的存储空间。</description>
+    </item>
+    
+  </channel>
+</rss>

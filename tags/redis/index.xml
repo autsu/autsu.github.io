@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Redis on /dev/null</title>
+    <link>/tags/redis/</link>
+    <description>Recent content in Redis on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Tue, 17 Aug 2021 11:50:56 +0000</lastBuildDate><atom:link href="/tags/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis zset 源码阅读</title>
+      <link>/posts/redis-zset-yuan-ma-yue-du/</link>
+      <pubDate>Tue, 17 Aug 2021 11:50:56 +0000</pubDate>
+      
+      <guid>/posts/redis-zset-yuan-ma-yue-du/</guid>
+      <description>types zskiplistNode typedef struct zskiplistNode { sds ele; // 成员 double score; // 分值 struct zskiplistNode *backward; // 后退指针 // 层 struct zskiplistLevel { struct zskiplistNode *forward; // 前进指针 unsigned long span; // 跨度 } level[]; } zskiplistNode; zskiplist typedef struct zskiplist { struct zskiplistNode *header, *tail; unsigned long length; int level; // 当前跳跃表内，层数最大的那个节点的层数 } zskiplist; zset typedef struct zset { dict *dict; zskiplist *zsl; } zset; functions zslCreate /* Create a new skiplist.</description>
+    </item>
+    
+    <item>
+      <title>Redis 持久化之 AOF 与 RDB</title>
+      <link>/posts/redis-chi-jiu-hua-zhi-aof-yu-rdb/</link>
+      <pubDate>Mon, 02 Aug 2021 12:03:42 +0000</pubDate>
+      
+      <guid>/posts/redis-chi-jiu-hua-zhi-aof-yu-rdb/</guid>
+      <description>RDB RDB 可以将某个时间点上的数据库状态保存到一个 RDB 文件中（该文件的文件名可以在 redis.</description>
+    </item>
+    
+    <item>
+      <title>docker 下的 redis 如何挂载外部配置和数据</title>
+      <link>/posts/2020-11-7-docker-redis-config/</link>
+      <pubDate>Fri, 06 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2020-11-7-docker-redis-config/</guid>
+      <description>使用docker安装redis，挂载外部配置和数据 mkdir /docker
+mkdir /docker/redis</description>
+    </item>
+    
+    <item>
+      <title>Xshell连接及docker、redis安装</title>
+      <link>/posts/2018-11-7-redis/</link>
+      <pubDate>Sun, 11 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2018-11-7-redis/</guid>
+      <description>This is official blog theme.</description>
+    </item>
+    
+  </channel>
+</rss>

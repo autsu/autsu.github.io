@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>Go slice append 的坑 [存疑] | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="引子 使用过 Go 的小伙伴应该都遇到过这样一个坑：当使用 slice 作为参数传递时，如果调用方函数内部发生了 append 操作，那么对应的改变不会在实参处体现出来，比如：">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Go slice append 的坑 [存疑]",
+      "item":"/posts/go-slice-append-de-keng-cun-yi/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/go-slice-append-de-keng-cun-yi/"
+    },
+    "headline": "Go slice append 的坑 [存疑] | \/dev\/null","datePublished": "2022-03-10T14:31:19+00:00",
+    "dateModified": "2022-03-10T14:31:19+00:00",
+    "wordCount":  469 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "引子 使用过 Go 的小伙伴应该都遇到过这样一个坑：当使用 slice 作为参数传递时，如果调用方函数内部发生了 append 操作，那么对应的改变不会在实参处体现出来，比如："
+}
+</script><meta property="og:title" content="Go slice append 的坑 [存疑] | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/go-slice-append-de-keng-cun-yi/" />
+
+
+
+
+<meta property="og:description" content="引子 使用过 Go 的小伙伴应该都遇到过这样一个坑：当使用 slice 作为参数传递时，如果调用方函数内部发生了 append 操作，那么对应的改变不会在实参处体现出来，比如：" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-03-10T14:31:19&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-03-10T14:31:19&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class="lg:col-start-2 bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">Go slice append 的坑 [存疑]</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-03-10</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>3分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h1 id="引子">引子</h1>
+<p>使用过 Go 的小伙伴应该都遇到过这样一个坑：当使用 slice 作为参数传递时，如果调用方函数内部发生了 append 操作，那么对应的改变不会在实参处体现出来，比如：</p>
+<pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+	slice := make([]int, 0, 0)
+	slice = fn(slice)
+	fmt.Println(&quot;[main] slice: &quot;, slice)
+}
+
+func fn(slice []int) (s []int) {
+	  s = append(slice, 1)
+    fmt.Println(&quot;[func] slice: &quot;, s)
+}
+</code></pre>
+<p>输出：</p>
+<pre><code>[func] slice:  [1]
+[main] slice:  []
+</code></pre>
+<p>看过一些博客，里面阐述的原因是：slice 的底层数据结构是一个名为 <code>SliceHeader</code> 的结构体：</p>
+<pre><code class="language-go">type SliceHeader struct {
+	Data uintptr
+	Len  int
+	Cap  int
+}
+</code></pre>
+<p>其中的 Data 指向底层数组，将 slice 作为函数参数传递，实际上传递的就是这样一个结构体，而 append 可能会导致扩容，也就是重新分配一个更大的数组，将之前的数据拷贝过去，并且重新将 Data 指向这个新数组，因为传入的参数不是指针类型而是值类型，所以 Data 的改变不能体现在实参中。</p>
+<p>听起来有些道理，那么就动手实践一下，看看实际情况如何：</p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;reflect&quot;
+	&quot;unsafe&quot;
+	&quot;fmt&quot;
+)
+
+// 通过反射来获取 slice 对应的底层 SliceHeader 结构体
+func getSliceHeader(slice []int) {
+	struc := (*reflect.SliceHeader)(unsafe.Pointer(&amp;slice))
+	fmt.Printf(&quot;%+v\n&quot;, struc)
+
+	dataPtr := unsafe.Pointer(struc.Data)
+	fmt.Println(dataPtr)
+}
+
+func sliceAppend(slice []int) {
+	slice = append(slice, 1, 2, 3, 4)
+	fmt.Println(&quot;[func] sliceHeader info: &quot;)
+	getSliceHeader(slice)
+	fmt.Println(&quot;========================&quot;)
+
+	struc := (*reflect.SliceHeader)(unsafe.Pointer(&amp;slice))
+	dataPtr := unsafe.Pointer(struc.Data)
+	data := *(*[4]int)(dataPtr)
+	fmt.Println(&quot;[func] after append, sliceHeader.data: &quot;, data)
+}
+
+func main() {
+	n := make([]int, 0, 0)
+	fmt.Println(&quot;[main] sliceHeader info: &quot;)
+	getSliceHeader(n)
+	fmt.Println(&quot;========================&quot;)
+
+	sliceAppend(n)
+	fmt.Println(&quot;[main] after call, slice data: &quot;, n)
+	struc := (*reflect.SliceHeader)(unsafe.Pointer(&amp;n))
+	dataPtr := unsafe.Pointer(struc.Data)
+	data := *(*[4]int)(dataPtr)
+	fmt.Println(&quot;[main] sliceHeader.data&quot;, data)
+}
+</code></pre>
+<p>上面的代码看起来有些长，实际只是通过反射去拿到 slice 对应的 SliceHeader，并通过 unsafe 来获取 data 对应的底层数组，无需过多关注。</p>
+<p>输出结果：</p>
+<pre><code>[main] sliceHeader info: 
+&amp;{Data:4336299344 Len:0 Cap:0}
+0x10276ad50
+========================
+[func] sliceHeader info: 
+&amp;{Data:1374390272064 Len:4 Cap:4}
+0x140000b4040
+========================
+[func] after append, sliceHeader.data:  [1 2 3 4]
+[main] after call, slice data:  []
+[main] sliceHeader.data [0 0 0 0]
+</code></pre>
+<p>main 里的 slice 是一个 len 和 cap 都为 0 的 slice，而函数内部需要 append 4 个元素，这势必会发生扩容，从上面的输出信息中也可以看出，data 指向的地址确实发生了改变，main 中 data 指向 0x10276ad50，而 func 中 data 指向了 0x140000b4040。</p>
+<h1 id="新的疑问">新的疑问</h1>
+<p>在了解原因后，我又突发奇想，既然是因为扩容才导致的丢失，那我不让他扩容不就好了吗？在 make 时直接指定 cap 为 20，而函数内只 append 4 个元素，这样就不会扩容了，此时结果会如何？</p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;reflect&quot;
+	&quot;unsafe&quot;
+	&quot;fmt&quot;
+)
+
+func getSliceHeader(slice []int) {
+	struc := (*reflect.SliceHeader)(unsafe.Pointer(&amp;slice))
+	fmt.Printf(&quot;%+v\n&quot;, struc)
+
+	dataPtr := unsafe.Pointer(struc.Data)
+	fmt.Println(dataPtr)
+}
+
+func sliceAppend(slice []int) {
+	slice = append(slice, 1, 2, 3, 4)
+	fmt.Println(&quot;[func] sliceHeader info: &quot;)
+	getSliceHeader(slice)
+	fmt.Println(&quot;========================&quot;)
+
+	struc := (*reflect.SliceHeader)(unsafe.Pointer(&amp;slice))
+	dataPtr := unsafe.Pointer(struc.Data)
+	data := *(*[4]int)(dataPtr)
+	fmt.Println(&quot;[func] after append, sliceHeader.data: &quot;, data)
+}
+
+func main() {
+	n := make([]int, 0, 20)
+	fmt.Println(&quot;[main] sliceHeader info: &quot;)
+	getSliceHeader(n)
+	fmt.Println(&quot;========================&quot;)
+
+	sliceAppend(n)
+	fmt.Println(&quot;[main] after call, slice data: &quot;, n)
+	struc := (*reflect.SliceHeader)(unsafe.Pointer(&amp;n))
+	dataPtr := unsafe.Pointer(struc.Data)
+	data := *(*[4]int)(dataPtr)
+	fmt.Println(&quot;[main] sliceHeader.data&quot;, data)
+}
+</code></pre>
+<p>输出：</p>
+<pre><code class="language-shell">[main] sliceHeader info: 
+&amp;{Data:1374390001664 Len:0 Cap:20}
+0x14000072000
+========================
+[func] sliceHeader info: 
+&amp;{Data:1374390001664 Len:4 Cap:20} # 注意这里的 Len
+0x14000072000
+========================
+[func] after append, sliceHeader.data:  [1 2 3 4]
+[main] after call, slice data:  []
+[main] sliceHeader.data [1 2 3 4]
+</code></pre>
+<p>可以看到，SliceHeader.Data 的指向确实没有发生改变，都是 0x14000072000，并且通过最后一句输出 <code>[main] sliceHeader.data [1 2 3 4]</code> 可以得知，底层的数组确实已经发生了改变，但是最终 main 的 slice 输出还是为空，这是为什么呢？</p>
+<p>一个猜测：</p>
+<p>我们在 main 函数调用 sliceAppend 之后在加入一段话：</p>
+<pre><code class="language-go">sliceAppend(n)
+fmt.Println(&quot;[main] after call, slice data: &quot;, n)
+struc := (*reflect.SliceHeader)(unsafe.Pointer(&amp;n))
+dataPtr := unsafe.Pointer(struc.Data)
+data := *(*[4]int)(dataPtr)
+fmt.Println(&quot;after call, sliceHeader info: &quot;) // 新增
+getSliceHeader(n)	// 新增
+</code></pre>
+<p>输出：</p>
+<pre><code class="language-shell">after call, sliceHeader info:
+&amp;{Data:1374390730752 Len:0 Cap:20}
+data address: 0x14000124000
+</code></pre>
+<p>发现在 append 之后，Len 依然为 0，难道这就是问题所在？fmt.Println 可能是检测到 slice 的 Len 为 0，所以即便底层数组发生了改变，但还是打印出了空切片？（具体还是得看 Println 的源码才能真正知道原因）</p>
+<p>因为传的不是指针类型，所以 Len 的变化不能反映到实参，在之前的输出可以看到，形参的 Len 已经发生了改变：</p>
+<pre><code class="language-shell">[func] sliceHeader info: 
+&amp;{Data:1374390001664 Len:4 Cap:20}
+</code></pre>
+<p>综上所述，以后如果要把 slice 作为参数传递，且调用方要执行 append 操作，直接统一传递指针就好了。</p>
+
+</article>
+
+
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/mysql-buffer-pool-de-yi-xie-yi-wen-ji-lu/" class="block">Mysql Buffer Pool 的一些疑问记录</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/cao-zuo-xi-tong-mian-shi-ti/" class="block">操作系统面试题</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+
+    
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

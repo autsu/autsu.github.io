@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Gridea on /dev/null</title>
+    <link>/tags/gridea/</link>
+    <description>Recent content in Gridea on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Wed, 12 Dec 2018 00:00:00 +0000</lastBuildDate><atom:link href="/tags/gridea/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hello Gridea</title>
+      <link>/posts/hello-gridea/</link>
+      <pubDate>Wed, 12 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/hello-gridea/</guid>
+      <description>👏 欢迎使用 Gridea ！
+✍️ Gridea 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意&amp;hellip; &amp;hellip;</description>
+    </item>
+    
+  </channel>
+</rss>

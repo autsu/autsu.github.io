@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mq on /dev/null</title>
+    <link>/tags/mq/</link>
+    <description>Recent content in mq on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Thu, 14 Jul 2022 14:30:52 +0000</lastBuildDate><atom:link href="/tags/mq/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>rabbitmq 学习笔记</title>
+      <link>/posts/go-rabbitmq/</link>
+      <pubDate>Thu, 14 Jul 2022 14:30:52 +0000</pubDate>
+      
+      <guid>/posts/go-rabbitmq/</guid>
+      <description>本笔记主要记录 go rabbitmq 库的使用示例，同时结合学习 rabbitmq</description>
+    </item>
+    
+  </channel>
+</rss>

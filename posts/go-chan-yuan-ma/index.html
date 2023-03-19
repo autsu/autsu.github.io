@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>go chan 原理（人话版） | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="chan 原理（人话版） 说明：这里只是用大白话来阐述 chan 的大致原理，不保证严谨性，也不考虑一些繁枝细节（比如 sudog，gopark，goready），仅作为一个简单的参考理解，如果想深入理解 chan 的底层实现，请自行参阅其他博客">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"go chan 原理（人话版）",
+      "item":"/posts/go-chan-yuan-ma/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/go-chan-yuan-ma/"
+    },
+    "headline": "go chan 原理（人话版） | \/dev\/null","datePublished": "2022-06-26T20:51:11+00:00",
+    "dateModified": "2022-06-26T20:51:11+00:00",
+    "wordCount":  2620 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "chan 原理（人话版） 说明：这里只是用大白话来阐述 chan 的大致原理，不保证严谨性，也不考虑一些繁枝细节（比如 sudog，gopark，goready），仅作为一个简单的参考理解，如果想深入理解 chan 的底层实现，请自行参阅其他博客"
+}
+</script><meta property="og:title" content="go chan 原理（人话版） | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/go-chan-yuan-ma/" />
+
+
+
+
+<meta property="og:description" content="chan 原理（人话版） 说明：这里只是用大白话来阐述 chan 的大致原理，不保证严谨性，也不考虑一些繁枝细节（比如 sudog，gopark，goready），仅作为一个简单的参考理解，如果想深入理解 chan 的底层实现，请自行参阅其他博客" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-06-26T20:51:11&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-06-26T20:51:11&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="go" />
+
+<meta property="article:tag" content="源码" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/gobreaker/" />
+
+<meta property="og:see_also" content="/posts/errgroup/" />
+
+<meta property="og:see_also" content="/posts/go-map-yuan-ma-yue-du/" />
+
+<meta property="og:see_also" content="/posts/go-containerheap-yuan-ma-yue-du/" />
+
+<meta property="og:see_also" content="/posts/2021-2-24-go-container-list-source-code/" />
+
+<meta property="og:see_also" content="/posts/go_seek/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">go chan 原理（人话版）</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-06-26</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>13分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h1 id="chan-原理人话版">chan 原理（人话版）</h1>
+<blockquote>
+<p>说明：这里只是用大白话来阐述 chan 的大致原理，不保证严谨性，也不考虑一些繁枝细节（比如 sudog，gopark，goready），仅作为一个简单的参考理解，如果想深入理解 chan 的底层实现，请自行参阅其他博客</p>
+</blockquote>
+<p>chan 底层有两个队列：<code>sendq</code> 和 <code>recvq</code>，这两个队列保存的都是被阻塞的 goroutine（简称 g），顾名思义，<code>sendq</code> 里面保存的是因为发送操作而被阻塞的 g，而 <code>recvq</code> 保存的是因为接收操作被阻塞的 g，比如：</p>
+<pre><code class="language-go">func main() {
+  ch := make(chan int)
+  ch &lt;- 1
+}
+</code></pre>
+<p>因为没有接收者，所以 ch &lt;- 1 这个操作会被阻塞，那么就会把执行这个 chan 的 g 给放到 sendq 中</p>
+<p>当执行 <strong>发送</strong> 操作时，会先看看 recvq 中有没有因为接收操作而被阻塞的 g，如果有的话，那么出队 g，并将数据拷贝给它，之后再将其唤醒；</p>
+<p>同理，当执行 <strong>接收</strong> 操作时，会先看看 sendq 中有没有因为发送而被阻塞的 g，如果有，则执行和上面相同的操作。</p>
+<p>比如：</p>
+<pre><code class="language-go">func main() {
+  ch := make(chan int)
+  ch &lt;- 1
+  go func() {
+    v := &lt;-ch
+  }()
+}
+</code></pre>
+<p>ch &lt;- 1 这个操作对应的 main goroutine 被阻塞，会放到 ch 的 sendq 中，之后的 &lt;-ch 会检查 ch 的 sendq，发现里面有元素，那么就将这个元素取出来，并将值拷贝给接收者 v，并唤醒 main goroutine ，让其不再是阻塞状态。</p>
+<p>用过 chan 的同学都知道这是一个并发安全的数据结构，那么这里是如何实现的呢？其实也是加锁，chan 的底层有一个 mutex 锁来对其他字段进行保护。</p>
+<p>此外，上面提到的发送和接收操作都是基于无缓存的 chan，如果是有缓存的 chan，那么流程会有所不同。</p>
+<p>缓存（简称 buf）在底层其实是一个 <strong>环形队列</strong>，这是一个非常经典的数据结构，这里就不多阐述了，发送和接收的流程如下：</p>
+<p><strong>发送</strong>：</p>
+<ol>
+<li>先看看 recvq 中有没有元素，有的话直接按照之前的操作，将数据拷贝给对应的接收者，就不需要经过缓存这一部分了</li>
+<li>如果 recvq 中没有元素，则先检查缓存是否已满，则将数据拷贝到缓存中；如果缓存已满，那么将当前的 g 阻塞并放到 sendq 中</li>
+</ol>
+<p><strong>接收</strong>：</p>
+<ol>
+<li>如果 sendq 中有元素，此时又分为两种情况：
+<ol>
+<li>无缓存 chan，直接取出 sendq 中的队头 g，并将 g 的数据拷贝给当前的接收者，并唤醒该 g</li>
+<li>有缓存 chan，先从缓存中取出一个数据（通过 recvx 取出），并拷贝给接收者，此时缓存中相当于空了一个位置（环形队列，可以用覆盖值代替显式删除），所以可以取出 sendq 中的队头元素，放到这个空位里</li>
+</ol>
+</li>
+<li>如果 sendq 为空：
+<ol>
+<li>看缓存里有没有值，有的话则取出，并执行拷贝操作</li>
+<li>缓存中没有值，将当前执行接收操作的 g 阻塞并放到 recvq 中</li>
+</ol>
+</li>
+</ol>
+<p>buf 底层是一个数组，通过两个变量 <code>sendx</code> 和 <code>recvx</code>  来完成 <strong>环形</strong> 的操作，通过下图来进行说明：</p>
+<p><img src="https://youseebiggirl.github.io/post-images/1656262263446.png" alt=""></p>
+<h1 id="附部分源码注释">附：部分源码注释</h1>
+<h2 id="hchan">hchan</h2>
+<pre><code class="language-go">// channel 的数据结构
+type hchan struct {
+	// 环形队列（buf）中元素的个数
+	qcount uint // total data in the queue
+
+	// 环形队列容量，即可以存放的元素个数
+	// 即 make(chan int, 2) 的第二个参数，如果不指定则为 0
+	dataqsiz uint // size of the circular queue
+
+	// 指针，指向环形队列头节点
+	buf unsafe.Pointer // points to an array of dataqsiz elements
+
+	// 队列中每个元素的大小
+	elemsize uint16
+
+	// chan 是否关闭
+	closed uint32
+
+	// 队列中的元素数据类型
+	elemtype *_type // element type
+
+	// 队列已发送位置的索引
+	sendx uint // send index
+
+	// 队列已接收位置的索引
+	recvx uint // receive index
+
+	// sendq 和 recvq 存储了当前 Channel 由于缓冲区空间不足而阻塞的 Goroutine 列表，
+	// 这些等待队列使用双向链表 runtime.waitq 表示：
+	// 		type waitq struct {
+	//			first *sudog
+	//			last  *sudog
+	// 		}
+	//
+	// 链表中所有的元素都是 runtime.sudog 结构：
+
+	// 等待读消息的 goroutine 队列
+	// 存储试图从 channel 接收数据(&lt;-ch)的阻塞 goroutines
+	recvq waitq // list of recv waiters
+
+	// 等待写消息的 goroutine 队列
+	// 存储试图发送数据(ch&lt;-)到 channel 的阻塞 goroutines
+	sendq waitq // list of send waiters
+
+	// lock protects all fields in hchan, as well as several
+	// fields in sudogs blocked on this channel.
+	//
+	// Do not change another G's status while holding this lock
+	// (in particular, do not ready a G), as this can deadlock
+	// with stack shrinking.
+	lock mutex
+}
+</code></pre>
+<h2 id="chansend">chansend</h2>
+<pre><code class="language-go">// 发送数据到 channel 时，直观的理解是将数据放到 chan 的环形队列中，不过 go 做了一些优化：
+// 先判断是否有等待接收数据的 groutine，如果有，直接将数据发给 Groutine，唤醒 groutine，
+// 就不放入队列中了。当然还有另外一种情况就是：buf 如果满了，那就只能放到队列中等待，直到有
+// 数据被取走才能发送。
+
+// 核心逻辑：
+// 如果 recvq 不为空，从 recvq 中取出一个等待接收数据的 Groutine，将数据发送给该 Groutine
+// 如果 recvq 为空，才将数据放入 buf 中
+// 如果 buf 已满，则将要发送的数据和当前的 Groutine 打包成 Sudog 对象放入 sendq，
+// 并将 groutine 置为等待状态
+
+// ep    		指向要发送数据的首地址
+// c     		chan
+// block 		是否阻塞
+// callerpc 	调用地址
+//
+// 比较迷惑的是这个 block 参数，block 是为了实现如下代码的语义：
+// 因为加了 default，所以是非阻塞
+// c := make(chan int)
+//        // ...
+//    select {
+//    case &lt;-c:
+//        // ...
+//    default:
+//        // ...
+//    }
+//
+// 上面这段代码被编译成对 selectnbsend 的调用：
+// 	if selectnbsend(c, v) {
+//    ... foo
+//	} else {
+//    ... bar
+//	}
+//
+// selectnbsend 的实现如下
+// func selectnbsend(c *hchan, elem unsafe.Pointer) (selected bool) {
+// block 设置为 false
+//    return chansend(c, elem, false, getcallerpc()) // 非阻塞的发送
+// }
+func chansend(c *hchan, ep unsafe.Pointer, block bool, callerpc uintptr) bool {
+	if c == nil {
+		if !block {
+			return false
+		}
+		gopark(nil, nil, waitReasonChanSendNilChan, traceEvGoStop, 2)
+		throw(&quot;unreachable&quot;)
+	}
+
+	if debugChan {
+		print(&quot;chansend: chan=&quot;, c, &quot;\n&quot;)
+	}
+
+	if raceenabled {
+		racereadpc(c.raceaddr(), callerpc, abi.FuncPCABIInternal(chansend))
+	}
+
+	// Fast path: check for failed non-blocking operation without acquiring the lock.
+	//
+	// After observing that the channel is not closed, we observe that the channel is
+	// not ready for sending. Each of these observations is a single word-sized read
+	// (first c.closed and second full()).
+	// Because a closed channel cannot transition from 'ready for sending' to
+	// 'not ready for sending', even if the channel is closed between the two observations,
+	// they imply a moment between the two when the channel was both not yet closed
+	// and not ready for sending. We behave as if we observed the channel at that moment,
+	// and report that the send cannot proceed.
+	//
+	// It is okay if the reads are reordered here: if we observe that the channel is not
+	// ready for sending and then observe that it is not closed, that implies that the
+	// channel wasn't closed during the first observation. However, nothing here
+	// guarantees forward progress. We rely on the side effects of lock release in
+	// chanrecv() and closechan() to update this thread's view of c.closed and full().
+	if !block &amp;&amp; c.closed == 0 &amp;&amp; full(c) {
+		return false
+	}
+
+	var t0 int64
+	if blockprofilerate &gt; 0 {
+		t0 = cputicks()
+	}
+
+	// 加锁
+	lock(&amp;c.lock)
+
+	// 如果向已关闭的 channel 中发送数据，会引发 panic
+	if c.closed != 0 {
+		unlock(&amp;c.lock)
+		panic(plainError(&quot;send on closed channel&quot;))
+	}
+
+	// blog1. 从接收队列中（存放等待接收的 goroutine）取出 goroutine，
+	// 如果取到数据，就将数据传过去
+
+	// blog3. 如果目标 Channel 没有被关闭并且已经有处于读等待的 Goroutine，
+	// 那么 runtime.chansend 会从接收队列 recvq 中取出最先陷入等待的 Goroutine
+	// 并直接向它发送数据：
+
+	// 如果 recvq 不为空，从 recvq 中取出一个等待接收数据的 Groutine，将数据发送给该 Groutine
+	if sg := c.recvq.dequeue(); sg != nil {
+		// Found a waiting receiver. We pass the value we want to send
+		// directly to the receiver, bypassing the channel buffer (if any).
+		// 找到一个等待的接收者。我们将要发送的值直接传递给接收者，绕过 chan buf（如果有）
+		send(c, sg, ep, func() { unlock(&amp;c.lock) }, 3)
+		return true // 返回
+	}
+
+	// 到这里说明 recvq 为空，没有等待接收的 goroutine，此时会判断 hchan.buf 是否可用
+	// 对于有缓冲的 channel 来说，如果当前缓冲区 hchan.buf 有可用空间，那么会将数据拷贝至缓冲区
+	// 如果用户使用的是无缓冲 channel，则 c.dataqsiz = 0，不满足 c.qcount &lt; c.dataqsiz 条件
+	if c.qcount &lt; c.dataqsiz {
+		// c.sendx 是已发送的索引位置，这个方法通过指针偏移找到索引位置
+		// 相当于 c.buf[c.sendx]
+		// 计算出下一个可以存储数据的位置
+		// Space is available in the channel buffer. Enqueue the element to send.
+		qp := chanbuf(c, c.sendx)
+		if raceenabled {
+			racenotify(c, c.sendx, nil)
+		}
+
+		// typememmove 会调用 memmove 方法，完成数据的拷贝工作，是用汇编实现的
+		// 将要发送的数据拷贝到 buf 中
+		typedmemmove(c.elemtype, qp, ep)
+		// 发送索引号 + 1
+		c.sendx++
+		// 因为存储数据元素的结构是循环队列，所以当当前索引号已经到队末时，将索引号调整到队头
+		if c.sendx == c.dataqsiz {
+			c.sendx = 0
+		}
+		// 当前循环队列中存储元素数 + 1
+		c.qcount++
+		unlock(&amp;c.lock)
+		return true
+	}
+
+	// 走到这里，说明缓冲区也写满了
+	// 对于非阻塞的情况，直接返回
+	if !block {
+		unlock(&amp;c.lock)
+		return false
+	}
+
+	// 代码执行到这里，意味着：
+	// 1. 如果是有缓冲的 channel，则当前 hchan.buf 已满；
+	// 2. 如果是无缓冲的 channel，则当前没有接收的 goroutine
+	// 此时会将当前发送 goroutine 置于 sendq 中排队，并在运行时中挂起。
+	// Block on the channel. Some receiver will complete our operation for us.
+	gp := getg() // 获取当前执行的 goroutine
+
+	// 执行 runtime.acquireSudog 获取 runtime.sudog 结构并设置这一次阻塞发送的相关信息，
+	// 例如发送的 Channel、是否在 select 中和待发送数据的内存地址等
+	mysg := acquireSudog()
+	mysg.releasetime = 0
+	if t0 != 0 {
+		mysg.releasetime = -1
+	}
+	// No stack splits between assigning elem and enqueuing mysg
+	// on gp.waiting where copystack can find it.
+	mysg.elem = ep
+	mysg.waitlink = nil
+	mysg.g = gp
+	mysg.isSelect = false
+	mysg.c = c
+	gp.waiting = mysg
+	gp.param = nil
+
+	// 将要发送的数据和当前 goroutine 打包成 sudog 对象放入到 sendq 中
+	c.sendq.enqueue(mysg)
+	// Signal to anyone trying to shrink our stack that we're about
+	// to park on a channel. The window between when this G's status
+	// changes and when we set gp.activeStackChans is not safe for
+	// stack shrinking.
+	atomic.Store8(&amp;gp.parkingOnChan, 1)
+
+	// gopark 将当前 goroutine 转为 waiting 态
+	// 在用户看来，向 channel 发送数据的代码语句会阻塞
+	gopark(chanparkcommit, unsafe.Pointer(&amp;c.lock), waitReasonChanSend, traceEvGoBlockSend, 2)
+	// Ensure the value being sent is kept alive until the
+	// receiver copies it out. The sudog has a pointer to the
+	// stack object, but sudogs aren't considered as roots of the
+	// stack tracer.
+	KeepAlive(ep)
+
+	// someone woke us up.
+	if mysg != gp.waiting {
+		throw(&quot;G waiting list is corrupted&quot;)
+	}
+	gp.waiting = nil
+	gp.activeStackChans = false
+	closed := !mysg.success
+	gp.param = nil
+	if mysg.releasetime &gt; 0 {
+		blockevent(mysg.releasetime-t0, 2)
+	}
+	mysg.c = nil
+	releaseSudog(mysg)
+	if closed {
+		if c.closed == 0 {
+			throw(&quot;chansend: spurious wakeup&quot;)
+		}
+		panic(plainError(&quot;send on closed channel&quot;))
+	}
+	return true
+}
+</code></pre>
+<h2 id="send">send</h2>
+<pre><code class="language-go">// send processes a send operation on an empty channel c.
+// The value ep sent by the sender is copied to the receiver sg.
+// The receiver is then woken up to go on its merry way.
+// Channel c must be empty and locked.  send unlocks c with unlockf.
+// sg must already be dequeued from c.
+// ep must be non-nil and point to the heap or the caller's stack.
+// 
+// send 在 recvq 不为空时调用，sg 就是从 recvq 中取出的
+func send(c *hchan, sg *sudog, ep unsafe.Pointer, unlockf func(), skip int) {
+	if raceenabled {
+		if c.dataqsiz == 0 {
+			racesync(c, sg)
+		} else {
+			// Pretend we go through the buffer, even though
+			// we copy directly. Note that we need to increment
+			// the head/tail locations only when raceenabled.
+			racenotify(c, c.recvx, nil)
+			racenotify(c, c.recvx, sg)
+			c.recvx++
+			if c.recvx == c.dataqsiz {
+				c.recvx = 0
+			}
+			c.sendx = c.recvx // c.sendx = (c.sendx+1) % c.dataqsiz
+		}
+	}
+	if sg.elem != nil {
+		// ep -&gt; sg
+		sendDirect(c.elemtype, sg, ep)
+		sg.elem = nil
+	}
+	gp := sg.g
+	unlockf()
+	gp.param = unsafe.Pointer(sg)
+	sg.success = true
+	if sg.releasetime != 0 {
+		sg.releasetime = cputicks()
+	}
+
+	// 使得之前在接收等待队列中的第一个 goroutine 的状态变为 runnable，
+	// 这样 go 的调度器就可以重新让该 goroutine 得到执行。
+	goready(gp, skip+1)
+}
+</code></pre>
+<h2 id="chanrecv">chanrecv</h2>
+<pre><code class="language-go">// chanrecv receives on channel c and writes the received data to ep.
+// ep may be nil, in which case received data is ignored.
+// If block == false and no elements are available, returns (false, false).
+// Otherwise, if c is closed, zeros *ep and returns (true, false).
+// Otherwise, fills in *ep with an element and returns (true, true).
+// A non-nil ep must point to the heap or the caller's stack.
+//
+// 在通道 c 上接收并将接收到的数据写入 ep，ep 可能为 nil，在这种情况下，接收到的数据会被忽略，
+// 如果 block == false 并且没有可用的元素，则返回 (false, false)，
+// 否则，如果 c 关闭，则将 ep 清零并返回 (true, false)。
+// 否则，用一个元素填充 ep 并返回 (true, true)。
+// 非 nil ep 必须指向堆或调用者的堆栈。
+// block 貌似是用于 select
+func chanrecv(c *hchan, ep unsafe.Pointer, block bool) (selected, received bool) {
+	// raceenabled: don't need to check ep, as it is always on the stack
+	// or is new memory allocated by reflect.
+
+	if debugChan {
+		print(&quot;chanrecv: chan=&quot;, c, &quot;\n&quot;)
+	}
+
+	if c == nil {
+		// 如果 c 为空且是非阻塞调用，那么直接返回 (false,false)
+		if !block {
+			return
+		}
+		// 阻塞调用直接等待
+		gopark(nil, nil, waitReasonChanReceiveNilChan, traceEvGoStop, 2)
+		throw(&quot;unreachable&quot;)
+	}
+
+	// Fast path: check for failed non-blocking operation without acquiring the lock.
+	if !block &amp;&amp; empty(c) {
+		// After observing that the channel is not ready for receiving, we observe whether the
+		// channel is closed.
+		//
+		// Reordering of these checks could lead to incorrect behavior when racing with a close.
+		// For example, if the channel was open and not empty, was closed, and then drained,
+		// reordered reads could incorrectly indicate &quot;open and empty&quot;. To prevent reordering,
+		// we use atomic loads for both checks, and rely on emptying and closing to happen in
+		// separate critical sections under the same lock.  This assumption fails when closing
+		// an unbuffered channel with a blocked send, but that is an error condition anyway.
+		if atomic.Load(&amp;c.closed) == 0 {
+			// Because a channel cannot be reopened, the later observation of the channel
+			// being not closed implies that it was also not closed at the moment of the
+			// first observation. We behave as if we observed the channel at that moment
+			// and report that the receive cannot proceed.
+			return
+		}
+		// The channel is irreversibly closed. Re-check whether the channel has any pending data
+		// to receive, which could have arrived between the empty and closed checks above.
+		// Sequential consistency is also required here, when racing with such a send.
+		if empty(c) {
+			// The channel is irreversibly closed and empty.
+			if raceenabled {
+				raceacquire(c.raceaddr())
+			}
+			if ep != nil {
+				typedmemclr(c.elemtype, ep)
+			}
+			return true, false
+		}
+	}
+
+	var t0 int64
+	if blockprofilerate &gt; 0 {
+		t0 = cputicks()
+	}
+
+	lock(&amp;c.lock)
+
+	if c.closed != 0 &amp;&amp; c.qcount == 0 {
+		if raceenabled {
+			raceacquire(c.raceaddr())
+		}
+		unlock(&amp;c.lock)
+		if ep != nil {
+			typedmemclr(c.elemtype, ep)
+		}
+		return true, false
+	}
+
+	// 如果 sendq 中有 goroutine，则取出一个，将数据发送给它
+	if sg := c.sendq.dequeue(); sg != nil {
+		// Found a waiting sender. If buffer is size 0, receive value
+		// directly from sender. Otherwise, receive from head of queue
+		// and add sender's value to the tail of the queue (both map to
+		// the same buffer slot because the queue is full).
+		//
+		// 如果是无缓冲 chan，则直接从 sg 中接收数据，
+		// 如果是有缓冲 chan，则接收 buf 中第一个元素的数据，并将 sg 中的数据放到 buf 的末尾
+		recv(c, sg, ep, func() { unlock(&amp;c.lock) }, 3)
+		return true, true
+	}
+
+	// 到这里说明 sendq 中没有等待的 goroutine
+
+	// 如果缓冲区中有数据，那么就从 buf 中获取
+	if c.qcount &gt; 0 {
+		// Receive directly from queue
+		qp := chanbuf(c, c.recvx)
+		if raceenabled {
+			racenotify(c, c.recvx, nil)
+		}
+		// 从缓冲区复制数据到 ep
+		if ep != nil {
+			typedmemmove(c.elemtype, ep, qp)
+		}
+		// typedmemclr 的作用是将 ep 指向的类型为 elemtype 的内存块置为 0 值。
+		// 这里就是将 buf[recvx] 置为 0，因为这里的元素已经拷贝给了 ep
+		typedmemclr(c.elemtype, qp)
+		c.recvx++
+		if c.recvx == c.dataqsiz {
+			c.recvx = 0
+		}
+		c.qcount--
+		unlock(&amp;c.lock)
+		return true, true
+	}
+
+	// 非阻塞，直接返回
+	if !block {
+		unlock(&amp;c.lock)
+		return false, false
+	}
+
+	// 到这里说明即没有等待的 groutine，环形队列中也没有数据，则阻塞该 groutine，
+	// 并将 goroutine 打包为 sudog 加入到 recevq 等待队列中
+	// no sender available: block on this channel.
+	gp := getg()
+	// 创建 sudog
+	mysg := acquireSudog()
+	mysg.releasetime = 0
+	if t0 != 0 {
+		mysg.releasetime = -1
+	}
+	// No stack splits between assigning elem and enqueuing mysg
+	// on gp.waiting where copystack can find it.
+	mysg.elem = ep
+	mysg.waitlink = nil
+	gp.waiting = mysg
+	mysg.g = gp
+	mysg.isSelect = false
+	mysg.c = c
+	gp.param = nil
+	c.recvq.enqueue(mysg)
+	// Signal to anyone trying to shrink our stack that we're about
+	// to park on a channel. The window between when this G's status
+	// changes and when we set gp.activeStackChans is not safe for
+	// stack shrinking.
+	atomic.Store8(&amp;gp.parkingOnChan, 1)
+	gopark(chanparkcommit, unsafe.Pointer(&amp;c.lock), waitReasonChanReceive, traceEvGoBlockRecv, 2)
+
+	// someone woke us up
+	if mysg != gp.waiting {
+		throw(&quot;G waiting list is corrupted&quot;)
+	}
+	gp.waiting = nil
+	gp.activeStackChans = false
+	if mysg.releasetime &gt; 0 {
+		blockevent(mysg.releasetime-t0, 2)
+	}
+	success := mysg.success
+	gp.param = nil
+	mysg.c = nil
+	releaseSudog(mysg)
+	return true, success
+}
+</code></pre>
+<h2 id="recv">recv</h2>
+<pre><code class="language-go">// recv processes a receive operation on a full channel c.
+// There are 2 parts:
+// 1) The value sent by the sender sg is put into the channel
+//    and the sender is woken up to go on its merry way.
+// 2) The value received by the receiver (the current G) is
+//    written to ep.
+// For synchronous channels, both values are the same.
+// For asynchronous channels, the receiver gets its data from
+// the channel buffer and the sender's data is put in the
+// channel buffer.
+// Channel c must be full and locked. recv unlocks c with unlockf.
+// sg must already be dequeued from c.
+// A non-nil ep must point to the heap or the caller's stack.
+//
+// recv 被 chanrecv() 调用，调用条件是 sendq 中有等待的 g
+// c: chan
+// sg: sendq 中的等待 goroutine
+// ep: 用来接收数据
+func recv(c *hchan, sg *sudog, ep unsafe.Pointer, unlockf func(), skip int) {
+	// 如果是无缓冲区 chan
+	if c.dataqsiz == 0 {
+		if raceenabled {
+			racesync(c, sg)
+		}
+		if ep != nil {
+			// copy data from sender
+			// 将 sg（sendq 中的对象）中的数据拷贝到 ep 中
+			recvDirect(c.elemtype, sg, ep)
+		}
+		// 有缓冲区chan
+	} else {
+		// Queue is full. Take the item at the
+		// head of the queue. Make the sender enqueue
+		// its item at the tail of the queue. Since the
+		// queue is full, those are both the same slot.
+		//
+		// 由于有发送者在等待，所以缓冲区一定是满的，因为 recv 的第二个参数 sudog
+		// 传入的是被阻塞的发送者，在 chanrecv 中的表现是：
+		// if sg := c.sendq.dequeue(); sg != nil {
+		// 		recv(c, sg, ep, func() { unlock(&amp;c.lock) }, 3)
+		//		return true, true
+		// }
+		//
+		qp := chanbuf(c, c.recvx)
+		if raceenabled {
+			racenotify(c, c.recvx, nil)
+			racenotify(c, c.recvx, sg)
+		}
+		// copy data from queue to receiver
+		// 先将 buf 中的第一个数据（recvx）移动到 ep
+		if ep != nil {
+			typedmemmove(c.elemtype, ep, qp)
+		}
+		// copy data from sender to queue
+		// 因为已经将 buf 中的一个数据拷贝给 ep 了，等于此时的 ep 已经空了一个
+		// 位置了，所以可以将 sudog 中的元素放到这个空位置里
+		// 下面的逻辑也没有对 c.qcount 进行更新，因为移除了一个后又新添加了一个,
+		// 相当于长度没有发生改变
+		typedmemmove(c.elemtype, qp, sg.elem)
+		c.recvx++
+		if c.recvx == c.dataqsiz {
+			c.recvx = 0
+		}
+		c.sendx = c.recvx // c.sendx = (c.sendx+1) % c.dataqsiz
+	}
+	sg.elem = nil
+	gp := sg.g
+	unlockf()
+	gp.param = unsafe.Pointer(sg)
+	sg.success = true
+	if sg.releasetime != 0 {
+		sg.releasetime = cputicks()
+	}
+	goready(gp, skip+1)
+}
+</code></pre>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/go/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#go</a>
+    
+    <a href="/tags/%E6%BA%90%E7%A0%81/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#源码</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/go-mutex-yuan-ma/" class="block">go mutex 原理</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/127.0.0.1_localhost_0.0.0.0/" class="block">127.0.0.1，localhost，0.0.0.0 的区别（包含虚拟网卡相关操作）</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#hchan">hchan</a></li>
+    <li><a href="#chansend">chansend</a></li>
+    <li><a href="#send">send</a></li>
+    <li><a href="#chanrecv">chanrecv</a></li>
+    <li><a href="#recv">recv</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/gobreaker/" class="no-underline">go 熔断器 gobreaker 源码阅读</a>
+          <br />
+        
+          <a href="/posts/errgroup/" class="no-underline">Go errgroup 使用</a>
+          <br />
+        
+          <a href="/posts/go-map-yuan-ma-yue-du/" class="no-underline">go map源码阅读</a>
+          <br />
+        
+          <a href="/posts/go-containerheap-yuan-ma-yue-du/" class="no-underline">go container/heap 源码阅读</a>
+          <br />
+        
+          <a href="/posts/2021-2-24-go-container-list-source-code/" class="no-underline">go container/list 源码分析【未完】</a>
+          <br />
+        
+          <a href="/posts/go_seek/" class="no-underline">go 文件操作的&#34;坑&#34;之 Seek()</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

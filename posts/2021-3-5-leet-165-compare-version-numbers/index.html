@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>LeetCode165.比较版本号 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="题目描述 给你两个版本号 version1 和 version2 ，请你比较它们。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"LeetCode165.比较版本号",
+      "item":"/posts/2021-3-5-leet-165-compare-version-numbers/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/2021-3-5-leet-165-compare-version-numbers/"
+    },
+    "headline": "LeetCode165.比较版本号 | \/dev\/null","datePublished": "2021-04-16T19:32:54+00:00",
+    "dateModified": "2021-04-16T19:32:54+00:00",
+    "wordCount":  674 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "题目描述 给你两个版本号 version1 和 version2 ，请你比较它们。"
+}
+</script><meta property="og:title" content="LeetCode165.比较版本号 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/2021-3-5-leet-165-compare-version-numbers/" />
+
+
+
+
+<meta property="og:description" content="题目描述 给你两个版本号 version1 和 version2 ，请你比较它们。" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-04-16T19:32:54&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-04-16T19:32:54&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="字符串" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/jian-zhi-offer-48-zui-chang-bu-han-chong-fu-zi-fu-de-zi-zi-fu-chuan/" />
+
+<meta property="og:see_also" content="/posts/jian-zhi-offer-50-di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-shu-zhong-wei-35-ti/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">LeetCode165.比较版本号</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2021-04-16</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>4分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h2 id="题目描述">题目描述</h2>
+<blockquote>
+<p>给你两个版本号 version1 和 version2 ，请你比较它们。</p>
+<p>版本号由一个或多个修订号组成，各修订号由一个 &lsquo;.&rsquo; 连接。每个修订号由 多位数字 组成，可能包含 前导零 。每个版本号至少包含一个字符。修订号从左到右编号，下标从 0 开始，最左边的修订号下标为 0 ，下一个修订号下标为 1 ，以此类推。例如，2.5.33 和 0.1 都是有效的版本号。</p>
+<p>比较版本号时，请按从左到右的顺序依次比较它们的修订号。比较修订号时，只需比较 忽略任何前导零后的整数值 。也就是说，修订号 1 和修订号 001 相等 。如果版本号没有指定某个下标处的修订号，则该修订号视为 0 。例如，版本 1.0 小于版本 1.1 ，因为它们下标为 0 的修订号相同，而下标为 1 的修订号分别为 0 和 1 ，0 &lt; 1 。</p>
+<p>返回规则如下：</p>
+<p>如果 version1 &gt; version2 返回 1，
+如果 version1 &lt; version2 返回 -1，
+除此之外返回 0。</p>
+<p>示例 1：</p>
+<p>输入：version1 = &ldquo;1.01&rdquo;, version2 = &ldquo;1.001&rdquo;
+输出：0
+解释：忽略前导零，&ldquo;01&rdquo; 和 &ldquo;001&rdquo; 都表示相同的整数 &ldquo;1&rdquo;
+示例 2：</p>
+<p>输入：version1 = &ldquo;1.0&rdquo;, version2 = &ldquo;1.0.0&rdquo;
+输出：0
+解释：version1 没有指定下标为 2 的修订号，即视为 &ldquo;0&rdquo;
+示例 3：</p>
+<p>输入：version1 = &ldquo;0.1&rdquo;, version2 = &ldquo;1.1&rdquo;
+输出：-1
+解释：version1 中下标为 0 的修订号是 &ldquo;0&rdquo;，version2 中下标为 0 的修订号是 &ldquo;1&rdquo; 。0 &lt; 1，所以 version1 &lt; version2
+示例 4：</p>
+<p>输入：version1 = &ldquo;1.0.1&rdquo;, version2 = &ldquo;1&rdquo;
+输出：1
+示例 5：</p>
+<p>输入：version1 = &ldquo;7.5.2.4&rdquo;, version2 = &ldquo;7.5.3&rdquo;
+输出：-1</p>
+<p>提示：</p>
+<p>1 &lt;= version1.length, version2.length &lt;= 500
+version1 和 version2 仅包含数字和 &lsquo;.&rsquo;
+version1 和 version2 都是 有效版本号
+version1 和 version2 的所有修订号都可以存储在 32 位整数 中</p>
+</blockquote>
+<h2 id="算法设计">算法设计</h2>
+<h3 id="1切割比较">1.切割比较</h3>
+<p>思路：使用 strings.split() 函数，按 <code>.</code> 切割，再使用 atoi() 将切割好的字符转换为整形，并一一比较。</p>
+<p>上面的问题：如果两个版本号长度不同，例如 1.0 和 1.0.0，切割出的数组分别为 [1, 0] 和 [1, 0, 0]，按下标逐一比较，会有一个出现越界异常</p>
+<p>解决方法：对较短的数组进行扩充，使二者长度相同，扩充元素为 0，因为 0 不会对结果产生影响，例如上面的例子，可以将 1 扩充为 [1, 0, 0]，这样就可以安全比较了。</p>
+<p><img src="https://zengh1.github.io/post-images/1618572799885.png" alt=""></p>
+<p>代码如下：</p>
+<pre><code class="language-go">func compareVersion(version1 string, version2 string) int {
+    v1arr := strings.Split(version1, &quot;.&quot;)
+    v2arr := strings.Split(version2, &quot;.&quot;)
+    
+  	// 为较短数组填充 0，使两个数组的长度相同
+    if len(v1arr) &gt; len(v2arr) {
+        sub := len(v1arr) - len(v2arr)
+        for sub &gt; 0 {
+            v2arr = append(v2arr, &quot;0&quot;)
+            sub--
+        }
+    } else if len(v1arr) &lt; len(v2arr) {
+        sub := len(v2arr) - len(v1arr)
+        for sub &gt; 0 {
+            v1arr = append(v1arr, &quot;0&quot;)
+            sub--
+        }
+    }
+    
+    for i := 0; i &lt; len(v1arr); i++ {
+        // 转换为整形比较，无需担心 001 这样的字符串，atoi() 会智能的将其转换为 1
+        v1i, _ := strconv.Atoi(v1arr[i])
+        v2i, _ := strconv.Atoi(v2arr[i])
+        if v1i &gt; v2i {
+            return 1
+        } else if v1i &lt; v2i {
+            return -1
+        } else {
+            continue
+        }
+    }
+    return 0
+}
+</code></pre>
+<h3 id="2双指针">2.双指针</h3>
+<p>第一种方法比较直观易懂，但是需要额外的空间，还需要多次遍历，效率不是很高，而双指针法可以解决上述的问题。</p>
+<p>思路：准备两个指针，分别置于两个版本号的开头，之后不断移动两个指针，直到都到达末尾。在移动的过程中，初始化两个变量 v1，v2 用于保存当前小版本号的值，如何获取小版本号的值呢？只需要使用 while 循环不断移动指针，当指针值为 <code>.</code> 时停止，每次循环都将 v1 = v1 + 指针值 - &lsquo;0&rsquo;，</p>
+<p><img src="https://zengh1.github.io/post-images/1618572818859.png" alt=""></p>
+<pre><code class="language-go">func compareVersion(version1 string, version2 string) int {
+    l1, l2 := len(version1), len(version2)
+    p1, p2 := 0, 0
+
+  	// 获取最大值 
+    var maxFunc = func(x, y int) int {
+        if x &gt; y {
+            return x
+        } else {
+            return y
+        }
+    }
+
+    max := maxFunc(l1, l2)
+    for p1 &lt; max || p2 &lt; max {
+        var v1, v2 int
+      	// 使用 while 来循环读取一个小版本号（例如 1.111 中的 1 和 111 就是小版本号），
+ 		// 遇到 . 停止，此时 vv1, vv2 的值即是小版本号，vv1 和 vv2 定义在外层 for 内，
+        // 每次比较后都会清零
+        for p1 &lt; l1 &amp;&amp; version1[p1] != '.' {
+            v1 = v1*10 + int(version1[p1]) - '0'
+            p1++
+        }
+
+        for p2 &lt; l2 &amp;&amp; version2[p2] != '.' {
+            v2 = v2*10 + int(version2[p2]) - '0'
+            p2++
+        }
+
+        if v1 &gt; v2 {
+            return 1
+        } else if v1 &lt; v2 {
+            return -1
+        }
+        p1++
+        p2++
+    }
+    return 0
+}
+</code></pre>
+<h2 id="错误记录">错误记录</h2>
+<h3 id="1-超出时间限制">1. 超出时间限制</h3>
+<pre><code class="language-go">    func compareVersion(version1 string, version2 string) int {
+    p1, p2 := 0, 0
+
+    for p1 &lt; len(version1) || p2 &lt; len(version2) {
+        v1, v2 := 0, 0
+        for p1 &lt; len(version1) &amp;&amp; version1[p1] != '.' {
+            v, _ := strconv.Atoi(string(version1[p1]))
+            v1 += v
+            p1++
+        }
+        for p2 &lt; len(version2) &amp;&amp; version1[p2] != '.' {
+            v, _ := strconv.Atoi(string(version1[p2]))
+            v2 += v
+            p2++
+        }
+        
+        if v1 &gt; v2 {
+            return 1
+        } else if v1 &lt; v2 {
+            return -1
+        }
+    }
+    return 0
+}
+</code></pre>
+<p>这里超时的原因是末尾没有 p1++ 和 p2++，当 p1 和 p2 都为 &lsquo;.&rsquo; 时，p1 和 p2 将不会有任何改变，这会导致 while 条件一直满足，从而陷入死循环。</p>
+<p>所以末尾的 p1++ 和 p2++ 就是用来保证当 p1，p2 都为 &lsquo;.&rsquo; 时仍然会移动，防止死循环的发生。</p>
+<h3 id="2-解答错误">2. 解答错误</h3>
+<pre><code class="language-go">    func compareVersion(version1 string, version2 string) int {
+    p1, p2 := 0, 0
+
+    for p1 &lt; len(version1) || p2 &lt; len(version2) {
+        v1, v2 := 0, 0
+        for p1 &lt; len(version1) &amp;&amp; version1[p1] != '.' {
+            v, _ := strconv.Atoi(string(version1[p1]))
+            v1 += v
+            p1++
+        }
+        for p2 &lt; len(version2) &amp;&amp; version2[p2] != '.' {
+            v, _ := strconv.Atoi(string(version2[p2]))
+            v2 += v
+            p2++
+        }
+        
+        if v1 &gt; v2 {
+            return 1
+        } else if v1 &lt; v2 {
+            return -1
+        }
+        p1++
+        p2++
+    }
+    return 0
+}
+</code></pre>
+<p>测试用例：</p>
+<pre><code>    &quot;1.1&quot;
+    &quot;1.10&quot;
+</code></pre>
+<p>这里错误的原因是因为对于小版本号只是单纯的相加操作，对于 1.10 的第二个小版本而言，结果为 1 + 0 = 1，从而导致错误结果 1.1 = 1.10，解决方法是将对应小版本号从 string 转为 int，具体方法是 v = v*10 + s[i] - &lsquo;0&rsquo;。</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#字符串</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/2021-3-27-find-binarytree-root-to-node-path/" class="block">求二叉树根节点到指定节点的路径</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/2021-3-6-offer-11-retate-array-min-num/" class="block">剑指 Offer 11. 旋转数组的最小数字</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#题目描述">题目描述</a></li>
+    <li><a href="#算法设计">算法设计</a>
+      <ul>
+        <li><a href="#1切割比较">1.切割比较</a></li>
+        <li><a href="#2双指针">2.双指针</a></li>
+      </ul>
+    </li>
+    <li><a href="#错误记录">错误记录</a>
+      <ul>
+        <li><a href="#1-超出时间限制">1. 超出时间限制</a></li>
+        <li><a href="#2-解答错误">2. 解答错误</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/jian-zhi-offer-48-zui-chang-bu-han-chong-fu-zi-fu-de-zi-zi-fu-chuan/" class="no-underline">剑指 Offer 48. 最长不含重复字符的子字符串</a>
+          <br />
+        
+          <a href="/posts/jian-zhi-offer-50-di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-shu-zhong-wei-35-ti/" class="no-underline">剑指 Offer 50. 第一个只出现一次的字符（书中为35题）</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

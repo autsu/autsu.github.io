@@ -1,0 +1,1550 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>/dev/null</title>
+    <link>/</link>
+    <description>Recent content on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Mon, 10 Oct 2022 22:11:10 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>k8s Secret</title>
+      <link>/posts/k8s-secret/</link>
+      <pubDate>Mon, 10 Oct 2022 22:11:10 +0000</pubDate>
+      
+      <guid>/posts/k8s-secret/</guid>
+      <description>Opaque Secret 要求 value 必须是 base64 编码的</description>
+    </item>
+    
+    <item>
+      <title>k8s client-go 源码阅读</title>
+      <link>/posts/client-go-yuan-ma/</link>
+      <pubDate>Fri, 07 Oct 2022 12:57:11 +0000</pubDate>
+      
+      <guid>/posts/client-go-yuan-ma/</guid>
+      <description>架构 Informers 由几个核心的组件构成：
+Reflector：负责从 api-server list（全量拉取数据） and watch（监听数据变更） DeltaFIFO：一个存储事件的队列，里面记录了事件的类型 Indexer：存储数据，数据来源是从 DeltaFIFO 中 pop 出来的，然后会根据事件类型进行对于的操作 sharedProcessor：用于运行用户设置的事件回调函数，里面用 map 存储了所有的 listener，每次调用 AddEventHandler 都会创建一个 listener，同时这个函数可以调用多次，也就是创建多个 listener，当发送事件时，会调用所有的 listener 的对应回调函数 controller：上面提到的 Reflector、DeltaFIFO、Indexer 各自有各自的作用，但是它们彼此之间还没有关联起来，而 controller 就是负责这件事的，它是这 3 个组件的 master，让它们可以协同运作，大致流程是：当 Reflector watch 到事件时会将其保存到 DeltaFIFO 中，controller 这件会持续从 DeltaFIFO 中 pop 元素，然后根据事件类型对 indexer 进行相应操作（add、update、delete），使得 indexer 中的数据和 api-server 中的一致，同时还会调用 sharedProcessor 的对应回调，来完成用户设置的对应事件操作。 informers/factory.</description>
+    </item>
+    
+    <item>
+      <title>kubebuilder 实践</title>
+      <link>/posts/kubebuilder/</link>
+      <pubDate>Mon, 03 Oct 2022 22:08:11 +0000</pubDate>
+      
+      <guid>/posts/kubebuilder/</guid>
+      <description>快速入门 下载 kubebuiler $ os=$(go env GOOS) $ arch=$(go env GOARCH) $ curl -L -o kubebuilder https://go.</description>
+    </item>
+    
+    <item>
+      <title>docker tag 的用处</title>
+      <link>/posts/docker-tag/</link>
+      <pubDate>Thu, 29 Sep 2022 00:14:11 +0000</pubDate>
+      
+      <guid>/posts/docker-tag/</guid>
+      <description>docker tag 相当于对镜像做一次备份，将当前的镜像（比如 tag:latest）备份出去一份（比如 tag: v1），然后如果开发了新的镜像，可以直接覆盖掉当前的（tag:latest），然后再给 latest 打个标签：tag:v2，相当于又备份了一份，现在就有了 v1，v2，latest 三个镜像，使用 tag 不仅可以备份镜像，还可以对镜像做标注区分。</description>
+    </item>
+    
+    <item>
+      <title>k8s StatefulSet</title>
+      <link>/posts/k8s-statefulset/</link>
+      <pubDate>Sun, 11 Sep 2022 23:43:10 +0000</pubDate>
+      
+      <guid>/posts/k8s-statefulset/</guid>
+      <description>创建一个 handless service：
+kubia-service-headless.yaml
+apiVersion: v1 kind: Service metadata: name: kubia spec: clusterIP: None selector: app: kubia ports: - name: http port: 80 运行：</description>
+    </item>
+    
+    <item>
+      <title>ubuntu arm64 使用 apt-get 安装 docker，以及 snap 的一些问题记录</title>
+      <link>/posts/ubuntu-arm64-an-zhuang-docker/</link>
+      <pubDate>Sat, 10 Sep 2022 19:41:35 +0000</pubDate>
+      
+      <guid>/posts/ubuntu-arm64-an-zhuang-docker/</guid>
+      <description>使用 snap 可以比较方便的安装 docker，但是有一次出现了 k8s pod 无法拉取镜像的问题，看了下 pod describe，发现是因为走代理的问题（我使用的是 ubuntu 虚拟机，连接宿主机的 clashx 进行代理），连接的代理是宿主机的老地址 192.</description>
+    </item>
+    
+    <item>
+      <title>GoLand/Idea 启动闪退，报错 NSInternalInconsistencyException 的解决方法</title>
+      <link>/posts/jetbrain_crash/</link>
+      <pubDate>Thu, 08 Sep 2022 00:55:11 +0000</pubDate>
+      
+      <guid>/posts/jetbrain_crash/</guid>
+      <description>环境：
+机器：MacBook Air (M1, 2020) 系统：MacOS 12.</description>
+    </item>
+    
+    <item>
+      <title>Linux 虚拟网络设备 veth-pair [未完]</title>
+      <link>/posts/linux_veth_pair/</link>
+      <pubDate>Tue, 06 Sep 2022 22:37:45 +0000</pubDate>
+      
+      <guid>/posts/linux_veth_pair/</guid>
+      <description>介绍 veth-pair 是什么 两个 namespace 间通信 直接连接 # 创建 2 个 namespace $ ip netns add ns1 $ ip netns add ns2 # 查看创建的 namespace $ ip netns ns2 ns1 # 创建一对 veth-pair veth0 veth1 $ ip l a veth0 type veth peer name veth1 # 也可以写成： # ip link add veth0 type veth peer name veth1 # 将 veth0 veth1 分别加入两个 ns $ ip l s veth0 netns ns1 $ ip l s veth1 netns ns2 # 给两个 veth0 veth1 配上 IP 并启用 $ ip netns exec ns1 ip a a 10.</description>
+    </item>
+    
+    <item>
+      <title>一个 EOF 引发的低级错误</title>
+      <link>/posts/eof_cuo_wu/</link>
+      <pubDate>Tue, 06 Sep 2022 02:28:52 +0000</pubDate>
+      
+      <guid>/posts/eof_cuo_wu/</guid>
+      <description>今天更新了一下之前写的 tcp server，结果测试的时候发现了一个十分诡异的 BUG：客户端这边发送完数据，进程都已经退出了，但是服务端却依然源源不断的接收到客户端发来的数据，而且数据包的大小都为 0，这个 BUG 花费了我大半天的时间，终于找到了问题所在，特此记录。</description>
+    </item>
+    
+    <item>
+      <title>tcp 粘包/拆包问题</title>
+      <link>/posts/tcp_zhan_bao/</link>
+      <pubDate>Mon, 05 Sep 2022 00:51:45 +0000</pubDate>
+      
+      <guid>/posts/tcp_zhan_bao/</guid>
+      <description>简介 tcp 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 tcp 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。</description>
+    </item>
+    
+    <item>
+      <title>一个 go nil pointer 错误记录</title>
+      <link>/posts/go_nil_pointer/</link>
+      <pubDate>Mon, 05 Sep 2022 00:51:45 +0000</pubDate>
+      
+      <guid>/posts/go_nil_pointer/</guid>
+      <description>看看下面这段代码的运行结果是什么？
+package main import ( &amp;quot;fmt&amp;quot; &amp;quot;net&amp;quot; ) func main() { lis, err := net.</description>
+    </item>
+    
+    <item>
+      <title>epoll 打断/唤醒</title>
+      <link>/posts/epoll_zhong_duan/</link>
+      <pubDate>Fri, 02 Sep 2022 12:32:45 +0000</pubDate>
+      
+      <guid>/posts/epoll_zhong_duan/</guid>
+      <description>写这篇文章是因为最近在看 go netpoll 的源码，里面有一部分代码是创建一个管道，一开始没有搞懂用意何在，后来查阅了网上的文章，有说法是这个管道是为了打断 epoll_wait 的等待，将这个管道的 fd 添加到 epoll 中，如果想主动打断 epoll_wait，那么就往管道中写入数据，然后在 epoll_wait 处就会产生事件，终止阻塞。</description>
+    </item>
+    
+    <item>
+      <title>孤儿进程与僵尸进程</title>
+      <link>/posts/gu_er_jin_cheng_he_jiang_shi_jin_cheng/</link>
+      <pubDate>Wed, 31 Aug 2022 00:59:00 +0000</pubDate>
+      
+      <guid>/posts/gu_er_jin_cheng_he_jiang_shi_jin_cheng/</guid>
+      <description>来源：https://www.cnblogs.com/Anker/p/3271773.html
+基本概念 孤儿进程：一个父进程退出，而它的一个或多个子进程还在运行，那么那些子进程将成为孤儿进程。孤儿进程将被 init 进程(进程号为 1 )所收养，并由 init 进程对它们完成状态收集工作。</description>
+    </item>
+    
+    <item>
+      <title>如何保证缓存和数据库的一致性</title>
+      <link>/posts/huan_cun_yi_zhi_xing/</link>
+      <pubDate>Sat, 27 Aug 2022 23:49:10 +0000</pubDate>
+      
+      <guid>/posts/huan_cun_yi_zhi_xing/</guid>
+      <description>先更新数据库，再更新缓存 存在的问题：
+更新数据库成功，更新缓存失败
+并发情况下可能会存在问题，如下（纵轴代表时间线）：
+A B 更新 DB x = 1 更新 DB，x = 2 更新缓存，x = 2 更新缓存，x = 1 可以看到因为并发操作导致 A 把 B 的更新缓存结果给覆盖了，最终使得数据库结果（x = 2）和缓存结果（x = 1）不一致</description>
+    </item>
+    
+    <item>
+      <title>面试题收集 1</title>
+      <link>/posts/mian_shi_ti_shou_ji1/</link>
+      <pubDate>Thu, 18 Aug 2022 22:12:52 +0000</pubDate>
+      
+      <guid>/posts/mian_shi_ti_shou_ji1/</guid>
+      <description>Go相关 map、channel、slice 的底层实现 map map 使用的是拉链法，用哈希桶来保存键值对，每个桶可以保存 8 个键值对，它会用哈希算法计算出 key 的 hash 值，然后用这个哈希值的高 8 位作为 tophash，用于在一个桶中区别出 key，然后桶的数量是 2^b ，用低 b 位来决定这个 key 放到哪个桶。每个桶还会连接一个溢出桶，如果一个桶已经满了，但是依然有 key 落入到这个桶，那么就会将其放到溢出桶中。</description>
+    </item>
+    
+    <item>
+      <title>两个类似的堆问题：leetcode 347 前 K 个高频元素 和 692. 前 K 个高频单词 </title>
+      <link>/posts/leetcode_347_and_692/</link>
+      <pubDate>Wed, 17 Aug 2022 23:02:26 +0000</pubDate>
+      
+      <guid>/posts/leetcode_347_and_692/</guid>
+      <description>首先先来看一下这两个问题：
+347. 前 K 个高频元素 给你一个整数数组 nums 和一个整数 k ，请你返回其中出现频率前 k 高的元素。你可以按 任意顺序 返回答案。</description>
+    </item>
+    
+    <item>
+      <title>go binary 使用指南 </title>
+      <link>/posts/go_binary/</link>
+      <pubDate>Mon, 08 Aug 2022 20:35:52 +0000</pubDate>
+      
+      <guid>/posts/go_binary/</guid>
+      <description>一个示例 demo：
+package main import ( &amp;quot;bytes&amp;quot; &amp;quot;encoding/binary&amp;quot; &amp;quot;fmt&amp;quot; &amp;quot;io&amp;quot; ) type I interface { Do() } type S struct { Id int64 Name [10]byte } func (s *S) Do() { fmt.</description>
+    </item>
+    
+    <item>
+      <title>TCP 拥塞控制</title>
+      <link>/posts/tcp_yong_se_kong_zhi/</link>
+      <pubDate>Tue, 02 Aug 2022 19:04:52 +0000</pubDate>
+      
+      <guid>/posts/tcp_yong_se_kong_zhi/</guid>
+      <description>发送方维护一个叫做 拥塞窗口 cwnd 的状态变量，其值 取决于网络的拥塞程度，并且 动态变化。</description>
+    </item>
+    
+    <item>
+      <title>为什么 go 需要 nil chan</title>
+      <link>/posts/wei-shen-me-go-you-nil-chan/</link>
+      <pubDate>Mon, 18 Jul 2022 22:35:52 +0000</pubDate>
+      
+      <guid>/posts/wei-shen-me-go-you-nil-chan/</guid>
+      <description>如果没有调用 make 来对一个 chan 进行初始化，那么这个 chan 就是 nil chan。</description>
+    </item>
+    
+    <item>
+      <title>minikube 问题汇总</title>
+      <link>/posts/minikube_wen_ti_hui_zong/</link>
+      <pubDate>Thu, 14 Jul 2022 14:30:52 +0000</pubDate>
+      
+      <guid>/posts/minikube_wen_ti_hui_zong/</guid>
+      <description>设置代理后，minikube kubectl 无响应 在给虚拟机设置了代理后，整个网络体验爽快多了，再也不用担心拉不下来包了。。。
+只需要将虚拟机的网络设置为桥接模式，然后开启 clashx 的 “允许局域网连接”（非常重要的一步，之前就是因为忽略了这一步，导致虚拟机无法使用宿主机代理），然后再点击 clashx 的 “复制终端代理命令”，将里面的 127.</description>
+    </item>
+    
+    <item>
+      <title>rabbitmq 学习笔记</title>
+      <link>/posts/go-rabbitmq/</link>
+      <pubDate>Thu, 14 Jul 2022 14:30:52 +0000</pubDate>
+      
+      <guid>/posts/go-rabbitmq/</guid>
+      <description>本笔记主要记录 go rabbitmq 库的使用示例，同时结合学习 rabbitmq</description>
+    </item>
+    
+    <item>
+      <title>TLS 握手流程</title>
+      <link>/posts/tls_wo_shou/</link>
+      <pubDate>Thu, 14 Jul 2022 14:30:52 +0000</pubDate>
+      
+      <guid>/posts/tls_wo_shou/</guid>
+      <description>引用自 cloudflare 学习中心
+TLS 握手有哪些步骤？ TLS 握手是由客户端和服务器交换的一系列数据报或消息。TLS 握手涉及多个步骤，因为客户端和服务器要交换完成握手和进行进一步对话所需的信息。</description>
+    </item>
+    
+    <item>
+      <title>输入 url 到浏览器显示网页，期间发生了什么？（未完）</title>
+      <link>/posts/url_dao_xian_shi_wang_ye_fa_shen_le_shen_me/</link>
+      <pubDate>Thu, 14 Jul 2022 14:30:52 +0000</pubDate>
+      
+      <guid>/posts/url_dao_xian_shi_wang_ye_fa_shen_le_shen_me/</guid>
+      <description>从请求 URL 中获取请求域名，通过 DNS 获取域名对应的 IP 地址</description>
+    </item>
+    
+    <item>
+      <title>go mutex 原理</title>
+      <link>/posts/go-mutex-yuan-ma/</link>
+      <pubDate>Tue, 12 Jul 2022 22:09:40 +0000</pubDate>
+      
+      <guid>/posts/go-mutex-yuan-ma/</guid>
+      <description>参考： https://www.bilibili.com/video/BV15V411n7fM?p=2&amp;amp;spm_id_from=pageDriver&amp;amp;vd_source=2ff613424b86c58a71ba91b7304ffe9b
+总览 mutex 的数据结构：</description>
+    </item>
+    
+    <item>
+      <title>go chan 原理（人话版）</title>
+      <link>/posts/go-chan-yuan-ma/</link>
+      <pubDate>Sun, 26 Jun 2022 20:51:11 +0000</pubDate>
+      
+      <guid>/posts/go-chan-yuan-ma/</guid>
+      <description>chan 原理（人话版） 说明：这里只是用大白话来阐述 chan 的大致原理，不保证严谨性，也不考虑一些繁枝细节（比如 sudog，gopark，goready），仅作为一个简单的参考理解，如果想深入理解 chan 的底层实现，请自行参阅其他博客</description>
+    </item>
+    
+    <item>
+      <title>127.0.0.1，localhost，0.0.0.0 的区别（包含虚拟网卡相关操作）</title>
+      <link>/posts/127.0.0.1_localhost_0.0.0.0/</link>
+      <pubDate>Fri, 24 Jun 2022 20:50:11 +0000</pubDate>
+      
+      <guid>/posts/127.0.0.1_localhost_0.0.0.0/</guid>
+      <description>127.0.0.1 127.0.0.1 是 回环地址，当报文的目的地址是回环地址时，依然会走一遍网络协议栈，但是不会经过物理网卡，而是经过一个名为 lo 的虚拟网卡（mac 上交 lo0），具体的流程是：</description>
+    </item>
+    
+    <item>
+      <title>go 熔断器 gobreaker 源码阅读</title>
+      <link>/posts/gobreaker/</link>
+      <pubDate>Sat, 11 Jun 2022 20:40:11 +0000</pubDate>
+      
+      <guid>/posts/gobreaker/</guid>
+      <description>该文章仅作为本人笔记，不具备太大的参考价值
+该文章着重记录源码，没有对熔断器这一概念做过多理念上的说明解释
+该文章排版、思路较为混乱，后续可能会进行修改
+示例 官方示例 官方示例有点太简单了，完全无法体会到 熔断 这一概念</description>
+    </item>
+    
+    <item>
+      <title>go 文件操作的&#34;坑&#34;之 Seek()</title>
+      <link>/posts/go_seek/</link>
+      <pubDate>Wed, 08 Jun 2022 01:03:35 +0000</pubDate>
+      
+      <guid>/posts/go_seek/</guid>
+      <description>引子 最近买了块机械硬盘作为仓库盘，用硬盘盒连接到 mac，但是这块硬盘貌似有休眠机制（不确定），如果一段时间没有读写操作就会停转，等到需要操作时才会唤醒，唤醒会有比较明显的磁盘启动声音，并且需要等待 5s 左右才能使用。</description>
+    </item>
+    
+    <item>
+      <title>k8s ConfigMap</title>
+      <link>/posts/k8s-configmap/</link>
+      <pubDate>Tue, 07 Jun 2022 19:17:35 +0000</pubDate>
+      
+      <guid>/posts/k8s-configmap/</guid>
+      <description>引子 做过开发的同学都遇到过给程序进行配置的场景，比如非常常见的配置文件，将 Mysql 的地址、端口、用户名、密码等信息写到一个配置文件里，然后程序内部通过读取这个配置文件来获取信息，防止了硬编码信息到程序内部，这样如果发生变动只需要修改配置文件即可，无需重新编译整个程序；另一种常见的方式是运行程序时指定参数来进行配置，比如 Go 标准库里的 flag 包就可以方便的进行参数指定，然后运行时只要使用诸如 go run main.</description>
+    </item>
+    
+    <item>
+      <title>go gc 白话版</title>
+      <link>/posts/go-gc/</link>
+      <pubDate>Wed, 01 Jun 2022 22:15:39 +0000</pubDate>
+      
+      <guid>/posts/go-gc/</guid>
+      <description>主流的垃圾回收算法 引用计数法 根据对象自身的引用计数来回收，当引用计数归零时进行回收，但是计数频繁更新会带来更多开销，且无法解决循环引用的问题。
+优点：简单直接，回收速度快 缺点：需要额外的空间存放计数，无法处理循环引用的情况； 标记清除法 标记出所有不需要回收的对象，在标记完成后统一回收掉所有未被标记的对象。</description>
+    </item>
+    
+    <item>
+      <title>k8s namespace</title>
+      <link>/posts/k8s-namespace/</link>
+      <pubDate>Tue, 31 May 2022 11:31:39 +0000</pubDate>
+      
+      <guid>/posts/k8s-namespace/</guid>
+      <description>简介 Namespace 是对一组资源和对象的抽象集合，比如可以用来将系统内部的对象划分为不同的项目组或用户组。常见的 pods, services, replication controllers 和 deployments 等都是属于某一个 namespace 的（默认是default），而 node, persistentVolumes 等则不属于任何 namespace。</description>
+    </item>
+    
+    <item>
+      <title>Go errgroup 使用</title>
+      <link>/posts/errgroup/</link>
+      <pubDate>Sat, 28 May 2022 23:55:35 +0000</pubDate>
+      
+      <guid>/posts/errgroup/</guid>
+      <description>简介 errgroup 是 WaitGroup 的强化版，其在 WaitGroup 的基础上添加了错误处理的功能：如果一组 goroutine 中的某一个发生了错误，那么后续的所有 gorouine 都不会被执行。</description>
+    </item>
+    
+    <item>
+      <title>kqueue</title>
+      <link>/posts/kqueue/</link>
+      <pubDate>Sat, 28 May 2022 01:10:35 +0000</pubDate>
+      
+      <guid>/posts/kqueue/</guid>
+      <description>一个 echo server 示例：
+package main import ( &amp;quot;log&amp;quot; .</description>
+    </item>
+    
+    <item>
+      <title>k8s 卷</title>
+      <link>/posts/k8s-juan/</link>
+      <pubDate>Fri, 20 May 2022 19:41:35 +0000</pubDate>
+      
+      <guid>/posts/k8s-juan/</guid>
+      <description>为什么需要卷 pod 类似逻辑主机，在逻辑主机中运行的进程共享诸如 CPU、RAM、网络接口等资源。有时候人们会期望进程也能共享磁盘，但是因为 pod 中运行的是一个个容器，而每个容器都有自己独立的文件系统（因为文件系统来自于容器镜像），所以不能共享磁盘。有时候可能存在这样一种需求：pod 中某个容器存储的数据需要持久化，但是因为容器存在挂掉的可能，如果挂掉后会新创建一个 pod 来顶替，但是因为 pod 因为无法共享磁盘，导致无法继承先前 pod 里存储的数据，先前的那部分数据就永久丢失了。</description>
+    </item>
+    
+    <item>
+      <title>在 mac 上制作 windows10 启动盘，亲测可用</title>
+      <link>/posts/mac-shang-zhi-zuo-windows/</link>
+      <pubDate>Tue, 17 May 2022 11:02:35 +0000</pubDate>
+      
+      <guid>/posts/mac-shang-zhi-zuo-windows/</guid>
+      <description>来源：https://chinese.freecodecamp.org/news/how-make-a-windows-10-usb-using-your-mac-build-a-bootable-iso-from-your-macs-terminal/
+准备 windows iso 文件 一个大小至少 8G 的 U 盘 mac 上安装好 homebrew 步骤 1 查看 U 盘的名称：</description>
+    </item>
+    
+    <item>
+      <title>linux iptables</title>
+      <link>/posts/iptables/</link>
+      <pubDate>Mon, 16 May 2022 10:53:35 +0000</pubDate>
+      
+      <guid>/posts/iptables/</guid>
+      <description>参考：
+https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2
+规则相关命令 查看规则 # 查看 filter 表的所有规则，-t 后面跟表名 $ iptables -t filter -L # 查看 raw 表的所有规则 $ iptables -t raw -L # 查看 filter 表（-t 缺省时，默认为 filter 表）的 INPUT 链上的所有规则 $ iptables -L INPUT # 加 -v 可以输出更详细的信息 $ iptables -vL INPUT # 加 -n 会直接输出 IP 地址，不加的话会继续转换，比如 0.</description>
+    </item>
+    
+    <item>
+      <title>k8s Deployment</title>
+      <link>/posts/k8s-deployment/</link>
+      <pubDate>Fri, 13 May 2022 10:53:35 +0000</pubDate>
+      
+      <guid>/posts/k8s-deployment/</guid>
+      <description>deplopyment 用于 pod 的更新相关操作。
+如何更新 pod 更新是一个非常常见的场景，比如：当前 pod 运行的是某个 v1 版本的镜像，一个月后该镜像发布了 v2 版本，此时想将所有的 pod 更新到 v2 版本，该怎么做呢？</description>
+    </item>
+    
+    <item>
+      <title>一段莫名阻塞的 reflect 代码</title>
+      <link>/posts/block-code/</link>
+      <pubDate>Fri, 13 May 2022 10:53:35 +0000</pubDate>
+      
+      <guid>/posts/block-code/</guid>
+      <description>package main import ( &amp;quot;fmt&amp;quot; &amp;quot;reflect&amp;quot; ) type I interface { Do() } type S struct{} func (s *S) Do() {} func EnforcePtr(obj interface{}) { v := reflect.</description>
+    </item>
+    
+    <item>
+      <title>ssh 输入卡顿</title>
+      <link>/posts/ssh-shu-ru-qia-dun/</link>
+      <pubDate>Wed, 11 May 2022 22:44:05 +0000</pubDate>
+      
+      <guid>/posts/ssh-shu-ru-qia-dun/</guid>
+      <description>ssh 到家里的另外一台电脑，发现输入延迟比较严重，体验不是很好，ping 发现延迟普遍在 100 -200 之间，有几次甚至超过了 400，在网上找到了一个解决方法：</description>
+    </item>
+    
+    <item>
+      <title>linux clone() 的坑</title>
+      <link>/posts/linux-clone-de-keng/</link>
+      <pubDate>Wed, 11 May 2022 17:57:22 +0000</pubDate>
+      
+      <guid>/posts/linux-clone-de-keng/</guid>
+      <description>环境：
+MacBook m1
+Ubuntu 20.04.4 LTS（使用 cat /etc/issue 查看），基于 multipass 创建</description>
+    </item>
+    
+    <item>
+      <title>HTTP MIME 嗅探 [待完善]</title>
+      <link>/posts/http_mime_sniff/</link>
+      <pubDate>Sun, 08 May 2022 15:46:11 +0000</pubDate>
+      
+      <guid>/posts/http_mime_sniff/</guid>
+      <description>实践 定义一个未知后缀名的文件（这个后缀名起的得随意一点，像 xyz 这种是不行的，会被 chrome 识别为 chemical/x-xyz 类型），但是文件里的内容是 HTML：</description>
+    </item>
+    
+    <item>
+      <title>k8s service</title>
+      <link>/posts/k8s-service/</link>
+      <pubDate>Sun, 08 May 2022 15:46:11 +0000</pubDate>
+      
+      <guid>/posts/k8s-service/</guid>
+      <description>什么是 service pod 往往需要与集群内的其他 pod 进行通信，可能也有外部的客户端需要访问集群中的 pod，如果需要管理员手动将 pod 的地址提供给访问者，那就太麻烦了，而且在 k8s 中 pod 的地址是不确定的、变动的：pod 可能被 rc、rs 缩减，或者发生异常下线，或者节点异常。所以 k8s 需要提供一种统一的对外访问的资源类型，也就是 service。</description>
+    </item>
+    
+    <item>
+      <title>multipass 修改配置（内存、硬盘、CPU 等）适用于 m1 mac</title>
+      <link>/posts/multipass-xiu-gai-pei-zhi/</link>
+      <pubDate>Sun, 08 May 2022 15:46:11 +0000</pubDate>
+      
+      <guid>/posts/multipass-xiu-gai-pei-zhi/</guid>
+      <description>multipass 是一款比较轻量级的虚拟机方案，使用起来也比较方便，操作方式与容器类似，但是使用过程中发现没有直接提供修改配置的简单方法，比如默认创建的虚拟机硬盘大小只会分配 5G，如果要跑 k8s 之类的显然是不够用的（k3s 都不够），而且默认创建的 CPU 只有 1 核，连 minikube 都跑不起来（最低需要 2 核），所以就需要修改配置。</description>
+    </item>
+    
+    <item>
+      <title>k8s nginx pod 的 containerPort 问题</title>
+      <link>/posts/k8s-nginx-pod-de-containerport-wen-ti/</link>
+      <pubDate>Sun, 08 May 2022 15:42:32 +0000</pubDate>
+      
+      <guid>/posts/k8s-nginx-pod-de-containerport-wen-ti/</guid>
+      <description>问题重现 有如下 yaml：
+apiVersion: v1 kind: Pod metadata: name: nginx labels: app: nginx spec: containers: - name: nginx image: nginx:alpine ports: - containerPort: 8080 hostPort: 9527 此时 curl nodeIP:9527 会发现报 Connection refused 错误，使用 kubectl exec -it nginx -- curl localhost:8080 也是如此</description>
+    </item>
+    
+    <item>
+      <title>k8s DaemonSet</title>
+      <link>/posts/k8s-daemonset/</link>
+      <pubDate>Sat, 07 May 2022 22:59:38 +0000</pubDate>
+      
+      <guid>/posts/k8s-daemonset/</guid>
+      <description>顾名思义，daemon 代表守护程序，所以 DaemonSet （简称 ds）会在每个节点上运行一个专门的 pod，这个 pod 是特殊的，比如资源监控器或者日志收集器，或者 k8s 自己的 kube-proxy。与 rc 或者 rs 不同，这两个会随机地分布在整个集群中，比如副本数量为 5，一共有 4 个节点，可能会在节点 1 创建两个副本，节点 2 创建 1 个副本，节点 4 创建 2 个副本，但 DaemonSet 会保证这 4 个节点各自都有一个副本。</description>
+    </item>
+    
+    <item>
+      <title>k8s ReplicaSet</title>
+      <link>/posts/k8s-replicaset/</link>
+      <pubDate>Sat, 07 May 2022 11:12:35 +0000</pubDate>
+      
+      <guid>/posts/k8s-replicaset/</guid>
+      <description>本篇笔记摘自 《Kubernetes in Aciton 》</description>
+    </item>
+    
+    <item>
+      <title>k8s ReplicationController</title>
+      <link>/posts/k8s-replicationcontroller/</link>
+      <pubDate>Fri, 06 May 2022 21:28:06 +0000</pubDate>
+      
+      <guid>/posts/k8s-replicationcontroller/</guid>
+      <description>本篇笔记摘自 《Kubernetes in Aciton 》</description>
+    </item>
+    
+    <item>
+      <title>k8s 存活探针</title>
+      <link>/posts/k8s-cun-huo-tan-zhen/</link>
+      <pubDate>Fri, 06 May 2022 16:40:35 +0000</pubDate>
+      
+      <guid>/posts/k8s-cun-huo-tan-zhen/</guid>
+      <description>本篇笔记摘自 《Kubernetes in Aciton 》4.</description>
+    </item>
+    
+    <item>
+      <title>k8s pod</title>
+      <link>/posts/k8s-pod-bi-ji/</link>
+      <pubDate>Wed, 04 May 2022 23:39:39 +0000</pubDate>
+      
+      <guid>/posts/k8s-pod-bi-ji/</guid>
+      <description>本篇笔记摘自 《Kubernetes in Aciton 》第三章：pod：运行于 Kubernetes 中的容器</description>
+    </item>
+    
+    <item>
+      <title>vscode 选中文本时滑动速度过快</title>
+      <link>/posts/vscode-xuan-zhong-wen-ben-shi-hua-dong-su-du-guo-kuai/</link>
+      <pubDate>Sun, 10 Apr 2022 13:44:05 +0000</pubDate>
+      
+      <guid>/posts/vscode-xuan-zhong-wen-ben-shi-hua-dong-su-du-guo-kuai/</guid>
+      <description>这是一个困扰我已久的问题，当选中一段代码并继续向下滑动时，滑动速度会非常快，导致无法准确选中我想要的部分，比如我的屏幕能显示200行代码，我想选中1-250行的代码，这就需要我向下滑动来选中剩余的50行，但是因为速度太快，导致我轻轻一滑就会瞬间跑到第800行代码的位置，于是我又要向上滑动，结果又瞬间到了第150行，非常令人蛋疼。
+在网上用中文搜索不到相关的问题，没办法只能用我蹩脚的英文搜索 vscode scroll too fast selecting，没想到还找出来不少，看来有时候还是得用英文搜索才能解决问题。https://github.</description>
+    </item>
+    
+    <item>
+      <title>k3s 踩坑记录</title>
+      <link>/posts/k3s/</link>
+      <pubDate>Fri, 08 Apr 2022 15:27:41 +0000</pubDate>
+      
+      <guid>/posts/k3s/</guid>
+      <description>安装： curl -sfL https://rancher-mirror.rancher.cn/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh -s - --write-kubeconfig-mode 666 &amp;ndash;write-kubeconfig-mode设置读写权限，否则每次 kubectl 都要 sudo，同时使用国内镜像进行下载</description>
+    </item>
+    
+    <item>
+      <title>MySQL 索引</title>
+      <link>/posts/mysql-suo-yin/</link>
+      <pubDate>Sat, 26 Mar 2022 22:35:02 +0000</pubDate>
+      
+      <guid>/posts/mysql-suo-yin/</guid>
+      <description>聚簇索引和非聚簇索引 索引类型分为主键索引和非主键索引。
+主键索引的叶子节点存的是整行数据。在InnoDB里，主键索引也被称为聚簇索引（clustered index）。
+非主键索引的叶子节点内容是主键的值。在InnoDB里，非主键索引也被称为二级索引（secondary index）。</description>
+    </item>
+    
+    <item>
+      <title>Mysql Buffer Pool 的一些疑问记录</title>
+      <link>/posts/mysql-buffer-pool-de-yi-xie-yi-wen-ji-lu/</link>
+      <pubDate>Wed, 16 Mar 2022 23:00:49 +0000</pubDate>
+      
+      <guid>/posts/mysql-buffer-pool-de-yi-xie-yi-wen-ji-lu/</guid>
+      <description>这是我在看 Mysql Buffer Pool 时的一个疑问，先说说 Buffer Pool，为了提高性能，Mysql 为读写操作添加了一层缓存，这样就可以直接从内存中操作，速度相比操作硬盘要快很多，只要之后再将内存中的数据定期写入到磁盘中即可保证数据一致。但是这样就产生了一个问题：如果在内存写入到磁盘之前，Mysql 进程挂掉了，这样岂不是就丢失数据了？</description>
+    </item>
+    
+    <item>
+      <title>Go slice append 的坑 [存疑]</title>
+      <link>/posts/go-slice-append-de-keng-cun-yi/</link>
+      <pubDate>Thu, 10 Mar 2022 14:31:19 +0000</pubDate>
+      
+      <guid>/posts/go-slice-append-de-keng-cun-yi/</guid>
+      <description>引子 使用过 Go 的小伙伴应该都遇到过这样一个坑：当使用 slice 作为参数传递时，如果调用方函数内部发生了 append 操作，那么对应的改变不会在实参处体现出来，比如：</description>
+    </item>
+    
+    <item>
+      <title>操作系统面试题</title>
+      <link>/posts/cao-zuo-xi-tong-mian-shi-ti/</link>
+      <pubDate>Tue, 15 Feb 2022 01:28:50 +0000</pubDate>
+      
+      <guid>/posts/cao-zuo-xi-tong-mian-shi-ti/</guid>
+      <description>页的概念 线程怎么调度的 进程间通信有哪几种方式，哪种方式最快？ 1.无名管道( pipe )：管道是一种半双工的通信方式，数据只能单向流动，而且只能在具有亲缘关系的进程间使用。进程的亲缘关系通常是指父子进程关系。</description>
+    </item>
+    
+    <item>
+      <title>MVCC 与事务隔离</title>
+      <link>/posts/mvcc-yu-shi-wu-ge-chi/</link>
+      <pubDate>Mon, 14 Feb 2022 16:01:18 +0000</pubDate>
+      
+      <guid>/posts/mvcc-yu-shi-wu-ge-chi/</guid>
+      <description>申明：以下内容来自网上的博客、课程，通过自己的理解进行一下转述，可能存在一些错误和纰漏
+介绍 MySQL 的 可重复读 和 读已提交 是基于 MVCC 实现的，它的最大优点是读不加锁，因此读写不冲突，并发性能好，其实现主要基于以下技术及数据结构：</description>
+    </item>
+    
+    <item>
+      <title>SO_REUSEADDR 和 SO_REUSEPORT 实践</title>
+      <link>/posts/so_reuseaddr-he-so_reuseport-shi-jian/</link>
+      <pubDate>Thu, 10 Feb 2022 22:03:09 +0000</pubDate>
+      
+      <guid>/posts/so_reuseaddr-he-so_reuseport-shi-jian/</guid>
+      <description>SO_REUSEADDR 该选项可以绑定处于 TIME_WAIT 状态的地址，实践： server 端：</description>
+    </item>
+    
+    <item>
+      <title>TCP CLOSE_WAIT 和 FIN_WAIT_2</title>
+      <link>/posts/close_wait-he-fin_wait_2/</link>
+      <pubDate>Wed, 02 Feb 2022 02:07:10 +0000</pubDate>
+      
+      <guid>/posts/close_wait-he-fin_wait_2/</guid>
+      <description>问题记录 最近写了一个普通的 tcp demo，发现 server 的状态处于 CLOSE_WAIT，而 client 的状态处于 FIN_WAIT_2，为了排查这个问题，特此写了这篇文章作为记录，这也</description>
+    </item>
+    
+    <item>
+      <title>计算机网络面试题</title>
+      <link>/posts/ji-suan-ji-wang-luo-mian-shi-ti/</link>
+      <pubDate>Fri, 28 Jan 2022 23:45:48 +0000</pubDate>
+      
+      <guid>/posts/ji-suan-ji-wang-luo-mian-shi-ti/</guid>
+      <description>TCP 相关 1. 说说 TIME_WAIT 及其作用 当一端 主动 断开连接并发送最后一次挥手后，该端状态变为 TIME_WAIT ，此时会等待 2 MSL （MSL 是 Maximum Segment Lifetime，译为“报文最大生存时间”，可为 30s，1min 或 2min。） 作用：</description>
+    </item>
+    
+    <item>
+      <title>GMP 面试题</title>
+      <link>/posts/gmp-mian-shi-ti/</link>
+      <pubDate>Wed, 26 Jan 2022 11:42:52 +0000</pubDate>
+      
+      <guid>/posts/gmp-mian-shi-ti/</guid>
+      <description>Goroutine 阻塞的话，是不是对应的 M 也会阻塞 如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么这个 G 会被标记为 runnable 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。</description>
+    </item>
+    
+    <item>
+      <title>Mac环境下， VMware Fusion下的虚拟机（ CentOS 7/Ubuntu20）的 NAT网络配置</title>
+      <link>/posts/mac-huan-jing-xia-vmware-fusion-xia-de-xu-ni-ji-centos-7de-nat-wang-luo-pei-zhi/</link>
+      <pubDate>Mon, 17 Jan 2022 14:57:10 +0000</pubDate>
+      
+      <guid>/posts/mac-huan-jing-xia-vmware-fusion-xia-de-xu-ni-ji-centos-7de-nat-wang-luo-pei-zhi/</guid>
+      <description>转载自：https://blog.csdn.net/u010476994/article/details/104001848 （Centos 7 部分） https://blog.</description>
+    </item>
+    
+    <item>
+      <title>Mysql 间隙锁实践</title>
+      <link>/posts/mysql-jian-xi-suo-shi-jian/</link>
+      <pubDate>Tue, 19 Oct 2021 23:30:55 +0000</pubDate>
+      
+      <guid>/posts/mysql-jian-xi-suo-shi-jian/</guid>
+      <description>测试数据如下：
+CREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) DEFAULT NULL, PRIMARY KEY (`id`), KEY `c` (`c`) ) ENGINE=InnoDB; +----+------+------+ | id | c | d | +----+------+------+ | 0 | 0 | 0 | | 5 | 5 | 5 | | 10 | 10 | 10 | | 15 | 15 | 15 | | 20 | 20 | 20 | | 25 | 25 | 25 | +----+------+------+ 测试情景 1 不存在的主键，select 是否会加间隙锁 session A session B 1 begin 2 begin 3 select * from t where id = 9 for update; 4 insert into t values(11,5,5); 5 insert into t values(6,5,5); 6 insert into t values(10,5,5); 7 insert into t values(4,5,5); 8 select * from t where id = 9 for update; 结果：</description>
+    </item>
+    
+    <item>
+      <title>MySQL实战笔记 20讲幻读是什么</title>
+      <link>/posts/mysql-shi-zhan-bi-ji-20-jiang-huan-du-shi-shi-me/</link>
+      <pubDate>Tue, 19 Oct 2021 20:15:04 +0000</pubDate>
+      
+      <guid>/posts/mysql-shi-zhan-bi-ji-20-jiang-huan-du-shi-shi-me/</guid>
+      <description>全文基于此表：
+CREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) DEFAULT NULL, PRIMARY KEY (`id`), KEY `c` (`c`) ) ENGINE=InnoDB; insert into t values(0,0,0),(5,5,5), (10,10,10),(15,15,15),(20,20,20),(25,25,25); 1.</description>
+    </item>
+    
+    <item>
+      <title>[转载] 进程的虚拟地址空间分布</title>
+      <link>/posts/zhuan-zai-jin-cheng-de-xu-ni-di-zhi-kong-jian-fen-bu/</link>
+      <pubDate>Mon, 04 Oct 2021 11:57:38 +0000</pubDate>
+      
+      <guid>/posts/zhuan-zai-jin-cheng-de-xu-ni-di-zhi-kong-jian-fen-bu/</guid>
+      <description>https://www.cnblogs.com/Joezzz/p/9803344.html</description>
+    </item>
+    
+    <item>
+      <title>[转载] Mac 通过DOSBox搭建汇编环境（附编译、链接、执行、调试详细过程）</title>
+      <link>/posts/mac-tong-guo-dosbox-da-jian-hui-bian-huan-jing-fu-bian-yi-lian-jie-zhi-xing-diao-shi-xiang-xi-guo-cheng/</link>
+      <pubDate>Mon, 04 Oct 2021 11:57:14 +0000</pubDate>
+      
+      <guid>/posts/mac-tong-guo-dosbox-da-jian-hui-bian-huan-jing-fu-bian-yi-lian-jie-zhi-xing-diao-shi-xiang-xi-guo-cheng/</guid>
+      <description>https://blog.csdn.net/qq_41855420/article/details/103746234</description>
+    </item>
+    
+    <item>
+      <title>39. 组合总和</title>
+      <link>/posts/39-zu-he-zong-he/</link>
+      <pubDate>Sat, 25 Sep 2021 22:27:33 +0000</pubDate>
+      
+      <guid>/posts/39-zu-he-zong-he/</guid>
+      <description>给定一个无重复元素的正整数数组 candidates 和一个正整数 target ，找出 candidates 中所有可以使数字和为目标数 target 的唯一组合。</description>
+    </item>
+    
+    <item>
+      <title>Linux 批量 kill 进程</title>
+      <link>/posts/linux-pi-liang-kill-jin-cheng/</link>
+      <pubDate>Tue, 21 Sep 2021 21:43:03 +0000</pubDate>
+      
+      <guid>/posts/linux-pi-liang-kill-jin-cheng/</guid>
+      <description>命令： ps -ef | grep name | grep -v grep | awk &#39;{print $2}&#39; | xargs kill 解释： ps -ef：查看全格式的全部进程</description>
+    </item>
+    
+    <item>
+      <title>我的面经</title>
+      <link>/posts/wo-de-mian-jing/</link>
+      <pubDate>Fri, 17 Sep 2021 18:32:23 +0000</pubDate>
+      
+      <guid>/posts/wo-de-mian-jing/</guid>
+      <description>2021.9.17 梦想工场 go 实习生
+现场面，只有纸和笔（吐槽：公司的大厦正好在装修，找了半天才找到，还好出门比较早，不然多半得迟到）</description>
+    </item>
+    
+    <item>
+      <title>MySQL 为什么使用 B&#43; 树</title>
+      <link>/posts/mysql-wei-shi-me-shi-yong-b-shu/</link>
+      <pubDate>Sat, 11 Sep 2021 19:56:55 +0000</pubDate>
+      
+      <guid>/posts/mysql-wei-shi-me-shi-yong-b-shu/</guid>
+      <description>B 树和 B+ 树的区别 来源：https://draveness.me/whys-the-design-mysql-b-plus-tree/</description>
+    </item>
+    
+    <item>
+      <title>Mac 下构建基于 C&#43;&#43; 的 gRPC</title>
+      <link>/posts/mac-xia-gou-jian-ji-yu-c-de-grpc/</link>
+      <pubDate>Tue, 31 Aug 2021 17:16:04 +0000</pubDate>
+      
+      <guid>/posts/mac-xia-gou-jian-ji-yu-c-de-grpc/</guid>
+      <description>来源于官方文档（https://grpc.io/docs/languages/cpp/quickstart/），但是其中有一些坑，特此记录，系统为 macOS 11.0.1 (20B29)：
+1. 设置目录（很重要，必须执行该步骤） 选择一个目录来保存本地安装的软件包。此页面假定环境变量MY_INSTALL_DIR包含此目录路径。例如：</description>
+    </item>
+    
+    <item>
+      <title>MySQL 锁</title>
+      <link>/posts/mysql-suo/</link>
+      <pubDate>Sun, 29 Aug 2021 10:55:13 +0000</pubDate>
+      
+      <guid>/posts/mysql-suo/</guid>
+      <description>表锁 语法：
+加锁：
+加读锁 LOCK TABLES [tablename] READ;</description>
+    </item>
+    
+    <item>
+      <title>MySQL 的事务隔离级别</title>
+      <link>/posts/mysql-de-shi-wu-ge-chi-ji-bie/</link>
+      <pubDate>Fri, 27 Aug 2021 23:17:16 +0000</pubDate>
+      
+      <guid>/posts/mysql-de-shi-wu-ge-chi-ji-bie/</guid>
+      <description>1. 未提交读（脏读） 事务的修改，即使没有提交，对其他事务也是可见的。事务可以读取未提交的数据，称之为 脏读。它存在 4 个常见问题（脏读、不可重复读、幻读、丢失更新）。 2.</description>
+    </item>
+    
+    <item>
+      <title>[牛客][笔试题] 兔子繁衍</title>
+      <link>/posts/niu-ke-bi-shi-ti-tu-zi-fan-yan/</link>
+      <pubDate>Sat, 21 Aug 2021 19:18:10 +0000</pubDate>
+      
+      <guid>/posts/niu-ke-bi-shi-ti-tu-zi-fan-yan/</guid>
+      <description>有一对兔子，从出生后的第五个月起每月生出一对小兔子（即满4月就开始生小兔），小兔子也会出生从第五个月起每月生一对小免子。假如兔子不会死，第n个月时，兔群有多少对兔子。
+输入描述: 第n月（n为自然数，n&amp;lt;101）
+输出描述: 第 n 个月时，兔子的对数（免群的兔子有多少对兔子）。 示例 1 输入 5 输出 2 说明 第五个月时，有两对兔子</description>
+    </item>
+    
+    <item>
+      <title>Redis zset 源码阅读</title>
+      <link>/posts/redis-zset-yuan-ma-yue-du/</link>
+      <pubDate>Tue, 17 Aug 2021 11:50:56 +0000</pubDate>
+      
+      <guid>/posts/redis-zset-yuan-ma-yue-du/</guid>
+      <description>types zskiplistNode typedef struct zskiplistNode { sds ele; // 成员 double score; // 分值 struct zskiplistNode *backward; // 后退指针 // 层 struct zskiplistLevel { struct zskiplistNode *forward; // 前进指针 unsigned long span; // 跨度 } level[]; } zskiplistNode; zskiplist typedef struct zskiplist { struct zskiplistNode *header, *tail; unsigned long length; int level; // 当前跳跃表内，层数最大的那个节点的层数 } zskiplist; zset typedef struct zset { dict *dict; zskiplist *zsl; } zset; functions zslCreate /* Create a new skiplist.</description>
+    </item>
+    
+    <item>
+      <title>leetcode 1493. 删掉一个元素以后全为 1 的最长子数组</title>
+      <link>/posts/leetcode-1493-shan-diao-yi-ge-yuan-su-yi-hou-quan-wei-1-de-zui-chang-zi-shu-zu/</link>
+      <pubDate>Thu, 12 Aug 2021 23:10:22 +0000</pubDate>
+      
+      <guid>/posts/leetcode-1493-shan-diao-yi-ge-yuan-su-yi-hou-quan-wei-1-de-zui-chang-zi-shu-zu/</guid>
+      <description>给你一个二进制数组 nums ，你需要从中删掉一个元素。
+请你在删掉元素的结果数组中，返回最长的且只包含 1 的非空子数组的长度。</description>
+    </item>
+    
+    <item>
+      <title>git clone 速度慢的解决方法</title>
+      <link>/posts/git-clone-su-du-man/</link>
+      <pubDate>Wed, 11 Aug 2021 12:37:33 +0000</pubDate>
+      
+      <guid>/posts/git-clone-su-du-man/</guid>
+      <description>使用国内镜像，目前已知Github国内镜像网站有 github.com.cnpmjs.org 和 git.sdut.me/ 。速度根据各地情况而定，在clone某个项目的时候将 github.</description>
+    </item>
+    
+    <item>
+      <title>git push error: remote: fatal error in commit_refs</title>
+      <link>/posts/git-push-error-remote-fatal-error-in-commit_refs/</link>
+      <pubDate>Wed, 11 Aug 2021 00:28:15 +0000</pubDate>
+      
+      <guid>/posts/git-push-error-remote-fatal-error-in-commit_refs/</guid>
+      <description>在一如既往地执行 git push 到 Github 时，出现了一个从未遇到过的错误：</description>
+    </item>
+    
+    <item>
+      <title>两个 main goroutine 操作一个 channel 会怎样</title>
+      <link>/posts/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/</link>
+      <pubDate>Sun, 08 Aug 2021 21:09:50 +0000</pubDate>
+      
+      <guid>/posts/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/</guid>
+      <description>引子 定义一个全局变量 chan，然后创建两个 main goroutine，一个往全局 chan 里发送数据，一个从全局 chan 里读取数据，会发生什么？</description>
+    </item>
+    
+    <item>
+      <title>Mysql 最左前缀原则失效</title>
+      <link>/posts/mysql-zui-zuo-qian-zhui-yuan-ze-shi-xiao/</link>
+      <pubDate>Sat, 07 Aug 2021 11:17:51 +0000</pubDate>
+      
+      <guid>/posts/mysql-zui-zuo-qian-zhui-yuan-ze-shi-xiao/</guid>
+      <description>引子 （以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看）
+有如下表，结构如下：</description>
+    </item>
+    
+    <item>
+      <title>进程间通信的方式</title>
+      <link>/posts/jin-cheng-jian-tong-xin-de-fang-shi/</link>
+      <pubDate>Fri, 06 Aug 2021 21:44:48 +0000</pubDate>
+      
+      <guid>/posts/jin-cheng-jian-tong-xin-de-fang-shi/</guid>
+      <description>这是一道面试高频题
+无名管道 无名管道只能用于父子进程之间的通信，代码如下：
+// // Created by zz on 2021/3/5.</description>
+    </item>
+    
+    <item>
+      <title>leetcode 153. 寻找旋转排序数组中的最小值</title>
+      <link>/posts/leetcode-153-xun-zhao-xuan-zhuan-pai-xu-shu-zu-zhong-de-zui-xiao-zhi/</link>
+      <pubDate>Fri, 06 Aug 2021 00:38:41 +0000</pubDate>
+      
+      <guid>/posts/leetcode-153-xun-zhao-xuan-zhuan-pai-xu-shu-zu-zhong-de-zui-xiao-zhi/</guid>
+      <description>已知一个长度为 n 的数组，预先按照升序排列，经由 1 到 n 次 旋转 后，得到输入数组。例如，原数组 nums = [0,1,2,4,5,6,7] 在变化后可能得到： 若旋转 4 次，则可以得到 [4,5,6,7,0,1,2] 若旋转 7 次，则可以得到 [0,1,2,4,5,6,7] 注意，数组 [a[0], a[1], a[2], &amp;hellip;, a[n-1]] 旋转一次 的结果为数组 [a[n-1], a[0], a[1], a[2], &amp;hellip;, a[n-2]] 。</description>
+    </item>
+    
+    <item>
+      <title>多级页表为什么节省内存</title>
+      <link>/posts/duo-ji-ye-biao/</link>
+      <pubDate>Thu, 05 Aug 2021 18:09:51 +0000</pubDate>
+      
+      <guid>/posts/duo-ji-ye-biao/</guid>
+      <description>首先明确几个概念 逻辑地址：是程序编译后，生成的目标模块进行编址时都是从0号单元开始编址，称之为目标模块的相对地址，即为逻辑地址。
+页：将虚拟内存划分的块，对应的大小就叫页面大小。
+页框：将物理内存划分的块。
+页和页框二者一一对应，一个页放入一个页框，（理论上）页的大小和页框的大小相等。</description>
+    </item>
+    
+    <item>
+      <title>leetcode 225. 用队列实现栈</title>
+      <link>/posts/leetcode-225-yong-dui-lie-shi-xian-zhan/</link>
+      <pubDate>Wed, 04 Aug 2021 20:20:51 +0000</pubDate>
+      
+      <guid>/posts/leetcode-225-yong-dui-lie-shi-xian-zhan/</guid>
+      <description>请你仅使用两个队列实现一个后入先出（LIFO）的栈，并支持普通栈的全部四种操作（push、top、pop 和 empty）。
+实现 MyStack 类：</description>
+    </item>
+    
+    <item>
+      <title>leetcode 155. 最小栈</title>
+      <link>/posts/leetcode-155-zui-xiao-zhan/</link>
+      <pubDate>Wed, 04 Aug 2021 12:08:57 +0000</pubDate>
+      
+      <guid>/posts/leetcode-155-zui-xiao-zhan/</guid>
+      <description>设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈。</description>
+    </item>
+    
+    <item>
+      <title>[牛客][腾讯2020笔试题] 第二题. 逛街</title>
+      <link>/posts/niu-ke-teng-xun-2020-bi-shi-ti-di-er-ti-guang-jie/</link>
+      <pubDate>Tue, 03 Aug 2021 22:53:02 +0000</pubDate>
+      
+      <guid>/posts/niu-ke-teng-xun-2020-bi-shi-ti-di-er-ti-guang-jie/</guid>
+      <description>小Q在周末的时候和他的小伙伴来到大城市逛街，一条步行街上有很多高楼，共有n座高楼排成一行。 小Q从第一栋一直走到了最后一栋，小Q从来都没有见到这么多的楼，所以他想知道他在每栋楼的位置处能看到多少栋楼呢？（当前面的楼的高度大于等于后面的楼时，后面的楼将被挡住）
+输入例子1: [5,3,8,3,2,5]</description>
+    </item>
+    
+    <item>
+      <title>[牛客][腾讯2020笔试题] 第一题. 压缩算法</title>
+      <link>/posts/teng-xun-2020-bi-shi-ti-ya-suo-suan-fa/</link>
+      <pubDate>Tue, 03 Aug 2021 21:38:24 +0000</pubDate>
+      
+      <guid>/posts/teng-xun-2020-bi-shi-ti-ya-suo-suan-fa/</guid>
+      <description>说明：该题出自牛客 —— 腾讯2020校园招聘-后台
+时间限制：C/C++ 1秒，其他语言2秒</description>
+    </item>
+    
+    <item>
+      <title>Redis 持久化之 AOF 与 RDB</title>
+      <link>/posts/redis-chi-jiu-hua-zhi-aof-yu-rdb/</link>
+      <pubDate>Mon, 02 Aug 2021 12:03:42 +0000</pubDate>
+      
+      <guid>/posts/redis-chi-jiu-hua-zhi-aof-yu-rdb/</guid>
+      <description>RDB RDB 可以将某个时间点上的数据库状态保存到一个 RDB 文件中（该文件的文件名可以在 redis.</description>
+    </item>
+    
+    <item>
+      <title>可靠传输的实现机制 —— 停止-等待协议SW（Stop-and-Wait）</title>
+      <link>/posts/ke-kao-chuan-shu-de-shi-xian-ji-zhi-ting-zhi-deng-dai-xie-yi-swstop-and-wait/</link>
+      <pubDate>Fri, 30 Jul 2021 18:16:47 +0000</pubDate>
+      
+      <guid>/posts/ke-kao-chuan-shu-de-shi-xian-ji-zhi-ting-zhi-deng-dai-xie-yi-swstop-and-wait/</guid>
+      <description>何为停等协议 首先假设有这样一个简单的可靠传输协议，主机 A 发送数据分组给 主机 B，由于网络传输过程中可能会出现数据损坏，所以主机 B会进行校验和检测，如果数据完整则发送 ACK，否则发送 NAK，如果收到 ACK，则可以继续发送下一个数据分组（如果有），收到 NAK 则重新发送当前数据分组。</description>
+    </item>
+    
+    <item>
+      <title>go map源码阅读</title>
+      <link>/posts/go-map-yuan-ma-yue-du/</link>
+      <pubDate>Thu, 29 Jul 2021 20:37:56 +0000</pubDate>
+      
+      <guid>/posts/go-map-yuan-ma-yue-du/</guid>
+      <description>看看 map 这个重要数据结构在 go 中是如何实现的</description>
+    </item>
+    
+    <item>
+      <title>leetcode 25. K 个一组翻转链表</title>
+      <link>/posts/leetcode-25-k-ge-yi-zu-fan-zhuan-lian-biao/</link>
+      <pubDate>Thu, 29 Jul 2021 10:05:08 +0000</pubDate>
+      
+      <guid>/posts/leetcode-25-k-ge-yi-zu-fan-zhuan-lian-biao/</guid>
+      <description>给你一个链表，每 k 个节点一组进行翻转，请你返回翻转后的链表。
+k 是一个正整数，它的值小于或等于链表的长度。</description>
+    </item>
+    
+    <item>
+      <title>[编程题]二叉树的下一个结点</title>
+      <link>/posts/bian-cheng-ti-er-cha-shu-de-xia-yi-ge-jie-dian/</link>
+      <pubDate>Wed, 28 Jul 2021 18:19:37 +0000</pubDate>
+      
+      <guid>/posts/bian-cheng-ti-er-cha-shu-de-xia-yi-ge-jie-dian/</guid>
+      <description>给定二叉树其中的一个结点，请找出其中序遍历顺序的下一个结点并且返回。
+注意，树中的结点不仅包含左右子结点，而且包含指向父结点的指针。
+示例: 输入:{8,6,10,5,7,9,11},8 返回:9 解析:这个组装传入的子树根节点，其实就是整颗树，中序遍历{5,6,7,8,9,10,11}，根节点8的下一个节点就是9，应该返回{9,10,11}，后台只打印子树的下一个节点，所以只会打印9，如下图，其实都有指向左右孩子的指针，还有指向父节点的指针，下图没有画出来 特别说明：leetcode 上没有这道题，测评请前往牛客，评测地址：https://www.</description>
+    </item>
+    
+    <item>
+      <title>MySQL 面经汇总</title>
+      <link>/posts/mysql-mian-jing/</link>
+      <pubDate>Sun, 25 Jul 2021 10:04:25 +0000</pubDate>
+      
+      <guid>/posts/mysql-mian-jing/</guid>
+      <description>MySQL 面经汇总，收集于牛客，不断更新中
+1. char 和 varchar 的区别 char 是固定长度，varchar 长度可变，存储时，前者不管实际存储数据的长度，直接规定 char 规定的长度分配存储空间；而后者会根据实际存储的数据分配最终的存储空间。</description>
+    </item>
+    
+    <item>
+      <title>epoll 的 LT 和 ET</title>
+      <link>/posts/epoll-de-lt-he-et/</link>
+      <pubDate>Fri, 23 Jul 2021 19:25:45 +0000</pubDate>
+      
+      <guid>/posts/epoll-de-lt-he-et/</guid>
+      <description>Linux epoll 的条件触发( Level Trigger )和边缘触发( Edge Trigger )</description>
+    </item>
+    
+    <item>
+      <title>go container/heap 源码阅读</title>
+      <link>/posts/go-containerheap-yuan-ma-yue-du/</link>
+      <pubDate>Thu, 22 Jul 2021 14:16:49 +0000</pubDate>
+      
+      <guid>/posts/go-containerheap-yuan-ma-yue-du/</guid>
+      <description>heap（堆），是一个用数组表示的完全二叉树，常用于构建优先队列，排序和快速找出一个集合中的最小值（或者最大值）。在 go 标准库下的 container 包中提供了这种数据结构。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 40. 最小的 k 个数</title>
+      <link>/posts/jian-zhi-offer-40-zui-xiao-de-k-ge-shu/</link>
+      <pubDate>Wed, 21 Jul 2021 21:07:14 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-40-zui-xiao-de-k-ge-shu/</guid>
+      <description>输入整数数组 arr ，找出其中最小的 k 个数</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 92. 反转链表 II</title>
+      <link>/posts/leetcode-92-fan-zhuan-lian-biao-ii/</link>
+      <pubDate>Tue, 20 Jul 2021 12:13:05 +0000</pubDate>
+      
+      <guid>/posts/leetcode-92-fan-zhuan-lian-biao-ii/</guid>
+      <description>反转链表的指定部分
+给你单链表的头指针 head 和两个整数 left 和 right ，其中 left &amp;lt;= right 。请你反转从位置 left 到位置 right 的链表节点，返回反转后的链表 。</description>
+    </item>
+    
+    <item>
+      <title>linux select 的错误使用案例</title>
+      <link>/posts/linux-select-de-cuo-wu-shi-yong-an-li/</link>
+      <pubDate>Sun, 18 Jul 2021 17:54:27 +0000</pubDate>
+      
+      <guid>/posts/linux-select-de-cuo-wu-shi-yong-an-li/</guid>
+      <description>select 错误使用记录，加深对 select 的理解
+错误的代码 有如下一个使用多路复用 select 实现的 echo（回响）服务器：</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 516. 最长回文子序列</title>
+      <link>/posts/leetcode-516-zui-chang-hui-wen-zi-xu-lie/</link>
+      <pubDate>Thu, 01 Jul 2021 09:42:46 +0000</pubDate>
+      
+      <guid>/posts/leetcode-516-zui-chang-hui-wen-zi-xu-lie/</guid>
+      <description>给定一个字符串 s ，找到其中最长的回文子序列，并返回该序列的长度
+给定一个字符串 s ，找到其中最长的回文子序列，并返回该序列的长度。可以假设 s 的最大长度为 1000 。</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 5. 最长回文子串</title>
+      <link>/posts/leetcode-5-zui-chang-hui-wen-zi-chuan/</link>
+      <pubDate>Tue, 29 Jun 2021 21:43:27 +0000</pubDate>
+      
+      <guid>/posts/leetcode-5-zui-chang-hui-wen-zi-chuan/</guid>
+      <description>给你一个字符串 s，找到 s 中最长的回文子串。
+给你一个字符串 s，找到 s 中最长的回文子串。</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 43. 字符串相乘</title>
+      <link>/posts/leetcode-43-zi-fu-chuan-xiang-cheng/</link>
+      <pubDate>Wed, 23 Jun 2021 11:18:48 +0000</pubDate>
+      
+      <guid>/posts/leetcode-43-zi-fu-chuan-xiang-cheng/</guid>
+      <description>给定两个以字符串形式表示的非负整数 num1 和 num2，返回 num1 和 num2 的乘积，它们的乘积也表示为字符串形式。</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 460. LFU 缓存</title>
+      <link>/posts/leetcode-460-lfu-huan-cun/</link>
+      <pubDate>Wed, 16 Jun 2021 21:52:51 +0000</pubDate>
+      
+      <guid>/posts/leetcode-460-lfu-huan-cun/</guid>
+      <description>最不经常使用（LFU）缓存算法
+请你为 最不经常使用（LFU）缓存算法设计并实现数据结构。
+实现 LFUCache 类：</description>
+    </item>
+    
+    <item>
+      <title>25匹马的角逐</title>
+      <link>/posts/25-pi-ma-de-jiao-zhu/</link>
+      <pubDate>Tue, 15 Jun 2021 11:18:00 +0000</pubDate>
+      
+      <guid>/posts/25-pi-ma-de-jiao-zhu/</guid>
+      <description>25 匹马，5条跑道，每个跑道最多能有 1 匹马进行比赛，（就是说最多同时可以有 5 匹马一起比赛）， 不能使用计时器，且每匹马的速度都很稳定（意思是在上一场比赛中 A 马比 B 马快，则下一场比赛中A马 依然比 B 马快），问最少比多少次能比出前3名和前5名？</description>
+    </item>
+    
+    <item>
+      <title>【两万字长文带你深入Go语言GC源码——腾讯技术工程】阅读笔记</title>
+      <link>/posts/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/</link>
+      <pubDate>Fri, 04 Jun 2021 21:29:45 +0000</pubDate>
+      
+      <guid>/posts/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/</guid>
+      <description>作者：luozhiyun 博客：https://www.luozhiyun.com/archives/475 本文使用的 Go 的源码1.</description>
+    </item>
+    
+    <item>
+      <title>leetcode 78. 子集</title>
+      <link>/posts/leetcode-78-zi-ji/</link>
+      <pubDate>Thu, 03 Jun 2021 17:43:51 +0000</pubDate>
+      
+      <guid>/posts/leetcode-78-zi-ji/</guid>
+      <description>给你一个整数数组 nums ，数组中的元素 互不相同 。返回该数组所有可能的子集（幂集）。</description>
+    </item>
+    
+    <item>
+      <title>【Linux 高性能服务器编程】阅读笔记 第五章 -- Linux 网络编程基础 api</title>
+      <link>/posts/linux-gao-xing-neng-fu-wu-qi-bian-cheng-yue-du-bi-ji-di-wu-zhang-linux-wang-luo-bian-cheng-ji-chu-api/</link>
+      <pubDate>Sat, 29 May 2021 19:27:47 +0000</pubDate>
+      
+      <guid>/posts/linux-gao-xing-neng-fu-wu-qi-bian-cheng-yue-du-bi-ji-di-wu-zhang-linux-wang-luo-bian-cheng-ji-chu-api/</guid>
+      <description>1. 字节序 字节序：内存中存储多个字节的方式。
+例如一个 16 进制数，它由两个字节组成，内存中存储这两个字节有两种方式，分别为大端字节序和小端 字节序。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 68 - I. 二叉搜索树的最近公共祖先</title>
+      <link>/posts/jian-zhi-offer-68-i-er-cha-sou-suo-shu-de-zui-jin-gong-gong-zu-xian/</link>
+      <pubDate>Sun, 09 May 2021 11:22:20 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-68-i-er-cha-sou-suo-shu-de-zui-jin-gong-gong-zu-xian/</guid>
+      <description>给定一个二叉搜索树, 找到该树中两个指定节点的最近公共祖先。
+百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x， 满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 57 - II. 和为s的连续正数序列</title>
+      <link>/posts/jian-zhi-offer-57-ii-he-wei-s-de-lian-xu-zheng-shu-xu-lie/</link>
+      <pubDate>Tue, 04 May 2021 11:52:11 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-57-ii-he-wei-s-de-lian-xu-zheng-shu-xu-lie/</guid>
+      <description>输入一个正整数 target ，输出所有和为 target 的连续正整数序列（至少含有两个数）。</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 690. 员工的重要性</title>
+      <link>/posts/leetcode-690-yuan-gong-de-chong-yao-xing/</link>
+      <pubDate>Sun, 02 May 2021 10:02:50 +0000</pubDate>
+      
+      <guid>/posts/leetcode-690-yuan-gong-de-chong-yao-xing/</guid>
+      <description>给定一个保存员工信息的数据结构，它包含了员工 唯一的 id ，重要度 和 直系下属的 id</description>
+    </item>
+    
+    <item>
+      <title>Parallels Desktop 16 网络初始化失败和不能连接USB设备解决方法</title>
+      <link>/posts/parallels-desktop-16-wang-luo-chu-shi-hua-shi-bai-he-bu-neng-lian-jie-usb-she-bei-jie-jue-fang-fa/</link>
+      <pubDate>Sat, 01 May 2021 11:52:55 +0000</pubDate>
+      
+      <guid>/posts/parallels-desktop-16-wang-luo-chu-shi-hua-shi-bai-he-bu-neng-lian-jie-usb-she-bei-jie-jue-fang-fa/</guid>
+      <description>Parallels Desktop 16 在最新的macOS Big Sur 11.</description>
+    </item>
+    
+    <item>
+      <title>go：记一次 defer 错误</title>
+      <link>/posts/goji-yi-ci-defer-cuo-wu/</link>
+      <pubDate>Fri, 23 Apr 2021 21:27:02 +0000</pubDate>
+      
+      <guid>/posts/goji-yi-ci-defer-cuo-wu/</guid>
+      <description>错误1： func test() error { if err := func1(); err !</description>
+    </item>
+    
+    <item>
+      <title>再探 for 循环</title>
+      <link>/posts/wei-shi-me-bu-neng-yong-bian-liang-bao-cun-die-dai-qi/</link>
+      <pubDate>Fri, 23 Apr 2021 13:23:51 +0000</pubDate>
+      
+      <guid>/posts/wei-shi-me-bu-neng-yong-bian-liang-bao-cun-die-dai-qi/</guid>
+      <description>有如下 c++ 代码，它的功能是删除容器中所有小于 10 的元素：</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 67. 把字符串转换成整数</title>
+      <link>/posts/jian-zhi-offer-67-ba-zi-fu-chuan-zhuan-huan-cheng-zheng-shu/</link>
+      <pubDate>Wed, 21 Apr 2021 22:12:13 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-67-ba-zi-fu-chuan-zhuan-huan-cheng-zheng-shu/</guid>
+      <description>写一个函数 StrToInt，实现把字符串转换成整数这个功能。不能使用 atoi 或者其他类似的库函数。</description>
+    </item>
+    
+    <item>
+      <title>leetcode 394. 字符串解码</title>
+      <link>/posts/leetcode-394-zi-fu-chuan-jie-ma/</link>
+      <pubDate>Mon, 19 Apr 2021 18:57:01 +0000</pubDate>
+      
+      <guid>/posts/leetcode-394-zi-fu-chuan-jie-ma/</guid>
+      <description>题目描述 给定一个经过编码的字符串，返回它解码后的字符串。
+编码规则为: k[encoded_string]，表示其中方括号内部的 encoded_string 正好重复 k 次。注意 k 保证为正整数。</description>
+    </item>
+    
+    <item>
+      <title>go：http.Request.Body 第二次读取为空 </title>
+      <link>/posts/goiocopy-de-keng/</link>
+      <pubDate>Sat, 17 Apr 2021 13:01:40 +0000</pubDate>
+      
+      <guid>/posts/goiocopy-de-keng/</guid>
+      <description>有如下代码，先使用 io.Copy 将 request.Body copy 到 stdout 标准输出，再使用 io.</description>
+    </item>
+    
+    <item>
+      <title>go：ioutil.ReadAll() 引发的 out of memory </title>
+      <link>/posts/goioutilreadall-yin-fa-de-out-of-memory/</link>
+      <pubDate>Fri, 16 Apr 2021 22:01:38 +0000</pubDate>
+      
+      <guid>/posts/goioutilreadall-yin-fa-de-out-of-memory/</guid>
+      <description>情景 某天突发奇想，写了一个在线阅读的 http 小程序，当访问某一路由时会读取电子书文件，并写入到 response 中，其中封装了一个读取文件的函数：</description>
+    </item>
+    
+    <item>
+      <title>go 字节数组错误：\u0001</title>
+      <link>/posts/2021-3-13-byte-array/</link>
+      <pubDate>Fri, 16 Apr 2021 19:48:34 +0000</pubDate>
+      
+      <guid>/posts/2021-3-13-byte-array/</guid>
+      <description>在做 压缩字符串 这道题时，提交的输出结果十分诡异，如下：
+输入：
+[&amp;ldquo;a&amp;rdquo;,&amp;ldquo;a&amp;rdquo;,&amp;ldquo;b&amp;rdquo;,&amp;ldquo;b&amp;rdquo;,&amp;ldquo;c&amp;rdquo;,&amp;ldquo;c&amp;rdquo;,&amp;ldquo;c&amp;rdquo;]</description>
+    </item>
+    
+    <item>
+      <title>Golang GDB 调试提示 No symbol table is loaded. Use the &#34;file&#34; command</title>
+      <link>/posts/2021-4-10-golang-gdb/</link>
+      <pubDate>Fri, 16 Apr 2021 19:48:15 +0000</pubDate>
+      
+      <guid>/posts/2021-4-10-golang-gdb/</guid>
+      <description>背景：
+本地 MacOS 上通过 GDB 调试 golang 程序，结果提示 No symbol table is loaded.</description>
+    </item>
+    
+    <item>
+      <title>c&#43;&#43;：iterator.begin() 和 *iterator.begin() 的区别 【未完】</title>
+      <link>/posts/2021-4-14-whats-different-in-cpp-iterator-var/</link>
+      <pubDate>Fri, 16 Apr 2021 19:48:05 +0000</pubDate>
+      
+      <guid>/posts/2021-4-14-whats-different-in-cpp-iterator-var/</guid>
+      <description>情景描述 有如下 c++ 代码：
+auto b = vec.</description>
+    </item>
+    
+    <item>
+      <title>etcd 错误：context deadline exceeded</title>
+      <link>/posts/2020-10-17-etcd-error/</link>
+      <pubDate>Fri, 16 Apr 2021 19:46:44 +0000</pubDate>
+      
+      <guid>/posts/2020-10-17-etcd-error/</guid>
+      <description>etcd 远程操作失败：Error: context deadline exceeded 在服务器启动 etcd，并在本地机器通过 etcdctl &amp;ndash;endpoints=http://ip:2379 put name &amp;ldquo;123&amp;rdquo; 命令，在服务器的 etcd 中创建一对键值对， 如下图所示：</description>
+    </item>
+    
+    <item>
+      <title>面试题 01.06. 字符串压缩</title>
+      <link>/posts/2021-3-13-ctcl-0106-compress-string/</link>
+      <pubDate>Fri, 16 Apr 2021 19:41:48 +0000</pubDate>
+      
+      <guid>/posts/2021-3-13-ctcl-0106-compress-string/</guid>
+      <description>题目描述 字符串压缩。利用字符重复出现的次数，编写一种方法，实现基本的字符串压缩功能。比如，字符串aabcccccaaa会变为a2b1c5a3。若“压缩”后的字符串没有变短，则返回原先的字符串。你可以假设字符串中只包含大小写英文字母（a至z）。
+示例1:
+输入：&amp;ldquo;aabcccccaaa&amp;rdquo; 输出：&amp;ldquo;a2b1c5a3&amp;rdquo; 示例2:</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 53 - I. 在排序数组中查找数字 I</title>
+      <link>/posts/2021-3-17-offer-53-search-sort-array1/</link>
+      <pubDate>Fri, 16 Apr 2021 19:41:09 +0000</pubDate>
+      
+      <guid>/posts/2021-3-17-offer-53-search-sort-array1/</guid>
+      <description>题目描述 统计一个数字在排序数组中出现的次数。
+示例 1:
+输入: nums = [5,7,7,8,8,10], target = 8 输出: 2 示例 2:</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 52. 两个链表的第一个公共节点</title>
+      <link>/posts/2021-3-23-offer-52-get-intersection-node/</link>
+      <pubDate>Fri, 16 Apr 2021 19:39:31 +0000</pubDate>
+      
+      <guid>/posts/2021-3-23-offer-52-get-intersection-node/</guid>
+      <description>题目描述 输入两个链表，找出它们的第一个公共节点。	编写一个程序，找到两个单链表相交的起始节点。
+如下面的两个链表：
+a1 -&amp;gt; a2 ↘ c1 -&amp;gt; c2 -&amp;gt; c3 b1 -&amp;gt; b2 -&amp;gt; b3 ↗ 在节点 c1 开始相交。</description>
+    </item>
+    
+    <item>
+      <title>leetcode 15. 三数之和</title>
+      <link>/posts/2021-3-24-leet-15-three-sum/</link>
+      <pubDate>Fri, 16 Apr 2021 19:38:53 +0000</pubDate>
+      
+      <guid>/posts/2021-3-24-leet-15-three-sum/</guid>
+      <description>题目描述 给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三 个元素 a，b，c ，使得 a + b + c = 0 请你找出所有和为 0 且不重复的三元组。</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 56. 合并区间</title>
+      <link>/posts/2021-3-26-leet-56-merge-interval/</link>
+      <pubDate>Fri, 16 Apr 2021 19:35:46 +0000</pubDate>
+      
+      <guid>/posts/2021-3-26-leet-56-merge-interval/</guid>
+      <description>题目描述 以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] = [starti, endi] 。 请你合并所有重叠的区间，并返回一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间。</description>
+    </item>
+    
+    <item>
+      <title>求二叉树根节点到指定节点的路径</title>
+      <link>/posts/2021-3-27-find-binarytree-root-to-node-path/</link>
+      <pubDate>Fri, 16 Apr 2021 19:34:52 +0000</pubDate>
+      
+      <guid>/posts/2021-3-27-find-binarytree-root-to-node-path/</guid>
+      <description>算法描述 这不是一道力扣或者剑指上的原题，但却是二叉树问题的一个基础核心算法，适用于许多二叉树类型的题目，比如 剑指 Offer 68 - II.</description>
+    </item>
+    
+    <item>
+      <title>LeetCode165.比较版本号</title>
+      <link>/posts/2021-3-5-leet-165-compare-version-numbers/</link>
+      <pubDate>Fri, 16 Apr 2021 19:32:54 +0000</pubDate>
+      
+      <guid>/posts/2021-3-5-leet-165-compare-version-numbers/</guid>
+      <description>题目描述 给你两个版本号 version1 和 version2 ，请你比较它们。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 11. 旋转数组的最小数字</title>
+      <link>/posts/2021-3-6-offer-11-retate-array-min-num/</link>
+      <pubDate>Fri, 16 Apr 2021 19:28:50 +0000</pubDate>
+      
+      <guid>/posts/2021-3-6-offer-11-retate-array-min-num/</guid>
+      <description>题目描述 把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。输入一个递增排序的数组的一个旋转，输出旋转数组的最小元素。例如，数组 [3,4,5,1,2] 为 [1,2,3,4,5] 的一个旋转，该数组的最小值为1。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 68 - II. 二叉树的最近公共祖先</title>
+      <link>/posts/2021-4-3-offer-68-lowest-common-ancestor/</link>
+      <pubDate>Fri, 16 Apr 2021 19:27:28 +0000</pubDate>
+      
+      <guid>/posts/2021-4-3-offer-68-lowest-common-ancestor/</guid>
+      <description>题目描述 给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖 先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”</description>
+    </item>
+    
+    <item>
+      <title>leetcode 46.全排列【未完】</title>
+      <link>/posts/2021-4-6-leet-46-quan-pai-lie/</link>
+      <pubDate>Fri, 16 Apr 2021 19:26:43 +0000</pubDate>
+      
+      <guid>/posts/2021-4-6-leet-46-quan-pai-lie/</guid>
+      <description>题目描述 算法设计 方法1 回溯法，使用 bool 数组记录每个数是否被访问 cpp 版本：</description>
+    </item>
+    
+    <item>
+      <title>leetcode 225. 用队列实现栈【未完】</title>
+      <link>/posts/leetcode-225-yong-dui-lie-shi-xian-zhan-wei-wan/</link>
+      <pubDate>Fri, 16 Apr 2021 19:21:36 +0000</pubDate>
+      
+      <guid>/posts/leetcode-225-yong-dui-lie-shi-xian-zhan-wei-wan/</guid>
+      <description>题目描述 请你仅使用两个队列实现一个后入先出（LIFO）的栈，并支持普通队列的全部四种操作（push、top、pop 和 empty）。
+实现 MyStack 类：</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 04. 二维数组中的查找</title>
+      <link>/posts/jian-zhi-offer-04-er-wei-shu-zu-zhong-de-cha-zhao/</link>
+      <pubDate>Fri, 16 Apr 2021 19:17:34 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-04-er-wei-shu-zu-zhong-de-cha-zhao/</guid>
+      <description>题目描述 在一个 n * m 的二维数组中，每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个高效的函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 48. 最长不含重复字符的子字符串</title>
+      <link>/posts/jian-zhi-offer-48-zui-chang-bu-han-chong-fu-zi-fu-de-zi-zi-fu-chuan/</link>
+      <pubDate>Fri, 16 Apr 2021 15:58:39 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-48-zui-chang-bu-han-chong-fu-zi-fu-de-zi-zi-fu-chuan/</guid>
+      <description>题目描述 请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。
+示例 1:
+输入: &amp;quot;abcabcbb&amp;quot; 输出: 3 解释: 因为无重复字符的最长子串是 &amp;quot;abc&amp;quot;，所以其长度为 3。 示例 2:</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 50. 第一个只出现一次的字符（书中为35题）</title>
+      <link>/posts/jian-zhi-offer-50-di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-shu-zhong-wei-35-ti/</link>
+      <pubDate>Fri, 16 Apr 2021 15:55:30 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-50-di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-shu-zhong-wei-35-ti/</guid>
+      <description>题目描述 在字符串 s 中找出第一个只出现一次的字符。如果没有，返回一个单空格。 s 只包含小写字母。</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 22. 链表中倒数第k个节点</title>
+      <link>/posts/jian-zhi-offer-22-lian-biao-zhong-dao-shu-di-k-ge-jie-dian/</link>
+      <pubDate>Fri, 16 Apr 2021 15:53:20 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-22-lian-biao-zhong-dao-shu-di-k-ge-jie-dian/</guid>
+      <description>题目描述 输入一个链表，输出该链表中倒数第k个节点。为了符合大多数人的习惯，本题从1开始计数，即链表的尾节点是倒数第1个节点。例如，一个链表有6个节点，从头节点开始，它们的值依次是1、2、3、4、5、6。这个链表的倒数第3个节点是值为4的节点。
+示例：
+给定一个链表: 1-&amp;gt;2-&amp;gt;3-&amp;gt;4-&amp;gt;5, 和 k = 2.</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 18. 删除链表的节点</title>
+      <link>/posts/jian-zhi-offer-18-shan-chu-lian-biao-de-jie-dian/</link>
+      <pubDate>Fri, 16 Apr 2021 15:42:54 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-18-shan-chu-lian-biao-de-jie-dian/</guid>
+      <description>题目描述 给定单向链表的头指针和一个要删除的节点的值，定义一个函数删除该节点。
+返回删除后的链表的头节点。
+注意：此题对比原题有改动
+示例 1:</description>
+    </item>
+    
+    <item>
+      <title>剑指 Offer 03. 数组中重复的数字</title>
+      <link>/posts/jian-zhi-offer-03-shu-zu-zhong-chong-fu-de-shu-zi/</link>
+      <pubDate>Fri, 16 Apr 2021 15:38:03 +0000</pubDate>
+      
+      <guid>/posts/jian-zhi-offer-03-shu-zu-zhong-chong-fu-de-shu-zi/</guid>
+      <description>题目描述 找出数组中重复的数字。
+在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。</description>
+    </item>
+    
+    <item>
+      <title>LeetCode146.LRU 缓存机制</title>
+      <link>/posts/leetcode146lru-huan-cun-ji-zhi/</link>
+      <pubDate>Fri, 16 Apr 2021 14:45:38 +0000</pubDate>
+      
+      <guid>/posts/leetcode146lru-huan-cun-ji-zhi/</guid>
+      <description>题目描述 运用你所掌握的数据结构，设计和实现一个 LRU (最近最少使用) 缓存机制。它应该支持以下操作： 获取数据 get 和 写入数据 put 。</description>
+    </item>
+    
+    <item>
+      <title>docker 安装 etcd</title>
+      <link>/posts/2020-11-6-docker-etcd/</link>
+      <pubDate>Fri, 06 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2020-11-6-docker-etcd/</guid>
+      <description>docker 安装 etcd 创建一个 sh 文件</description>
+    </item>
+    
+    <item>
+      <title>docker 下的 redis 如何挂载外部配置和数据</title>
+      <link>/posts/2020-11-7-docker-redis-config/</link>
+      <pubDate>Fri, 06 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2020-11-7-docker-redis-config/</guid>
+      <description>使用docker安装redis，挂载外部配置和数据 mkdir /docker
+mkdir /docker/redis</description>
+    </item>
+    
+    <item>
+      <title>Chapter 1</title>
+      <link>/docs/interview/base/chapter-1/</link>
+      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/interview/base/chapter-1/</guid>
+      <description>&lt;p&gt;This is chapter 1 of nested chapter.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Chapter 1</title>
+      <link>/docs/interview/language/chapter-1/</link>
+      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/interview/language/chapter-1/</guid>
+      <description>&lt;p&gt;This is chapter 1 of nested chapter.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Chapter 1</title>
+      <link>/docs/interview/middleware/chapter-1/</link>
+      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/interview/middleware/chapter-1/</guid>
+      <description>&lt;p&gt;This is chapter 1 of nested chapter.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Chapter 2</title>
+      <link>/docs/interview/base/chapter-2/</link>
+      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/interview/base/chapter-2/</guid>
+      <description>&lt;p&gt;This is chapter 2 of nested chapter.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Chapter 2</title>
+      <link>/docs/interview/language/chapter-2/</link>
+      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/interview/language/chapter-2/</guid>
+      <description>&lt;p&gt;This is chapter 2 of nested chapter.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Chapter 2</title>
+      <link>/docs/interview/middleware/chapter-2/</link>
+      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/interview/middleware/chapter-2/</guid>
+      <description>&lt;p&gt;This is chapter 2 of nested chapter.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Xshell连接及docker、redis安装</title>
+      <link>/posts/2018-11-7-redis/</link>
+      <pubDate>Sun, 11 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2018-11-7-redis/</guid>
+      <description>This is official blog theme.</description>
+    </item>
+    
+    <item>
+      <title>项目和教程</title>
+      <link>/project/</link>
+      <pubDate>Thu, 23 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/project/</guid>
+      <description>项目 1/ Django-mdeditor
+Django-mdeditor 是基于 Editor.</description>
+    </item>
+    
+    <item>
+      <title>c&#43;&#43;：如何理解函数返回一个引用【未完】</title>
+      <link>/posts/2021-4-15-cpp_func_return_reference/</link>
+      <pubDate>Wed, 15 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2021-4-15-cpp_func_return_reference/</guid>
+      <description>有如下函数，其返回了一个引用：
+int &amp;amp;ret_val(int &amp;amp;a) { return a; } 另一个函数用来接收返回的引用：</description>
+    </item>
+    
+    <item>
+      <title>go container/list 源码分析【未完】</title>
+      <link>/posts/2021-2-24-go-container-list-source-code/</link>
+      <pubDate>Mon, 24 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2021-2-24-go-container-list-source-code/</guid>
+      <description>List // List代表一个双向链表。List零值为一个空的、可用的链表。 type List struct { // 哨兵节点，连接链表的头节点和尾结点，root.</description>
+    </item>
+    
+    <item>
+      <title>go 交换 container/list 的值</title>
+      <link>/posts/2021-2-24-go-container-list-swap/</link>
+      <pubDate>Mon, 24 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2021-2-24-go-container-list-swap/</guid>
+      <description>场景 在 LeetCode 255.用队列实现栈 这道题里，需要用到两个队列来实现一个栈，并且在算法流程中，需要交换这两个队列的内容，例如：队列 A =&amp;gt; [1, 2, 3]，队列 B =&amp;gt; [555]，交换后：A =&amp;gt; [555]，B =&amp;gt; [1, 2, 3]。</description>
+    </item>
+    
+    <item>
+      <title>go 发送 post 请求</title>
+      <link>/posts/2021-1-24-go-post-request/</link>
+      <pubDate>Fri, 24 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2021-1-24-go-post-request/</guid>
+      <description>go 基础之使用原生 http 库发送 post 请求</description>
+    </item>
+    
+    <item>
+      <title>c&#43;&#43; 引用：如何理解&#34;引用被初始化后，不能再指向其他对象&#34;</title>
+      <link>/posts/2021-1-11-reference_c&#43;&#43;/</link>
+      <pubDate>Sat, 11 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2021-1-11-reference_c&#43;&#43;/</guid>
+      <description>在 c++ 的引用规则中，有这么一条：一旦初始化完成 ，引用将和它的初始值对象一直绑定在一起（即不能再指向其他对象）。抱着初学者的好奇心态，我尝试改变引用的指向，写出了如下代码：
+// 定义两个 string 变量 std::string s = &amp;quot;123&amp;quot;; std::string s2 = &amp;quot;456&amp;quot;; // 让 s1 引用 s std::string &amp;amp;s1 = s; std::cout &amp;lt;&amp;lt; &amp;quot;修改前：&amp;quot; &amp;lt;&amp;lt; &amp;quot;s1: &amp;quot; &amp;lt;&amp;lt; s1 &amp;lt;&amp;lt; std::endl; // 修改 s1 的引用？ s1 = s2; std::cout &amp;lt;&amp;lt; &amp;quot;修改后：&amp;quot; &amp;lt;&amp;lt; &amp;quot;s1: &amp;quot; &amp;lt;&amp;lt; s1 &amp;lt;&amp;lt; std::endl; // output 修改前：s1: 123 修改后：s1: 456 这里我让 s1 重新指向 s2，并且从输出结果来看，s1 的值也确实被修改了，不对啊，规则中明明说好了不能修改的，怎么实际代码中可以？为了验证引用是否真的被修改，将三个变量的指针打印出来：</description>
+    </item>
+    
+    <item>
+      <title>硬链接和软链接</title>
+      <link>/posts/2021-1-19-soft-hard-link/</link>
+      <pubDate>Sat, 11 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2021-1-19-soft-hard-link/</guid>
+      <description>Linux 的硬链接和软链接
+索引节点 在Linux的文件系统中，保存在磁盘分区中的文件不管是什么类型都给它分配一个编号，称为索引节点号(Inode Index)，可以通过 ls -li 查看每个文件的索引节点：</description>
+    </item>
+    
+    <item>
+      <title>资料库</title>
+      <link>/resource/</link>
+      <pubDate>Mon, 04 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/resource/</guid>
+      <description>英语 程序员工作中常见的英语词汇 人人都能用英语-李笑来 大前端类 Javascript 资源：Airbnb javascript编码规范 Fluter 资源：Fluter样式模板 电子书：Fluter实战 Vue.</description>
+    </item>
+    
+    <item>
+      <title>关于</title>
+      <link>/posts/about/</link>
+      <pubDate>Fri, 25 Jan 2019 19:09:48 +0000</pubDate>
+      
+      <guid>/posts/about/</guid>
+      <description> 欢迎来到我的小站呀，很高兴遇见你！🤝
+🏠 关于本站 👨‍💻 博主是谁 ⛹ 兴趣爱好 📬 联系我呀 </description>
+    </item>
+    
+    <item>
+      <title>Hello Gridea</title>
+      <link>/posts/hello-gridea/</link>
+      <pubDate>Wed, 12 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/hello-gridea/</guid>
+      <description>👏 欢迎使用 Gridea ！
+✍️ Gridea 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意&amp;hellip; &amp;hellip;</description>
+    </item>
+    
+    <item>
+      <title>包含关键词 的文章</title>
+      <link>/search/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/search/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>标签</title>
+      <link>/tags/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>分类</title>
+      <link>/categories/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>归档</title>
+      <link>/archive/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/archive/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>简历</title>
+      <link>/resume/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/resume/</guid>
+      <description>个人信息 吴秀民/男/1988 本科/临沂大学/计算机科学与技术 工作年限：9年 技术博客：https://pylixm.cc/ Github：https://github.</description>
+    </item>
+    
+  </channel>
+</rss>

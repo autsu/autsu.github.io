@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>笔试题 on /dev/null</title>
+    <link>/tags/%E7%AC%94%E8%AF%95%E9%A2%98/</link>
+    <description>Recent content in 笔试题 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Tue, 03 Aug 2021 22:53:02 +0000</lastBuildDate><atom:link href="/tags/%E7%AC%94%E8%AF%95%E9%A2%98/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[牛客][腾讯2020笔试题] 第二题. 逛街</title>
+      <link>/posts/niu-ke-teng-xun-2020-bi-shi-ti-di-er-ti-guang-jie/</link>
+      <pubDate>Tue, 03 Aug 2021 22:53:02 +0000</pubDate>
+      
+      <guid>/posts/niu-ke-teng-xun-2020-bi-shi-ti-di-er-ti-guang-jie/</guid>
+      <description>小Q在周末的时候和他的小伙伴来到大城市逛街，一条步行街上有很多高楼，共有n座高楼排成一行。 小Q从第一栋一直走到了最后一栋，小Q从来都没有见到这么多的楼，所以他想知道他在每栋楼的位置处能看到多少栋楼呢？（当前面的楼的高度大于等于后面的楼时，后面的楼将被挡住）
+输入例子1: [5,3,8,3,2,5]</description>
+    </item>
+    
+    <item>
+      <title>[牛客][腾讯2020笔试题] 第一题. 压缩算法</title>
+      <link>/posts/teng-xun-2020-bi-shi-ti-ya-suo-suan-fa/</link>
+      <pubDate>Tue, 03 Aug 2021 21:38:24 +0000</pubDate>
+      
+      <guid>/posts/teng-xun-2020-bi-shi-ti-ya-suo-suan-fa/</guid>
+      <description>说明：该题出自牛客 —— 腾讯2020校园招聘-后台
+时间限制：C/C++ 1秒，其他语言2秒</description>
+    </item>
+    
+  </channel>
+</rss>

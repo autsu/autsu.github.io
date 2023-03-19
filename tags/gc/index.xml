@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>gc on /dev/null</title>
+    <link>/tags/gc/</link>
+    <description>Recent content in gc on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Wed, 01 Jun 2022 22:15:39 +0000</lastBuildDate><atom:link href="/tags/gc/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>go gc 白话版</title>
+      <link>/posts/go-gc/</link>
+      <pubDate>Wed, 01 Jun 2022 22:15:39 +0000</pubDate>
+      
+      <guid>/posts/go-gc/</guid>
+      <description>主流的垃圾回收算法 引用计数法 根据对象自身的引用计数来回收，当引用计数归零时进行回收，但是计数频繁更新会带来更多开销，且无法解决循环引用的问题。
+优点：简单直接，回收速度快 缺点：需要额外的空间存放计数，无法处理循环引用的情况； 标记清除法 标记出所有不需要回收的对象，在标记完成后统一回收掉所有未被标记的对象。</description>
+    </item>
+    
+    <item>
+      <title>【两万字长文带你深入Go语言GC源码——腾讯技术工程】阅读笔记</title>
+      <link>/posts/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/</link>
+      <pubDate>Fri, 04 Jun 2021 21:29:45 +0000</pubDate>
+      
+      <guid>/posts/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/</guid>
+      <description>作者：luozhiyun 博客：https://www.luozhiyun.com/archives/475 本文使用的 Go 的源码1.</description>
+    </item>
+    
+  </channel>
+</rss>

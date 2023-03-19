@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>linux select 的错误使用案例 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="select 错误使用记录，加深对 select 的理解
+错误的代码 有如下一个使用多路复用 select 实现的 echo（回响）服务器：">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"linux select 的错误使用案例",
+      "item":"/posts/linux-select-de-cuo-wu-shi-yong-an-li/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/linux-select-de-cuo-wu-shi-yong-an-li/"
+    },
+    "headline": "linux select 的错误使用案例 | \/dev\/null","datePublished": "2021-07-18T17:54:27+00:00",
+    "dateModified": "2021-07-18T17:54:27+00:00",
+    "wordCount":  672 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "select 错误使用记录，加深对 select 的理解\n错误的代码 有如下一个使用多路复用 select 实现的 echo（回响）服务器："
+}
+</script><meta property="og:title" content="linux select 的错误使用案例 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/linux-select-de-cuo-wu-shi-yong-an-li/" />
+
+
+
+
+<meta property="og:description" content="select 错误使用记录，加深对 select 的理解
+错误的代码 有如下一个使用多路复用 select 实现的 echo（回响）服务器：" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-07-18T17:54:27&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-07-18T17:54:27&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="多路复用" />
+
+
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">linux select 的错误使用案例</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2021-07-18</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>4分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <p>select 错误使用记录，加深对 select 的理解</p>
+<!-- more -->
+<h1 id="错误的代码">错误的代码</h1>
+<p>有如下一个使用多路复用 select 实现的 echo（回响）服务器：</p>
+<pre><code class="language-c">int main() {
+    char buf[BUF_SIZE];
+  	// 简单封装了一下 socket 的创建流程
+    Server s(&quot;tcp&quot;, &quot;0.0.0.0&quot;, &quot;8080&quot;);
+    s.Listen(1024);
+
+    fd_set readfds;
+    // 监听服务端socket，当有客户连接时会触发事件
+    FD_ZERO(&amp;readfds);
+    FD_SET(s.Sockfd(), &amp;readfds);
+
+    int maxfd = s.Sockfd();
+
+    for (; ;) {
+        int okcnt = select(maxfd+1, &amp;readfds, nullptr, nullptr, nullptr);
+        if (okcnt == -1) {
+            printf(&quot;select error\n&quot;);
+            break;
+        }
+        if (okcnt == 0) {
+            continue;
+        }
+
+        // 遍历 select 数组
+        for (int i = 0; i &lt; maxfd+1; ++i) {
+            // 找到所有值为 1 的 fd，这表示该 fd 已经准备就绪了
+            if (FD_ISSET(i, &amp;readfds)) {
+                // 如果就绪的 fd 为 server,说明有新的连接请求
+                if (i == s.Sockfd()) {
+                    // 调用 accept 接收客户端的连接请求
+                    auto conn = s.Accept();
+                    int connfd = conn-&gt;Connfd();
+                    // 更新 maxfd
+                    if (connfd &gt; maxfd) {
+                        maxfd = connfd;
+                    }
+                    // 将 conn 的 fd 添加到 select 监听集合中
+                    FD_SET(connfd, &amp;readfds);
+                    printf(&quot;connected client: %d\n&quot;, conn-&gt;Connfd());
+                    // 如果就绪的 fd 不是 server fd，则是 conn fd
+                } else {
+                    printf(&quot;conn %d is already\n&quot;, i);
+                    // 可以对这些准备就绪的 conn 进行 echo 处理了
+                    int n = read(i, buf, BUF_SIZE);
+                    if (n == 0) {   // EOF
+                        //
+                        FD_CLR(i, &amp;readfds);
+                        close(i);
+                        printf(&quot;close conn: %d\n&quot;, i);
+                    } else {
+                        write(i, buf, n);
+                    }
+                }
+            }
+        }
+    }
+
+    s.Close();
+    return 0;
+}
+</code></pre>
+<h2 id="运行结果">运行结果</h2>
+<p>编译并运行：</p>
+<pre><code class="language-shell">g++ -o echo_server_wrong_example echo_server_wrong_example.cc
+./echo_server_wrong_example
+</code></pre>
+<p>新建一个终端并开启第一个客户端：</p>
+<pre><code class="language-shell">nc localhost 8080
+</code></pre>
+<p>此时只连接到服务端，不发送任何数据，服务端的日志：</p>
+<pre><code class="language-shell">connected client: 4
+conn 4 is already
+</code></pre>
+<p>随后再新建一个终端并开启第二个客户端，并尝试发送数据：</p>
+<pre><code class="language-shell">nc localhost 8080
+
+1
+</code></pre>
+<p>但是没有任何回应，查看服务端日志：</p>
+<pre><code class="language-shell">connected client: 4
+conn 4 is already
+</code></pre>
+<p>根本没有接收第二个服务端的连接！说明编写的这个程序是没有并发能力的，一定是某个地方写错了</p>
+<p>再返回去看第一个客户端是否能正常收到响应：</p>
+<pre><code class="language-shell">nc localhost 8080
+
+1 // 发送的
+1	// 响应的
+</code></pre>
+<p>第一个客户端是可以正常工作的</p>
+<p>再将第一个服务端结束，服务端日志：</p>
+<pre><code class="language-shell">close conn: 4
+</code></pre>
+<p>此时切换到第二个客户端，发现原来阻塞的请求得到了响应：</p>
+<pre><code class="language-shell">nc localhost 8080
+
+1
+l
+</code></pre>
+<p>服务端日志：</p>
+<pre><code class="language-shell">// 之前的
+connected client: 4
+conn 4 is already
+close conn: 4
+
+// 新的 
+connected client: 4
+conn 4 is already
+</code></pre>
+<p>并且之后的所有请求都能够得到响应</p>
+<p>此时再启动第一个客户端：</p>
+<p>服务端日志：</p>
+<pre><code class="language-shell">connected client: 5
+conn 5 is already
+</code></pre>
+<p>尝试发送数据：</p>
+<pre><code class="language-shell">kk
+kk
+adasd
+adasd
+</code></pre>
+<p>全部能够得到响应</p>
+<p>再切到第二个客户端，并发送数据，结果发现阻塞了，服务端日志没有任何变化</p>
+<h1 id="正确的代码">正确的代码</h1>
+<p>修改为正确的程序：</p>
+<pre><code class="language-cc">//
+// Created by root on 7/17/21.
+//
+
+#include &quot;../pkg/net/net.h&quot;
+#include &lt;sys/select.h&gt;
+
+#define BUF_SIZE 100
+
+// g++ -o echo_server echo_server.cc ../pkg/net/net.cpp
+int main() {
+    char buf[BUF_SIZE];
+    Server s(&quot;tcp&quot;, &quot;0.0.0.0&quot;, &quot;8080&quot;);
+    s.Listen(1024);
+
+    fd_set readfds;
+    FD_ZERO(&amp;readfds);
+    // 监听服务端socket，当有客户连接时会触发事件
+    FD_SET(s.Sockfd(), &amp;readfds);
+
+    int maxfd = s.Sockfd();
+
+    for (; ;) {
+        // 这句话非常重要，否则会出现多条连接只有一条能正常工作，其他全部阻塞的 bug
+        // readfds 保存的是要监听的 fd 集合，但是每次调用 select 后，会将这些监
+        // 听 fd 中已经准备好的置 1，未准备好的置 0，如果使用这个已被更改的 fdset，
+        // 可能会导致一些异常情况发生，所以这里将 fdset 拷贝一份，调用 select 时传
+        // 入拷贝值，这样 select 的更改就不会影响到原 fdset
+        fd_set cpyset = readfds;
+
+        // okcnt：准备就绪的 fd 数量
+        int okcnt = select(maxfd+1, &amp;cpyset, nullptr, nullptr, nullptr);
+        if (okcnt == -1) {
+            printf(&quot;select error\n&quot;);
+            break;
+        }
+        if (okcnt == 0) {
+            continue;
+        }
+
+        // 遍历 select 数组
+        for (int i = 0; i &lt; maxfd+1; ++i) {
+            // 找到所有值为 1 的 fd，这表示该 fd 已经准备就绪了
+            if (FD_ISSET(i, &amp;cpyset)) {
+                // 如果就绪的 fd 为 server,说明有新的连接请求
+                if (i == s.Sockfd()) {
+                    // 调用 accept 接收客户端的连接请求
+                    auto conn = s.Accept();
+                    int connfd = conn-&gt;Connfd();
+                    // 更新 maxfd
+                    if (connfd &gt; maxfd) {
+                        maxfd = connfd;
+                    }
+                    // 将 conn 的 fd 添加到 select 监听集合中
+                    FD_SET(connfd, &amp;readfds);
+                    printf(&quot;connected client: %d\n&quot;, conn-&gt;Connfd());
+                // 如果就绪的 fd 不是 server fd，则是 conn fd
+                } else {
+                    printf(&quot;conn %d is already\n&quot;, i);
+                    // 可以对这些准备就绪的 conn 进行 echo 处理了
+                    int n = read(i, buf, BUF_SIZE);
+                    if (n == 0) {   // EOF
+                        //
+                        FD_CLR(i, &amp;readfds);
+                        close(i);
+                        printf(&quot;close conn: %d\n&quot;, i);
+                    } else {
+                        write(i, buf, n);
+                    }
+                }
+            }
+        }
+    }
+
+    s.Close();
+    return 0;
+}
+
+
+</code></pre>
+<p>这段代码只更改了几个地方：</p>
+<p>29 行的 <code>fd_set cpyset = readfds</code></p>
+<p>32 行的 <code>select(maxfd+1, &amp;cpyset, nullptr, nullptr, nullptr)</code>，将第二个参数由 <code>readfds</code> 更改为 <code>cpyset</code></p>
+<p>44 行的 <code>if (FD_ISSET(i, &amp;cpyset))</code>，之前为 <code>if (FD_ISSET(i, &amp;readfds))</code></p>
+<h1 id="分析">分析</h1>
+<p>简单说明下程序的流程：</p>
+<p>先将服务端 socket 加入到 select 的监听集合，之后调用 select <code>int okcnt = select(maxfd+1, &amp;readfds, nullptr, nullptr, nullptr);</code> 这里会阻塞，直到有 fd 准备好。</p>
+<p>当服务端 socket 准备好了以后，select 返回 1（因为只监听了一个 fd），继续向下执行 <code>for (int i = 0; i &lt; maxfd+1; ++i)</code>，继续执行 <code>if (FD_ISSET(i, &amp;readfds))</code>，这样会遍历 fdset 并找到准备就绪的 fd，此时只有服务端的 fd 准备好了，所以必然进入下面的语句<code>if (i == s.Sockfd())</code>，之后 <code>FD_SET(connfd, &amp;readfds)</code>并且更新 maxfd。</p>
+<p><strong>问题来了</strong>，<code>FD_SET(connfd, &amp;readfds)</code>是希望将 connfd 添加到监听集合中，但是程序会错误的继续执行 <code>for (int i = 0; i &lt; maxfd+1; ++i)</code>，并找到 connfd，因为刚刚的 FD_SET 操作把其置于 1，导致程序错误的认为该 fd 已经准备就绪，又因为不满足 <code>if (i == s.Sockfd())</code>，所以进入 else 分支，进入 <code>read(i, buf, BUF_SIZE)</code> 操作，但是因为该 fd 根本没有准备好，所以整个程序会进入阻塞。</p>
+<p>造成该问题的根本原因是 select 的机制问题：传入要监听的 fd 到 fdset 中，当其返回时，会将监听中已就绪的置1，未就绪的置 0，fdset 即充当了记录被监听 fd 的角色，又充当了记录已就绪 fd 的角色，这样会导致混乱的结果，在错误的程序中就是这样，<code>readfds</code> 充当了两个角色，导致了程序的不正确。</p>
+<p>解决方法就是额外创建一个 fdset，一个用来记录要监听的 fd，一个记录已就绪 fd，在正确的代码中， <code>readfds</code>就是用来<strong>记录要监听的 fd</strong>，<code>cpyset</code> 是用来记录<strong>已就绪 fd</strong>。</p>
+<p>每次 for 循环，<code>cpyset</code> 都会拷贝 <code>readfds</code>获得要监听的所有 fd，并传入 select，得到已就绪的 fd，之后的 FD_ISSET 也是基于cpyset，当要新记录 fd 时，执行语句<code>FD_SET(connfd, &amp;readfds)</code>，将 fd 添加到 readfds 中，删除 fd 时也是 <code>FD_CLR(i, &amp;readfds)</code>，这样二者各司其职，就可以保证程序的正常工作了。</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#多路复用</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/leetcode-92-fan-zhuan-lian-biao-ii/" class="block">LeetCode 92. 反转链表 II</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/leetcode-516-zui-chang-hui-wen-zi-xu-lie/" class="block">LeetCode 516. 最长回文子序列</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#运行结果">运行结果</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

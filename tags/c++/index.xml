@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>c&#43;&#43; on /dev/null</title>
+    <link>/tags/c&#43;&#43;/</link>
+    <description>Recent content in c&#43;&#43; on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Tue, 31 Aug 2021 17:16:04 +0000</lastBuildDate><atom:link href="/tags/c++/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Mac 下构建基于 C&#43;&#43; 的 gRPC</title>
+      <link>/posts/mac-xia-gou-jian-ji-yu-c-de-grpc/</link>
+      <pubDate>Tue, 31 Aug 2021 17:16:04 +0000</pubDate>
+      
+      <guid>/posts/mac-xia-gou-jian-ji-yu-c-de-grpc/</guid>
+      <description>来源于官方文档（https://grpc.io/docs/languages/cpp/quickstart/），但是其中有一些坑，特此记录，系统为 macOS 11.0.1 (20B29)：
+1. 设置目录（很重要，必须执行该步骤） 选择一个目录来保存本地安装的软件包。此页面假定环境变量MY_INSTALL_DIR包含此目录路径。例如：</description>
+    </item>
+    
+    <item>
+      <title>c&#43;&#43;：iterator.begin() 和 *iterator.begin() 的区别 【未完】</title>
+      <link>/posts/2021-4-14-whats-different-in-cpp-iterator-var/</link>
+      <pubDate>Fri, 16 Apr 2021 19:48:05 +0000</pubDate>
+      
+      <guid>/posts/2021-4-14-whats-different-in-cpp-iterator-var/</guid>
+      <description>情景描述 有如下 c++ 代码：
+auto b = vec.</description>
+    </item>
+    
+    <item>
+      <title>c&#43;&#43;：如何理解函数返回一个引用【未完】</title>
+      <link>/posts/2021-4-15-cpp_func_return_reference/</link>
+      <pubDate>Wed, 15 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2021-4-15-cpp_func_return_reference/</guid>
+      <description>有如下函数，其返回了一个引用：
+int &amp;amp;ret_val(int &amp;amp;a) { return a; } 另一个函数用来接收返回的引用：</description>
+    </item>
+    
+    <item>
+      <title>c&#43;&#43; 引用：如何理解&#34;引用被初始化后，不能再指向其他对象&#34;</title>
+      <link>/posts/2021-1-11-reference_c&#43;&#43;/</link>
+      <pubDate>Sat, 11 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2021-1-11-reference_c&#43;&#43;/</guid>
+      <description>在 c++ 的引用规则中，有这么一条：一旦初始化完成 ，引用将和它的初始值对象一直绑定在一起（即不能再指向其他对象）。抱着初学者的好奇心态，我尝试改变引用的指向，写出了如下代码：
+// 定义两个 string 变量 std::string s = &amp;quot;123&amp;quot;; std::string s2 = &amp;quot;456&amp;quot;; // 让 s1 引用 s std::string &amp;amp;s1 = s; std::cout &amp;lt;&amp;lt; &amp;quot;修改前：&amp;quot; &amp;lt;&amp;lt; &amp;quot;s1: &amp;quot; &amp;lt;&amp;lt; s1 &amp;lt;&amp;lt; std::endl; // 修改 s1 的引用？ s1 = s2; std::cout &amp;lt;&amp;lt; &amp;quot;修改后：&amp;quot; &amp;lt;&amp;lt; &amp;quot;s1: &amp;quot; &amp;lt;&amp;lt; s1 &amp;lt;&amp;lt; std::endl; // output 修改前：s1: 123 修改后：s1: 456 这里我让 s1 重新指向 s2，并且从输出结果来看，s1 的值也确实被修改了，不对啊，规则中明明说好了不能修改的，怎么实际代码中可以？为了验证引用是否真的被修改，将三个变量的指针打印出来：</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>kqueue on /dev/null</title>
+    <link>/tags/kqueue/</link>
+    <description>Recent content in kqueue on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Sat, 28 May 2022 01:10:35 +0000</lastBuildDate><atom:link href="/tags/kqueue/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>kqueue</title>
+      <link>/posts/kqueue/</link>
+      <pubDate>Sat, 28 May 2022 01:10:35 +0000</pubDate>
+      
+      <guid>/posts/kqueue/</guid>
+      <description>一个 echo server 示例：
+package main import ( &amp;quot;log&amp;quot; .</description>
+    </item>
+    
+  </channel>
+</rss>

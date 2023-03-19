@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>栈 on /dev/null</title>
+    <link>/tags/%E6%A0%88/</link>
+    <description>Recent content in 栈 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Wed, 04 Aug 2021 20:20:51 +0000</lastBuildDate><atom:link href="/tags/%E6%A0%88/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>leetcode 225. 用队列实现栈</title>
+      <link>/posts/leetcode-225-yong-dui-lie-shi-xian-zhan/</link>
+      <pubDate>Wed, 04 Aug 2021 20:20:51 +0000</pubDate>
+      
+      <guid>/posts/leetcode-225-yong-dui-lie-shi-xian-zhan/</guid>
+      <description>请你仅使用两个队列实现一个后入先出（LIFO）的栈，并支持普通栈的全部四种操作（push、top、pop 和 empty）。
+实现 MyStack 类：</description>
+    </item>
+    
+    <item>
+      <title>leetcode 155. 最小栈</title>
+      <link>/posts/leetcode-155-zui-xiao-zhan/</link>
+      <pubDate>Wed, 04 Aug 2021 12:08:57 +0000</pubDate>
+      
+      <guid>/posts/leetcode-155-zui-xiao-zhan/</guid>
+      <description>设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈。</description>
+    </item>
+    
+    <item>
+      <title>[牛客][腾讯2020笔试题] 第二题. 逛街</title>
+      <link>/posts/niu-ke-teng-xun-2020-bi-shi-ti-di-er-ti-guang-jie/</link>
+      <pubDate>Tue, 03 Aug 2021 22:53:02 +0000</pubDate>
+      
+      <guid>/posts/niu-ke-teng-xun-2020-bi-shi-ti-di-er-ti-guang-jie/</guid>
+      <description>小Q在周末的时候和他的小伙伴来到大城市逛街，一条步行街上有很多高楼，共有n座高楼排成一行。 小Q从第一栋一直走到了最后一栋，小Q从来都没有见到这么多的楼，所以他想知道他在每栋楼的位置处能看到多少栋楼呢？（当前面的楼的高度大于等于后面的楼时，后面的楼将被挡住）
+输入例子1: [5,3,8,3,2,5]</description>
+    </item>
+    
+    <item>
+      <title>leetcode 394. 字符串解码</title>
+      <link>/posts/leetcode-394-zi-fu-chuan-jie-ma/</link>
+      <pubDate>Mon, 19 Apr 2021 18:57:01 +0000</pubDate>
+      
+      <guid>/posts/leetcode-394-zi-fu-chuan-jie-ma/</guid>
+      <description>题目描述 给定一个经过编码的字符串，返回它解码后的字符串。
+编码规则为: k[encoded_string]，表示其中方括号内部的 encoded_string 正好重复 k 次。注意 k 保证为正整数。</description>
+    </item>
+    
+    <item>
+      <title>leetcode 225. 用队列实现栈【未完】</title>
+      <link>/posts/leetcode-225-yong-dui-lie-shi-xian-zhan-wei-wan/</link>
+      <pubDate>Fri, 16 Apr 2021 19:21:36 +0000</pubDate>
+      
+      <guid>/posts/leetcode-225-yong-dui-lie-shi-xian-zhan-wei-wan/</guid>
+      <description>题目描述 请你仅使用两个队列实现一个后入先出（LIFO）的栈，并支持普通队列的全部四种操作（push、top、pop 和 empty）。
+实现 MyStack 类：</description>
+    </item>
+    
+  </channel>
+</rss>

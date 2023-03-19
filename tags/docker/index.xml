@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>docker on /dev/null</title>
+    <link>/tags/docker/</link>
+    <description>Recent content in docker on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Thu, 29 Sep 2022 00:14:11 +0000</lastBuildDate><atom:link href="/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>docker tag 的用处</title>
+      <link>/posts/docker-tag/</link>
+      <pubDate>Thu, 29 Sep 2022 00:14:11 +0000</pubDate>
+      
+      <guid>/posts/docker-tag/</guid>
+      <description>docker tag 相当于对镜像做一次备份，将当前的镜像（比如 tag:latest）备份出去一份（比如 tag: v1），然后如果开发了新的镜像，可以直接覆盖掉当前的（tag:latest），然后再给 latest 打个标签：tag:v2，相当于又备份了一份，现在就有了 v1，v2，latest 三个镜像，使用 tag 不仅可以备份镜像，还可以对镜像做标注区分。</description>
+    </item>
+    
+    <item>
+      <title>docker 安装 etcd</title>
+      <link>/posts/2020-11-6-docker-etcd/</link>
+      <pubDate>Fri, 06 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2020-11-6-docker-etcd/</guid>
+      <description>docker 安装 etcd 创建一个 sh 文件</description>
+    </item>
+    
+    <item>
+      <title>docker 下的 redis 如何挂载外部配置和数据</title>
+      <link>/posts/2020-11-7-docker-redis-config/</link>
+      <pubDate>Fri, 06 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2020-11-7-docker-redis-config/</guid>
+      <description>使用docker安装redis，挂载外部配置和数据 mkdir /docker
+mkdir /docker/redis</description>
+    </item>
+    
+    <item>
+      <title>Xshell连接及docker、redis安装</title>
+      <link>/posts/2018-11-7-redis/</link>
+      <pubDate>Sun, 11 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2018-11-7-redis/</guid>
+      <description>This is official blog theme.</description>
+    </item>
+    
+  </channel>
+</rss>

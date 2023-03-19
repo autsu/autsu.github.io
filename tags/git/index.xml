@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Git on /dev/null</title>
+    <link>/tags/git/</link>
+    <description>Recent content in Git on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Wed, 11 Aug 2021 12:37:33 +0000</lastBuildDate><atom:link href="/tags/git/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>git clone 速度慢的解决方法</title>
+      <link>/posts/git-clone-su-du-man/</link>
+      <pubDate>Wed, 11 Aug 2021 12:37:33 +0000</pubDate>
+      
+      <guid>/posts/git-clone-su-du-man/</guid>
+      <description>使用国内镜像，目前已知Github国内镜像网站有 github.com.cnpmjs.org 和 git.sdut.me/ 。速度根据各地情况而定，在clone某个项目的时候将 github.</description>
+    </item>
+    
+    <item>
+      <title>git push error: remote: fatal error in commit_refs</title>
+      <link>/posts/git-push-error-remote-fatal-error-in-commit_refs/</link>
+      <pubDate>Wed, 11 Aug 2021 00:28:15 +0000</pubDate>
+      
+      <guid>/posts/git-push-error-remote-fatal-error-in-commit_refs/</guid>
+      <description>在一如既往地执行 git push 到 Github 时，出现了一个从未遇到过的错误：</description>
+    </item>
+    
+  </channel>
+</rss>

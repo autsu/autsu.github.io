@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mysql on /dev/null</title>
+    <link>/tags/mysql/</link>
+    <description>Recent content in mysql on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Sat, 26 Mar 2022 22:35:02 +0000</lastBuildDate><atom:link href="/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL 索引</title>
+      <link>/posts/mysql-suo-yin/</link>
+      <pubDate>Sat, 26 Mar 2022 22:35:02 +0000</pubDate>
+      
+      <guid>/posts/mysql-suo-yin/</guid>
+      <description>聚簇索引和非聚簇索引 索引类型分为主键索引和非主键索引。
+主键索引的叶子节点存的是整行数据。在InnoDB里，主键索引也被称为聚簇索引（clustered index）。
+非主键索引的叶子节点内容是主键的值。在InnoDB里，非主键索引也被称为二级索引（secondary index）。</description>
+    </item>
+    
+    <item>
+      <title>Mysql Buffer Pool 的一些疑问记录</title>
+      <link>/posts/mysql-buffer-pool-de-yi-xie-yi-wen-ji-lu/</link>
+      <pubDate>Wed, 16 Mar 2022 23:00:49 +0000</pubDate>
+      
+      <guid>/posts/mysql-buffer-pool-de-yi-xie-yi-wen-ji-lu/</guid>
+      <description>这是我在看 Mysql Buffer Pool 时的一个疑问，先说说 Buffer Pool，为了提高性能，Mysql 为读写操作添加了一层缓存，这样就可以直接从内存中操作，速度相比操作硬盘要快很多，只要之后再将内存中的数据定期写入到磁盘中即可保证数据一致。但是这样就产生了一个问题：如果在内存写入到磁盘之前，Mysql 进程挂掉了，这样岂不是就丢失数据了？</description>
+    </item>
+    
+    <item>
+      <title>MVCC 与事务隔离</title>
+      <link>/posts/mvcc-yu-shi-wu-ge-chi/</link>
+      <pubDate>Mon, 14 Feb 2022 16:01:18 +0000</pubDate>
+      
+      <guid>/posts/mvcc-yu-shi-wu-ge-chi/</guid>
+      <description>申明：以下内容来自网上的博客、课程，通过自己的理解进行一下转述，可能存在一些错误和纰漏
+介绍 MySQL 的 可重复读 和 读已提交 是基于 MVCC 实现的，它的最大优点是读不加锁，因此读写不冲突，并发性能好，其实现主要基于以下技术及数据结构：</description>
+    </item>
+    
+    <item>
+      <title>Mysql 间隙锁实践</title>
+      <link>/posts/mysql-jian-xi-suo-shi-jian/</link>
+      <pubDate>Tue, 19 Oct 2021 23:30:55 +0000</pubDate>
+      
+      <guid>/posts/mysql-jian-xi-suo-shi-jian/</guid>
+      <description>测试数据如下：
+CREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) DEFAULT NULL, PRIMARY KEY (`id`), KEY `c` (`c`) ) ENGINE=InnoDB; +----+------+------+ | id | c | d | +----+------+------+ | 0 | 0 | 0 | | 5 | 5 | 5 | | 10 | 10 | 10 | | 15 | 15 | 15 | | 20 | 20 | 20 | | 25 | 25 | 25 | +----+------+------+ 测试情景 1 不存在的主键，select 是否会加间隙锁 session A session B 1 begin 2 begin 3 select * from t where id = 9 for update; 4 insert into t values(11,5,5); 5 insert into t values(6,5,5); 6 insert into t values(10,5,5); 7 insert into t values(4,5,5); 8 select * from t where id = 9 for update; 结果：</description>
+    </item>
+    
+    <item>
+      <title>MySQL实战笔记 20讲幻读是什么</title>
+      <link>/posts/mysql-shi-zhan-bi-ji-20-jiang-huan-du-shi-shi-me/</link>
+      <pubDate>Tue, 19 Oct 2021 20:15:04 +0000</pubDate>
+      
+      <guid>/posts/mysql-shi-zhan-bi-ji-20-jiang-huan-du-shi-shi-me/</guid>
+      <description>全文基于此表：
+CREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) DEFAULT NULL, PRIMARY KEY (`id`), KEY `c` (`c`) ) ENGINE=InnoDB; insert into t values(0,0,0),(5,5,5), (10,10,10),(15,15,15),(20,20,20),(25,25,25); 1.</description>
+    </item>
+    
+    <item>
+      <title>MySQL 为什么使用 B&#43; 树</title>
+      <link>/posts/mysql-wei-shi-me-shi-yong-b-shu/</link>
+      <pubDate>Sat, 11 Sep 2021 19:56:55 +0000</pubDate>
+      
+      <guid>/posts/mysql-wei-shi-me-shi-yong-b-shu/</guid>
+      <description>B 树和 B+ 树的区别 来源：https://draveness.me/whys-the-design-mysql-b-plus-tree/</description>
+    </item>
+    
+    <item>
+      <title>MySQL 锁</title>
+      <link>/posts/mysql-suo/</link>
+      <pubDate>Sun, 29 Aug 2021 10:55:13 +0000</pubDate>
+      
+      <guid>/posts/mysql-suo/</guid>
+      <description>表锁 语法：
+加锁：
+加读锁 LOCK TABLES [tablename] READ;</description>
+    </item>
+    
+    <item>
+      <title>MySQL 的事务隔离级别</title>
+      <link>/posts/mysql-de-shi-wu-ge-chi-ji-bie/</link>
+      <pubDate>Fri, 27 Aug 2021 23:17:16 +0000</pubDate>
+      
+      <guid>/posts/mysql-de-shi-wu-ge-chi-ji-bie/</guid>
+      <description>1. 未提交读（脏读） 事务的修改，即使没有提交，对其他事务也是可见的。事务可以读取未提交的数据，称之为 脏读。它存在 4 个常见问题（脏读、不可重复读、幻读、丢失更新）。 2.</description>
+    </item>
+    
+    <item>
+      <title>Mysql 最左前缀原则失效</title>
+      <link>/posts/mysql-zui-zuo-qian-zhui-yuan-ze-shi-xiao/</link>
+      <pubDate>Sat, 07 Aug 2021 11:17:51 +0000</pubDate>
+      
+      <guid>/posts/mysql-zui-zuo-qian-zhui-yuan-ze-shi-xiao/</guid>
+      <description>引子 （以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看）
+有如下表，结构如下：</description>
+    </item>
+    
+    <item>
+      <title>MySQL 面经汇总</title>
+      <link>/posts/mysql-mian-jing/</link>
+      <pubDate>Sun, 25 Jul 2021 10:04:25 +0000</pubDate>
+      
+      <guid>/posts/mysql-mian-jing/</guid>
+      <description>MySQL 面经汇总，收集于牛客，不断更新中
+1. char 和 varchar 的区别 char 是固定长度，varchar 长度可变，存储时，前者不管实际存储数据的长度，直接规定 char 规定的长度分配存储空间；而后者会根据实际存储的数据分配最终的存储空间。</description>
+    </item>
+    
+  </channel>
+</rss>

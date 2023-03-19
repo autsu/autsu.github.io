@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>动态规划 on /dev/null</title>
+    <link>/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</link>
+    <description>Recent content in 动态规划 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Thu, 01 Jul 2021 09:42:46 +0000</lastBuildDate><atom:link href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode 516. 最长回文子序列</title>
+      <link>/posts/leetcode-516-zui-chang-hui-wen-zi-xu-lie/</link>
+      <pubDate>Thu, 01 Jul 2021 09:42:46 +0000</pubDate>
+      
+      <guid>/posts/leetcode-516-zui-chang-hui-wen-zi-xu-lie/</guid>
+      <description>给定一个字符串 s ，找到其中最长的回文子序列，并返回该序列的长度
+给定一个字符串 s ，找到其中最长的回文子序列，并返回该序列的长度。可以假设 s 的最大长度为 1000 。</description>
+    </item>
+    
+    <item>
+      <title>LeetCode 5. 最长回文子串</title>
+      <link>/posts/leetcode-5-zui-chang-hui-wen-zi-chuan/</link>
+      <pubDate>Tue, 29 Jun 2021 21:43:27 +0000</pubDate>
+      
+      <guid>/posts/leetcode-5-zui-chang-hui-wen-zi-chuan/</guid>
+      <description>给你一个字符串 s，找到 s 中最长的回文子串。
+给你一个字符串 s，找到 s 中最长的回文子串。</description>
+    </item>
+    
+  </channel>
+</rss>

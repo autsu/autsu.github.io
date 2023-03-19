@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>我的面经 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="2021.9.17 梦想工场 go 实习生
+现场面，只有纸和笔（吐槽：公司的大厦正好在装修，找了半天才找到，还好出门比较早，不然多半得迟到）">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"我的面经",
+      "item":"/posts/wo-de-mian-jing/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/wo-de-mian-jing/"
+    },
+    "headline": "我的面经 | \/dev\/null","datePublished": "2021-09-17T18:32:23+00:00",
+    "dateModified": "2021-09-17T18:32:23+00:00",
+    "wordCount":  186 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "2021.9.17 梦想工场 go 实习生\n现场面，只有纸和笔（吐槽：公司的大厦正好在装修，找了半天才找到，还好出门比较早，不然多半得迟到）"
+}
+</script><meta property="og:title" content="我的面经 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/wo-de-mian-jing/" />
+
+
+
+
+<meta property="og:description" content="2021.9.17 梦想工场 go 实习生
+现场面，只有纸和笔（吐槽：公司的大厦正好在装修，找了半天才找到，还好出门比较早，不然多半得迟到）" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-09-17T18:32:23&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2021-09-17T18:32:23&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="面经" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/mysql-mian-jing/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class="lg:col-start-2 bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">我的面经</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2021-09-17</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>1分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <p>2021.9.17
+梦想工场 go 实习生</p>
+<p>现场面，只有纸和笔（吐槽：公司的大厦正好在装修，找了半天才找到，还好出门比较早，不然多半得迟到）</p>
+<p>一上来就是一道算法题：字符串的比较，根据字典序，如果字符串特别大，问我用什么数据结构合适（完全不会，于是换了一道，期间为了遮掩自己的一无所知，随口瞎说了个 kmp 。。。面完才想起来，比较字符串不是可以使用双指针吗？）</p>
+<p>第二道是括号匹配，面试官还在描述题意，我就打断说了句：“括号匹配吧”，然后面试官说：“做过？那就换一道”，顿时想抽自己一巴掌</p>
+<p>第三道题直接把我整懵逼了，假如有很多辆送货车，每辆车都有一个坐标（x, y），他们需要把货物送到一个驿站，找出一个合适的坐标作为驿站，使得每辆车到驿站的距离加起来最短。（完全不会，面试官引导我说，那就先从一维开始，只有 x 坐标，比如数组下标的 [1, 3, 5] 处有三辆车，此时在哪里建驿站最合适，然后我想了一会，说建在中间最合适，偶数个就取中间两个，然后引申到二维，因为我完全不会，所以只能瞎扯，说找出所有 x 坐标的中间坐标，和所有 y 坐标的中间坐标，此时的坐标就是最近的，面试官问我为什么，我沉默了一会说不知道。。。没想到面试官说，其实你这个做法是对的，也不知道是不是在安慰我。。。后来又加了新的条件：每辆车不仅有坐标，还有运货次数，还是一维的，此时又如何建站？此时我的内心是痛苦的，能不能别折磨我了，这面试官不会是个搞算法的吧，我又胡乱扯了下，说根据运货次数进行排序，因为这个问题实在是不会，所以也没有继续往下说了）</p>
+<p>前面刚好提到了排序，面试官让我在纸上手写快排，幸好昨天刚练过，开始写的很熟练流程，结果有一句话卡住了，就是 n[l] = p 这句话。。。连快排这种基础算法都能卡，估计是凉透了</p>
+<p>问完以后又问了我 go 的优点，为什么选 go ，我随便瞎扯了一下，之后说换一个面试官问我项目，可能是因为他不太懂 go ？</p>
+<p>第二个面试官穿着一件印有 pincap 的短袖，一看就是个大佬，问了我项目中的一些问题：</p>
+<ol>
+<li>jwt 如何防止数据篡改？（不知道，硬是瞎扯了半天，简直就是造孽，只是照着网上教程简单使用过）</li>
+<li>websocket 的发布订阅？（完全没听说过）如何辨别每一条连接？（不知道，瞎说了每条连接都有一个随机 id）</li>
+<li>用过哪些 linux 命令，如何杀死一批进程？（说了 ps -ef | grep，但是不知道如何筛选 pid，也不知道如何处理一批）</li>
+<li>kill 和 kill - 9 的区别，我说 -9 是强制的，又继续问原理，我说 kill 的信号能被接收，kill -9 的不能被接收。。。又错了</li>
+<li>go pprof 怎么使用的，怎么找项目里的性能问题？我把我写项目遇到的经历说了下，其间提到了 cpu 占用 500%，面试官问 500% 代表什么，我说占了 5 个核</li>
+<li>简历上的项目哪个写的时间最长？</li>
+<li>介绍一下简历上的 【TCP 服务器】项目，期间我提到了心跳、长连接和 CLOSE_WAIT，面试官只是点点头，没有过多地提问</li>
+</ol>
+<p>没有反问</p>
+<p>总结：
+人生中第一次面试，给我整傻了，全程没有八股，算法题也是我没刷过的（虽然一共也没刷多少题），充分认识到了自己菜的程度，不过面试体验不错，第一个面试官全程笑脸。</p>
+<p>其次，只要是写到简历上的，一定要比较熟悉，起码要了解一些原理，不管你写的是熟练、了解还是简单使用过，面试官不会管你这么多，也不会问你“这是干嘛的？怎么使用？”这种特别浅的问题，像我今天的 jwt 和 websocket 就吃亏了。</p>
+<p>2021.9.22</p>
+<p>汇量科技 go 实习生
+一面</p>
+<p>说一下你的项目
+说说项目里的限流是如何实现的
+new 和 make 分别是分配在堆上还是栈上？二者的区别
+如何使用 pprof，pprof 除了可以分析 cpu 以外，还能分析什么
+说说 go 的逃逸分析
+go 如何检测逃逸（我回答说使用 go tool，面试官说可以设置一个 flag，后来网上查了下，正确答案是go run -gcflags &ldquo;-m -l&rdquo; (-m打印逃逸分析信息，-l禁止内联编译)）
+说说 go 的垃圾回收
+进程、线程、协程区别，介绍协程时我说了 gmp
+gmp 中 g 有哪几种状态
+如何给一个程序分配内存，流程是怎样的？画图说明（不会）
+说说虚拟内存
+如果给进程分配虚拟内存时缺页，怎么办
+说说淘汰算法（说虚拟内存时提到了会淘汰一部分页）
+介绍项目的时候，我说 go 不能强制结束掉一个 goroutine，只能等待其自己退出，后来面试官说其实可以，说 runtime 有一个函数可以强制结束，但是我没听清
+goroutine 初始的栈空间大小是多少？
+linux 用过 awk 吗？一个文本文件，有三列，每列以空格分隔，筛选出所有第三列大于 100 的行
+如果不是以空格分隔，而是以 \t 分隔呢？，我说好像可以用 -F，（瞎说的，因为之前刚好有看过这个参数），没想到说对了，但是我不知道判断大于 100 的命令
+如果是统计次数呢？（我瞎说了 wc -l，不知道对不对）
+redis 的持久化，哪种比较好，有没有不需要持久化的场景？
+redis 是用来做什么的
+说说数据库的事务，我说了说 ACID，顺便提了提隔离级别
+幻读和不可重复读的区别
+可重复读是如何实现的
+链表和数组的区别
+链表和数组哪个内存占用更大</p>
+<p>算法题：
+括号匹配
+用切片实现一个栈
+最长不重复子串（没写出来，有些bug，面试官说思路差不多）</p>
+<p>2021.9.24 二面</p>
+<p>说说项目里的心跳检测和封包协议
+虽然协议记录了数据包的长度，但是还是会被截断（？没听清），这时该怎么处理？
+tcp 三次握手对应到 socket
+redis 主要用来干什么
+redis 有哪几种数据结构
+redis zset 是如何实现的
+redis 的 io 模型</p>
+<p>算法题：
+连续递增子序列的最大和
+反转链表2</p>
+<p>吐槽：相比一面而言，二面的体验简直太差了，面试官在最后一分钟才进入房间，并且没开摄像头，声音很小并且断断续续，导致有些问题都没听清；全程心不在焉，不断传来点击鼠标的声音，可能是边工作边面试；回答完问题后没有任何反馈，沉默几十秒后再问下一个，场面一度十分尴尬；在随便问了几个问题后，就开始做题了，第一道做完以后让我说了下思路，第二道没完全ac，只通过了 15/20，面试官说差不多了，应该是还有一些特殊情况没处理好，然后就结束了面试。</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/%E9%9D%A2%E7%BB%8F/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#面经</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/linux-pi-liang-kill-jin-cheng/" class="block">Linux 批量 kill 进程</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/mysql-wei-shi-me-shi-yong-b-shu/" class="block">MySQL 为什么使用 B&#43; 树</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+
+    
+    
+      <div
+        class="lg:col-start-2 bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/mysql-mian-jing/" class="no-underline">MySQL 面经汇总</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

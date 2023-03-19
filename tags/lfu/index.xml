@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>LFU on /dev/null</title>
+    <link>/tags/lfu/</link>
+    <description>Recent content in LFU on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Wed, 16 Jun 2021 21:52:51 +0000</lastBuildDate><atom:link href="/tags/lfu/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode 460. LFU 缓存</title>
+      <link>/posts/leetcode-460-lfu-huan-cun/</link>
+      <pubDate>Wed, 16 Jun 2021 21:52:51 +0000</pubDate>
+      
+      <guid>/posts/leetcode-460-lfu-huan-cun/</guid>
+      <description>最不经常使用（LFU）缓存算法
+请你为 最不经常使用（LFU）缓存算法设计并实现数据结构。
+实现 LFUCache 类：</description>
+    </item>
+    
+  </channel>
+</rss>

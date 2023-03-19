@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>HTTP on /dev/null</title>
+    <link>/tags/http/</link>
+    <description>Recent content in HTTP on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Sun, 08 May 2022 15:46:11 +0000</lastBuildDate><atom:link href="/tags/http/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>HTTP MIME 嗅探 [待完善]</title>
+      <link>/posts/http_mime_sniff/</link>
+      <pubDate>Sun, 08 May 2022 15:46:11 +0000</pubDate>
+      
+      <guid>/posts/http_mime_sniff/</guid>
+      <description>实践 定义一个未知后缀名的文件（这个后缀名起的得随意一点，像 xyz 这种是不行的，会被 chrome 识别为 chemical/x-xyz 类型），但是文件里的内容是 HTML：</description>
+    </item>
+    
+  </channel>
+</rss>

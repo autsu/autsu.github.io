@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>程序员面试金典 on /dev/null</title>
+    <link>/tags/%E7%A8%8B%E5%BA%8F%E5%91%98%E9%9D%A2%E8%AF%95%E9%87%91%E5%85%B8/</link>
+    <description>Recent content in 程序员面试金典 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Fri, 16 Apr 2021 19:41:48 +0000</lastBuildDate><atom:link href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98%E9%9D%A2%E8%AF%95%E9%87%91%E5%85%B8/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>面试题 01.06. 字符串压缩</title>
+      <link>/posts/2021-3-13-ctcl-0106-compress-string/</link>
+      <pubDate>Fri, 16 Apr 2021 19:41:48 +0000</pubDate>
+      
+      <guid>/posts/2021-3-13-ctcl-0106-compress-string/</guid>
+      <description>题目描述 字符串压缩。利用字符重复出现的次数，编写一种方法，实现基本的字符串压缩功能。比如，字符串aabcccccaaa会变为a2b1c5a3。若“压缩”后的字符串没有变短，则返回原先的字符串。你可以假设字符串中只包含大小写英文字母（a至z）。
+示例1:
+输入：&amp;ldquo;aabcccccaaa&amp;rdquo; 输出：&amp;ldquo;a2b1c5a3&amp;rdquo; 示例2:</description>
+    </item>
+    
+  </channel>
+</rss>

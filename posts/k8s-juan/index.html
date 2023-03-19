@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>k8s 卷 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="为什么需要卷 pod 类似逻辑主机，在逻辑主机中运行的进程共享诸如 CPU、RAM、网络接口等资源。有时候人们会期望进程也能共享磁盘，但是因为 pod 中运行的是一个个容器，而每个容器都有自己独立的文件系统（因为文件系统来自于容器镜像），所以不能共享磁盘。有时候可能存在这样一种需求：pod 中某个容器存储的数据需要持久化，但是因为容器存在挂掉的可能，如果挂掉后会新创建一个 pod 来顶替，但是因为 pod 因为无法共享磁盘，导致无法继承先前 pod 里存储的数据，先前的那部分数据就永久丢失了。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"k8s 卷",
+      "item":"/posts/k8s-juan/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/k8s-juan/"
+    },
+    "headline": "k8s 卷 | \/dev\/null","datePublished": "2022-05-20T19:41:35+00:00",
+    "dateModified": "2022-05-20T19:41:35+00:00",
+    "wordCount":  902 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "为什么需要卷 pod 类似逻辑主机，在逻辑主机中运行的进程共享诸如 CPU、RAM、网络接口等资源。有时候人们会期望进程也能共享磁盘，但是因为 pod 中运行的是一个个容器，而每个容器都有自己独立的文件系统（因为文件系统来自于容器镜像），所以不能共享磁盘。有时候可能存在这样一种需求：pod 中某个容器存储的数据需要持久化，但是因为容器存在挂掉的可能，如果挂掉后会新创建一个 pod 来顶替，但是因为 pod 因为无法共享磁盘，导致无法继承先前 pod 里存储的数据，先前的那部分数据就永久丢失了。"
+}
+</script><meta property="og:title" content="k8s 卷 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/k8s-juan/" />
+
+
+
+
+<meta property="og:description" content="为什么需要卷 pod 类似逻辑主机，在逻辑主机中运行的进程共享诸如 CPU、RAM、网络接口等资源。有时候人们会期望进程也能共享磁盘，但是因为 pod 中运行的是一个个容器，而每个容器都有自己独立的文件系统（因为文件系统来自于容器镜像），所以不能共享磁盘。有时候可能存在这样一种需求：pod 中某个容器存储的数据需要持久化，但是因为容器存在挂掉的可能，如果挂掉后会新创建一个 pod 来顶替，但是因为 pod 因为无法共享磁盘，导致无法继承先前 pod 里存储的数据，先前的那部分数据就永久丢失了。" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-05-20T19:41:35&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-05-20T19:41:35&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="k8s" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/k8s-deployment/" />
+
+<meta property="og:see_also" content="/posts/k8s-service/" />
+
+<meta property="og:see_also" content="/posts/k8s-nginx-pod-de-containerport-wen-ti/" />
+
+<meta property="og:see_also" content="/posts/k8s-daemonset/" />
+
+<meta property="og:see_also" content="/posts/k8s-replicaset/" />
+
+<meta property="og:see_also" content="/posts/k8s-replicationcontroller/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">k8s 卷</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-05-20</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>5分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h1 id="为什么需要卷">为什么需要卷</h1>
+<p>pod 类似逻辑主机，在逻辑主机中运行的进程共享诸如 CPU、RAM、网络接口等资源。有时候人们会期望进程也能共享磁盘，但是因为 pod 中运行的是一个个容器，而每个容器都有自己独立的文件系统（因为文件系统来自于容器镜像），所以不能共享磁盘。有时候可能存在这样一种需求：<del>pod 中某个容器存储的数据需要持久化，但是因为容器存在挂掉的可能，如果挂掉后会新创建一个 pod 来顶替，但是因为 pod 因为无法共享磁盘，导致无法继承先前 pod 里存储的数据，先前的那部分数据就永久丢失了。</del></p>
+<p>k8s 通过定义 <strong>卷</strong> 这个概念来解决这个问题，<strong>它们不像 pod 这样的顶级资源，而是被定义为了 pod 的一部分</strong>，并和 pod 共享相同的生命周期，也就是说，卷在 pod 启动时创建，在 pod 删除时销毁（书上是这么说的，但是感觉不太准确，不同类型的卷有不同的生命周期，像 emptyDir 就是和 pod 共享生命周期，而 hostPath 则不共享，就算 pod 删除了，这个卷也不会被删除）。</p>
+<h1 id="卷类型">卷类型</h1>
+<h2 id="emptydir">emptyDir</h2>
+<p>顾名思义，这个卷最初是空的，当 Pod 因为某些原因被从节点上删除时，<code>emptyDir</code> 卷中的数据也会被永久删除。运行在 pod 内的应用程序可以写入它需要的任何文件。</p>
+<p>实践：</p>
+<p>yaml 如下：（ ⚠️ 该 yaml 的镜像基于 arm64 架构，如果你的机器是 x86，需要将第一个 -image 更换为 luksa/fortune）</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: fortune
+spec:
+  containers:
+  - image: stdoutt/fortune-arm64
+    name: html-generator
+    volumeMounts:
+    - name: html # 使用 name 为 html 的卷（该卷在 yaml 最后定义）
+      mountPath: /var/htdocs
+  - image: nginx:alpine
+    name: web-server
+    volumeMounts:
+    - name: html
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+    ports:
+    - containerPort: 80
+      protocol: TCP
+  volumes:
+  - name: html
+    emptyDir: {}
+</code></pre>
+<p>这个 pod 的大致意思是：创建了 2 个容器，一个负责生成随机内容（使用 fortune 随机生成一句谚语）并写入到 /var/htdocs/index.html 文件里，另一个是 nginx 服务，负责将 /usr/share/nginx/html/index.html 里的内容显示出来（将第一个容器写入的谚语读取出来），所以这两个容器需要结合使用，一个负责写，另一个负责读，所以需要共用同一个卷来实现。</p>
+<p>为了实现上面的流程，需要创建一个卷，将这个卷分别挂载到两个容器的某个目录下，这样就可以达到共享一个卷的目的，在上面的 yaml 中，将卷挂载到了 fortune 容器的 /var/htdocs/ 目录下，然后这个容器会在这个目录下创建一个 index.html 并写入谚语（因为挂载的原因，所以相当在卷中创建了一个 index.html 文件）；同样还会将这个卷挂载到 nginx 容器下的 /usr/share/nginx/html 目录下，nginx 默认会读取这个目录下的 index.html 作为显示内容，前面提到过，fortune 容器会创建一个 index.html 文件到卷中，所以这个文件刚好就可以作为 nginx 的默认显示内容，值得注意的是，yaml 里还对 nginx 容器设置了 readOnly: true 属性，表示该容器只能从卷中读取，不能写入。</p>
+<p>以上涉及到 linux 挂载（mount）的知识，这个概念感觉有点绕，（我总是把挂载、被挂载搞混），我也是初学掌握的不是很好，所以上面的内容说的比较绕，也可能不正确，用我个人的理解，简单的用几句话概括就是，将卷挂载到了一个容器的 /var/htdocs 下和另一个容器的 /usr/share/nginx/html 容器下，然后这两个路径就相当于共享了，第一个容器在 /var/htdocs 中创建一个文件，另一个容器可以同样在 /usr/share/nginx/html 目录下读取到。</p>
+<p>因为容器的文件系统是隔离的，正常来说两个容器是不能共享目录的，就相当于两台电脑，如果不通过一些特殊手段肯定是不能共享目录的，所以为了解决这个问题，就需要使用上面的 <strong>卷</strong> 来实现。</p>
+<p>接下来就可以使用 <code>kubectl apply -f </code> 进行创建了，为了测试效果，可以使用端口转发：</p>
+<pre><code class="language-shell">$ kubectl port-forward fortune 8080:80
+Forwarding from 127.0.0.1:8080 -&gt; 80
+Forwarding from [::1]:8080 -&gt; 80
+</code></pre>
+<p>然后使用 curl 就可以了：</p>
+<pre><code class="language-shell">$ curl http://localhost:8080
+Q:	How many psychiatrists does it take to change a light bulb?
+A:	Only one, but it takes a long time, and the light bulb has
+	to really want to change.
+</code></pre>
+<blockquote>
+<p>❓这个 emptyDir 实际路径在哪里？</p>
+</blockquote>
+<p>emptyDir 不仅可以使用常规的硬盘作为存储介质，也可以使用内存作为存储介质（linux 中的 tmpfs 也是类似的东西），只需要在 yaml 中指定 mediun 即可：</p>
+<pre><code class="language-yaml">volumes:
+- name: html
+	emptyDir:
+		medium: Memory # 存储在内存中
+</code></pre>
+<h2 id="hostpath">hostPath</h2>
+<p>这里复用 emptyDir 部分的 yaml，只是将 volume 的类型更换为了 hostPath：</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: fortune
+spec:
+  containers:
+  - image: stdoutt/fortune-arm64
+    name: html-generator
+    volumeMounts:
+    - name: html 
+      mountPath: /var/htdocs
+  - image: nginx:alpine
+    name: web-server
+    volumeMounts:
+    - name: html
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+    ports:
+    - containerPort: 80
+      protocol: TCP
+  volumes:
+  - name: html
+    hostPath:
+      path: /data
+      type: Directory
+</code></pre>
+<p>执行上面的 yaml，创建 pod，然后看看 hostPath 卷里的内容：</p>
+<pre><code class="language-shell">$ cat /data/index.html
+Stay away from hurricanes for a while.
+
+$ cat /data/index.html
+A vivid and creative mind characterizes you.
+</code></pre>
+<p>也可以像 emptyDir 中演示的那样，开启端口转发，使用 curl 看看效果，这里就不记录了。</p>
+<p>测试一下 hostPath 类型的卷是否和 pod 共享生命周期：</p>
+<pre><code class="language-shell">$ kubectl delete po fortune
+pod &quot;fortune&quot; deleted
+
+$ cat /data/index.html
+Today's weirdness is tomorrow's reason why.
+		-- Hunter S. Thompson
+</code></pre>
+<p>pod 被删除了，但是 /data 下的内容依然存在，所以 hostPath 卷不与 pod 共享生命周期，属于持久卷。</p>
+<h1 id="持久卷">持久卷</h1>
+<h2 id="持久卷pv和持久卷声明pvc">持久卷（pv）和持久卷声明（pvc）</h2>
+<p>一般来说，开发者不需要知道持久卷存储的类型和地址，如果开发者定义 pod 时需要手动指定存储地址，那么会导致高耦合，解决方法就是计算机的通用解决方法：套一层中间层，pvc 就是这个中间层，开发者只需要将自己的需求（容量需求、访问模式）定义为 pvc 提交给 k8s，k8s 将找到可匹配的持久卷并将其绑定到 pvc。</p>
+<p><strong>PVC 与 PV 是一一对应关系，不能一个 PVC 挂载多个 PV，也不能一个 PV 挂载多个 PVC</strong>。为应用配置存储时，需要声明一个存储需求声明（PVC），而Kubernetes会通过最佳匹配的方式选择一个满足PVC需求的PV，并与之绑定。所以从职责上PVC是应用所需要的存储对象，属于应用作用域。PV是存储平面的存储对象，属于整个存储域。</p>
+<p>PVC只有绑定了PV之后才能被Pod使用，而PVC绑定PV的过程即是消费PV的过程，这个过程是有一定规则的，以下规则都满足的PV才能被PVC绑定：</p>
+<ul>
+<li>VolumeMode：被消费PV的VolumeMode需要和PVC一致。</li>
+<li>AccessMode：被消费PV的AccessMode需要和PVC一致。</li>
+<li>StorageClassName：如果PVC定义了此参数，PV必须有相关的参数定义才能进行绑定。</li>
+<li>LabelSelector：通过标签（<strong>labels</strong>）匹配的方式从PV列表中选择合适的PV绑定。</li>
+<li>Size：被消费PV的<strong>capacity</strong>必须大于或者等于PVC的存储容量需求才能被绑定。</li>
+</ul>
+<h2 id="在-k3s-上实践-pv-和-pvc">在 k3s 上实践 pv 和 pvc</h2>
+<p>pvc.yaml</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: local-path-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 50Mi
+</code></pre>
+<p>创建并查看：</p>
+<pre><code class="language-shell">$ kubectl apply -f pvc.yaml
+persistentvolumeclaim/local-path-pvc created
+
+$ kubectl get pvc
+NAME             STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+local-path-pvc   Pending                                      local-path     102s
+
+$ kubectl get pv
+No resources found
+</code></pre>
+<p>发现 pvc 的状态是 pending，查看 describe：</p>
+<pre><code class="language-shell">Events:
+  Type    Reason                Age                 From                         Message
+  ----    ------                ----                ----                         -------
+  Normal  WaitForFirstConsumer  11s (x9 over 2m3s)  persistentvolume-controller  waiting for first consumer to be created before binding
+</code></pre>
+<p>意思是 pvc 创建好了，等待某个消费者来绑定它，所以处于 pending 状态，接下来创建一个 pod 作为消费者，来绑定这个 pvc：</p>
+<p>pvc_consumer_pod.yaml</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-test
+  namespace: default
+spec:
+  containers:
+  - name: volume-test
+    image: nginx:stable-alpine
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+    - name: volv
+      mountPath: /data
+    ports:
+    - containerPort: 80
+  volumes:
+  - name: volv
+    persistentVolumeClaim:
+      claimName: local-path-pvc
+</code></pre>
+<p>运行：</p>
+<pre><code class="language-shell">$ kubectl apply -f pvc_consumer_pod.yaml
+pod/volume-test created
+</code></pre>
+<p>此时再查看 pvc 状态：</p>
+<pre><code class="language-shell">$ kubectl get pvc
+NAME             STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+local-path-pvc   Bound    pvc-0e7db0b6-fa32-4c2e-ac0c-53a354ead8a4   50Mi       RWO            local-path     5m41s
+
+$ kubectl get pv
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                    STORAGECLASS   REASON   AGE
+pvc-0e7db0b6-fa32-4c2e-ac0c-53a354ead8a4   50Mi       RWO            Delete           Bound    default/local-path-pvc   local-path              41m
+</code></pre>
+<p>发现 pvc 已经处于 Bound 状态了，此外 pv 也已经创建好了</p>
+<p>接下来就可以测试一下效果了，首先需要先进入容器：</p>
+<pre><code class="language-shell">$ k3s kubectl get po
+NAME          READY   STATUS    RESTARTS   AGE
+redis         1/1     Running   0          9h
+volume-test   1/1     Running   0          5m49s
+
+$ kubectl exec -it volume-test -- /bin/sh
+/ # ls
+bin                   docker-entrypoint.sh  media                 root                  sys
+data                  etc                   mnt                   run                   tmp
+dev                   home                  opt                   sbin                  usr
+docker-entrypoint.d   lib                   proc                  srv                   var
+</code></pre>
+<p>因为 pvc_consumer_pod.yaml 中，我们定义的挂载目录的 /data，所以我们要 cd 到容器的 /data 目录，然后向这个目录中写入一些内容，再看看其 pvc 绑定的 pv 是否会同步拥有该内容</p>
+<pre><code># 此时接着上面的 exec，也就是在容器内部执行这些命令
+/ # cd data
+/data # echo &quot;hello, local PV&quot; &gt; pvc-test
+/data # cat pvc-test
+hello, local PV
+</code></pre>
+<p>在 local PV 查看是否同样有此文件，在 k3s 中，pv 存储在 /var/lib/rancher/k3s/storage 目录下，k3s 的 pv 相关内容可以 <a href="https://www.jianshu.com/p/dd186961e398">参考这篇</a></p>
+<pre><code class="language-shell"># 退出容器内部，回到主机
+$ ls /var/lib/rancher/k3s/storage/
+pvc-0e7db0b6-fa32-4c2e-ac0c-53a354ead8a4_default_local-path-pvc
+
+$ cd /var/lib/rancher/k3s/storage/pvc-0e7db0b6-fa32-4c2e-ac0c-53a354ead8a4_default_local-path-pvc
+$ ls
+pvc-test
+
+# 在容器内部写入的内容，同步到了这里
+$ cat pvc-test
+hello, local PV
+</code></pre>
+<p>结果说明测试成功</p>
+<h2 id="如果两个-pod-绑定到同一个-pvc-上会怎样">如果两个 pod 绑定到同一个 pvc 上会怎样？</h2>
+<p>继续沿用之前的 pvc_consumer_pod.yaml，做一些修改：</p>
+<pre><code class="language-shell">$ cp pvc_consumer_pod.yaml pvc_consumer_pod1.yaml
+</code></pre>
+<p>修改后：</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-test1 # 此处修改
+  namespace: default
+spec:
+  containers:
+  - name: volume-test1 # 此处修改
+    image: nginx:stable-alpine
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+    - name: volv
+      mountPath: /data
+    ports:
+    - containerPort: 80
+  volumes:
+  - name: volv
+    persistentVolumeClaim:
+      claimName: local-path-pvc
+</code></pre>
+<p>创建：</p>
+<pre><code class="language-shell">$ kubectl apply -f pvc_consumer_pod1.yaml
+pod/volume-test1 created
+$ kubectl get po
+NAME           READY   STATUS    RESTARTS   AGE
+redis          1/1     Running   0          10h
+volume-test    1/1     Running   0          25m
+volume-test1   1/1     Running   0          32s
+</code></pre>
+<p>发现创建成功了</p>
+<p>还是按照之前的流程，先 exec 进容器看看：</p>
+<pre><code class="language-shell">$ kubectl exec -it volume-test1 -- /bin/sh
+/ # ls
+bin                   docker-entrypoint.sh  media                 root                  sys
+data                  etc                   mnt                   run                   tmp
+dev                   home                  opt                   sbin                  usr
+docker-entrypoint.d   lib                   proc                  srv                   var
+/ # cd data/
+/data # ls
+pvc-test
+/data # cat pvc-test
+hello, local PV
+</code></pre>
+<p>发现 /data 下已经有内容了，而且就是之前 volume-test 这个 pod 写入的内容，尝试向这个文件里新写入一部分内容：</p>
+<pre><code class="language-shell">/data # echo &quot;hello again&quot; &gt;&gt; pvc-test
+/data # cat pvc-test
+hello, local PV
+hello again
+</code></pre>
+<p>查看 local PV：</p>
+<pre><code class="language-shell">$ cat /var/lib/rancher/k3s/storage/pvc-0e7db0b6-fa32-4c2e-ac0c-53a354ead8a4_default_local-path-pvc/pvc-test
+hello, local PV
+hello again
+</code></pre>
+<p>查看第一个容器 volume-test :</p>
+<pre><code class="language-shell">$ kubectl exec -it volume-test -- /bin/sh
+/ # cat /data/pvc-test
+hello, local PV
+hello again
+</code></pre>
+<p>发现二者的内容都同步了</p>
+<p>如此看来，多个 pod 可以绑定同一个 pvc 来达到共享文件的效果，pv 和 pvc 是一对一绑定的，但是 pod 和 pvc 是可以多对一绑定的。</p>
+<h1 id="删除-pvc">删除 pvc</h1>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/k8s/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#k8s</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/kqueue/" class="block">kqueue</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/mac-shang-zhi-zuo-windows/" class="block">在 mac 上制作 windows10 启动盘，亲测可用</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#emptydir">emptyDir</a></li>
+    <li><a href="#hostpath">hostPath</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#持久卷pv和持久卷声明pvc">持久卷（pv）和持久卷声明（pvc）</a></li>
+    <li><a href="#在-k3s-上实践-pv-和-pvc">在 k3s 上实践 pv 和 pvc</a></li>
+    <li><a href="#如果两个-pod-绑定到同一个-pvc-上会怎样">如果两个 pod 绑定到同一个 pvc 上会怎样？</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/k8s-deployment/" class="no-underline">k8s Deployment</a>
+          <br />
+        
+          <a href="/posts/k8s-service/" class="no-underline">k8s service</a>
+          <br />
+        
+          <a href="/posts/k8s-nginx-pod-de-containerport-wen-ti/" class="no-underline">k8s nginx pod 的 containerPort 问题</a>
+          <br />
+        
+          <a href="/posts/k8s-daemonset/" class="no-underline">k8s DaemonSet</a>
+          <br />
+        
+          <a href="/posts/k8s-replicaset/" class="no-underline">k8s ReplicaSet</a>
+          <br />
+        
+          <a href="/posts/k8s-replicationcontroller/" class="no-underline">k8s ReplicationController</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

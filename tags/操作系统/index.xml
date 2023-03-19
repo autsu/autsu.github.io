@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>操作系统 on /dev/null</title>
+    <link>/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link>
+    <description>Recent content in 操作系统 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Wed, 31 Aug 2022 00:59:00 +0000</lastBuildDate><atom:link href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>孤儿进程与僵尸进程</title>
+      <link>/posts/gu_er_jin_cheng_he_jiang_shi_jin_cheng/</link>
+      <pubDate>Wed, 31 Aug 2022 00:59:00 +0000</pubDate>
+      
+      <guid>/posts/gu_er_jin_cheng_he_jiang_shi_jin_cheng/</guid>
+      <description>来源：https://www.cnblogs.com/Anker/p/3271773.html
+基本概念 孤儿进程：一个父进程退出，而它的一个或多个子进程还在运行，那么那些子进程将成为孤儿进程。孤儿进程将被 init 进程(进程号为 1 )所收养，并由 init 进程对它们完成状态收集工作。</description>
+    </item>
+    
+    <item>
+      <title>操作系统面试题</title>
+      <link>/posts/cao-zuo-xi-tong-mian-shi-ti/</link>
+      <pubDate>Tue, 15 Feb 2022 01:28:50 +0000</pubDate>
+      
+      <guid>/posts/cao-zuo-xi-tong-mian-shi-ti/</guid>
+      <description>页的概念 线程怎么调度的 进程间通信有哪几种方式，哪种方式最快？ 1.无名管道( pipe )：管道是一种半双工的通信方式，数据只能单向流动，而且只能在具有亲缘关系的进程间使用。进程的亲缘关系通常是指父子进程关系。</description>
+    </item>
+    
+    <item>
+      <title>[转载] 进程的虚拟地址空间分布</title>
+      <link>/posts/zhuan-zai-jin-cheng-de-xu-ni-di-zhi-kong-jian-fen-bu/</link>
+      <pubDate>Mon, 04 Oct 2021 11:57:38 +0000</pubDate>
+      
+      <guid>/posts/zhuan-zai-jin-cheng-de-xu-ni-di-zhi-kong-jian-fen-bu/</guid>
+      <description>https://www.cnblogs.com/Joezzz/p/9803344.html</description>
+    </item>
+    
+    <item>
+      <title>进程间通信的方式</title>
+      <link>/posts/jin-cheng-jian-tong-xin-de-fang-shi/</link>
+      <pubDate>Fri, 06 Aug 2021 21:44:48 +0000</pubDate>
+      
+      <guid>/posts/jin-cheng-jian-tong-xin-de-fang-shi/</guid>
+      <description>这是一道面试高频题
+无名管道 无名管道只能用于父子进程之间的通信，代码如下：
+// // Created by zz on 2021/3/5.</description>
+    </item>
+    
+    <item>
+      <title>多级页表为什么节省内存</title>
+      <link>/posts/duo-ji-ye-biao/</link>
+      <pubDate>Thu, 05 Aug 2021 18:09:51 +0000</pubDate>
+      
+      <guid>/posts/duo-ji-ye-biao/</guid>
+      <description>首先明确几个概念 逻辑地址：是程序编译后，生成的目标模块进行编址时都是从0号单元开始编址，称之为目标模块的相对地址，即为逻辑地址。
+页：将虚拟内存划分的块，对应的大小就叫页面大小。
+页框：将物理内存划分的块。
+页和页框二者一一对应，一个页放入一个页框，（理论上）页的大小和页框的大小相等。</description>
+    </item>
+    
+  </channel>
+</rss>

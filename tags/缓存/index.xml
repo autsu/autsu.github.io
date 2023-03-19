@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>缓存 on /dev/null</title>
+    <link>/tags/%E7%BC%93%E5%AD%98/</link>
+    <description>Recent content in 缓存 on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Sat, 27 Aug 2022 23:49:10 +0000</lastBuildDate><atom:link href="/tags/%E7%BC%93%E5%AD%98/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>如何保证缓存和数据库的一致性</title>
+      <link>/posts/huan_cun_yi_zhi_xing/</link>
+      <pubDate>Sat, 27 Aug 2022 23:49:10 +0000</pubDate>
+      
+      <guid>/posts/huan_cun_yi_zhi_xing/</guid>
+      <description>先更新数据库，再更新缓存 存在的问题：
+更新数据库成功，更新缓存失败
+并发情况下可能会存在问题，如下（纵轴代表时间线）：
+A B 更新 DB x = 1 更新 DB，x = 2 更新缓存，x = 2 更新缓存，x = 1 可以看到因为并发操作导致 A 把 B 的更新缓存结果给覆盖了，最终使得数据库结果（x = 2）和缓存结果（x = 1）不一致</description>
+    </item>
+    
+  </channel>
+</rss>

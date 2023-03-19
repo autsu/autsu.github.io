@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Authors on /dev/null</title>
+    <link>/authors/</link>
+    <description>Recent content in Authors on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright><atom:link href="/authors/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>void</title>
+      <link>/authors/void/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/authors/void/</guid>
+      <description>关于我 参与工作已近10年时间，头3年在泉城济南从事 Python开发工作，虽然离开但心怀感恩，带我进入 Python 的世界。之后帝都北京，至今一直从事运维自动化的相关工作，期间也受到了很多的朋友同事的帮助，至今仍心存感激。祝诸君未来发展，一帆风顺，步步高升！</description>
+    </item>
+    
+    <item>
+      <title>Example Author</title>
+      <link>/authors/example-author/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/authors/example-author/</guid>
+      <description>Self Introduction Cras ex dui, tristique a libero eget, consectetur semper ligula.</description>
+    </item>
+    
+    <item>
+      <title>Hugo Authors</title>
+      <link>/authors/hugo-authors/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/authors/hugo-authors/</guid>
+      <description>Vestibulum vel arcu Donec interdum justo sed posuere imperdiet.</description>
+    </item>
+    
+  </channel>
+</rss>

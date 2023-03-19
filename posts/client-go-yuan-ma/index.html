@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>k8s client-go 源码阅读 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="架构 Informers 由几个核心的组件构成：
+Reflector：负责从 api-server list（全量拉取数据） and watch（监听数据变更） DeltaFIFO：一个存储事件的队列，里面记录了事件的类型 Indexer：存储数据，数据来源是从 DeltaFIFO 中 pop 出来的，然后会根据事件类型进行对于的操作 sharedProcessor：用于运行用户设置的事件回调函数，里面用 map 存储了所有的 listener，每次调用 AddEventHandler 都会创建一个 listener，同时这个函数可以调用多次，也就是创建多个 listener，当发送事件时，会调用所有的 listener 的对应回调函数 controller：上面提到的 Reflector、DeltaFIFO、Indexer 各自有各自的作用，但是它们彼此之间还没有关联起来，而 controller 就是负责这件事的，它是这 3 个组件的 master，让它们可以协同运作，大致流程是：当 Reflector watch 到事件时会将其保存到 DeltaFIFO 中，controller 这件会持续从 DeltaFIFO 中 pop 元素，然后根据事件类型对 indexer 进行相应操作（add、update、delete），使得 indexer 中的数据和 api-server 中的一致，同时还会调用 sharedProcessor 的对应回调，来完成用户设置的对应事件操作。 informers/factory.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"k8s client-go 源码阅读",
+      "item":"/posts/client-go-yuan-ma/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/client-go-yuan-ma/"
+    },
+    "headline": "k8s client-go 源码阅读 | \/dev\/null","datePublished": "2022-10-07T12:57:11+00:00",
+    "dateModified": "2022-10-07T12:57:11+00:00",
+    "wordCount":  3882 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "架构 Informers 由几个核心的组件构成：\nReflector：负责从 api-server list（全量拉取数据） and watch（监听数据变更） DeltaFIFO：一个存储事件的队列，里面记录了事件的类型 Indexer：存储数据，数据来源是从 DeltaFIFO 中 pop 出来的，然后会根据事件类型进行对于的操作 sharedProcessor：用于运行用户设置的事件回调函数，里面用 map 存储了所有的 listener，每次调用 AddEventHandler 都会创建一个 listener，同时这个函数可以调用多次，也就是创建多个 listener，当发送事件时，会调用所有的 listener 的对应回调函数 controller：上面提到的 Reflector、DeltaFIFO、Indexer 各自有各自的作用，但是它们彼此之间还没有关联起来，而 controller 就是负责这件事的，它是这 3 个组件的 master，让它们可以协同运作，大致流程是：当 Reflector watch 到事件时会将其保存到 DeltaFIFO 中，controller 这件会持续从 DeltaFIFO 中 pop 元素，然后根据事件类型对 indexer 进行相应操作（add、update、delete），使得 indexer 中的数据和 api-server 中的一致，同时还会调用 sharedProcessor 的对应回调，来完成用户设置的对应事件操作。 informers\/factory."
+}
+</script><meta property="og:title" content="k8s client-go 源码阅读 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/client-go-yuan-ma/" />
+
+
+
+
+<meta property="og:description" content="架构 Informers 由几个核心的组件构成：
+Reflector：负责从 api-server list（全量拉取数据） and watch（监听数据变更） DeltaFIFO：一个存储事件的队列，里面记录了事件的类型 Indexer：存储数据，数据来源是从 DeltaFIFO 中 pop 出来的，然后会根据事件类型进行对于的操作 sharedProcessor：用于运行用户设置的事件回调函数，里面用 map 存储了所有的 listener，每次调用 AddEventHandler 都会创建一个 listener，同时这个函数可以调用多次，也就是创建多个 listener，当发送事件时，会调用所有的 listener 的对应回调函数 controller：上面提到的 Reflector、DeltaFIFO、Indexer 各自有各自的作用，但是它们彼此之间还没有关联起来，而 controller 就是负责这件事的，它是这 3 个组件的 master，让它们可以协同运作，大致流程是：当 Reflector watch 到事件时会将其保存到 DeltaFIFO 中，controller 这件会持续从 DeltaFIFO 中 pop 元素，然后根据事件类型对 indexer 进行相应操作（add、update、delete），使得 indexer 中的数据和 api-server 中的一致，同时还会调用 sharedProcessor 的对应回调，来完成用户设置的对应事件操作。 informers/factory." />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-10-07T12:57:11&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-10-07T12:57:11&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="k8s" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/kubebuilder/" />
+
+<meta property="og:see_also" content="/posts/k8s-statefulset/" />
+
+<meta property="og:see_also" content="/posts/k8s-configmap/" />
+
+<meta property="og:see_also" content="/posts/k8s-namespace/" />
+
+<meta property="og:see_also" content="/posts/k8s-juan/" />
+
+<meta property="og:see_also" content="/posts/k8s-deployment/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">k8s client-go 源码阅读</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-10-07</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>19分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h1 id="架构">架构</h1>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/ebb2c434fe2fdcb013512d0e6f62e9d8722bc2e3/img/K8s-informer.png" alt=""></p>
+<p>Informers 由几个核心的组件构成：</p>
+<ul>
+<li>Reflector：负责从 api-server list（全量拉取数据） and watch（监听数据变更）</li>
+<li>DeltaFIFO：一个存储事件的队列，里面记录了事件的类型</li>
+<li>Indexer：存储数据，数据来源是从 DeltaFIFO 中 pop 出来的，然后会根据事件类型进行对于的操作</li>
+<li>sharedProcessor：用于运行用户设置的事件回调函数，里面用 map 存储了所有的 listener，每次调用 AddEventHandler 都会创建一个 listener，同时这个函数可以调用多次，也就是创建多个 listener，当发送事件时，会调用所有的 listener 的对应回调函数</li>
+<li>controller：上面提到的 Reflector、DeltaFIFO、Indexer 各自有各自的作用，但是它们彼此之间还没有关联起来，而 controller 就是负责这件事的，它是这 3 个组件的 master，让它们可以协同运作，大致流程是：当 Reflector watch 到事件时会将其保存到 DeltaFIFO 中，controller 这件会持续从 DeltaFIFO 中 pop 元素，然后根据事件类型对 indexer 进行相应操作（add、update、delete），使得 indexer 中的数据和 api-server 中的一致，同时还会调用 sharedProcessor 的对应回调，来完成用户设置的对应事件操作。</li>
+</ul>
+<h1 id="informersfactorygo">informers/factory.go</h1>
+<h2 id="types">types</h2>
+<h3 id="sharedinformerfactory">sharedInformerFactory</h3>
+<pre><code class="language-go">type sharedInformerFactory struct {
+   client           kubernetes.Interface
+   namespace        string
+   tweakListOptions internalinterfaces.TweakListOptionsFunc
+   lock             sync.Mutex
+   defaultResync    time.Duration
+   customResync     map[reflect.Type]time.Duration
+
+   informers map[reflect.Type]cache.SharedIndexInformer
+   // startedInformers is used for tracking which informers have been started.
+   // This allows Start() to be called multiple times safely.
+   startedInformers map[reflect.Type]bool
+   // wg tracks how many goroutines were started.
+   wg sync.WaitGroup
+   // shuttingDown is true when Shutdown has been called. It may still be running
+   // because it needs to wait for goroutines.
+   shuttingDown bool
+}
+</code></pre>
+<h4 id="start">Start()</h4>
+<pre><code class="language-GO">// Start initializes all requested informers.
+func (f *sharedInformerFactory) Start(stopCh &lt;-chan struct{}) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
+
+  // 遍历 factory 中已注册的 informer，如果该 informer 还未运行过，则运行它
+	for informerType, informer := range f.informers {
+		if !f.startedInformers[informerType] {	// 还未运行过
+			go informer.Run(stopCh)	// 运行该 informer
+			f.startedInformers[informerType] = true	// 标记为已运行
+		}
+	}
+}
+</code></pre>
+<h4 id="informerfor">InformerFor()</h4>
+<p>InformerFor 填充 sharedInformerFactory 的 informers 字段</p>
+<p>会检查该 type 是否已经注册，如果没注册则会调用传递进来的 newFunc 回调函数进行创建，并注册到 informers 中</p>
+<pre><code class="language-go">// InternalInformerFor returns the SharedIndexInformer for obj using an internal
+// client.
+func (f *sharedInformerFactory) InformerFor(obj runtime.Object, newFunc internalinterfaces.NewInformerFunc) cache.SharedIndexInformer {
+   f.lock.Lock()
+   defer f.lock.Unlock()
+
+   // 使用反射获取 obj 的类型
+   informerType := reflect.TypeOf(obj)
+   // 查看是否已注册过该 informerType，如果注册过则直接返回，符合了 shared 的定义 
+   informer, exists := f.informers[informerType]
+   if exists {
+      return informer
+   }
+
+   resyncPeriod, exists := f.customResync[informerType]
+   if !exists {
+      resyncPeriod = f.defaultResync
+   }
+		
+  // 走到这里说明 informerType 还未注册过，那么就创建一个 informer 并注册
+   informer = newFunc(f.client, resyncPeriod)
+   f.informers[informerType] = informer
+
+   return informer
+}
+</code></pre>
+<h5 id="示例">示例</h5>
+<p>比如有一个 podInformer，它有一个 Informer 方法，该方法会调用 InformerFor</p>
+<pre><code class="language-go">func (f *podInformer) Informer() cache.SharedIndexInformer {
+	return f.factory.InformerFor(&amp;corev1.Pod{}, f.defaultInformer)
+}
+</code></pre>
+<p>它传递的回调函数是 f.defaultInformer，该函数定义如下：</p>
+<pre><code class="language-go">func (f *podInformer) defaultInformer(client kubernetes.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
+	return NewFilteredPodInformer(client, f.namespace, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
+}
+</code></pre>
+<p>该函数又调用了 NewFilteredPodInformer：</p>
+<pre><code class="language-go">// NewFilteredPodInformer constructs a new informer for Pod type.
+// Always prefer using an informer factory to get a shared informer instead of getting an independent
+// one. This reduces memory footprint and number of connections to the server.
+func NewFilteredPodInformer(client kubernetes.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
+	return cache.NewSharedIndexInformer(
+		&amp;cache.ListWatch{
+			ListFunc: func(options metav1.ListOptions) (runtime.Object, error) {
+				if tweakListOptions != nil {
+					tweakListOptions(&amp;options)
+				}
+				return client.CoreV1().Pods(namespace).List(context.TODO(), options)
+			},
+			WatchFunc: func(options metav1.ListOptions) (watch.Interface, error) {
+				if tweakListOptions != nil {
+					tweakListOptions(&amp;options)
+				}
+				return client.CoreV1().Pods(namespace).Watch(context.TODO(), options)
+			},
+		},
+		&amp;corev1.Pod{},
+		resyncPeriod,
+		indexers,
+	)
+}
+</code></pre>
+<p>这个函数又调用了 NewSharedIndexInformer ，最终会创建出一个 SharedIndexInformer，该函数定义在 tools/cache/shared_informer.go</p>
+<h2 id="functions">functions</h2>
+<h3 id="newsharedinformerfactory">NewSharedInformerFactory</h3>
+<p>实际调用的是 NewSharedInformerFactoryWithOptions</p>
+<pre><code class="language-go">// NewSharedInformerFactory constructs a new instance of sharedInformerFactory for all namespaces.
+func NewSharedInformerFactory(client kubernetes.Interface, defaultResync time.Duration) SharedInformerFactory {
+   return NewSharedInformerFactoryWithOptions(client, defaultResync)
+}
+</code></pre>
+<h3 id="newsharedinformerfactorywithoptions">NewSharedInformerFactoryWithOptions</h3>
+<pre><code class="language-go">// NewSharedInformerFactoryWithOptions constructs a new instance of a SharedInformerFactory with additional options.
+func NewSharedInformerFactoryWithOptions(client kubernetes.Interface, defaultResync time.Duration, options ...SharedInformerOption) SharedInformerFactory {
+   factory := &amp;sharedInformerFactory{
+      client:           client,
+      namespace:        v1.NamespaceAll,
+      defaultResync:    defaultResync,
+      informers:        make(map[reflect.Type]cache.SharedIndexInformer),
+      startedInformers: make(map[reflect.Type]bool),
+      customResync:     make(map[reflect.Type]time.Duration),
+   }
+
+   // Apply all options
+   for _, opt := range options {
+      factory = opt(factory)
+   }
+
+   return factory
+}
+</code></pre>
+<h1 id="toolscacheshared_informergo">tools/cache/shared_informer.go</h1>
+<h2 id="types-1">types</h2>
+<h3 id="sharedindexinformer">sharedIndexInformer</h3>
+<p>sharedIndexInformer 结构体，里面的几个核心属性是用来 list-watch 的 <code>listerWatcher</code>，负责存储的 <code>indexer</code>，负责执行整套流程的的 controller（从 reflector 中 list-watch，从 DefltaFIFO 中 pop 并更新 indexer），负责执行用户设置的 eventHandle 的 processor</p>
+<pre><code class="language-go">// `*sharedIndexInformer` implements SharedIndexInformer and has three
+// main components.  One is an indexed local cache, `indexer Indexer`.
+// The second main component is a Controller that pulls
+// objects/notifications using the ListerWatcher and pushes them into
+// a DeltaFIFO --- whose knownObjects is the informer's local cache
+// --- while concurrently Popping Deltas values from that fifo and
+// processing them with `sharedIndexInformer::HandleDeltas`.  Each
+// invocation of HandleDeltas, which is done with the fifo's lock
+// held, processes each Delta in turn.  For each Delta this both
+// updates the local cache and stuffs the relevant notification into
+// the sharedProcessor.  The third main component is that
+// sharedProcessor, which is responsible for relaying those
+// notifications to each of the informer's clients.
+type sharedIndexInformer struct {
+   indexer    Indexer
+   controller Controller
+
+   processor             *sharedProcessor
+   cacheMutationDetector MutationDetector
+
+   listerWatcher ListerWatcher
+
+   // objectType is an example object of the type this informer is
+   // expected to handle.  Only the type needs to be right, except
+   // that when that is `unstructured.Unstructured` the object's
+   // `&quot;apiVersion&quot;` and `&quot;kind&quot;` must also be right.
+   objectType runtime.Object
+
+   // resyncCheckPeriod is how often we want the reflector's resync timer to fire so it can call
+   // shouldResync to check if any of our listeners need a resync.
+   resyncCheckPeriod time.Duration
+   // defaultEventHandlerResyncPeriod is the default resync period for any handlers added via
+   // AddEventHandler (i.e. they don't specify one and just want to use the shared informer's default
+   // value).
+   defaultEventHandlerResyncPeriod time.Duration
+   // clock allows for testability
+   clock clock.Clock
+
+   started, stopped bool
+   startedLock      sync.Mutex
+
+   // blockDeltas gives a way to stop all event distribution so that a late event handler
+   // can safely join the shared informer.
+   blockDeltas sync.Mutex
+
+   // Called whenever the ListAndWatch drops the connection with an error.
+   watchErrorHandler WatchErrorHandler
+
+   transform TransformFunc
+}
+</code></pre>
+<h4 id="run">Run()</h4>
+<p>Run 会调用 s.controller.Run</p>
+<pre><code class="language-go">func (s *sharedIndexInformer) Run(stopCh &lt;-chan struct{}) {
+   defer utilruntime.HandleCrash()
+
+   if s.HasStarted() {
+      klog.Warningf(&quot;The sharedIndexInformer has started, run more than once is not allowed&quot;)
+      return
+   }
+   // 创建一个 DeltaFIFO
+   fifo := NewDeltaFIFOWithOptions(DeltaFIFOOptions{
+      KnownObjects:          s.indexer,
+      EmitDeltaTypeReplaced: true,
+   })
+
+  // 配置用来创建 controller 的 Config
+   cfg := &amp;Config{
+      Queue:            fifo, // 设置为 DeltaFIFO
+      ListerWatcher:    s.listerWatcher,
+      ObjectType:       s.objectType,
+      FullResyncPeriod: s.resyncCheckPeriod,
+      RetryOnError:     false,
+      ShouldResync:     s.processor.shouldResync,
+
+      Process:           s.HandleDeltas,
+      WatchErrorHandler: s.watchErrorHandler,
+   }
+
+   func() {
+      s.startedLock.Lock()
+      defer s.startedLock.Unlock()
+
+     	// 创建 controller
+      s.controller = New(cfg)
+      s.controller.(*controller).clock = s.clock
+      s.started = true
+   }()
+
+   // Separate stop channel because Processor should be stopped strictly after controller
+   processorStopCh := make(chan struct{})
+   var wg wait.Group
+   defer wg.Wait()              // Wait for Processor to stop
+   defer close(processorStopCh) // Tell Processor to stop
+   wg.StartWithChannel(processorStopCh, s.cacheMutationDetector.Run)
+   wg.StartWithChannel(processorStopCh, s.processor.run)
+
+   defer func() {
+      s.startedLock.Lock()
+      defer s.startedLock.Unlock()
+      s.stopped = true // Don't want any new listeners
+   }()
+   // 运行 controller
+   s.controller.Run(stopCh)
+}
+</code></pre>
+<h4 id="handledeltas">HandleDeltas()</h4>
+<p>对 DeltaFIFO 中 pop 出的元素进行处理</p>
+<pre><code class="language-go">func (s *sharedIndexInformer) HandleDeltas(obj interface{}) error {
+	s.blockDeltas.Lock()
+	defer s.blockDeltas.Unlock()
+
+	if deltas, ok := obj.(Deltas); ok {
+    // 又调用了 processDeltas，其中第二个参数传递的是 indexer
+		return processDeltas(s, s.indexer, s.transform, deltas)
+	}
+	return errors.New(&quot;object given as Process argument is not Deltas&quot;)
+}
+</code></pre>
+<h4 id="addeventhandler">AddEventHandler()</h4>
+<p>添加事件处理函数，但发生事件时（add，update，delete）会调用对应的回调函数，实际调用的是AddEventHandlerWithResyncPeriod，该函数可以调用多次（也就是 add 多个 EventHandler），每次都会创建一个 listener，当发生事件时，会一并通知所有的 listener</p>
+<pre><code class="language-go">func (s *sharedIndexInformer) AddEventHandler(handler ResourceEventHandler) (ResourceEventHandlerRegistration, error) {
+	return s.AddEventHandlerWithResyncPeriod(handler, s.defaultEventHandlerResyncPeriod)
+}
+</code></pre>
+<h4 id="addeventhandlerwithresyncperiod">AddEventHandlerWithResyncPeriod()</h4>
+<p>该函数会创建一个 listener</p>
+<pre><code class="language-go">func (s *sharedIndexInformer) AddEventHandlerWithResyncPeriod(handler ResourceEventHandler, resyncPeriod time.Duration) (ResourceEventHandlerRegistration, error) {
+	s.startedLock.Lock()
+	defer s.startedLock.Unlock()
+
+	if s.stopped {
+		return nil, fmt.Errorf(&quot;handler %v was not added to shared informer because it has stopped already&quot;, handler)
+	}
+
+	if resyncPeriod &gt; 0 {
+		if resyncPeriod &lt; minimumResyncPeriod {
+			klog.Warningf(&quot;resyncPeriod %v is too small. Changing it to the minimum allowed value of %v&quot;, resyncPeriod, minimumResyncPeriod)
+			resyncPeriod = minimumResyncPeriod
+		}
+
+		if resyncPeriod &lt; s.resyncCheckPeriod {
+			if s.started {
+				klog.Warningf(&quot;resyncPeriod %v is smaller than resyncCheckPeriod %v and the informer has already started. Changing it to %v&quot;, resyncPeriod, s.resyncCheckPeriod, s.resyncCheckPeriod)
+				resyncPeriod = s.resyncCheckPeriod
+			} else {
+				// if the event handler's resyncPeriod is smaller than the current resyncCheckPeriod, update
+				// resyncCheckPeriod to match resyncPeriod and adjust the resync periods of all the listeners
+				// accordingly
+				s.resyncCheckPeriod = resyncPeriod
+				s.processor.resyncCheckPeriodChanged(resyncPeriod)
+			}
+		}
+	}
+
+  // 创建一个 listener
+	listener := newProcessListener(handler, resyncPeriod, determineResyncPeriod(resyncPeriod, s.resyncCheckPeriod), s.clock.Now(), initialBufferSize)
+
+	if !s.started {
+		return s.processor.addListener(listener), nil
+	}
+
+	// in order to safely join, we have to
+	// 1. stop sending add/update/delete notifications
+	// 2. do a list against the store
+	// 3. send synthetic &quot;Add&quot; events to the new handler
+	// 4. unblock
+	s.blockDeltas.Lock()
+	defer s.blockDeltas.Unlock()
+
+  // 将 listener 添加到 s.processor
+	handle := s.processor.addListener(listener)
+  // 遍历当前 indexer 里的所有数据，对所有的 listener 进行通知
+	for _, item := range s.indexer.List() {
+		listener.add(addNotification{newObj: item})
+	}
+	return handle, nil
+}
+</code></pre>
+<h4 id="onadd">OnAdd()</h4>
+<pre><code class="language-go">// Conforms to ResourceEventHandler
+func (s *sharedIndexInformer) OnAdd(obj interface{}) {
+	// Invocation of this function is locked under s.blockDeltas, so it is
+	// save to distribute the notification
+	s.cacheMutationDetector.AddObject(obj)
+	s.processor.distribute(addNotification{newObj: obj}, false)
+}
+</code></pre>
+<h4 id="onupdate">OnUpdate()</h4>
+<pre><code class="language-go">// Conforms to ResourceEventHandler
+func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
+	isSync := false
+
+	// If is a Sync event, isSync should be true
+	// If is a Replaced event, isSync is true if resource version is unchanged.
+	// If RV is unchanged: this is a Sync/Replaced event, so isSync is true
+
+	if accessor, err := meta.Accessor(new); err == nil {
+		if oldAccessor, err := meta.Accessor(old); err == nil {
+			// Events that didn't change resourceVersion are treated as resync events
+			// and only propagated to listeners that requested resync
+			isSync = accessor.GetResourceVersion() == oldAccessor.GetResourceVersion()
+		}
+	}
+
+	// Invocation of this function is locked under s.blockDeltas, so it is
+	// save to distribute the notification
+	s.cacheMutationDetector.AddObject(new)
+	s.processor.distribute(updateNotification{oldObj: old, newObj: new}, isSync)
+}
+</code></pre>
+<h4 id="ondelete">OnDelete()</h4>
+<pre><code class="language-go">// Conforms to ResourceEventHandler
+func (s *sharedIndexInformer) OnDelete(old interface{}) {
+	// Invocation of this function is locked under s.blockDeltas, so it is
+	// save to distribute the notification
+	s.processor.distribute(deleteNotification{oldObj: old}, false)
+}
+</code></pre>
+<h3 id="sharedprocessor">sharedProcessor</h3>
+<pre><code class="language-go">// sharedProcessor has a collection of processorListener and can
+// distribute a notification object to its listeners.  There are two
+// kinds of distribute operations.  The sync distributions go to a
+// subset of the listeners that (a) is recomputed in the occasional
+// calls to shouldResync and (b) every listener is initially put in.
+// The non-sync distributions go to every listener.
+type sharedProcessor struct {
+	listenersStarted bool
+	listenersLock    sync.RWMutex
+	// Map from listeners to whether or not they are currently syncing
+	listeners map[*processorListener]bool
+	clock     clock.Clock
+	wg        wait.Group
+}
+</code></pre>
+<h4 id="addlistener">addListener()</h4>
+<pre><code class="language-go">func (p *sharedProcessor) addListener(listener *processorListener) {
+	p.listenersLock.Lock()
+	defer p.listenersLock.Unlock()
+
+	p.addListenerLocked(listener)
+	if p.listenersStarted {
+		p.wg.Start(listener.run)
+		p.wg.Start(listener.pop)
+	}
+}
+</code></pre>
+<h4 id="distribute">distribute()</h4>
+<pre><code class="language-go">func (p *sharedProcessor) distribute(obj interface{}, sync bool) {
+	p.listenersLock.RLock()
+	defer p.listenersLock.RUnlock()
+
+	for listener, isSyncing := range p.listeners {
+		switch {
+		case !sync:
+			// non-sync messages are delivered to every listener
+			listener.add(obj)
+		case isSyncing:
+			// sync messages are delivered to every syncing listener
+			listener.add(obj)
+		default:
+			// skipping a sync obj for a non-syncing listener
+		}
+	}
+}
+</code></pre>
+<h3 id="processorlistener">processorListener</h3>
+<pre><code class="language-go">// processorListener relays notifications from a sharedProcessor to
+// one ResourceEventHandler --- using two goroutines, two unbuffered
+// channels, and an unbounded ring buffer.  The `add(notification)`
+// function sends the given notification to `addCh`.  One goroutine
+// runs `pop()`, which pumps notifications from `addCh` to `nextCh`
+// using storage in the ring buffer while `nextCh` is not keeping up.
+// Another goroutine runs `run()`, which receives notifications from
+// `nextCh` and synchronously invokes the appropriate handler method.
+//
+// processorListener also keeps track of the adjusted requested resync
+// period of the listener.
+type processorListener struct {
+	nextCh chan interface{}
+	addCh  chan interface{}
+
+	handler ResourceEventHandler
+
+	// pendingNotifications is an unbounded ring buffer that holds all notifications not yet distributed.
+	// There is one per listener, but a failing/stalled listener will have infinite pendingNotifications
+	// added until we OOM.
+	// TODO: This is no worse than before, since reflectors were backed by unbounded DeltaFIFOs, but
+	// we should try to do something better.
+	pendingNotifications buffer.RingGrowing
+
+	// requestedResyncPeriod is how frequently the listener wants a
+	// full resync from the shared informer, but modified by two
+	// adjustments.  One is imposing a lower bound,
+	// `minimumResyncPeriod`.  The other is another lower bound, the
+	// sharedIndexInformer's `resyncCheckPeriod`, that is imposed (a) only
+	// in AddEventHandlerWithResyncPeriod invocations made after the
+	// sharedIndexInformer starts and (b) only if the informer does
+	// resyncs at all.
+	requestedResyncPeriod time.Duration
+	// resyncPeriod is the threshold that will be used in the logic
+	// for this listener.  This value differs from
+	// requestedResyncPeriod only when the sharedIndexInformer does
+	// not do resyncs, in which case the value here is zero.  The
+	// actual time between resyncs depends on when the
+	// sharedProcessor's `shouldResync` function is invoked and when
+	// the sharedIndexInformer processes `Sync` type Delta objects.
+	resyncPeriod time.Duration
+	// nextResync is the earliest time the listener should get a full resync
+	nextResync time.Time
+	// resyncLock guards access to resyncPeriod and nextResync
+	resyncLock sync.Mutex
+}
+</code></pre>
+<h4 id="newprocesslistener">newProcessListener()</h4>
+<p>该函数在 sharedIndexInformer.AddEventHandlerWithResyncPeriod 中调用，创建一个新的 listener</p>
+<pre><code class="language-go">func newProcessListener(handler ResourceEventHandler, requestedResyncPeriod, resyncPeriod time.Duration, now time.Time, bufferSize int) *processorListener {
+	ret := &amp;processorListener{
+		nextCh:                make(chan interface{}),
+		addCh:                 make(chan interface{}),
+		handler:               handler,
+		pendingNotifications:  *buffer.NewRingGrowing(bufferSize),
+		requestedResyncPeriod: requestedResyncPeriod,
+		resyncPeriod:          resyncPeriod,
+	}
+
+	ret.determineNextResync(now)
+
+	return ret
+}
+</code></pre>
+<h2 id="functions-1">functions</h2>
+<h3 id="newsharedindexinformer">NewSharedIndexInformer</h3>
+<pre><code class="language-go">// NewSharedIndexInformer creates a new instance for the listwatcher.
+// The created informer will not do resyncs if the given
+// defaultEventHandlerResyncPeriod is zero.  Otherwise: for each
+// handler that with a non-zero requested resync period, whether added
+// before or after the informer starts, the nominal resync period is
+// the requested resync period rounded up to a multiple of the
+// informer's resync checking period.  Such an informer's resync
+// checking period is established when the informer starts running,
+// and is the maximum of (a) the minimum of the resync periods
+// requested before the informer starts and the
+// defaultEventHandlerResyncPeriod given here and (b) the constant
+// `minimumResyncPeriod` defined in this file.
+func NewSharedIndexInformer(lw ListerWatcher, exampleObject runtime.Object, defaultEventHandlerResyncPeriod time.Duration, indexers Indexers) SharedIndexInformer {
+	realClock := &amp;clock.RealClock{}
+	sharedIndexInformer := &amp;sharedIndexInformer{
+		processor:                       &amp;sharedProcessor{clock: realClock},
+		indexer:                         NewIndexer(DeletionHandlingMetaNamespaceKeyFunc, indexers),
+		listerWatcher:                   lw,
+		objectType:                      exampleObject,
+		resyncCheckPeriod:               defaultEventHandlerResyncPeriod,
+		defaultEventHandlerResyncPeriod: defaultEventHandlerResyncPeriod,
+		cacheMutationDetector:           NewCacheMutationDetector(fmt.Sprintf(&quot;%T&quot;, exampleObject)),
+		clock:                           realClock,
+	}
+	return sharedIndexInformer
+}
+</code></pre>
+<h1 id="toolscachecontrollergo">tools/cache/controller.go</h1>
+<h2 id="types-2">types</h2>
+<h3 id="controller">controller</h3>
+<pre><code class="language-go">// `*controller` implements Controller
+type controller struct {
+	config         Config
+	reflector      *Reflector
+	reflectorMutex sync.RWMutex
+	clock          clock.Clock
+}
+</code></pre>
+<h4 id="processloop">processLoop()</h4>
+<p>processLoop 会不断从 DeltaFIFO 中 pop 出元素，并调用 c.config.Process 对 pop 出的元素进行处理，这个 Process 实际是 HandleDeltas</p>
+<pre><code class="language-go">// processLoop drains the work queue.
+// TODO: Consider doing the processing in parallel. This will require a little thought
+// to make sure that we don't end up processing the same object multiple times
+// concurrently.
+//
+// TODO: Plumb through the stopCh here (and down to the queue) so that this can
+// actually exit when the controller is stopped. Or just give up on this stuff
+// ever being stoppable. Converting this whole package to use Context would
+// also be helpful.
+func (c *controller) processLoop() {
+   for {
+      obj, err := c.config.Queue.Pop(PopProcessFunc(c.config.Process))
+      if err != nil {
+         if err == ErrFIFOClosed {
+            return
+         }
+         if c.config.RetryOnError {
+            // This is the safe way to re-enqueue.
+            c.config.Queue.AddIfNotPresent(obj)
+         }
+      }
+   }
+}
+</code></pre>
+<h4 id="run-1">Run()</h4>
+<p>sharedIndexInformer.Run 里会创建一个 DeltaFIFO，并将 config.Queue 设置为这个 DeltaFIFO</p>
+<pre><code class="language-go">// Run begins processing items, and will continue until a value is sent down stopCh or it is closed.
+// It's an error to call Run more than once.
+// Run blocks; call via go.
+func (c *controller) Run(stopCh &lt;-chan struct{}) {
+	defer utilruntime.HandleCrash()
+	go func() {
+		&lt;-stopCh
+		c.config.Queue.Close()
+	}()
+  
+	// 创建一个 reflector 用来 list-watch
+  // 这里的 c.config.Queue 实际是一个 DeltaFIFO
+	r := NewReflector(
+		c.config.ListerWatcher,
+		c.config.ObjectType,
+		c.config.Queue,
+		c.config.FullResyncPeriod,
+	)
+	r.ShouldResync = c.config.ShouldResync
+	r.WatchListPageSize = c.config.WatchListPageSize
+	r.clock = c.clock
+	if c.config.WatchErrorHandler != nil {
+		r.watchErrorHandler = c.config.WatchErrorHandler
+	}
+
+	c.reflectorMutex.Lock()
+	c.reflector = r
+	c.reflectorMutex.Unlock()
+
+	var wg wait.Group
+
+	wg.StartWithChannel(stopCh, r.Run)
+
+	wait.Until(c.processLoop, time.Second, stopCh)
+	wg.Wait()
+}
+</code></pre>
+<h3 id="config">Config</h3>
+<pre><code class="language-go">type Config struct {
+   // The queue for your objects - has to be a DeltaFIFO due to
+   // assumptions in the implementation. Your Process() function
+   // should accept the output of this Queue's Pop() method.
+   // 应该传递一个 DeltaFIFO 类型的 queue，Process() 中会从该 queue
+   // 中 pop 元素进行处理
+   Queue
+
+   // Something that can list and watch your objects.
+   ListerWatcher
+
+   // Something that can process a popped Deltas.
+   // Pop 出来的 obj 处理函数
+   Process ProcessFunc
+
+   // ObjectType is an example object of the type this controller is
+   // expected to handle.  Only the type needs to be right, except
+   // that when that is `unstructured.Unstructured` the object's
+   // `&quot;apiVersion&quot;` and `&quot;kind&quot;` must also be right.
+   ObjectType runtime.Object
+
+   // FullResyncPeriod is the period at which ShouldResync is considered.
+   FullResyncPeriod time.Duration
+
+   // ShouldResync is periodically used by the reflector to determine
+   // whether to Resync the Queue. If ShouldResync is `nil` or
+   // returns true, it means the reflector should proceed with the
+   // resync.
+   ShouldResync ShouldResyncFunc
+
+   // If true, when Process() returns an error, re-enqueue the object.
+   // TODO: add interface to let you inject a delay/backoff or drop
+   //       the object completely if desired. Pass the object in
+   //       question to this interface as a parameter.  This is probably moot
+   //       now that this functionality appears at a higher level.
+   RetryOnError bool
+
+   // Called whenever the ListAndWatch drops the connection with an error.
+   WatchErrorHandler WatchErrorHandler
+
+   // WatchListPageSize is the requested chunk size of initial and relist watch lists.
+   WatchListPageSize int64
+}
+</code></pre>
+<h3 id="processfunc">ProcessFunc</h3>
+<pre><code class="language-go">// ProcessFunc processes a single object.
+type ProcessFunc func(obj interface{}) error
+</code></pre>
+<h2 id="functions-2">functions</h2>
+<h3 id="new">New</h3>
+<pre><code class="language-go">// New makes a new Controller from the given Config.
+func New(c *Config) Controller {
+   ctlr := &amp;controller{
+      config: *c,
+      clock:  &amp;clock.RealClock{},
+   }
+   return ctlr
+}
+</code></pre>
+<h3 id="processdeltas">processDeltas</h3>
+<p>如果是 HandleDeltas 调用该函数，那么第二个参数传递的是 indexer，那么这里就会根据 pop 的事件类型对 indexer 进行相应操作，同时还传递了一个 handler 参数，这是一个接口类型，需要实现 OnAdd、OnUpdate、OnDelete 三个方法，sharedIndexInformer 实现了这个接口，实际会调用 sharedProcessor 的 OnAdd 等方法，这些方法是用户自己设置的回调函数</p>
+<pre><code class="language-go">// Multiplexes updates in the form of a list of Deltas into a Store, and informs
+// a given handler of events OnUpdate, OnAdd, OnDelete
+func processDeltas(
+	// Object which receives event notifications from the given deltas
+	handler ResourceEventHandler,
+	clientState Store,
+	transformer TransformFunc,
+	deltas Deltas,
+) error {
+	// from oldest to newest
+	for _, d := range deltas {
+		obj := d.Object
+		if transformer != nil {
+			var err error
+			obj, err = transformer(obj)
+			if err != nil {
+				return err
+			}
+		}
+
+		switch d.Type {
+		case Sync, Replaced, Added, Updated:
+			if old, exists, err := clientState.Get(obj); err == nil &amp;&amp; exists {
+        // 更新 indexer 里的数据
+				if err := clientState.Update(obj); err != nil {
+					return err
+				}
+        // 同时执行用户设置的回调函数
+				handler.OnUpdate(old, obj)
+			} else {
+				if err := clientState.Add(obj); err != nil {
+					return err
+				}
+				handler.OnAdd(obj)
+			}
+		case Deleted:
+			if err := clientState.Delete(obj); err != nil {
+				return err
+			}
+			handler.OnDelete(obj)
+		}
+	}
+	return nil
+}
+</code></pre>
+<h1 id="toolscachereflectorgo">tools/cache/reflector.go</h1>
+<h2 id="types-3">types</h2>
+<h2 id="functions-3">functions</h2>
+<h3 id="watchhandler">watchHandler</h3>
+<p>当 watch 到有事件产生时，会执行该函数对事件进行相应的处理</p>
+<pre><code class="language-go">// watchHandler watches w and sets setLastSyncResourceVersion
+func watchHandler(start time.Time,
+   w watch.Interface,
+   store Store,
+	 // 省略其他参数...
+) error {
+  	eventCount := 0
+
+	// Stopping the watcher should be idempotent and if we return from this function there's no way
+	// we're coming back in with the same watch interface.
+	defer w.Stop()
+
+loop:
+	for {
+		select {
+		// 省略...
+    // 有事件产生了  
+		case event, ok := &lt;-w.ResultChan():
+			if !ok {
+				break loop
+			}
+			if event.Type == watch.Error {
+				return apierrors.FromObject(event.Object)
+			}
+			// 省略...
+      // 判断事件类型，进行相应的处理
+			switch event.Type {
+			case watch.Added:
+        // 这里的 store 实际是 DeltaFIFO，调用的是 DeltaFIFO.Add()
+				err := store.Add(event.Object)
+				if err != nil {
+					utilruntime.HandleError(fmt.Errorf(&quot;%s: unable to add watch event object (%#v) to store: %v&quot;, name, event.Object, err))
+				}
+			case watch.Modified:
+				err := store.Update(event.Object)
+				if err != nil {
+					utilruntime.HandleError(fmt.Errorf(&quot;%s: unable to update watch event object (%#v) to store: %v&quot;, name, event.Object, err))
+				}
+			case watch.Deleted:
+				// TODO: Will any consumers need access to the &quot;last known
+				// state&quot;, which is passed in event.Object? If so, may need
+				// to change this.
+				err := store.Delete(event.Object)
+				if err != nil {
+					utilruntime.HandleError(fmt.Errorf(&quot;%s: unable to delete watch event object (%#v) from store: %v&quot;, name, event.Object, err))
+				}
+			case watch.Bookmark:
+				// A `Bookmark` means watch has synced here, just update the resourceVersion
+			default:
+				utilruntime.HandleError(fmt.Errorf(&quot;%s: unable to understand watch event %#v&quot;, name, event))
+			}
+			setLastSyncResourceVersion(resourceVersion)
+			if rvu, ok := store.(ResourceVersionUpdater); ok {
+				rvu.UpdateResourceVersion(resourceVersion)
+			}
+			eventCount++
+		}
+	}
+  // 省略...
+}
+
+
+</code></pre>
+<h1 id="toolscachedelta_fifogo">tools/cache/delta_fifo.go</h1>
+<h2 id="types-4">types</h2>
+<h3 id="deltafifo">DeltaFIFO</h3>
+<pre><code class="language-go">// DeltaFIFO is like FIFO, but differs in two ways.  One is that the
+// accumulator associated with a given object's key is not that object
+// but rather a Deltas, which is a slice of Delta values for that
+// object.  Applying an object to a Deltas means to append a Delta
+// except when the potentially appended Delta is a Deleted and the
+// Deltas already ends with a Deleted.  In that case the Deltas does
+// not grow, although the terminal Deleted will be replaced by the new
+// Deleted if the older Deleted's object is a
+// DeletedFinalStateUnknown.
+//
+// The other difference is that DeltaFIFO has two additional ways that
+// an object can be applied to an accumulator: Replaced and Sync.
+// If EmitDeltaTypeReplaced is not set to true, Sync will be used in
+// replace events for backwards compatibility.  Sync is used for periodic
+// resync events.
+//
+// DeltaFIFO is a producer-consumer queue, where a Reflector is
+// intended to be the producer, and the consumer is whatever calls
+// the Pop() method.
+//
+// DeltaFIFO solves this use case:
+//   - You want to process every object change (delta) at most once.
+//   - When you process an object, you want to see everything
+//     that's happened to it since you last processed it.
+//   - You want to process the deletion of some of the objects.
+//   - You might want to periodically reprocess objects.
+//
+// DeltaFIFO's Pop(), Get(), and GetByKey() methods return
+// interface{} to satisfy the Store/Queue interfaces, but they
+// will always return an object of type Deltas. List() returns
+// the newest object from each accumulator in the FIFO.
+//
+// A DeltaFIFO's knownObjects KeyListerGetter provides the abilities
+// to list Store keys and to get objects by Store key.  The objects in
+// question are called &quot;known objects&quot; and this set of objects
+// modifies the behavior of the Delete, Replace, and Resync methods
+// (each in a different way).
+//
+// A note on threading: If you call Pop() in parallel from multiple
+// threads, you could end up with multiple threads processing slightly
+// different versions of the same object.
+type DeltaFIFO struct {
+	// lock/cond protects access to 'items' and 'queue'.
+	lock sync.RWMutex
+	cond sync.Cond
+
+	// `items` maps a key to a Deltas.
+	// Each such Deltas has at least one Delta.
+	items map[string]Deltas
+
+	// `queue` maintains FIFO order of keys for consumption in Pop().
+	// There are no duplicates in `queue`.
+	// A key is in `queue` if and only if it is in `items`.
+	queue []string
+
+	// populated is true if the first batch of items inserted by Replace() has been populated
+	// or Delete/Add/Update/AddIfNotPresent was called first.
+	populated bool
+	// initialPopulationCount is the number of items inserted by the first call of Replace()
+	initialPopulationCount int
+
+	// keyFunc is used to make the key used for queued item
+	// insertion and retrieval, and should be deterministic.
+	keyFunc KeyFunc
+
+	// knownObjects list keys that are &quot;known&quot; --- affecting Delete(),
+	// Replace(), and Resync()
+	knownObjects KeyListerGetter
+
+	// Used to indicate a queue is closed so a control loop can exit when a queue is empty.
+	// Currently, not used to gate any of CRUD operations.
+	closed bool
+
+	// emitDeltaTypeReplaced is whether to emit the Replaced or Sync
+	// DeltaType when Replace() is called (to preserve backwards compat).
+	emitDeltaTypeReplaced bool
+}
+</code></pre>
+<h4 id="add">Add()</h4>
+<p>实际调用的是 queueActionLocked 方法</p>
+<pre><code class="language-go">// Add inserts an item, and puts it in the queue. The item is only enqueued
+// if it doesn't already exist in the set.
+func (f *DeltaFIFO) Add(obj interface{}) error {
+   f.lock.Lock()
+   defer f.lock.Unlock()
+   f.populated = true
+   return f.queueActionLocked(Added, obj)
+}
+</code></pre>
+<h4 id="queueactionlocked">queueActionLocked()</h4>
+<p>queueActionLocked 会将 actionType 和 obj 封装为一个 Delta 对象，并 push 到 DeltaFIFO</p>
+<pre><code class="language-go">// queueActionLocked appends to the delta list for the object.
+// Caller must lock first.
+func (f *DeltaFIFO) queueActionLocked(actionType DeltaType, obj interface{}) error {
+	id, err := f.KeyOf(obj)
+	if err != nil {
+		return KeyError{obj, err}
+	}
+	oldDeltas := f.items[id]
+	newDeltas := append(oldDeltas, Delta{actionType, obj})
+	newDeltas = dedupDeltas(newDeltas)
+
+	if len(newDeltas) &gt; 0 {
+		if _, exists := f.items[id]; !exists {
+			f.queue = append(f.queue, id)
+		}
+		f.items[id] = newDeltas
+		f.cond.Broadcast()
+	} else {
+		// This never happens, because dedupDeltas never returns an empty list
+		// when given a non-empty list (as it is here).
+		// If somehow it happens anyway, deal with it but complain.
+		if oldDeltas == nil {
+			klog.Errorf(&quot;Impossible dedupDeltas for id=%q: oldDeltas=%#+v, obj=%#+v; ignoring&quot;, id, oldDeltas, obj)
+			return nil
+		}
+		klog.Errorf(&quot;Impossible dedupDeltas for id=%q: oldDeltas=%#+v, obj=%#+v; breaking invariant by storing empty Deltas&quot;, id, oldDeltas, obj)
+		f.items[id] = newDeltas
+		return fmt.Errorf(&quot;Impossible dedupDeltas for id=%q: oldDeltas=%#+v, obj=%#+v; broke DeltaFIFO invariant by storing empty Deltas&quot;, id, oldDeltas, obj)
+	}
+	return nil
+}
+</code></pre>
+<h2 id="functions-4">functions</h2>
+<h1 id="参考资料">参考资料</h1>
+<p><a href="https://github.com/k8s-club/k8s-club/blob/main/articles/K8s%20%E7%B3%BB%E5%88%97(%E5%9B%9B)%20-%20%E6%B5%85%E8%B0%88%20Informer.md">K8s 系列(四) - 浅谈 Informer.md</a></p>
+<p><a href="https://cloudnative.to/blog/client-go-informer-source-code/#indexer">深入了解 Kubernetes Informer</a></p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/k8s/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#k8s</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/k8s-secret/" class="block">k8s Secret</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/kubebuilder/" class="block">kubebuilder 实践</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#types">types</a>
+      <ul>
+        <li><a href="#sharedinformerfactory">sharedInformerFactory</a>
+          <ul>
+            <li><a href="#start">Start()</a></li>
+            <li><a href="#informerfor">InformerFor()</a>
+              <ul>
+                <li><a href="#示例">示例</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#functions">functions</a>
+      <ul>
+        <li><a href="#newsharedinformerfactory">NewSharedInformerFactory</a></li>
+        <li><a href="#newsharedinformerfactorywithoptions">NewSharedInformerFactoryWithOptions</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#types-1">types</a>
+      <ul>
+        <li><a href="#sharedindexinformer">sharedIndexInformer</a>
+          <ul>
+            <li><a href="#run">Run()</a></li>
+            <li><a href="#handledeltas">HandleDeltas()</a></li>
+            <li><a href="#addeventhandler">AddEventHandler()</a></li>
+            <li><a href="#addeventhandlerwithresyncperiod">AddEventHandlerWithResyncPeriod()</a></li>
+            <li><a href="#onadd">OnAdd()</a></li>
+            <li><a href="#onupdate">OnUpdate()</a></li>
+            <li><a href="#ondelete">OnDelete()</a></li>
+          </ul>
+        </li>
+        <li><a href="#sharedprocessor">sharedProcessor</a>
+          <ul>
+            <li><a href="#addlistener">addListener()</a></li>
+            <li><a href="#distribute">distribute()</a></li>
+          </ul>
+        </li>
+        <li><a href="#processorlistener">processorListener</a>
+          <ul>
+            <li><a href="#newprocesslistener">newProcessListener()</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#functions-1">functions</a>
+      <ul>
+        <li><a href="#newsharedindexinformer">NewSharedIndexInformer</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#types-2">types</a>
+      <ul>
+        <li><a href="#controller">controller</a>
+          <ul>
+            <li><a href="#processloop">processLoop()</a></li>
+            <li><a href="#run-1">Run()</a></li>
+          </ul>
+        </li>
+        <li><a href="#config">Config</a></li>
+        <li><a href="#processfunc">ProcessFunc</a></li>
+      </ul>
+    </li>
+    <li><a href="#functions-2">functions</a>
+      <ul>
+        <li><a href="#new">New</a></li>
+        <li><a href="#processdeltas">processDeltas</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#types-3">types</a></li>
+    <li><a href="#functions-3">functions</a>
+      <ul>
+        <li><a href="#watchhandler">watchHandler</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#types-4">types</a>
+      <ul>
+        <li><a href="#deltafifo">DeltaFIFO</a>
+          <ul>
+            <li><a href="#add">Add()</a></li>
+            <li><a href="#queueactionlocked">queueActionLocked()</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#functions-4">functions</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/kubebuilder/" class="no-underline">kubebuilder 实践</a>
+          <br />
+        
+          <a href="/posts/k8s-statefulset/" class="no-underline">k8s StatefulSet</a>
+          <br />
+        
+          <a href="/posts/k8s-configmap/" class="no-underline">k8s ConfigMap</a>
+          <br />
+        
+          <a href="/posts/k8s-namespace/" class="no-underline">k8s namespace</a>
+          <br />
+        
+          <a href="/posts/k8s-juan/" class="no-underline">k8s 卷</a>
+          <br />
+        
+          <a href="/posts/k8s-deployment/" class="no-underline">k8s Deployment</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

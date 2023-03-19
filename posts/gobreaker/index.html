@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>go 熔断器 gobreaker 源码阅读 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="该文章仅作为本人笔记，不具备太大的参考价值
+该文章着重记录源码，没有对熔断器这一概念做过多理念上的说明解释
+该文章排版、思路较为混乱，后续可能会进行修改
+示例 官方示例 官方示例有点太简单了，完全无法体会到 熔断 这一概念">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"go 熔断器 gobreaker 源码阅读",
+      "item":"/posts/gobreaker/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/gobreaker/"
+    },
+    "headline": "go 熔断器 gobreaker 源码阅读 | \/dev\/null","datePublished": "2022-06-11T20:40:11+00:00",
+    "dateModified": "2022-06-11T20:40:11+00:00",
+    "wordCount":  3313 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "该文章仅作为本人笔记，不具备太大的参考价值\n该文章着重记录源码，没有对熔断器这一概念做过多理念上的说明解释\n该文章排版、思路较为混乱，后续可能会进行修改\n示例 官方示例 官方示例有点太简单了，完全无法体会到 熔断 这一概念"
+}
+</script><meta property="og:title" content="go 熔断器 gobreaker 源码阅读 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/gobreaker/" />
+
+
+
+
+<meta property="og:description" content="该文章仅作为本人笔记，不具备太大的参考价值
+该文章着重记录源码，没有对熔断器这一概念做过多理念上的说明解释
+该文章排版、思路较为混乱，后续可能会进行修改
+示例 官方示例 官方示例有点太简单了，完全无法体会到 熔断 这一概念" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-06-11T20:40:11&#43;00:00" />
+
+
+<meta property="article:modified_time" content="2022-06-11T20:40:11&#43;00:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="go" />
+
+<meta property="article:tag" content="源码" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/errgroup/" />
+
+<meta property="og:see_also" content="/posts/go-map-yuan-ma-yue-du/" />
+
+<meta property="og:see_also" content="/posts/go-containerheap-yuan-ma-yue-du/" />
+
+<meta property="og:see_also" content="/posts/2021-2-24-go-container-list-source-code/" />
+
+<meta property="og:see_also" content="/posts/go_seek/" />
+
+<meta property="og:see_also" content="/posts/go-gc/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">go 熔断器 gobreaker 源码阅读</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-06-11</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>16分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <blockquote>
+<p>该文章仅作为本人笔记，不具备太大的参考价值</p>
+<p>该文章着重记录源码，没有对熔断器这一概念做过多理念上的说明解释</p>
+<p>该文章排版、思路较为混乱，后续可能会进行修改</p>
+</blockquote>
+<h1 id="示例">示例</h1>
+<h2 id="官方示例">官方示例</h2>
+<p>官方示例有点太简单了，完全无法体会到 <strong>熔断</strong> 这一概念</p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+	&quot;io/ioutil&quot;
+	&quot;log&quot;
+	&quot;net/http&quot;
+
+	&quot;github.com/sony/gobreaker&quot;
+)
+
+var cb *gobreaker.CircuitBreaker
+
+func init() {
+	var st gobreaker.Settings
+	st.Name = &quot;HTTP GET&quot;
+	st.ReadyToTrip = func(counts gobreaker.Counts) bool {
+		failureRatio := float64(counts.TotalFailures) / float64(counts.Requests)
+		return counts.Requests &gt;= 3 &amp;&amp; failureRatio &gt;= 0.6
+	}
+
+	cb = gobreaker.NewCircuitBreaker(st)
+}
+
+// Get wraps http.Get in CircuitBreaker.
+func Get(url string) ([]byte, error) {
+	body, err := cb.Execute(func() (interface{}, error) {
+		resp, err := http.Get(url)
+		if err != nil {
+			return nil, err
+		}
+
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		return body, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return body.([]byte), nil
+}
+
+func main() {
+	body, err := Get(&quot;http://www.google.com/robots.txt&quot;)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(string(body))
+}
+</code></pre>
+<h2 id="我的示例">我的示例</h2>
+<p>先写一个 http server，他会随机为请求返回 200 或者 500</p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;math/rand&quot;
+	&quot;net/http&quot;
+	&quot;time&quot;
+)
+
+var canVisit bool
+
+func main() {
+	rand.Seed(time.Now().Unix())
+	go func() {
+		for {
+			t := rand.Int63n(10)
+			select {
+			case &lt;-time.After(time.Duration(t) * time.Second):
+				canVisit = !canVisit
+			}
+		}
+	}()
+
+	http.HandleFunc(&quot;/&quot;, func(w http.ResponseWriter, r *http.Request) {
+		if canVisit {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(&quot;server error&quot;))
+		} else {
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte(&quot;success&quot;))
+		}
+	})
+	if err := http.ListenAndServe(&quot;:9000&quot;, nil); err != nil {
+		panic(err)
+	}
+}
+
+</code></pre>
+<p>熔断器程序，会一直访问上面的 http server，返回 200 算请求成功，500 算失败，来观察熔断器的状态和效果：</p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+	&quot;io/ioutil&quot;
+	&quot;log&quot;
+	&quot;net/http&quot;
+	&quot;time&quot;
+
+	&quot;github.com/sony/gobreaker&quot;
+)
+
+var cb *gobreaker.CircuitBreaker
+
+func init() {
+	var st gobreaker.Settings
+	st.Name = &quot;HTTP GET&quot;
+	st.ReadyToTrip = func(counts gobreaker.Counts) bool {
+		failureRatio := float64(counts.TotalFailures) / float64(counts.Requests)
+		return counts.Requests &gt;= 3 &amp;&amp; failureRatio &gt;= 0.5
+	}
+	st.Timeout = time.Second * 10	// 从开启切换到半开的时间
+	st.OnStateChange = func(name string, from, to gobreaker.State) {
+		log.Printf(&quot;state change: [%v] -&gt; [%v]\n&quot;, from, to)
+	}
+	cb = gobreaker.NewCircuitBreaker(st)
+}
+
+func Get(url string) ([]byte, error) {
+	body, err := cb.Execute(func() (interface{}, error) {
+		resp, err := http.Get(url)
+		if err != nil {
+			return nil, err
+		}
+
+		defer resp.Body.Close()
+		if resp.StatusCode &gt;= 400 {
+			return nil, fmt.Errorf(&quot;[%v]%v&quot;, resp.StatusCode, http.StatusText(resp.StatusCode))
+		}
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		return body, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	return body.([]byte), nil
+}
+
+func main() {
+	for {
+		body, err := Get(&quot;http://localhost:9000&quot;)
+		if err != nil {
+			log.Println(err)
+		}
+		log.Printf(&quot;%v, %+v\n&quot;, cb.State(), cb.Counts())
+		fmt.Println(string(body))
+		time.Sleep(time.Millisecond * 500)
+	}
+}
+
+</code></pre>
+<p>输出日志：</p>
+<pre><code class="language-shell">2022/06/10 22:02:36 closed, {Requests:1 TotalSuccesses:1 TotalFailures:0 ConsecutiveSuccesses:1 ConsecutiveFailures:0}
+....
+
+2022/06/10 22:03:26 [500]Internal Server Error
+2022/06/10 22:03:26 closed, {Requests:101 TotalSuccesses:51 TotalFailures:50 ConsecutiveSuccesses:0 ConsecutiveFailures:8}
+
+2022/06/10 22:03:26 state change: [closed] -&gt; [open]
+2022/06/10 22:03:26 [500]Internal Server Error
+2022/06/10 22:03:26 open, {Requests:0 TotalSuccesses:0 TotalFailures:0 ConsecutiveSuccesses:0 ConsecutiveFailures:0}
+</code></pre>
+<p>第二段日志记录了错误，此时的总请求次数是 101，总错误是 50，还没达到 ReadyToTrip 的条件（错误率 &gt;= 50%），然后第三段日志，发现此时请求依然失败，此时总请求 102，总错误 51，达到了 50%，所以发生了状态转换，熔断器进行开启模式。</p>
+<p>后续应该会一直保持开启状态，直到 10s 后切换为半开状态，这里日志就没记录了。</p>
+<h1 id="熔断器的-3-种状态">熔断器的 3 种状态</h1>
+<pre><code class="language-go">// State is a type that represents a state of CircuitBreaker.
+type State int
+
+// These constants are states of CircuitBreaker.
+// 熔断器的状态
+const (
+	// StateClosed 表示关闭状态，此时所有请求都会通过
+	StateClosed State = iota
+	// StateHalfOpen 半开状态，会根据情况变更为开启或者关闭状态
+	StateHalfOpen
+	// StateOpen 开启状态，此时会拒绝所有请求
+	StateOpen
+)
+</code></pre>
+<p>熔断器有三种状态：</p>
+<ul>
+<li>开启：所有请求都会拒绝</li>
+<li>关闭：所有请求都会通过</li>
+<li>半开启：开启状态自然不能一直维持，需要某个条件将其切换到一种中间状态：也就是这里的半开启状态。当开启状态持续了一段时间后，就会变更为半开启状态，表示可以做试探了，如果此时请求依然失败，则变更为开启状态；如果成功次数达到了我们的需求，则变更为关闭状态</li>
+</ul>
+<h1 id="计数器">计数器</h1>
+<p>计数器保存了熔断器的所有信息，具体属性如下：</p>
+<pre><code class="language-go">// Counts 保存请求的数量及其成功失败的次数。
+// CircuitBreaker 在状态更改或关闭状态间隔时清除内部计数。
+// Counts 会忽略在清除之前发送的请求的结果。
+type Counts struct {
+	Requests             uint32 // 总请求次数
+	TotalSuccesses       uint32 // 总成功次数
+	TotalFailures        uint32 // 总失败次数
+	ConsecutiveSuccesses uint32 // 连续成功次数
+	ConsecutiveFailures  uint32 // 连续失败次数
+}
+</code></pre>
+<p>此外还提供了一些列更新计数的方法：</p>
+<pre><code class="language-go">func (c *Counts) onRequest() {
+	c.Requests++
+}
+
+func (c *Counts) onSuccess() {
+	c.TotalSuccesses++
+	c.ConsecutiveSuccesses++
+	c.ConsecutiveFailures = 0
+}
+
+func (c *Counts) onFailure() {
+	c.TotalFailures++
+	c.ConsecutiveFailures++
+	c.ConsecutiveSuccesses = 0
+}
+
+func (c *Counts) clear() {
+	c.Requests = 0
+	c.TotalSuccesses = 0
+	c.TotalFailures = 0
+	c.ConsecutiveSuccesses = 0
+	c.ConsecutiveFailures = 0
+}
+</code></pre>
+<h1 id="熔断器">熔断器</h1>
+<p>CircuitBreaker 定义了熔断器结构体，这也是最核心的结构体</p>
+<pre><code class="language-go">// CircuitBreaker is a state machine to prevent sending requests that are likely to fail.
+type CircuitBreaker struct {
+	// 虚线内的属性和 Settings 中的相同，如果 Settings 中没有设置，则使用默认值来填充
+	// ==================
+	name        string
+  // 比较迷的一个变量，源码里有两种情况：
+	// 1. 请求总数（Requests） &gt;= MaxRequests，那么会返回请求过多的错误
+	// 2. 连续成功次数（ConsecutiveSuccesses） &gt;= MaxRequests，那么变更为关闭状态
+	// 1 在 beforeRequest() 函数中，2 在 afterRequest() -&gt; onSuccess() 的 HalfOpen 分支中
+	// 也就是在请求前会确保请求总数不超过 MaxRequest，请求后如果处于半开状态且连续成功数 &gt;= MaxRequest
+	// 那么会变更为关闭状态
+	maxRequests uint32
+  
+	// 关闭状态下定期清空计数的时间，如果为 0，则不清空
+  // 这里我不太明白清空计数的原因，在网上找了一个分析，意思是如果一直处于成功状态，
+	// 那么计数的意义就不是很大，此外如果请求量过大可能会导致溢出，所以需要定期清空
+	interval      time.Duration
+  
+	// 打开状态的持续时间，到时后会变更为半打开状态。
+	timeout time.Duration
+  
+	// 关闭状态下会调用该回调函数，如果返回 true，则进入打开状态
+	readyToTrip   func(counts Counts) bool
+  
+  // 用来判断请求是否成功的回调函数
+	isSuccessful  func(err error) bool
+  
+  // 发生状态变更时的回调函数
+	onStateChange func(name string, from State, to State)
+  // ====================
+
+	mutex      sync.Mutex
+	state      State
+	generation uint64
+	counts     Counts
+  // 这个变量貌似有两种情况：
+	// 1. 开启状态下，代表切换到半开启的绝对时间（time.Time 代表一个绝对时间）
+	//    具体值是 time.Now + timeout
+	// 2. 关闭状态下，代表进入下一个周期的绝对时间（进入下一个周期会清空计数）
+	// 	  具体值是 time.Now + interval
+	expiry time.Time
+}
+</code></pre>
+<p>其中的一部分值是通过配置类来指定的，如果不指定则会设置为默认配置：</p>
+<pre><code class="language-go">func NewCircuitBreaker(st Settings) *CircuitBreaker {
+	cb := new(CircuitBreaker)
+
+	cb.name = st.Name
+	cb.onStateChange = st.OnStateChange
+
+	if st.MaxRequests == 0 {
+		cb.maxRequests = 1
+	} else {
+		cb.maxRequests = st.MaxRequests
+	}
+
+	if st.Interval &lt;= 0 {
+		cb.interval = defaultInterval
+	} else {
+		cb.interval = st.Interval
+	}
+
+	if st.Timeout &lt;= 0 {
+		cb.timeout = defaultTimeout
+	} else {
+		cb.timeout = st.Timeout
+	}
+
+	if st.ReadyToTrip == nil {
+		cb.readyToTrip = defaultReadyToTrip
+	} else {
+		cb.readyToTrip = st.ReadyToTrip
+	}
+
+	if st.IsSuccessful == nil {
+		cb.isSuccessful = defaultIsSuccessful
+	} else {
+		cb.isSuccessful = st.IsSuccessful
+	}
+
+	cb.toNewGeneration(time.Now())
+
+	return cb
+}
+</code></pre>
+<h1 id="配置类">配置类</h1>
+<pre><code class="language-go">type Settings struct {
+	// 熔断器的名称
+	Name string
+
+	// MaxRequests 是 CircuitBreaker 半开时允许通过的最大请求数。
+	// 如果 MaxRequests 为 0，则 CircuitBreaker 只允许 1 个请求。
+	// FIXME 比较迷的一个变量，源码里有两种情况：
+	// 1. 请求总数（Requests） &gt;= MaxRequests，那么会返回请求过多的错误
+	// 2. 连续成功次数（ConsecutiveSuccesses） &gt;= MaxRequests，那么变更为关闭状态
+	// 1 在 beforeRequest() 函数中，2 在 afterRequest() -&gt; onSuccess() 的 HalfOpen 分支中
+	// 也就是在请求前会确保请求总数不超过 MaxRequest，请求后如果处于半开状态且连续成功数 &gt;= MaxRequest
+	// 那么会变更为关闭状态
+	MaxRequests uint32
+
+	// Interval 是熔断器处于关闭状态时，定期清除内部 Counts 的时间。
+	// 如果 Interval 小于或等于 0，CircuitBreaker 在关闭状态期间不会清除内部计数。
+	// FIXME 这个东西暂时没发现用处何在
+	// 在网上找了一个分析，意思是如果一直处于成功状态，那么计数的意义就不是很大，
+	// 需要定期清空，不然可能会溢出
+	Interval time.Duration
+
+	// Timeout 是打开状态的持续时间，到时后会变更为半打开状态。
+	// 如果 Timeout 小于或等于 0，则将 CircuitBreaker 的超时值设置为 60 秒。
+	Timeout time.Duration
+
+	// 每当请求在关闭状态下失败时，就会调用 ReadyToTrip，参数传递的是 Counts 的副本。
+	// 如果 ReadyToTrip 返回 true，CircuitBreaker 将进入打开状态。
+	// 如果 ReadyToTrip 为 nil，则使用默认 ReadyToTrip。
+	// 当连续失败次数超过 5 次时，默认 ReadyToTrip 返回 true。
+	ReadyToTrip func(counts Counts) bool
+
+	// OnStateChange 是熔断器状态变更时的回调函数
+	OnStateChange func(name string, from State, to State)
+
+	// IsSuccessful 判断请求是否成功，传入的 err 是执行用户请求函数后返回的。
+	// （也就是 CircuitBreaker.Execute 的参数 req）
+	// 如果 IsSuccessful 返回 true， 则说明请求发生了错误，否则说明没有错误。
+	// 如果 IsSuccessful 为 nil， 则使用默认 IsSuccessful，该默认函数的逻辑是：
+	// if err == nil { return true }
+	IsSuccessful func(err error) bool
+}
+</code></pre>
+<p>默认配置：</p>
+<pre><code class="language-go">const defaultInterval = time.Duration(0) * time.Second
+const defaultTimeout = time.Duration(60) * time.Second
+
+func defaultReadyToTrip(counts Counts) bool {
+	return counts.ConsecutiveFailures &gt; 5
+}
+
+func defaultIsSuccessful(err error) bool {
+	return err == nil
+}
+</code></pre>
+<h1 id="状态转换">状态转换</h1>
+<p>一共有一下几种状态转换：</p>
+<ul>
+<li>关闭 -&gt; 开启</li>
+<li>开启 -&gt; 半开</li>
+<li>半开 -&gt; 开启</li>
+<li>半开 -&gt; 关闭</li>
+</ul>
+<p>gobreaker 定义了一些方法来完成上面的状态转换，顾名思义，如下所示：</p>
+<h2 id="circuitbreakeronsuccess"><strong>CircuitBreaker.onSuccess</strong></h2>
+<p>这个函数定义了 <strong>半开 -&gt; 关闭</strong> 的状态转换 ，是通过 cb.setState 来完成的</p>
+<pre><code class="language-go">// 熔断器请求成功时调用该函数
+func (cb *CircuitBreaker) onSuccess(state State, now time.Time) {
+	switch state {
+	case StateClosed: // 如果此时是关闭状态，则更新计数
+		cb.counts.onSuccess()
+	case StateHalfOpen: // 半开状态
+		cb.counts.onSuccess() // 更新计数
+		// 连续成功总数超过了设置的 maxRequests，变更为关闭状态
+		if cb.counts.ConsecutiveSuccesses &gt;= cb.maxRequests {
+			cb.setState(StateClosed, now)
+		}
+	}
+}
+</code></pre>
+<h2 id="circuitbreakeronfailure"><strong>CircuitBreaker.onFailure</strong></h2>
+<p>这个函数定义了 **半开 -&gt; 开启 ** 和 <strong>关闭 -&gt; 开启</strong> 的状态转换</p>
+<pre><code class="language-go">// 熔断器请求失败时调用该函数
+func (cb *CircuitBreaker) onFailure(state State, now time.Time) {
+	switch state {
+	// 关闭状态下请求失败了
+	case StateClosed:
+		cb.counts.onFailure() // 更新计数
+		// 如果回调函数 readyToTrip 返回 true
+		// 因为一次失败可能不足以直接判定为需要熔断，所以可能失败多次后才会返回 true
+		// 比如官方示例中设置的回调函数是：
+		// st.ReadyToTrip = func(counts gobreaker.Counts) bool {
+		//		failureRatio := float64(counts.TotalFailures) / float64(counts.Requests)
+		//		return counts.Requests &gt;= 3 &amp;&amp; failureRatio &gt;= 0.6
+		//	}
+		// 可以看到这里需要请求次数大于3，且总失败率大于等于 60% 才会返回 true
+		if cb.readyToTrip(cb.counts) {
+			cb.setState(StateOpen, now) // 变更熔断器为开启状态
+		}
+	case StateHalfOpen: // 半开状态下失败了，变更为开启状态
+		cb.setState(StateOpen, now)
+	}
+}
+</code></pre>
+<h2 id="circuitbreakercurrentstate"><strong>CircuitBreaker.currentState</strong></h2>
+<p>这个函数定义了 <strong>开启 -&gt; 半开</strong> 的状态转换：</p>
+<pre><code class="language-go">// currentState 返回熔断器当前的状态，now 用来判断是否发生了状态变更
+func (cb *CircuitBreaker) currentState(now time.Time) (State, uint64) {
+   // func toNewGeneration
+   // case StateClosed:
+   //    if cb.interval == 0 {
+   //       cb.expiry = zero
+   //    } else {
+   //       cb.expiry = now.Add(cb.interval)
+   //    }
+   switch cb.state {
+   // 如上面的注释代码所示，如果 cb.interval 为 0，那么 cb.expiry 会设置为 zero，
+   // 此时下面的 if 条件就不满足了，关闭状态下也不会调用 cb.toNewGeneration 来清空计数
+   // 如果设置了 cb.interval，那么会设置 cb.expiry 的时间，如果处于关闭状态且达到了
+   // expiry 的时间，就会调用 cb.toNewGeneration 来清空计数
+   case StateClosed:
+      if !cb.expiry.IsZero() &amp;&amp; cb.expiry.Before(now) {
+         cb.toNewGeneration(now)
+      }
+   case StateOpen:
+      // 超过了 expiry 的时间，可以切换到半开状态了
+      if cb.expiry.Before(now) {
+         cb.setState(StateHalfOpen, now)
+      }
+   }
+   return cb.state, cb.generation
+}
+</code></pre>
+<h1 id="核心方法-execute">核心方法 Execute</h1>
+<p>这个方法就是熔断器的执行方法，用户传入一个函数，熔断器会根据当前状态进行相应的操作</p>
+<pre><code class="language-go">func (cb *CircuitBreaker) Execute(req func() (interface{}, error)) (interface{}, error) {
+	generation, err := cb.beforeRequest()
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		e := recover()
+		if e != nil {
+			cb.afterRequest(generation, false)
+			panic(e)
+		}
+	}()
+
+	result, err := req()
+	cb.afterRequest(generation, cb.isSuccessful(err))
+	return result, err
+}
+</code></pre>
+<p>可以看到其中调用了用户传入的函数，此外还有两个函数：beforeRequest() 和 afterRequest() 代表执行请求前和执行请求后，这两个函数内部会更新熔断器的计数以及状态</p>
+<h1 id="beforerequest"><strong>beforeRequest</strong></h1>
+<pre><code class="language-go">func (cb *CircuitBreaker) beforeRequest() (uint64, error) {
+	cb.mutex.Lock()
+	defer cb.mutex.Unlock()
+
+	now := time.Now()
+	state, generation := cb.currentState(now)
+
+	// 如果熔断器处于开启状态，直接返回错误，因为该方法在 Execute 中先于用户请求执行，
+	// 且逻辑是有 err 直接 return，所以不会执行之后的代码，具体查看 Execute，下面是截取的部分：
+	// generation, err := cb.beforeRequest()
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	if state == StateOpen {
+		return generation, ErrOpenState
+		// 请求前如果处于半开状态，会进行限流操作
+	} else if state == StateHalfOpen &amp;&amp; cb.counts.Requests &gt;= cb.maxRequests {
+		return generation, ErrTooManyRequests
+	}
+
+	cb.counts.onRequest() // 更新计数
+	return generation, nil
+}
+</code></pre>
+<h1 id="afterrequest"><strong>afterRequest</strong></h1>
+<pre><code class="language-go">func (cb *CircuitBreaker) afterRequest(before uint64, success bool) {
+	cb.mutex.Lock()
+	defer cb.mutex.Unlock()
+
+	now := time.Now()
+	state, generation := cb.currentState(now)
+	if generation != before {
+		return
+	}
+
+  // 更新状态和计数
+	if success {
+		cb.onSuccess(state, now)
+	} else {
+		cb.onFailure(state, now)
+	}
+}
+</code></pre>
+<p>这两个函数又调用了同一个函数 <code>cb.currentState</code></p>
+<h1 id="currentstate">currentState</h1>
+<pre><code class="language-go">// currentState 返回熔断器当前的状态，now 用来判断是否需要执行某些操作，这些操作包括：
+// 1. 关闭状态下清空计数（如果设置了 interval 且达到了清空时间）
+// 2. 开启状态转换为半开启状态（到达了转换时间）
+func (cb *CircuitBreaker) currentState(now time.Time) (State, uint64) {
+	// func toNewGeneration
+	// case StateClosed:
+	//		if cb.interval == 0 {
+	//			cb.expiry = zero
+	//		} else {
+	//			cb.expiry = now.Add(cb.interval)
+	//		}
+	switch cb.state {
+	// 如上面的注释代码所示，如果 cb.interval 为 0，那么 cb.expiry 会设置为 zero，
+	// 此时下面的 if 条件就不满足了，关闭状态下也不会调用 cb.toNewGeneration 来清空计数
+	// 如果设置了 cb.interval，那么会设置 cb.expiry 的时间，如果处于关闭状态且达到了
+	// expiry 的时间，就会调用 cb.toNewGeneration 来清空计数
+	case StateClosed:
+		if !cb.expiry.IsZero() &amp;&amp; cb.expiry.Before(now) {
+			cb.toNewGeneration(now)
+		}
+	case StateOpen:
+		// 超过了 expiry 的时间，可以切换到半开状态了
+		if cb.expiry.Before(now) {
+			cb.setState(StateHalfOpen, now)
+		}
+	}
+	return cb.state, cb.generation
+}
+</code></pre>
+<p>这个函数又调用了另一个函数 <code>toNewGeneration</code></p>
+<h1 id="tonewgeneration">toNewGeneration</h1>
+<pre><code class="language-go">// 进入一个新周期，会清空计数，并对 cb.expiry 进行更新
+// 该函数会在 setState、currentState、NewCircuitBreaker 调用
+func (cb *CircuitBreaker) toNewGeneration(now time.Time) {
+   cb.generation++
+   cb.counts.clear()
+
+   var zero time.Time
+   switch cb.state {
+   case StateClosed:
+      if cb.interval == 0 {
+         cb.expiry = zero
+      } else {
+         cb.expiry = now.Add(cb.interval)
+      }
+   case StateOpen:
+      cb.expiry = now.Add(cb.timeout) // 设置 open -&gt; halfOpen 的绝对时间
+   default: // StateHalfOpen
+      cb.expiry = zero
+   }
+}
+</code></pre>
+<h1 id="总结">总结</h1>
+<p>光看文档感觉熔断器并不是一个多么复杂的东西，但是等实际阅读代码才发现还是有点小复杂的，何况这个开源库还只是对熔断器的一个最精简实现，还有其他的更复杂的实现库，阅读这个源码主要有一些不清楚的点在于，里面的属性<code> CircuitBreaker.expiry</code> 和 <code>CircuitBreaker.maxRequests</code> 在不同情况下有不同的意义，导致看的有点头疼，状态的转换看着也有点绕，还有一开始对 <code>CircuitBreaker.interval</code> 这个属性的意义也不太理解</p>
+<h1 id="完整源码注释">完整源码注释</h1>
+<p><a href="https://github.com/youseebiggirl/gobreaker_annotation">https://github.com/youseebiggirl/gobreaker_annotation</a></p>
+<pre><code class="language-go">// Package gobreaker implements the Circuit Breaker pattern.
+// See https://msdn.microsoft.com/en-us/library/dn589784.aspx.
+package gobreaker
+
+import (
+	&quot;errors&quot;
+	&quot;fmt&quot;
+	&quot;sync&quot;
+	&quot;time&quot;
+)
+
+// State is a type that represents a state of CircuitBreaker.
+type State int
+
+// These constants are states of CircuitBreaker.
+// 熔断器的状态
+const (
+	// StateClosed 表示关闭状态，此时所有请求都会通过
+	StateClosed State = iota
+	// StateHalfOpen 半开状态，会根据情况变更为开启或者关闭状态
+	StateHalfOpen
+	// StateOpen 开启状态，此时会拒绝所有请求
+	StateOpen
+)
+
+var (
+	// ErrTooManyRequests is returned when the CB state is half open and the requests count is over the cb maxRequests
+	// 该错误在状态为半开且请求数超过 maxRequests 时返回
+	ErrTooManyRequests = errors.New(&quot;too many requests&quot;)
+	// ErrOpenState is returned when the CB state is open
+	// 该错误在状态为开启时返回
+	ErrOpenState = errors.New(&quot;circuit breaker is open&quot;)
+)
+
+// String implements stringer interface.
+// String 继承了 stringer 接口，相当于自定义了 fmt.Println(State) 的输出
+func (s State) String() string {
+	switch s {
+	case StateClosed:
+		return &quot;closed&quot;
+	case StateHalfOpen:
+		return &quot;half-open&quot;
+	case StateOpen:
+		return &quot;open&quot;
+	default:
+		return fmt.Sprintf(&quot;unknown state: %d&quot;, s)
+	}
+}
+
+// Counts holds the numbers of requests and their successes/failures.
+// CircuitBreaker clears the internal Counts either
+// on the change of the state or at the closed-state intervals.
+// Counts ignores the results of the requests sent before clearing.
+// Counts 保存请求的数量及其成功失败的次数。
+// CircuitBreaker 在状态更改或关闭状态间隔时清除内部计数。
+// Counts 会忽略在清除之前发送的请求的结果。
+type Counts struct {
+	Requests             uint32 // 总请求次数
+	TotalSuccesses       uint32 // 总成功次数
+	TotalFailures        uint32 // 总失败次数
+	ConsecutiveSuccesses uint32 // 连续成功次数
+	ConsecutiveFailures  uint32 // 连续失败次数
+}
+
+func (c *Counts) onRequest() {
+	c.Requests++
+}
+
+func (c *Counts) onSuccess() {
+	c.TotalSuccesses++
+	c.ConsecutiveSuccesses++
+	c.ConsecutiveFailures = 0
+}
+
+func (c *Counts) onFailure() {
+	c.TotalFailures++
+	c.ConsecutiveFailures++
+	c.ConsecutiveSuccesses = 0
+}
+
+func (c *Counts) clear() {
+	c.Requests = 0
+	c.TotalSuccesses = 0
+	c.TotalFailures = 0
+	c.ConsecutiveSuccesses = 0
+	c.ConsecutiveFailures = 0
+}
+
+// Settings configures CircuitBreaker:
+//
+// Name is the name of the CircuitBreaker.
+//
+// MaxRequests is the maximum number of requests allowed to pass through
+// when the CircuitBreaker is half-open.
+// If MaxRequests is 0, the CircuitBreaker allows only 1 request.
+//
+// Interval is the cyclic period of the closed state
+// for the CircuitBreaker to clear the internal Counts.
+// If Interval is less than or equal to 0, the CircuitBreaker doesn't clear internal Counts during the closed state.
+//
+// Timeout is the period of the open state,
+// after which the state of the CircuitBreaker becomes half-open.
+// If Timeout is less than or equal to 0, the timeout value of the CircuitBreaker is set to 60 seconds.
+//
+// ReadyToTrip is called with a copy of Counts whenever a request fails in the closed state.
+// If ReadyToTrip returns true, the CircuitBreaker will be placed into the open state.
+// If ReadyToTrip is nil, default ReadyToTrip is used.
+// Default ReadyToTrip returns true when the number of consecutive failures is more than 5.
+//
+// OnStateChange is called whenever the state of the CircuitBreaker changes.
+//
+// IsSuccessful is called with the error returned from a request.
+// If IsSuccessful returns true, the error is counted as a success.
+// Otherwise the error is counted as a failure.
+// If IsSuccessful is nil, default IsSuccessful is used, which returns false for all non-nil errors.
+type Settings struct {
+	// 熔断器的名称
+	Name string
+
+	// MaxRequests 是 CircuitBreaker 半开时允许通过的最大请求数。
+	// 如果 MaxRequests 为 0，则 CircuitBreaker 只允许 1 个请求。
+	// FIXME 比较迷的一个变量，源码里有两种情况：
+	// 1. 请求总数（Requests） &gt;= MaxRequests，那么会返回请求过多的错误
+	// 2. 连续成功次数（ConsecutiveSuccesses） &gt;= MaxRequests，那么变更为关闭状态
+	// 1 在 beforeRequest() 函数中，2 在 afterRequest() -&gt; onSuccess() 的 HalfOpen 分支中
+	// 也就是在请求前会确保请求总数不超过 MaxRequest，请求后如果处于半开状态且连续成功数 &gt;= MaxRequest
+	// 那么会变更为关闭状态
+	MaxRequests uint32
+
+	// Interval 是熔断器处于关闭状态时，定期清除内部 Counts 的时间。
+	// 如果 Interval 小于或等于 0，CircuitBreaker 在关闭状态期间不会清除内部计数。
+	// FIXME 这个东西暂时没发现用处何在
+	// 在网上找了一个分析，意思是如果一直处于成功状态，那么计数的意义就不是很大，
+	// 需要定期清空，不然可能会溢出
+	Interval time.Duration
+
+	// Timeout 是打开状态的持续时间，到时后会变更为半打开状态。
+	// 如果 Timeout 小于或等于 0，则将 CircuitBreaker 的超时值设置为 60 秒。
+	Timeout time.Duration
+
+	// 每当请求在关闭状态下失败时，就会调用 ReadyToTrip，参数传递的是 Counts 的副本。
+	// 如果 ReadyToTrip 返回 true，CircuitBreaker 将进入打开状态。
+	// 如果 ReadyToTrip 为 nil，则使用默认 ReadyToTrip。
+	// 当连续失败次数超过 5 次时，默认 ReadyToTrip 返回 true。
+	ReadyToTrip func(counts Counts) bool
+
+	// OnStateChange 是熔断器状态变更时的回调函数
+	OnStateChange func(name string, from State, to State)
+
+	// IsSuccessful 判断请求是否成功，传入的 err 是执行用户请求函数后返回的。
+	// （也就是 CircuitBreaker.Execute 的参数 req）
+	// 如果 IsSuccessful 返回 true， 则说明请求发生了错误，否则说明没有错误。
+	// 如果 IsSuccessful 为 nil， 则使用默认 IsSuccessful，该默认函数的逻辑是：
+	// if err == nil { return true }
+	IsSuccessful func(err error) bool
+}
+
+// CircuitBreaker is a state machine to prevent sending requests that are likely to fail.
+type CircuitBreaker struct {
+	// 虚线内的属性和 Settings 中的相同，如果 Settings 中没有设置，则使用默认值来填充
+	// ==================
+	name string
+	// 比较迷的一个变量，源码里有两种情况：
+	// 1. 请求总数（Requests） &gt;= MaxRequests，那么会返回请求过多的错误
+	// 2. 连续成功次数（ConsecutiveSuccesses） &gt;= MaxRequests，那么变更为关闭状态
+	// 1 在 beforeRequest() 函数中，2 在 afterRequest() -&gt; onSuccess() 的 HalfOpen 分支中
+	// 也就是在请求前会确保请求总数不超过 MaxRequest，请求后如果处于半开状态且连续成功数 &gt;= MaxRequest
+	// 那么会变更为关闭状态
+	maxRequests uint32
+
+	// 关闭状态下定期清空计数的时间，如果为 0，则不清空
+	// 这里我不太明白清空计数的原因，在网上找了一个分析，意思是如果一直处于成功状态，
+	// 那么计数的意义就不是很大，此外如果请求量过大可能会导致溢出，所以需要定期清空
+	interval time.Duration
+
+	// 打开状态的持续时间，到时后会变更为半打开状态。
+	timeout time.Duration
+
+	// 关闭状态下会调用该回调函数，如果返回 true，则进入打开状态
+	readyToTrip func(counts Counts) bool
+
+	// 用来判断请求是否成功的回调函数
+	isSuccessful func(err error) bool
+
+	// 发生状态变更时的回调函数
+	onStateChange func(name string, from State, to State)
+	// ====================
+
+	mutex      sync.Mutex
+	state      State
+	generation uint64
+	counts     Counts
+	// 这个变量貌似有两种情况：
+	// 1. 开启状态下，代表切换到半开启的绝对时间（time.Time 代表一个绝对时间）
+	//    具体值是 time.Now + timeout
+	// 2. 关闭状态下，代表进入下一个周期的绝对时间（进入下一个周期会清空计数）
+	// 	  具体值是 time.Now + interval
+	expiry time.Time
+}
+
+// TwoStepCircuitBreaker is like CircuitBreaker but instead of surrounding a function
+// with the breaker functionality, it only checks whether a request can proceed and
+// expects the caller to report the outcome in a separate step using a callback.
+type TwoStepCircuitBreaker struct {
+	cb *CircuitBreaker
+}
+
+// NewCircuitBreaker returns a new CircuitBreaker configured with the given Settings.
+func NewCircuitBreaker(st Settings) *CircuitBreaker {
+	cb := new(CircuitBreaker)
+
+	cb.name = st.Name
+	cb.onStateChange = st.OnStateChange
+
+	if st.MaxRequests == 0 {
+		cb.maxRequests = 1
+	} else {
+		cb.maxRequests = st.MaxRequests
+	}
+
+	if st.Interval &lt;= 0 {
+		cb.interval = defaultInterval
+	} else {
+		cb.interval = st.Interval
+	}
+
+	if st.Timeout &lt;= 0 {
+		cb.timeout = defaultTimeout
+	} else {
+		cb.timeout = st.Timeout
+	}
+
+	if st.ReadyToTrip == nil {
+		cb.readyToTrip = defaultReadyToTrip
+	} else {
+		cb.readyToTrip = st.ReadyToTrip
+	}
+
+	if st.IsSuccessful == nil {
+		cb.isSuccessful = defaultIsSuccessful
+	} else {
+		cb.isSuccessful = st.IsSuccessful
+	}
+
+	cb.toNewGeneration(time.Now())
+
+	return cb
+}
+
+// NewTwoStepCircuitBreaker returns a new TwoStepCircuitBreaker configured with the given Settings.
+func NewTwoStepCircuitBreaker(st Settings) *TwoStepCircuitBreaker {
+	return &amp;TwoStepCircuitBreaker{
+		cb: NewCircuitBreaker(st),
+	}
+}
+
+const defaultInterval = time.Duration(0) * time.Second
+const defaultTimeout = time.Duration(60) * time.Second
+
+func defaultReadyToTrip(counts Counts) bool {
+	return counts.ConsecutiveFailures &gt; 5
+}
+
+func defaultIsSuccessful(err error) bool {
+	return err == nil
+}
+
+// Name returns the name of the CircuitBreaker.
+func (cb *CircuitBreaker) Name() string {
+	return cb.name
+}
+
+// State returns the current state of the CircuitBreaker.
+func (cb *CircuitBreaker) State() State {
+	cb.mutex.Lock()
+	defer cb.mutex.Unlock()
+
+	now := time.Now()
+	state, _ := cb.currentState(now)
+	return state
+}
+
+// Counts returns internal counters
+func (cb *CircuitBreaker) Counts() Counts {
+	cb.mutex.Lock()
+	defer cb.mutex.Unlock()
+
+	return cb.counts
+}
+
+// Execute runs the given request if the CircuitBreaker accepts it.
+// Execute returns an error instantly if the CircuitBreaker rejects the request.
+// Otherwise, Execute returns the result of the request.
+// If a panic occurs in the request, the CircuitBreaker handles it as an error
+// and causes the same panic again.
+func (cb *CircuitBreaker) Execute(req func() (interface{}, error)) (interface{}, error) {
+	// 执行请求前
+	generation, err := cb.beforeRequest()
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		e := recover()
+		if e != nil {
+			cb.afterRequest(generation, false)
+			panic(e)
+		}
+	}()
+
+	result, err := req()
+	// 执行请求后
+	cb.afterRequest(generation, cb.isSuccessful(err))
+	return result, err
+}
+
+// Name returns the name of the TwoStepCircuitBreaker.
+func (tscb *TwoStepCircuitBreaker) Name() string {
+	return tscb.cb.Name()
+}
+
+// State returns the current state of the TwoStepCircuitBreaker.
+func (tscb *TwoStepCircuitBreaker) State() State {
+	return tscb.cb.State()
+}
+
+// Counts returns internal counters
+func (tscb *TwoStepCircuitBreaker) Counts() Counts {
+	return tscb.cb.Counts()
+}
+
+// Allow checks if a new request can proceed. It returns a callback that should be used to
+// register the success or failure in a separate step. If the circuit breaker doesn't allow
+// requests, it returns an error.
+func (tscb *TwoStepCircuitBreaker) Allow() (done func(success bool), err error) {
+	generation, err := tscb.cb.beforeRequest()
+	if err != nil {
+		return nil, err
+	}
+
+	return func(success bool) {
+		tscb.cb.afterRequest(generation, success)
+	}, nil
+}
+
+func (cb *CircuitBreaker) beforeRequest() (uint64, error) {
+	cb.mutex.Lock()
+	defer cb.mutex.Unlock()
+
+	now := time.Now()
+	state, generation := cb.currentState(now)
+
+	// 如果熔断器处于开启状态，直接返回错误，因为该方法在 Execute 中先于用户请求执行，
+	// 且逻辑是有 err 直接 return，所以不会执行之后的代码，具体查看 Execute，下面是截取的部分：
+	// generation, err := cb.beforeRequest()
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	if state == StateOpen {
+		return generation, ErrOpenState
+		// 请求前如果处于半开状态，会进行限流操作
+	} else if state == StateHalfOpen &amp;&amp; cb.counts.Requests &gt;= cb.maxRequests {
+		return generation, ErrTooManyRequests
+	}
+
+	cb.counts.onRequest() // 更新计数
+	return generation, nil
+}
+
+func (cb *CircuitBreaker) afterRequest(before uint64, success bool) {
+	cb.mutex.Lock()
+	defer cb.mutex.Unlock()
+
+	now := time.Now()
+	state, generation := cb.currentState(now)
+	if generation != before {
+		return
+	}
+
+	// 更新状态和计数
+	if success {
+		cb.onSuccess(state, now)
+	} else {
+		cb.onFailure(state, now)
+	}
+}
+
+// 熔断器请求成功时调用该函数
+func (cb *CircuitBreaker) onSuccess(state State, now time.Time) {
+	switch state {
+	case StateClosed: // 如果此时是关闭状态，则更新计数
+		cb.counts.onSuccess()
+	case StateHalfOpen: // 半开状态
+		cb.counts.onSuccess() // 更新计数
+		// 连续成功总数超过了设置的 maxRequests，变更为关闭状态
+		if cb.counts.ConsecutiveSuccesses &gt;= cb.maxRequests {
+			cb.setState(StateClosed, now)
+		}
+	}
+}
+
+// 熔断器请求失败时调用该函数
+func (cb *CircuitBreaker) onFailure(state State, now time.Time) {
+	switch state {
+	// 关闭状态下请求失败了
+	case StateClosed:
+		cb.counts.onFailure() // 更新计数
+		// 如果回调函数 readyToTrip 返回 true
+		// 因为一次失败可能不足以直接判定为需要熔断，所以可能失败多次后才会返回 true
+		// 比如官方示例中设置的回调函数是：
+		// st.ReadyToTrip = func(counts gobreaker.Counts) bool {
+		//		failureRatio := float64(counts.TotalFailures) / float64(counts.Requests)
+		//		return counts.Requests &gt;= 3 &amp;&amp; failureRatio &gt;= 0.6
+		//	}
+		// 可以看到这里需要请求次数大于3，且总失败率大于等于 60% 才会返回 true
+		if cb.readyToTrip(cb.counts) {
+			cb.setState(StateOpen, now) // 变更熔断器为开启状态
+		}
+	case StateHalfOpen: // 半开状态下失败了，变更为开启状态
+		cb.setState(StateOpen, now)
+	}
+}
+
+// currentState 返回熔断器当前的状态，now 用来判断是否需要执行某些操作，这些操作包括：
+// 1. 关闭状态下清空计数（如果设置了 interval 且达到了清空时间）
+// 2. 开启状态转换为半开启状态（到达了转换时间）
+func (cb *CircuitBreaker) currentState(now time.Time) (State, uint64) {
+	// func toNewGeneration
+	// case StateClosed:
+	//		if cb.interval == 0 {
+	//			cb.expiry = zero
+	//		} else {
+	//			cb.expiry = now.Add(cb.interval)
+	//		}
+	switch cb.state {
+	// 如上面的注释代码所示，如果 cb.interval 为 0，那么 cb.expiry 会设置为 zero，
+	// 此时下面的 if 条件就不满足了，关闭状态下也不会调用 cb.toNewGeneration 来清空计数
+	// 如果设置了 cb.interval，那么会设置 cb.expiry 的时间，如果处于关闭状态且达到了
+	// expiry 的时间，就会调用 cb.toNewGeneration 来清空计数
+	case StateClosed:
+		if !cb.expiry.IsZero() &amp;&amp; cb.expiry.Before(now) {
+			cb.toNewGeneration(now)
+		}
+	case StateOpen:
+		// 超过了 expiry 的时间，可以切换到半开状态了
+		if cb.expiry.Before(now) {
+			cb.setState(StateHalfOpen, now)
+		}
+	}
+	return cb.state, cb.generation
+}
+
+func (cb *CircuitBreaker) setState(state State, now time.Time) {
+	if cb.state == state {
+		return
+	}
+
+	prev := cb.state
+	cb.state = state
+
+	cb.toNewGeneration(now) // 设置新状态后更新计数
+
+	if cb.onStateChange != nil {
+		cb.onStateChange(cb.name, prev, state)
+	}
+}
+
+// 进入一个新周期，会清空计数，并对 cb.expiry 进行更新
+// 该函数会在 setState、currentState、NewCircuitBreaker 调用
+func (cb *CircuitBreaker) toNewGeneration(now time.Time) {
+	cb.generation++
+	cb.counts.clear()
+
+	var zero time.Time
+	switch cb.state {
+	case StateClosed:
+		if cb.interval == 0 {
+			cb.expiry = zero
+		} else {
+			cb.expiry = now.Add(cb.interval)
+		}
+	case StateOpen:
+		cb.expiry = now.Add(cb.timeout) // 设置 open -&gt; halfOpen 的绝对时间
+	default: // StateHalfOpen
+		cb.expiry = zero
+	}
+}
+
+</code></pre>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/go/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#go</a>
+    
+    <a href="/tags/%E6%BA%90%E7%A0%81/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#源码</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/127.0.0.1_localhost_0.0.0.0/" class="block">127.0.0.1，localhost，0.0.0.0 的区别（包含虚拟网卡相关操作）</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/go_seek/" class="block">go 文件操作的&#34;坑&#34;之 Seek()</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#官方示例">官方示例</a></li>
+    <li><a href="#我的示例">我的示例</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#circuitbreakeronsuccess"><strong>CircuitBreaker.onSuccess</strong></a></li>
+    <li><a href="#circuitbreakeronfailure"><strong>CircuitBreaker.onFailure</strong></a></li>
+    <li><a href="#circuitbreakercurrentstate"><strong>CircuitBreaker.currentState</strong></a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/errgroup/" class="no-underline">Go errgroup 使用</a>
+          <br />
+        
+          <a href="/posts/go-map-yuan-ma-yue-du/" class="no-underline">go map源码阅读</a>
+          <br />
+        
+          <a href="/posts/go-containerheap-yuan-ma-yue-du/" class="no-underline">go container/heap 源码阅读</a>
+          <br />
+        
+          <a href="/posts/2021-2-24-go-container-list-source-code/" class="no-underline">go container/list 源码分析【未完】</a>
+          <br />
+        
+          <a href="/posts/go_seek/" class="no-underline">go 文件操作的&#34;坑&#34;之 Seek()</a>
+          <br />
+        
+          <a href="/posts/go-gc/" class="no-underline">go gc 白话版</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>
