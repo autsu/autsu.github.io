@@ -296,7 +296,6 @@
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -371,7 +370,7 @@
   
   <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
     <div
-      class="lg:col-start-2 bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
     >
       <article class="prose">
   <h1 class="mb-4">MySQL 面经汇总</h1>
@@ -549,6 +548,44 @@ D：持久性，事务最终会保存到硬盘上，对数据库的更改是永�
 </script>
 
     </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-char-和-varchar-的区别">1. char 和 varchar 的区别</a></li>
+    <li><a href="#2-建立一个联合索引问-select-abc-和-select-acb-有什么区别">2. 建立一个联合索引，问 select a，b，c 和 select a，c，b 有什么区别</a></li>
+    <li><a href="#3-varchar-类型插入的数据超过设置的长度会怎样">3. varchar 类型，插入的数据超过设置的长度会怎样</a></li>
+    <li><a href="#mysql-事务的-acid">MYSQL 事务的 ACID</a></li>
+    <li><a href="#mysql-原子性怎么保证">MySQL 原子性怎么保证</a></li>
+    <li><a href="#redolog-工作原理">redolog 工作原理</a></li>
+    <li><a href="#宕机恢复">宕机恢复</a></li>
+    <li><a href="#undolog-在宕机时怎么保证原子性">undolog 在宕机时怎么保证原子性</a></li>
+    <li><a href="#幻读和不可重复读的区别">幻读和不可重复读的区别</a></li>
+    <li><a href="#乐观锁悲观锁">乐观锁悲观锁</a></li>
+    <li><a href="#索引设计原则">索引设计原则</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
     
 
     

@@ -310,7 +310,6 @@
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -725,14 +724,21 @@ static void sig_child(int signo)
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#孤儿进程测试程序">孤儿进程测试程序</a></li>
-    <li><a href="#僵尸进程测试程序">僵尸进程测试程序</a></li>
-    <li><a href="#僵尸进程测试2">僵尸进程测试2</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#fork-两次">fork 两次</a></li>
-    <li><a href="#信号">信号</a></li>
+    <li><a href="#基本概念">基本概念</a></li>
+    <li><a href="#危害">危害</a></li>
+    <li><a href="#测试">测试</a>
+      <ul>
+        <li><a href="#孤儿进程测试程序">孤儿进程测试程序</a></li>
+        <li><a href="#僵尸进程测试程序">僵尸进程测试程序</a></li>
+        <li><a href="#僵尸进程测试2">僵尸进程测试2</a></li>
+      </ul>
+    </li>
+    <li><a href="#僵尸进程解决方法">僵尸进程解决方法</a>
+      <ul>
+        <li><a href="#fork-两次">fork 两次</a></li>
+        <li><a href="#信号">信号</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
 </div>

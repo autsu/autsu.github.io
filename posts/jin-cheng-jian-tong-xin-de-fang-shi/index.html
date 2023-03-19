@@ -300,7 +300,6 @@
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -907,18 +906,26 @@ int main() {
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#消息队列的-api">消息队列的 API</a>
+    <li><a href="#无名管道">无名管道</a></li>
+    <li><a href="#命名管道">命名管道</a></li>
+    <li><a href="#消息队列">消息队列</a>
       <ul>
-        <li><a href="#msgget-函数">msgget 函数</a></li>
-        <li><a href="#msgsnd-函数">msgsnd 函数</a></li>
-        <li><a href="#msgrcv-函数">msgrcv 函数</a></li>
-        <li><a href="#msgctl函数">msgctl函数</a></li>
+        <li><a href="#消息队列的-api">消息队列的 API</a>
+          <ul>
+            <li><a href="#msgget-函数">msgget 函数</a></li>
+            <li><a href="#msgsnd-函数">msgsnd 函数</a></li>
+            <li><a href="#msgrcv-函数">msgrcv 函数</a></li>
+            <li><a href="#msgctl函数">msgctl函数</a></li>
+          </ul>
+        </li>
+        <li><a href="#示例">示例</a></li>
+        <li><a href="#消息类型">消息类型</a></li>
+        <li><a href="#消息队列与命名管道的比较">消息队列与命名管道的比较</a></li>
+        <li><a href="#消息队列的缺点">消息队列的缺点</a></li>
       </ul>
     </li>
-    <li><a href="#示例">示例</a></li>
-    <li><a href="#消息类型">消息类型</a></li>
-    <li><a href="#消息队列与命名管道的比较">消息队列与命名管道的比较</a></li>
-    <li><a href="#消息队列的缺点">消息队列的缺点</a></li>
+    <li><a href="#socket">socket</a></li>
+    <li><a href="#信号">信号</a></li>
   </ul>
 </nav>
 </div>

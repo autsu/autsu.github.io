@@ -310,7 +310,6 @@
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -613,25 +612,31 @@
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#引用计数法">引用计数法</a></li>
-    <li><a href="#标记清除法">标记清除法</a></li>
-    <li><a href="#标记整理法">标记整理法</a></li>
-    <li><a href="#复制回收法">复制回收法</a></li>
-    <li><a href="#分代式">分代式</a></li>
-    <li><a href="#三色标记法">三色标记法</a>
+    <li><a href="#主流的垃圾回收算法">主流的垃圾回收算法</a>
       <ul>
-        <li><a href="#gc-root-节点具体指哪些">❓gc root 节点具体指哪些？</a></li>
-        <li><a href="#强三色不变式">强三色不变式</a></li>
-        <li><a href="#弱三色不变式">弱三色不变式</a></li>
-        <li><a href="#写屏障">写屏障</a>
+        <li><a href="#引用计数法">引用计数法</a></li>
+        <li><a href="#标记清除法">标记清除法</a></li>
+        <li><a href="#标记整理法">标记整理法</a></li>
+        <li><a href="#复制回收法">复制回收法</a></li>
+        <li><a href="#分代式">分代式</a></li>
+        <li><a href="#三色标记法">三色标记法</a>
           <ul>
-            <li><a href="#插入写屏障的缺点">插入写屏障的缺点</a></li>
-            <li><a href="#删除写屏障的缺点">删除写屏障的缺点</a></li>
+            <li><a href="#gc-root-节点具体指哪些">❓gc root 节点具体指哪些？</a></li>
+            <li><a href="#强三色不变式">强三色不变式</a></li>
+            <li><a href="#弱三色不变式">弱三色不变式</a></li>
+            <li><a href="#写屏障">写屏障</a>
+              <ul>
+                <li><a href="#插入写屏障的缺点">插入写屏障的缺点</a></li>
+                <li><a href="#删除写屏障的缺点">删除写屏障的缺点</a></li>
+              </ul>
+            </li>
+            <li><a href="#读屏障">读屏障</a></li>
           </ul>
         </li>
-        <li><a href="#读屏障">读屏障</a></li>
       </ul>
     </li>
+    <li><a href="#go-gc">Go GC</a></li>
+    <li><a href="#参考抄袭">参考（抄袭）</a></li>
   </ul>
 </nav>
 </div>

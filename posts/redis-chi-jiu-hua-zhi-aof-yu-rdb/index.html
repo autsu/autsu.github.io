@@ -298,7 +298,6 @@
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -565,25 +564,30 @@ b
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#如何使用">如何使用</a></li>
-    <li><a href="#rdb-的坑">RDB 的坑</a>
+    <li><a href="#rdb">RDB</a>
       <ul>
-        <li><a href="#1-生成的-dumprdb-所在位置">1. 生成的 dump.rdb 所在位置</a></li>
-        <li><a href="#2-客户端执行-shutdown-或者-直接-ctrlc-退出服务端会自动-save">2. 客户端执行 shutdown 或者 直接 ctrl+c 退出服务端，会自动 save</a></li>
+        <li><a href="#如何使用">如何使用</a></li>
+        <li><a href="#rdb-的坑">RDB 的坑</a>
+          <ul>
+            <li><a href="#1-生成的-dumprdb-所在位置">1. 生成的 dump.rdb 所在位置</a></li>
+            <li><a href="#2-客户端执行-shutdown-或者-直接-ctrlc-退出服务端会自动-save">2. 客户端执行 shutdown 或者 直接 ctrl+c 退出服务端，会自动 save</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
-  </ul>
-
-  <ul>
-    <li><a href="#如何使用-1">如何使用</a></li>
-    <li><a href="#aof-持久化的实现">AOF 持久化的实现</a>
+    <li><a href="#aof">AOF</a>
       <ul>
-        <li><a href="#写入和同步的区别">写入和同步的区别</a></li>
-      </ul>
-    </li>
-    <li><a href="#aof-重写">AOF 重写</a>
-      <ul>
-        <li><a href="#一个问题子进程在重写过程中父进程依然可以写入新的-kv此时会怎么处理">一个问题：子进程在重写过程中，父进程依然可以写入新的 kv，此时会怎么处理？</a></li>
+        <li><a href="#如何使用-1">如何使用</a></li>
+        <li><a href="#aof-持久化的实现">AOF 持久化的实现</a>
+          <ul>
+            <li><a href="#写入和同步的区别">写入和同步的区别</a></li>
+          </ul>
+        </li>
+        <li><a href="#aof-重写">AOF 重写</a>
+          <ul>
+            <li><a href="#一个问题子进程在重写过程中父进程依然可以写入新的-kv此时会怎么处理">一个问题：子进程在重写过程中，父进程依然可以写入新的 kv，此时会怎么处理？</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>

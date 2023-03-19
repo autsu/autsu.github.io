@@ -306,7 +306,6 @@
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -1266,39 +1265,48 @@ dnsutils         1/1     Running   1 (40m ago)   43m   10.42.0.31   ubuntu   &lt
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#测试"><strong>测试</strong></a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#使用环境变量">使用环境变量</a></li>
-    <li><a href="#使用-dns">使用 DNS</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#clusterip">ClusterIP</a>
+    <li><a href="#什么是-service">什么是 service</a></li>
+    <li><a href="#创建-service">创建 service</a>
       <ul>
-        <li><a href="#使用-kube-proxy-让外部访问-clusterip-service">使用 kube-proxy 让外部访问 ClusterIP Service</a></li>
+        <li><a href="#测试"><strong>测试</strong></a></li>
       </ul>
     </li>
-  </ul>
-
-  <ul>
-    <li><a href="#nodeport">NodePort</a></li>
-    <li><a href="#loadbalance">LoadBalance</a></li>
-    <li><a href="#ingress">Ingress</a>
+    <li><a href="#服务发现">服务发现</a>
       <ul>
-        <li><a href="#基于-minikube-nginx-ingress-的实践">基于 minikube nginx ingress 的实践</a></li>
+        <li><a href="#使用环境变量">使用环境变量</a></li>
+        <li><a href="#使用-dns">使用 DNS</a></li>
       </ul>
     </li>
-  </ul>
-
-  <ul>
-    <li>
+    <li><a href="#集群内访问">集群内访问</a>
+      <ul>
+        <li><a href="#clusterip">ClusterIP</a>
+          <ul>
+            <li><a href="#使用-kube-proxy-让外部访问-clusterip-service">使用 kube-proxy 让外部访问 ClusterIP Service</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#对外访问">对外访问</a>
+      <ul>
+        <li><a href="#nodeport">NodePort</a></li>
+        <li><a href="#loadbalance">LoadBalance</a></li>
+        <li><a href="#ingress">Ingress</a>
+          <ul>
+            <li><a href="#基于-minikube-nginx-ingress-的实践">基于 minikube nginx ingress 的实践</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#特殊的-headless-service">特殊的 headless service</a>
       <ul>
         <li>
           <ul>
-            <li><a href="#疑问用户自行选择-pod-的场景有哪些用户需要访问-service-下所有-pod-的场景有哪些">疑问：用户自行选择 pod 的场景有哪些？用户需要访问 service 下所有 pod 的场景有哪些？</a></li>
-            <li><a href="#疑问使用-headless-service-后是否代表负载均衡已经失效需要用户自行实现">疑问：使用 headless service 后，是否代表负载均衡已经失效，需要用户自行实现？</a></li>
+            <li>
+              <ul>
+                <li><a href="#疑问用户自行选择-pod-的场景有哪些用户需要访问-service-下所有-pod-的场景有哪些">疑问：用户自行选择 pod 的场景有哪些？用户需要访问 service 下所有 pod 的场景有哪些？</a></li>
+                <li><a href="#疑问使用-headless-service-后是否代表负载均衡已经失效需要用户自行实现">疑问：使用 headless service 后，是否代表负载均衡已经失效，需要用户自行实现？</a></li>
+              </ul>
+            </li>
           </ul>
         </li>
       </ul>

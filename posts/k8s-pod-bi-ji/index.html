@@ -292,7 +292,6 @@
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -710,15 +709,26 @@ nginx-66b9cc684d-hxzc9        kind-worker
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#每个-pod-只包含紧密相关的组件或进程">每个 pod 只包含紧密相关的组件或进程</a></li>
-    <li><a href="#何时在-pod-中使用多个容器"><strong>何时在 pod 中使用多个容器</strong></a></li>
-    <li><a href="#如果一个-pod-中存在多个容器而其中有一个容器挂掉了此时会如何处理">如果一个 pod 中存在多个容器，而其中有一个容器挂掉了，此时会如何处理？</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#hostnetwork">hostNetwork</a></li>
-    <li><a href="#hostport">HostPort</a></li>
-    <li><a href="#port-forward">port-forward</a></li>
+    <li><a href="#什么是-pod">什么是 pod</a></li>
+    <li><a href="#通过-pod-合理管理容器">通过 pod 合理管理容器</a>
+      <ul>
+        <li><a href="#每个-pod-只包含紧密相关的组件或进程">每个 pod 只包含紧密相关的组件或进程</a></li>
+        <li><a href="#何时在-pod-中使用多个容器"><strong>何时在 pod 中使用多个容器</strong></a></li>
+        <li><a href="#如果一个-pod-中存在多个容器而其中有一个容器挂掉了此时会如何处理">如果一个 pod 中存在多个容器，而其中有一个容器挂掉了，此时会如何处理？</a></li>
+      </ul>
+    </li>
+    <li><a href="#相关命令">相关命令</a></li>
+    <li><a href="#pod-提供对外访问">pod 提供对外访问</a>
+      <ul>
+        <li><a href="#hostnetwork">hostNetwork</a></li>
+        <li><a href="#hostport">HostPort</a></li>
+        <li><a href="#port-forward">port-forward</a></li>
+      </ul>
+    </li>
+    <li><a href="#pod-实战">pod 实战</a></li>
+    <li><a href="#标签">标签</a></li>
+    <li><a href="#将-pod-调度到特定节点">将 pod 调度到特定节点</a></li>
+    <li><a href="#pod-如何调度">pod 如何调度</a></li>
   </ul>
 </nav>
 </div>

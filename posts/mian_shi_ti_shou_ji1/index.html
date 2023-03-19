@@ -302,7 +302,6 @@
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -512,34 +511,39 @@
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#mapchannelslice-的底层实现">map、channel、slice 的底层实现</a>
+    <li><a href="#go相关">Go相关</a>
       <ul>
-        <li><a href="#map">map</a></li>
-        <li><a href="#channel">channel</a></li>
+        <li><a href="#mapchannelslice-的底层实现">map、channel、slice 的底层实现</a>
+          <ul>
+            <li><a href="#map">map</a></li>
+            <li><a href="#channel">channel</a></li>
+          </ul>
+        </li>
+        <li><a href="#syncmapsyncpoolsynconce的原理">sync.map、sync.pool、sync.Once的原理</a></li>
+        <li><a href="#gc的过程写屏障的含义及作用">GC的过程、写屏障的含义及作用</a></li>
+        <li><a href="#gmp-模型触发-goroutine-切换的原因有哪些for-死循环会怎么样全局-goroutine-里面存储什么">GMP 模型，触发 Goroutine 切换的原因有哪些？for 死循环会怎么样？全局 goroutine 里面存储什么？</a></li>
+        <li><a href="#interface-的底层实现怎么判空">interface 的底层实现，怎么判空？</a></li>
+        <li><a href="#reflect-的使用">reflect 的使用</a></li>
+        <li><a href="#逃逸分析">逃逸分析</a></li>
+        <li><a href="#context的使用">context的使用</a></li>
+        <li><a href="#go-性能问题的定位过程pprof的使用">go 性能问题的定位过程（pprof的使用）</a></li>
+        <li><a href="#协程池的使用">协程池的使用</a></li>
       </ul>
     </li>
-    <li><a href="#syncmapsyncpoolsynconce的原理">sync.map、sync.pool、sync.Once的原理</a></li>
-    <li><a href="#gc的过程写屏障的含义及作用">GC的过程、写屏障的含义及作用</a></li>
-    <li><a href="#gmp-模型触发-goroutine-切换的原因有哪些for-死循环会怎么样全局-goroutine-里面存储什么">GMP 模型，触发 Goroutine 切换的原因有哪些？for 死循环会怎么样？全局 goroutine 里面存储什么？</a></li>
-    <li><a href="#interface-的底层实现怎么判空">interface 的底层实现，怎么判空？</a></li>
-    <li><a href="#reflect-的使用">reflect 的使用</a></li>
-    <li><a href="#逃逸分析">逃逸分析</a></li>
-    <li><a href="#context的使用">context的使用</a></li>
-    <li><a href="#go-性能问题的定位过程pprof的使用">go 性能问题的定位过程（pprof的使用）</a></li>
-    <li><a href="#协程池的使用">协程池的使用</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#redis的数据类型以及日常的应用">redis的数据类型以及日常的应用</a></li>
-    <li><a href="#redis的发布订阅的原理">redis的发布/订阅的原理</a></li>
-    <li><a href="#zset的底层实现">zset的底层实现</a></li>
-    <li><a href="#数据缓存过期策略">数据缓存过期策略</a></li>
-    <li><a href="#redis的部署模式">redis的部署模式</a></li>
-    <li><a href="#redis为什么速度比较快">redis为什么速度比较快</a></li>
-    <li><a href="#reids的大key热key的处理">reids的大key、热key的处理</a></li>
-    <li><a href="#如何实现分布式锁的">如何实现分布式锁的</a></li>
-    <li><a href="#持久化策略及其对比">持久化策略及其对比</a></li>
-    <li><a href="#缓存雪崩缓存击穿缓存穿透">缓存雪崩、缓存击穿、缓存穿透</a></li>
+    <li><a href="#redis相关">Redis相关</a>
+      <ul>
+        <li><a href="#redis的数据类型以及日常的应用">redis的数据类型以及日常的应用</a></li>
+        <li><a href="#redis的发布订阅的原理">redis的发布/订阅的原理</a></li>
+        <li><a href="#zset的底层实现">zset的底层实现</a></li>
+        <li><a href="#数据缓存过期策略">数据缓存过期策略</a></li>
+        <li><a href="#redis的部署模式">redis的部署模式</a></li>
+        <li><a href="#redis为什么速度比较快">redis为什么速度比较快</a></li>
+        <li><a href="#reids的大key热key的处理">reids的大key、热key的处理</a></li>
+        <li><a href="#如何实现分布式锁的">如何实现分布式锁的</a></li>
+        <li><a href="#持久化策略及其对比">持久化策略及其对比</a></li>
+        <li><a href="#缓存雪崩缓存击穿缓存穿透">缓存雪崩、缓存击穿、缓存穿透</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
 </div>

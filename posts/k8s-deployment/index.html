@@ -308,7 +308,6 @@
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -1107,22 +1106,30 @@ kubia-74c44776ff-rm4xw   0/1     Running   0          98s
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#先删除所有旧版本的-pod再创建新版本的-pod"><strong>先删除所有旧版本的 pod，再创建新版本的 pod</strong></a></li>
-    <li><a href="#先创建新版本的-pod再删除所有旧版本的-pod"><strong>先创建新版本的 pod，再删除所有旧版本的 pod</strong></a></li>
-    <li><a href="#交替执行删一个旧的创建一个新的滚动更新">交替执行，删一个旧的，创建一个新的（滚动更新）</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#为什么需要回滚">为什么需要回滚</a></li>
-    <li><a href="#实践">实践</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#实践-1">实践</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#实践-2">实践</a></li>
+    <li><a href="#如何更新-pod">如何更新 pod</a>
+      <ul>
+        <li><a href="#先删除所有旧版本的-pod再创建新版本的-pod"><strong>先删除所有旧版本的 pod，再创建新版本的 pod</strong></a></li>
+        <li><a href="#先创建新版本的-pod再删除所有旧版本的-pod"><strong>先创建新版本的 pod，再删除所有旧版本的 pod</strong></a></li>
+        <li><a href="#交替执行删一个旧的创建一个新的滚动更新">交替执行，删一个旧的，创建一个新的（滚动更新）</a></li>
+      </ul>
+    </li>
+    <li><a href="#使用-deployment-进行更新">使用 deployment 进行更新</a></li>
+    <li><a href="#使用-deployment-进行回滚">使用 deployment 进行回滚</a>
+      <ul>
+        <li><a href="#为什么需要回滚">为什么需要回滚</a></li>
+        <li><a href="#实践">实践</a></li>
+      </ul>
+    </li>
+    <li><a href="#控制滚动升级速率">控制滚动升级速率</a>
+      <ul>
+        <li><a href="#实践-1">实践</a></li>
+      </ul>
+    </li>
+    <li><a href="#升级过程中检测新版本是否可用">升级过程中检测新版本是否可用</a>
+      <ul>
+        <li><a href="#实践-2">实践</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
 </div>

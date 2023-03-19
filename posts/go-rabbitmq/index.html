@@ -294,7 +294,6 @@
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -1022,52 +1021,60 @@ quick.orange.fox:888
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#生产者">生产者</a></li>
-    <li><a href="#消费者">消费者</a></li>
-    <li><a href="#核心方法">核心方法</a>
+    <li><a href="#一个基本的发布订阅程序示例">一个基本的发布/订阅程序示例</a>
       <ul>
-        <li><a href="#queuedeclare">QueueDeclare</a></li>
-        <li><a href="#consume">Consume</a></li>
-        <li><a href="#publish">Publish</a></li>
-      </ul>
-    </li>
-  </ul>
-
-  <ul>
-    <li>
-      <ul>
-        <li><a href="#queuebind">QueueBind</a></li>
-      </ul>
-    </li>
-    <li><a href="#通用代码">通用代码</a>
-      <ul>
-        <li><a href="#生产者-1">生产者</a></li>
-        <li><a href="#消费者-1">消费者</a></li>
-      </ul>
-    </li>
-    <li><a href="#fanout">fanout</a>
-      <ul>
-        <li><a href="#示例">示例</a>
+        <li><a href="#生产者">生产者</a></li>
+        <li><a href="#消费者">消费者</a></li>
+        <li><a href="#核心方法">核心方法</a>
           <ul>
-            <li><a href="#生产者-2">生产者</a></li>
-            <li><a href="#消费者-1-1">消费者 1</a></li>
-            <li><a href="#消费者-2">消费者 2</a></li>
+            <li><a href="#queuedeclare">QueueDeclare</a></li>
+            <li><a href="#consume">Consume</a></li>
+            <li><a href="#publish">Publish</a></li>
           </ul>
         </li>
       </ul>
     </li>
-    <li><a href="#direct">direct</a></li>
-    <li><a href="#topic">topic</a>
+    <li><a href="#临时队列">临时队列</a></li>
+    <li><a href="#exchange-交换器">exchange 交换器</a>
       <ul>
-        <li><a href="#示例-1">示例</a>
+        <li>
           <ul>
-            <li><a href="#生产者-3">生产者</a></li>
-            <li><a href="#消费者-1-2">消费者 1</a></li>
-            <li><a href="#消费者-2-1">消费者 2</a></li>
+            <li><a href="#queuebind">QueueBind</a></li>
+          </ul>
+        </li>
+        <li><a href="#通用代码">通用代码</a>
+          <ul>
+            <li><a href="#生产者-1">生产者</a></li>
+            <li><a href="#消费者-1">消费者</a></li>
+          </ul>
+        </li>
+        <li><a href="#fanout">fanout</a>
+          <ul>
+            <li><a href="#示例">示例</a>
+              <ul>
+                <li><a href="#生产者-2">生产者</a></li>
+                <li><a href="#消费者-1-1">消费者 1</a></li>
+                <li><a href="#消费者-2">消费者 2</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#direct">direct</a></li>
+        <li><a href="#topic">topic</a>
+          <ul>
+            <li><a href="#示例-1">示例</a>
+              <ul>
+                <li><a href="#生产者-3">生产者</a></li>
+                <li><a href="#消费者-1-2">消费者 1</a></li>
+                <li><a href="#消费者-2-1">消费者 2</a></li>
+              </ul>
+            </li>
           </ul>
         </li>
       </ul>
     </li>
+    <li><a href="#延迟队列">延迟队列</a></li>
+    <li><a href="#架构及组件">架构及组件</a></li>
   </ul>
 </nav>
 </div>

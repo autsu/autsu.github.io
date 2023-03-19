@@ -304,7 +304,6 @@
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -586,26 +585,31 @@
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#1-说说-time_wait-及其作用">1. 说说 TIME_WAIT 及其作用</a></li>
-    <li><a href="#2-tcp-如何保证可靠性">2. TCP 如何保证可靠性</a></li>
-    <li><a href="#3-三次握手对应到-socket-函数">3. 三次握手对应到 socket 函数</a></li>
-    <li><a href="#4-四次挥手对应到-socket-函数">4. 四次挥手对应到 socket 函数</a></li>
-    <li><a href="#5-为什么断开连接需要四次挥手">5. 为什么断开连接需要四次挥手</a></li>
-    <li><a href="#6-三次握手为什么需要-3-次2-次或者-4-次不行吗">6. 三次握手为什么需要 3 次？2 次或者 4 次不行吗</a></li>
-    <li><a href="#7-tcp-的拥塞控制">7. TCP 的拥塞控制</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#1--http-10112030">1.  HTTP 1.0，1.1，2.0，3.0</a>
+    <li><a href="#tcp-相关">TCP 相关</a>
       <ul>
-        <li><a href="#http-10">HTTP 1.0</a></li>
-        <li><a href="#http-11">HTTP 1.1</a></li>
-        <li><a href="#http-2">HTTP 2</a></li>
-        <li><a href="#http-3">HTTP 3</a></li>
+        <li><a href="#1-说说-time_wait-及其作用">1. 说说 TIME_WAIT 及其作用</a></li>
+        <li><a href="#2-tcp-如何保证可靠性">2. TCP 如何保证可靠性</a></li>
+        <li><a href="#3-三次握手对应到-socket-函数">3. 三次握手对应到 socket 函数</a></li>
+        <li><a href="#4-四次挥手对应到-socket-函数">4. 四次挥手对应到 socket 函数</a></li>
+        <li><a href="#5-为什么断开连接需要四次挥手">5. 为什么断开连接需要四次挥手</a></li>
+        <li><a href="#6-三次握手为什么需要-3-次2-次或者-4-次不行吗">6. 三次握手为什么需要 3 次？2 次或者 4 次不行吗</a></li>
+        <li><a href="#7-tcp-的拥塞控制">7. TCP 的拥塞控制</a></li>
       </ul>
     </li>
-    <li><a href="#http-状态码1xx-5xx">HTTP 状态码，1xx-5xx</a></li>
-    <li><a href="#输入-url-到浏览器的过程">输入 url 到浏览器的过程</a></li>
+    <li><a href="#http-相关">HTTP 相关</a>
+      <ul>
+        <li><a href="#1--http-10112030">1.  HTTP 1.0，1.1，2.0，3.0</a>
+          <ul>
+            <li><a href="#http-10">HTTP 1.0</a></li>
+            <li><a href="#http-11">HTTP 1.1</a></li>
+            <li><a href="#http-2">HTTP 2</a></li>
+            <li><a href="#http-3">HTTP 3</a></li>
+          </ul>
+        </li>
+        <li><a href="#http-状态码1xx-5xx">HTTP 状态码，1xx-5xx</a></li>
+        <li><a href="#输入-url-到浏览器的过程">输入 url 到浏览器的过程</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
 </div>

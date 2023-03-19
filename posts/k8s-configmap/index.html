@@ -306,7 +306,6 @@
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -1226,28 +1225,33 @@ Accept-Ranges: bytes
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#在-docker-中定义命令与参数">在 docker 中定义命令与参数</a></li>
-    <li><a href="#在-k8s-中定义命令与参数">在 k8s 中定义命令与参数</a>
+    <li><a href="#引子">引子</a>
       <ul>
-        <li><a href="#实战">实战</a></li>
+        <li><a href="#在-docker-中定义命令与参数">在 docker 中定义命令与参数</a></li>
+        <li><a href="#在-k8s-中定义命令与参数">在 k8s 中定义命令与参数</a>
+          <ul>
+            <li><a href="#实战">实战</a></li>
+          </ul>
+        </li>
+        <li><a href="#在容器定义中指定环境变量">在容器定义中指定环境变量</a></li>
       </ul>
     </li>
-    <li><a href="#在容器定义中指定环境变量">在容器定义中指定环境变量</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#命令">命令</a></li>
-    <li><a href="#给容器传递-configmap-作为环境变量">给容器传递 ConfigMap 作为环境变量</a>
+    <li><a href="#configmap">ConfigMap</a>
       <ul>
-        <li><a href="#如果引用的-configmap-不存在会怎样">如果引用的 ConfigMap 不存在会怎样</a></li>
-      </ul>
-    </li>
-    <li><a href="#给容器传递-configmap-作为参数">给容器传递 ConfigMap 作为参数</a></li>
-    <li><a href="#使用-configmap-卷">使用 ConfigMap 卷</a>
-      <ul>
-        <li><a href="#实践">实践</a></li>
-        <li><a href="#只挂载-configmap-中的部分条目">只挂载 ConfigMap 中的部分条目</a></li>
-        <li><a href="#热更新">热更新</a></li>
+        <li><a href="#命令">命令</a></li>
+        <li><a href="#给容器传递-configmap-作为环境变量">给容器传递 ConfigMap 作为环境变量</a>
+          <ul>
+            <li><a href="#如果引用的-configmap-不存在会怎样">如果引用的 ConfigMap 不存在会怎样</a></li>
+          </ul>
+        </li>
+        <li><a href="#给容器传递-configmap-作为参数">给容器传递 ConfigMap 作为参数</a></li>
+        <li><a href="#使用-configmap-卷">使用 ConfigMap 卷</a>
+          <ul>
+            <li><a href="#实践">实践</a></li>
+            <li><a href="#只挂载-configmap-中的部分条目">只挂载 ConfigMap 中的部分条目</a></li>
+            <li><a href="#热更新">热更新</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>

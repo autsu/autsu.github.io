@@ -1343,60 +1343,6 @@ mkdir /docker/redis</description>
     </item>
     
     <item>
-      <title>Chapter 1</title>
-      <link>/docs/interview/base/chapter-1/</link>
-      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/docs/interview/base/chapter-1/</guid>
-      <description>&lt;p&gt;This is chapter 1 of nested chapter.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Chapter 1</title>
-      <link>/docs/interview/language/chapter-1/</link>
-      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/docs/interview/language/chapter-1/</guid>
-      <description>&lt;p&gt;This is chapter 1 of nested chapter.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Chapter 1</title>
-      <link>/docs/interview/middleware/chapter-1/</link>
-      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/docs/interview/middleware/chapter-1/</guid>
-      <description>&lt;p&gt;This is chapter 1 of nested chapter.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Chapter 2</title>
-      <link>/docs/interview/base/chapter-2/</link>
-      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/docs/interview/base/chapter-2/</guid>
-      <description>&lt;p&gt;This is chapter 2 of nested chapter.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Chapter 2</title>
-      <link>/docs/interview/language/chapter-2/</link>
-      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/docs/interview/language/chapter-2/</guid>
-      <description>&lt;p&gt;This is chapter 2 of nested chapter.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Chapter 2</title>
-      <link>/docs/interview/middleware/chapter-2/</link>
-      <pubDate>Fri, 16 Oct 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/docs/interview/middleware/chapter-2/</guid>
-      <description>&lt;p&gt;This is chapter 2 of nested chapter.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
       <title>Xshell连接及docker、redis安装</title>
       <link>/posts/2018-11-7-redis/</link>
       <pubDate>Sun, 11 Oct 2020 00:00:00 +0000</pubDate>

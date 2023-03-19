@@ -308,7 +308,6 @@ CREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) 
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -889,13 +888,17 @@ CREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) 
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#测试情景-1-不存在的主键select-是否会加间隙锁">测试情景 1 不存在的主键，select 是否会加间隙锁</a></li>
-    <li><a href="#测试情景-2">测试情景 2</a></li>
-    <li><a href="#测试情景-3-已经存在的主键select-是否会加间隙锁">测试情景 3 已经存在的主键，select 是否会加间隙锁</a></li>
-    <li><a href="#测试情景-4-已经存在的非索引列可能查出多条数据select-是否会加间隙锁">测试情景 4 已经存在的非索引列（可能查出多条数据），select 是否会加间隙锁</a></li>
-    <li><a href="#测试情景-5-不存在的非索引列可能查出多条数据select-是否会加间隙锁">测试情景 5 不存在的非索引列（可能查出多条数据），select 是否会加间隙锁</a></li>
-    <li><a href="#测试场景-6-不存在的普通索引列select-是否会加间隙锁">测试场景 6 不存在的普通索引列，select 是否会加间隙锁</a></li>
-    <li><a href="#测试情景-6">测试情景 6</a></li>
+    <li>
+      <ul>
+        <li><a href="#测试情景-1-不存在的主键select-是否会加间隙锁">测试情景 1 不存在的主键，select 是否会加间隙锁</a></li>
+        <li><a href="#测试情景-2">测试情景 2</a></li>
+        <li><a href="#测试情景-3-已经存在的主键select-是否会加间隙锁">测试情景 3 已经存在的主键，select 是否会加间隙锁</a></li>
+        <li><a href="#测试情景-4-已经存在的非索引列可能查出多条数据select-是否会加间隙锁">测试情景 4 已经存在的非索引列（可能查出多条数据），select 是否会加间隙锁</a></li>
+        <li><a href="#测试情景-5-不存在的非索引列可能查出多条数据select-是否会加间隙锁">测试情景 5 不存在的非索引列（可能查出多条数据），select 是否会加间隙锁</a></li>
+        <li><a href="#测试场景-6-不存在的普通索引列select-是否会加间隙锁">测试场景 6 不存在的普通索引列，select 是否会加间隙锁</a></li>
+        <li><a href="#测试情景-6">测试情景 6</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
 </div>

@@ -308,7 +308,6 @@
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -383,7 +382,7 @@
   
   <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
     <div
-      class="lg:col-start-2 bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
     >
       <article class="prose">
   <h1 class="mb-4">GMP 面试题</h1>
@@ -569,11 +568,49 @@ func main() {
 
     </div>
     
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#goroutine-阻塞的话是不是对应的-m-也会阻塞">Goroutine 阻塞的话，是不是对应的 M 也会阻塞</a></li>
+    <li><a href="#gmp-当一个-g-阻塞时gmp-会发生什么">GMP 当一个 G 阻塞时，G、M、P 会发生什么</a></li>
+    <li><a href="#p-和-m-数量可以无限扩增的吗">P 和 M 数量可以无限扩增的吗？</a></li>
+    <li><a href="#p-的调度逻辑">P 的调度逻辑</a></li>
+    <li><a href="#如果一个-g-运行时间过长导致队列中后续-g-都无法运行呢">如果一个 G 运行时间过长，导致队列中后续 G 都无法运行呢？</a></li>
+    <li><a href="#g-陷入系统调用会发生什么">G 陷入系统调用会发生什么</a></li>
+    <li><a href="#如果当前-m-没有绑定-p那么如何获取-g">如果当前 M 没有绑定 P，那么如何获取 G</a></li>
+    <li><a href="#gmp-的几个队列">GMP 的几个队列</a></li>
+    <li><a href="#g0m0-是什么">g0，m0 是什么</a></li>
+    <li><a href="#程序题">程序题</a></li>
+    <li><a href="#goroutine-的调度时机有哪些">goroutine 的调度时机有哪些</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
 
     
     
       <div
-        class="lg:col-start-2 bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
       >
         <h3>相关</h3>
         

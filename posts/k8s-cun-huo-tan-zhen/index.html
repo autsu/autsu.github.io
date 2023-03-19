@@ -296,7 +296,6 @@
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -527,9 +526,15 @@ Liveness:       http-get http://:8080/ delay=0s timeout=1s period=10s #success=1
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#使用-http-方式">使用 http 方式</a></li>
-    <li><a href="#疑问">疑问：</a></li>
-    <li><a href="#如果-pod-中有多个容器如何检测">如果 pod 中有多个容器，如何检测</a></li>
+    <li><a href="#基本概念">基本概念</a></li>
+    <li><a href="#实践">实践</a>
+      <ul>
+        <li><a href="#使用-http-方式">使用 http 方式</a></li>
+        <li><a href="#疑问">疑问：</a></li>
+        <li><a href="#如果-pod-中有多个容器如何检测">如果 pod 中有多个容器，如何检测</a></li>
+      </ul>
+    </li>
+    <li><a href="#查看-pod-探针">查看 pod 探针</a></li>
   </ul>
 </nav>
 </div>

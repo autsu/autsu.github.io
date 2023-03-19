@@ -308,7 +308,6 @@ Reflector：负责从 api-server list（全量拉取数据） and watch（监听
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -1369,104 +1368,114 @@ func (f *DeltaFIFO) queueActionLocked(actionType DeltaType, obj interface{}) err
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#types">types</a>
+    <li><a href="#架构">架构</a></li>
+    <li><a href="#informersfactorygo">informers/factory.go</a>
       <ul>
-        <li><a href="#sharedinformerfactory">sharedInformerFactory</a>
+        <li><a href="#types">types</a>
           <ul>
-            <li><a href="#start">Start()</a></li>
-            <li><a href="#informerfor">InformerFor()</a>
+            <li><a href="#sharedinformerfactory">sharedInformerFactory</a>
               <ul>
-                <li><a href="#示例">示例</a></li>
+                <li><a href="#start">Start()</a></li>
+                <li><a href="#informerfor">InformerFor()</a>
+                  <ul>
+                    <li><a href="#示例">示例</a></li>
+                  </ul>
+                </li>
               </ul>
             </li>
           </ul>
         </li>
-      </ul>
-    </li>
-    <li><a href="#functions">functions</a>
-      <ul>
-        <li><a href="#newsharedinformerfactory">NewSharedInformerFactory</a></li>
-        <li><a href="#newsharedinformerfactorywithoptions">NewSharedInformerFactoryWithOptions</a></li>
-      </ul>
-    </li>
-  </ul>
-
-  <ul>
-    <li><a href="#types-1">types</a>
-      <ul>
-        <li><a href="#sharedindexinformer">sharedIndexInformer</a>
+        <li><a href="#functions">functions</a>
           <ul>
-            <li><a href="#run">Run()</a></li>
-            <li><a href="#handledeltas">HandleDeltas()</a></li>
-            <li><a href="#addeventhandler">AddEventHandler()</a></li>
-            <li><a href="#addeventhandlerwithresyncperiod">AddEventHandlerWithResyncPeriod()</a></li>
-            <li><a href="#onadd">OnAdd()</a></li>
-            <li><a href="#onupdate">OnUpdate()</a></li>
-            <li><a href="#ondelete">OnDelete()</a></li>
-          </ul>
-        </li>
-        <li><a href="#sharedprocessor">sharedProcessor</a>
-          <ul>
-            <li><a href="#addlistener">addListener()</a></li>
-            <li><a href="#distribute">distribute()</a></li>
-          </ul>
-        </li>
-        <li><a href="#processorlistener">processorListener</a>
-          <ul>
-            <li><a href="#newprocesslistener">newProcessListener()</a></li>
+            <li><a href="#newsharedinformerfactory">NewSharedInformerFactory</a></li>
+            <li><a href="#newsharedinformerfactorywithoptions">NewSharedInformerFactoryWithOptions</a></li>
           </ul>
         </li>
       </ul>
     </li>
-    <li><a href="#functions-1">functions</a>
+    <li><a href="#toolscacheshared_informergo">tools/cache/shared_informer.go</a>
       <ul>
-        <li><a href="#newsharedindexinformer">NewSharedIndexInformer</a></li>
-      </ul>
-    </li>
-  </ul>
-
-  <ul>
-    <li><a href="#types-2">types</a>
-      <ul>
-        <li><a href="#controller">controller</a>
+        <li><a href="#types-1">types</a>
           <ul>
-            <li><a href="#processloop">processLoop()</a></li>
-            <li><a href="#run-1">Run()</a></li>
+            <li><a href="#sharedindexinformer">sharedIndexInformer</a>
+              <ul>
+                <li><a href="#run">Run()</a></li>
+                <li><a href="#handledeltas">HandleDeltas()</a></li>
+                <li><a href="#addeventhandler">AddEventHandler()</a></li>
+                <li><a href="#addeventhandlerwithresyncperiod">AddEventHandlerWithResyncPeriod()</a></li>
+                <li><a href="#onadd">OnAdd()</a></li>
+                <li><a href="#onupdate">OnUpdate()</a></li>
+                <li><a href="#ondelete">OnDelete()</a></li>
+              </ul>
+            </li>
+            <li><a href="#sharedprocessor">sharedProcessor</a>
+              <ul>
+                <li><a href="#addlistener">addListener()</a></li>
+                <li><a href="#distribute">distribute()</a></li>
+              </ul>
+            </li>
+            <li><a href="#processorlistener">processorListener</a>
+              <ul>
+                <li><a href="#newprocesslistener">newProcessListener()</a></li>
+              </ul>
+            </li>
           </ul>
         </li>
-        <li><a href="#config">Config</a></li>
-        <li><a href="#processfunc">ProcessFunc</a></li>
-      </ul>
-    </li>
-    <li><a href="#functions-2">functions</a>
-      <ul>
-        <li><a href="#new">New</a></li>
-        <li><a href="#processdeltas">processDeltas</a></li>
-      </ul>
-    </li>
-  </ul>
-
-  <ul>
-    <li><a href="#types-3">types</a></li>
-    <li><a href="#functions-3">functions</a>
-      <ul>
-        <li><a href="#watchhandler">watchHandler</a></li>
-      </ul>
-    </li>
-  </ul>
-
-  <ul>
-    <li><a href="#types-4">types</a>
-      <ul>
-        <li><a href="#deltafifo">DeltaFIFO</a>
+        <li><a href="#functions-1">functions</a>
           <ul>
-            <li><a href="#add">Add()</a></li>
-            <li><a href="#queueactionlocked">queueActionLocked()</a></li>
+            <li><a href="#newsharedindexinformer">NewSharedIndexInformer</a></li>
           </ul>
         </li>
       </ul>
     </li>
-    <li><a href="#functions-4">functions</a></li>
+    <li><a href="#toolscachecontrollergo">tools/cache/controller.go</a>
+      <ul>
+        <li><a href="#types-2">types</a>
+          <ul>
+            <li><a href="#controller">controller</a>
+              <ul>
+                <li><a href="#processloop">processLoop()</a></li>
+                <li><a href="#run-1">Run()</a></li>
+              </ul>
+            </li>
+            <li><a href="#config">Config</a></li>
+            <li><a href="#processfunc">ProcessFunc</a></li>
+          </ul>
+        </li>
+        <li><a href="#functions-2">functions</a>
+          <ul>
+            <li><a href="#new">New</a></li>
+            <li><a href="#processdeltas">processDeltas</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#toolscachereflectorgo">tools/cache/reflector.go</a>
+      <ul>
+        <li><a href="#types-3">types</a></li>
+        <li><a href="#functions-3">functions</a>
+          <ul>
+            <li><a href="#watchhandler">watchHandler</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#toolscachedelta_fifogo">tools/cache/delta_fifo.go</a>
+      <ul>
+        <li><a href="#types-4">types</a>
+          <ul>
+            <li><a href="#deltafifo">DeltaFIFO</a>
+              <ul>
+                <li><a href="#add">Add()</a></li>
+                <li><a href="#queueactionlocked">queueActionLocked()</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#functions-4">functions</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考资料">参考资料</a></li>
   </ul>
 </nav>
 </div>

@@ -308,7 +308,6 @@ package main import ( &quot;bytes&quot; &quot;encoding/binary&quot; &quot;fmt&qu
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -585,10 +584,14 @@ func main() {
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#1-如果写入的是结构体那么结构体中不能有非定长的数据类型">1. 如果写入的是结构体，那么结构体中不能有非定长的数据类型</a></li>
-    <li><a href="#2-但是可以单独写入-byte">2. 但是可以单独写入 []byte</a></li>
-    <li><a href="#3-如果写入的是-struct需要保证所有字段为-public但是结构体本身可以为-private">3. 如果写入的是 struct，需要保证所有字段为 public，但是结构体本身可以为 private</a></li>
-    <li><a href="#4-可以写入接口类型">4. 可以写入接口类型</a></li>
+    <li><a href="#注意事项">注意事项</a>
+      <ul>
+        <li><a href="#1-如果写入的是结构体那么结构体中不能有非定长的数据类型">1. 如果写入的是结构体，那么结构体中不能有非定长的数据类型</a></li>
+        <li><a href="#2-但是可以单独写入-byte">2. 但是可以单独写入 []byte</a></li>
+        <li><a href="#3-如果写入的是-struct需要保证所有字段为-public但是结构体本身可以为-private">3. 如果写入的是 struct，需要保证所有字段为 public，但是结构体本身可以为 private</a></li>
+        <li><a href="#4-可以写入接口类型">4. 可以写入接口类型</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
 </div>

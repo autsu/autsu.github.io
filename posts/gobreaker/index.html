@@ -314,7 +314,6 @@
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -1565,14 +1564,30 @@ func (cb *CircuitBreaker) toNewGeneration(now time.Time) {
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#官方示例">官方示例</a></li>
-    <li><a href="#我的示例">我的示例</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#circuitbreakeronsuccess"><strong>CircuitBreaker.onSuccess</strong></a></li>
-    <li><a href="#circuitbreakeronfailure"><strong>CircuitBreaker.onFailure</strong></a></li>
-    <li><a href="#circuitbreakercurrentstate"><strong>CircuitBreaker.currentState</strong></a></li>
+    <li><a href="#示例">示例</a>
+      <ul>
+        <li><a href="#官方示例">官方示例</a></li>
+        <li><a href="#我的示例">我的示例</a></li>
+      </ul>
+    </li>
+    <li><a href="#熔断器的-3-种状态">熔断器的 3 种状态</a></li>
+    <li><a href="#计数器">计数器</a></li>
+    <li><a href="#熔断器">熔断器</a></li>
+    <li><a href="#配置类">配置类</a></li>
+    <li><a href="#状态转换">状态转换</a>
+      <ul>
+        <li><a href="#circuitbreakeronsuccess"><strong>CircuitBreaker.onSuccess</strong></a></li>
+        <li><a href="#circuitbreakeronfailure"><strong>CircuitBreaker.onFailure</strong></a></li>
+        <li><a href="#circuitbreakercurrentstate"><strong>CircuitBreaker.currentState</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#核心方法-execute">核心方法 Execute</a></li>
+    <li><a href="#beforerequest"><strong>beforeRequest</strong></a></li>
+    <li><a href="#afterrequest"><strong>afterRequest</strong></a></li>
+    <li><a href="#currentstate">currentState</a></li>
+    <li><a href="#tonewgeneration">toNewGeneration</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#完整源码注释">完整源码注释</a></li>
   </ul>
 </nav>
 </div>

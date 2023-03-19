@@ -294,7 +294,6 @@
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -527,36 +526,40 @@
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#1连接xshell">1.连接Xshell</a>
+    <li><a href="#xshell连接及dockerredis安装">Xshell连接及docker、redis安装</a>
       <ul>
-        <li><a href="#ip-addr">ip addr</a></li>
-        <li><a href="#vi-etcsysconfignetwork-scriptsifcfg-ens33">vi /etc/sysconfig/network-scripts/ifcfg-ens33</a></li>
-      </ul>
-    </li>
-    <li><a href="#2安装docker">2.安装docker</a>
-      <ul>
-        <li><a href="#sudo-yum-update">sudo yum update</a></li>
-        <li><a href="#sudo-yum-install--y-yum-utils-device-mapper-persistent-data-lvm2">sudo yum install -y yum-utils device-mapper-persistent-data lvm2</a></li>
-        <li><a href="#sudo-yum-config-manager---add-repo-httpmirrorsaliyuncomdocker-celinuxcentosdocker-cerepo">sudo yum-config-manager &ndash;add-repo <a href="http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo">http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</a></a></li>
-        <li><a href="#sudo-yum-install-docker-ce">sudo yum install docker-ce</a></li>
-        <li><a href="#sudo-systemctl-start-docker">sudo systemctl start docker</a></li>
-        <li><a href="#sudo-systemctl-enable-docker">sudo systemctl enable docker</a></li>
-        <li><a href="#docker-version">docker version</a></li>
-      </ul>
-    </li>
-    <li><a href="#3docker安装redis">3.docker安装redis</a>
-      <ul>
-        <li><a href="#docker-search-redis">docker search redis</a></li>
-        <li><a href="#docker-pull-redislatest">docker pull redis:latest</a></li>
-        <li><a href="#docker-image">docker image</a></li>
-        <li><a href="#docker-ps">docker ps</a></li>
-        <li><a href="#docker-run--itd---name-redis-test--p-63796379-redis">docker run -itd &ndash;name redis-test -p 6379:6379 redis</a></li>
-        <li><a href="#或者docker-run--p-63796379--d-redis">或者：docker run -p 6379:6379 -d redis</a></li>
-        <li><a href="#运行已存在容器sudo-docker-start-redis-test">运行已存在容器：sudo docker start &ldquo;redis-test&rdquo;</a></li>
-        <li><a href="#docker-exec--it-redis-binbash">docker exec -it redis /bin/bash</a></li>
-        <li><a href="#rootfcd32baa79ffdata-redis-cli">root@fcd32baa79ff:/data# redis-cli</a></li>
-        <li><a href="#中文不乱码--raw">中文不乱码：&ndash;raw</a></li>
-        <li><a href="#验证身份">验证身份</a></li>
+        <li><a href="#1连接xshell">1.连接Xshell</a>
+          <ul>
+            <li><a href="#ip-addr">ip addr</a></li>
+            <li><a href="#vi-etcsysconfignetwork-scriptsifcfg-ens33">vi /etc/sysconfig/network-scripts/ifcfg-ens33</a></li>
+          </ul>
+        </li>
+        <li><a href="#2安装docker">2.安装docker</a>
+          <ul>
+            <li><a href="#sudo-yum-update">sudo yum update</a></li>
+            <li><a href="#sudo-yum-install--y-yum-utils-device-mapper-persistent-data-lvm2">sudo yum install -y yum-utils device-mapper-persistent-data lvm2</a></li>
+            <li><a href="#sudo-yum-config-manager---add-repo-httpmirrorsaliyuncomdocker-celinuxcentosdocker-cerepo">sudo yum-config-manager &ndash;add-repo <a href="http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo">http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</a></a></li>
+            <li><a href="#sudo-yum-install-docker-ce">sudo yum install docker-ce</a></li>
+            <li><a href="#sudo-systemctl-start-docker">sudo systemctl start docker</a></li>
+            <li><a href="#sudo-systemctl-enable-docker">sudo systemctl enable docker</a></li>
+            <li><a href="#docker-version">docker version</a></li>
+          </ul>
+        </li>
+        <li><a href="#3docker安装redis">3.docker安装redis</a>
+          <ul>
+            <li><a href="#docker-search-redis">docker search redis</a></li>
+            <li><a href="#docker-pull-redislatest">docker pull redis:latest</a></li>
+            <li><a href="#docker-image">docker image</a></li>
+            <li><a href="#docker-ps">docker ps</a></li>
+            <li><a href="#docker-run--itd---name-redis-test--p-63796379-redis">docker run -itd &ndash;name redis-test -p 6379:6379 redis</a></li>
+            <li><a href="#或者docker-run--p-63796379--d-redis">或者：docker run -p 6379:6379 -d redis</a></li>
+            <li><a href="#运行已存在容器sudo-docker-start-redis-test">运行已存在容器：sudo docker start &ldquo;redis-test&rdquo;</a></li>
+            <li><a href="#docker-exec--it-redis-binbash">docker exec -it redis /bin/bash</a></li>
+            <li><a href="#rootfcd32baa79ffdata-redis-cli">root@fcd32baa79ff:/data# redis-cli</a></li>
+            <li><a href="#中文不乱码--raw">中文不乱码：&ndash;raw</a></li>
+            <li><a href="#验证身份">验证身份</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>

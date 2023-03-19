@@ -310,7 +310,6 @@ CREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) 
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
-            <a href="/docs/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文档</a>
             <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
@@ -576,13 +575,19 @@ update t set c=5 where id=0; /*(0,5,5)*/
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#21-语义被破坏">2.1 语义被破坏</a></li>
-    <li><a href="#22-数据一致性的问题">2.2 数据一致性的问题</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#31-间隙锁">3.1 间隙锁</a></li>
-    <li><a href="#32-间隙锁导致的死锁案例">3.2 间隙锁导致的死锁案例</a></li>
+    <li><a href="#1-什么是幻读">1. 什么是幻读</a></li>
+    <li><a href="#2-幻读有什么问题">2. 幻读有什么问题</a>
+      <ul>
+        <li><a href="#21-语义被破坏">2.1 语义被破坏</a></li>
+        <li><a href="#22-数据一致性的问题">2.2 数据一致性的问题</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-如何解决幻读">3. 如何解决幻读</a>
+      <ul>
+        <li><a href="#31-间隙锁">3.1 间隙锁</a></li>
+        <li><a href="#32-间隙锁导致的死锁案例">3.2 间隙锁导致的死锁案例</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
 </div>
