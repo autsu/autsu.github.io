@@ -185,7 +185,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
 
 <meta name="description"
-  content="什么是 service pod 往往需要与集群内的其他 pod 进行通信，可能也有外部的客户端需要访问集群中的 pod，如果需要管理员手动将 pod 的地址提供给访问者，那就太麻烦了，而且在 k8s 中 pod 的地址是不确定的、变动的：pod 可能被 rc、rs 缩减，或者发生异常下线，或者节点异常。所以 k8s 需要提供一种统一的对外访问的资源类型，也就是 service。">
+  content="什么是 service pod 往往需要与集群内的其他 pod 进行通信，同时可能也需要对外提供服务，让集群外部的 pod 也可以访问，如果需要管理员手动将 pod 的地址提供给访问者，显然太麻烦了，不适合作为解决方案，而且在 k8s 中 pod 的地址是不确定的，它是由 k8s 自动分配的；此外，pod 的地址也是随时可能变动的，这是因为 Pod 可能会在节点之间移动或者被重新创建。例如，当一个 Pod 从一个节点迁移到另一个节点时，它的 IP 地址也会随之改变。此外，当一个 Pod 被删除后，其 IP 地址也会随之消失。所以 k8s 需要提供一种稳定的资源类型来解决 pod 间通信的问题，避免直接使用 Pod IP 地址来访问 Pod。这个资源就是就是 service。">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -214,7 +214,7 @@
     },
     "headline": "k8s service | \/dev\/null","datePublished": "2022-05-08T15:46:11+00:00",
     "dateModified": "2022-05-08T15:46:11+00:00",
-    "wordCount":  2382 ,
+    "wordCount":  2503 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -223,7 +223,7 @@
             "url": "/images/icon.png"
         }
         },
-    "description": "什么是 service pod 往往需要与集群内的其他 pod 进行通信，可能也有外部的客户端需要访问集群中的 pod，如果需要管理员手动将 pod 的地址提供给访问者，那就太麻烦了，而且在 k8s 中 pod 的地址是不确定的、变动的：pod 可能被 rc、rs 缩减，或者发生异常下线，或者节点异常。所以 k8s 需要提供一种统一的对外访问的资源类型，也就是 service。"
+    "description": "什么是 service pod 往往需要与集群内的其他 pod 进行通信，同时可能也需要对外提供服务，让集群外部的 pod 也可以访问，如果需要管理员手动将 pod 的地址提供给访问者，显然太麻烦了，不适合作为解决方案，而且在 k8s 中 pod 的地址是不确定的，它是由 k8s 自动分配的；此外，pod 的地址也是随时可能变动的，这是因为 Pod 可能会在节点之间移动或者被重新创建。例如，当一个 Pod 从一个节点迁移到另一个节点时，它的 IP 地址也会随之改变。此外，当一个 Pod 被删除后，其 IP 地址也会随之消失。所以 k8s 需要提供一种稳定的资源类型来解决 pod 间通信的问题，避免直接使用 Pod IP 地址来访问 Pod。这个资源就是就是 service。"
 }
 </script><meta property="og:title" content="k8s service | /dev/null" />
 <meta property="og:type" content="article" />
@@ -237,7 +237,7 @@
 
 
 
-<meta property="og:description" content="什么是 service pod 往往需要与集群内的其他 pod 进行通信，可能也有外部的客户端需要访问集群中的 pod，如果需要管理员手动将 pod 的地址提供给访问者，那就太麻烦了，而且在 k8s 中 pod 的地址是不确定的、变动的：pod 可能被 rc、rs 缩减，或者发生异常下线，或者节点异常。所以 k8s 需要提供一种统一的对外访问的资源类型，也就是 service。" />
+<meta property="og:description" content="什么是 service pod 往往需要与集群内的其他 pod 进行通信，同时可能也需要对外提供服务，让集群外部的 pod 也可以访问，如果需要管理员手动将 pod 的地址提供给访问者，显然太麻烦了，不适合作为解决方案，而且在 k8s 中 pod 的地址是不确定的，它是由 k8s 自动分配的；此外，pod 的地址也是随时可能变动的，这是因为 Pod 可能会在节点之间移动或者被重新创建。例如，当一个 Pod 从一个节点迁移到另一个节点时，它的 IP 地址也会随之改变。此外，当一个 Pod 被删除后，其 IP 地址也会随之消失。所以 k8s 需要提供一种稳定的资源类型来解决 pod 间通信的问题，避免直接使用 Pod IP 地址来访问 Pod。这个资源就是就是 service。" />
 
 
 
@@ -409,8 +409,8 @@
   
 
   <h1 id="什么是-service">什么是 service</h1>
-<p>pod 往往需要与集群内的其他 pod 进行通信，可能也有外部的客户端需要访问集群中的 pod，如果需要管理员手动将 pod 的地址提供给访问者，那就太麻烦了，而且在 k8s 中 pod 的地址是不确定的、变动的：pod 可能被 rc、rs 缩减，或者发生异常下线，或者节点异常。所以 k8s 需要提供一种统一的对外访问的资源类型，也就是 service。</p>
-<p>service 为 <strong>一组功能相同</strong>（逻辑意义上的，例如使用相同的标签）的 pod 提供单一不变的接入点，它的 IP 和端口不会改变，所以客户端可以统一连接到 service，service 再将请求转发给其管理的某一个 pod（会负载均衡的访问），这样就可以解决上面的 pod 地址变动问题。</p>
+<p>pod 往往需要与集群内的其他 pod 进行通信，同时可能也需要对外提供服务，让集群外部的 pod 也可以访问，如果需要管理员手动将 pod 的地址提供给访问者，显然太麻烦了，不适合作为解决方案，而且在 k8s 中 pod 的地址是不确定的，它是由 k8s 自动分配的；此外，pod 的地址也是随时可能变动的，这是因为 Pod 可能会在节点之间移动或者被重新创建。例如，当一个 Pod 从一个节点迁移到另一个节点时，它的 IP 地址也会随之改变。此外，当一个 Pod 被删除后，其 IP 地址也会随之消失。所以 k8s 需要提供一种稳定的资源类型来解决 pod 间通信的问题，避免直接使用 Pod IP 地址来访问 Pod。这个资源就是就是 service。</p>
+<p>service 为 <strong>一组功能相同</strong>（逻辑意义上的，例如使用相同的标签）的 pod 提供单一不变的接入点，service 的 IP 和端口不会改变，所以访问者可以统一连接到 service，service 再将请求转发给其管理的某一个 pod（会负载均衡的访问），这样，无论 Pod IP 是否变化，都能保证对 Service 的访问不会受到影响，就可以解决上面的 pod 地址变动问题。</p>
 <h1 id="创建-service">创建 service</h1>
 <p>下面的 yaml 可以创建一个 service：</p>
 <pre><code class="language-yaml">apiVersion: v1
@@ -462,16 +462,27 @@ $ kubectl exec -it kubia-2qkls -- curl 10.43.87.107
 &lt;title&gt;Welcome to nginx!&lt;/title&gt;
 # 省略 ...
 </code></pre>
-<p>如果用过 docker，那么这个 exec 应该非常熟悉了</p>
+<p>如果用过 docker，那么 exec 命令应该已经非常熟悉了</p>
 </li>
 </ol>
 <h1 id="服务发现">服务发现</h1>
-<p>虽然 service 提供了一个统一访问的 pod 的途径，但是还存在一个问题：访问者如何知道 service 的地址？如果需要管理员手动执行命令查看 service 的 IP 并告诉访问者，这显然有些麻烦，不够智能，好在牛逼的 k8s 为这一问题提供了服务发现的解决方案。</p>
+<p>虽然 service 提供了一个统一访问的 pod 的途径，但是还存在一个问题：访问者又如何知道 service 的 IP 地址？难道还是需要管理员手动执行命令查看 service 的 IP 然后告诉访问者吗？那这不是搞了个寂寞吗，不过不用着急，你想到的 k8s 都想到了，并且给出了解决方案： service 服务发现。</p>
+<p>k8s 提供的服务发现有以下几种类型：</p>
 <h2 id="使用环境变量">使用环境变量</h2>
-<p>⚠️ 这种方式需要 <strong>service 先于 pod 创建</strong>，这样在 pod 创建过程中，k8s 会将其所属的 service 地址写入到其环境变量中，pod 通过环境变量就可以知道 service 的地址了。</p>
-<p>service 的环境变量名是 matadata.name_SERVICE_HOST 和 matadata.name_SERVICE_PORT，name 会转换为全大写，- 会转换为下划线</p>
+<p>k8s 可以为每个容器设置环境变量，其中包括其他 Pod、Service 和 Kubernetes API Server 的地址信息，通过环境变量服务发现，服务消费者可以通过访问容器的环境变量来发现和访问其他 Pod 和 Service。</p>
+<blockquote>
+<p>⚠️ 这种方式需要 <strong>service 先于 pod 创建</strong>，这样在 pod 创建过程中，k8s 会将其
+所属的 service 地址写入到其环境变量中，pod 通过环境变量就可以知道 service 的地
+址了。</p>
+</blockquote>
+<p>service 的环境变量名格式是 <code>&lt;SERVICE_NAME&gt;_SERVICE_HOST</code> 和 <code>&lt;SERVICE_NAME&gt;_SERVICE_PORT</code>，其中 <code>&lt;SERVICE_NAME&gt;</code> 是 Service 的名称，<code>SERVICE_HOST</code> 和 <code>SERVICE_PORT</code> 是固定的后缀。Service name 会转换为全大写，并且其中的 - 会转换为下划线。</p>
+<p>例如，如果有一个名为 <code>my-service</code> 的 Service，它的 Cluster IP 为 <code>10.0.0.1</code>，端口为 <code>8080</code>，则 k8s 会在 Pod 中为其创建两个环境变量：</p>
+<ul>
+<li><code>MY_SERVICE_SERVICE_HOST</code>：值为 <code>10.0.0.1</code>。</li>
+<li><code>MY_SERVICE_SERVICE_PORT</code>：值为 <code>8080</code>。</li>
+</ul>
 <p><strong>实践</strong></p>
-<p>service 依然沿用上面的 yaml：</p>
+<p>service.yaml 如下：</p>
 <pre><code class="language-yaml">apiVersion: v1
 kind: Service
 metadata:
@@ -481,9 +492,32 @@ spec:
   - port: 80 # 该 service 的端口
     targetPort: 80 # 转发到 pod 的 80 端口
   selector:
-    app: kubia # 具有 app=kubia 标签的 pod 都属于该 service
+    app: nginx # 具有 app=nginx 标签的 pod 都属于该 service
 </code></pre>
-<p>客户端 pod yaml，这是一个 go 程序，通过 http 来访问 nginx，输出 nginx index.html</p>
+<p>deploy.yaml，用于创建 nginx pod：</p>
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+</code></pre>
+<p>访问者的 pod yaml，使用的镜像是一个 go 程序，需要传递两个参数，分别是 <code>service host</code> 的环境变量名和 <code>port</code> 的环境变量名，前面提到过这两个环境变量的命名规则，因为我创建的 service name 是 kubia，所以两个环境变量名分别是：KUBIA_SERVICE_HOST 和 KUBIA_SERVICE_PORT。然后这个程序会拿到这两个环境变量的 value，再通过这两个 value 拼接成 URL，最后通过 http 来访问 nginx，期望结果会输出 nginx 的 index.html，也就是欢迎页面。</p>
 <pre><code class="language-yaml">apiVersion: v1
 kind: Pod
 metadata:
@@ -491,10 +525,10 @@ metadata:
 spec:
   containers:
   - name: http-get
-    image: stdoutt/http-get-env-arm64:v1
+    image: stdoutt/service-env-test
     args: [&quot;-hostEnv&quot;, &quot;KUBIA_SERVICE_HOST&quot;, &quot;-portEnv&quot;, &quot;KUBIA_SERVICE_PORT&quot;]
 </code></pre>
-<p>注意该镜像只支持 arm64，需要传递两个参数，分别是 service host 的环境变量名和 port 的环境变量名，前面提到过这两个环境变量的命名规则，因为我创建的 service metadata.name 是 kubia，所以两个环境变量名分别是：KUBIA_SERVICE_HOST 和 KUBIA_SERVICE_PORT。</p>
+<p><strong>注意这里需要先创建 service，再创建 deploy，最后再创建 http-get pod。</strong></p>
 <p>创建客户端 pod：</p>
 <pre><code class="language-shell">$ kubectl apply -f http-get.yaml
 pod/http-get created
@@ -512,7 +546,9 @@ url: http://10.43.65.224:80
 &lt;title&gt;Welcome to nginx!&lt;/title&gt;
 </code></pre>
 <p>通过日志内容，说明 pod 成功通过环境变量获取到了 service 的地址，并通过 service 访问到了 pod。</p>
+<blockquote>
 <p>附：</p>
+<p><code>http-get</code> 对应镜像 <code>stdoutt/service-env-test</code> 的源码和 Dockerfile：</p>
 <p>go 源码：</p>
 <pre><code class="language-go">package main
 
@@ -551,12 +587,6 @@ func main() {
 <p>Dockerfile</p>
 <pre><code class="language-dockerfile">FROM golang:alpine AS builder
 
-# 为我们的镜像设置必要的环境变量
-ENV GO111MODULE=on \
-    CGO_ENABLED=0 \
-    GOOS=linux \
-    GOARCH=arm64
-
 # 移动到工作目录：/build
 WORKDIR /build
 
@@ -577,14 +607,19 @@ COPY --from=builder /build/app /
 # 需要运行的命令
 ENTRYPOINT [&quot;/app&quot;]
 </code></pre>
+<p>如果你想构建多架构镜像，可以使用下面的命令：</p>
+<pre><code class="language-shell">docker buildx create --name mybuilder --use
+docker buildx build -t &lt;repo/imagename&gt; --platform=linux/arm64,linux/amd64 . --push
+</code></pre>
+</blockquote>
 <h2 id="使用-dns">使用 DNS</h2>
-<p>除了环境变量外，还有一张更简单的方式：通过 DNS 发现服务，之后便可以通过 FQDN 进行访问，格式类似于：backend-database.default.svc.cluster.local，其中 backend-database 是 service 的名字，default 是 service 所在的命名空间，svc.cluster.local 是在所有集群本地服务名称中使用的可配置集群域后缀（这里不懂）。</p>
+<p>除了环境变量外，还有一种更简单的方式：通过 DNS 发现服务，之后便可以通过 FQDN 进行访问，格式类似于：<code>backend-database.default.svc.cluster.local</code>，其中 <code>backend-database</code> 是 <strong>service 的名字</strong>，<strong>default 是 service 所在的命名空间</strong>，<strong>svc.cluster.local 是在所有集群本地服务名称中使用的可配置集群域后缀（这里不懂）</strong>。</p>
 <blockquote>
 <p>⚠️ 客户端仍然需要知道服务的端口号。如果服务使用标准端口号(例如，HTTP 的 80 端口或 Postgres 的 5432 端口)，这样是没问题的。 如果并不是标准端口， 客户端可以从环境变量中获取端口号 。</p>
 <p>（摘抄自书上）</p>
 <p>这里没看懂，都直接通过域名访问了，为什么客户端还需要知道端口号？</p>
 </blockquote>
-<p>如果客户端 pod 和被访问 pod 在同一个命名空间，那么可以直接用 service.name 进行访问，后面的可以全部省略，比如下面的例子，直接使用 service 的名字 kubia 进行访问：</p>
+<p>如果访问 pod 和被访问 pod 在同一个命名空间，那么可以直接用 service.name 进行访问，后面的可以全部省略，比如下面的例子，直接使用 service 的名字 kubia 进行访问：</p>
 <pre><code class="language-shell"># 查看 service，获取 service 的名字
 $ kubectl get svc
 NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
@@ -831,7 +866,7 @@ spec:
 </blockquote>
 <p>LoadBalance 的方式存在一个缺点：只能为一种类型的 service 提供服务，比如上面的介绍的 loadbalance 只是用来访问 nginx 的，如果现在集群添加了一些 redis pod，那么又要新创建一个 LoadBalance 来提供对外服务（比如 spec.ports[0].port=6379, target=6379, nodePort=30001），客户端通过 <strong>LoadBalanceIP:30000</strong> 这个地址来完成对 nginx pod 的访问，通过 <strong>LoadBalanceIP:30001</strong> 来完成对 redis pod 的访问，因为 LoadBalanceIP 是公网 IP，所以这么搞无疑有点浪费。</p>
 <p>为了解决上面的问题，ingress 这个玩意就应运而生了，这个东西其实说白了就是 service 的 service（无限套娃？），类似于 web 路由的功能，通过访问不同的域名来完成对不同 service 的访问，就比如这张图：
-<img src="https://autsu.github.io/post-images/1654445796590.jpg" alt="">
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1654445796590.jpg" alt="">
 而且 ingress 工作在应用层，所以可以提供一些 service 不能实现的功能，比如基于 cookie 的会话亲和性 (session affinity) 等</p>
 <h3 id="基于-minikube-nginx-ingress-的实践">基于 minikube nginx ingress 的实践</h3>
 <blockquote>
@@ -1090,8 +1125,14 @@ not connected&gt;
 <h1 id="特殊的-headless-service">特殊的 headless service</h1>
 <p>service 提供了稳定的对外访问服务，同时还提供了负载均衡的能力，每次访问 service，都会将其转发到该 service selector 对应的 pod 中的某一个，具体转发给哪个是由 service 决定的，访问者没有自主选择权，但是如果访问者想自主选择访问哪个 pod，或者想访问该 service 下的所有 pod，此时该如何处理呢？为了解决这类问题，就需要 Headless Service 闪亮登场了。</p>
 <blockquote>
-<h4 id="疑问用户自行选择-pod-的场景有哪些用户需要访问-service-下所有-pod-的场景有哪些">疑问：用户自行选择 pod 的场景有哪些？用户需要访问 service 下所有 pod 的场景有哪些？</h4>
-<h4 id="疑问使用-headless-service-后是否代表负载均衡已经失效需要用户自行实现">疑问：使用 headless service 后，是否代表负载均衡已经失效，需要用户自行实现？</h4>
+<ul>
+<li>
+<p>疑问：用户自行选择 pod 的场景有哪些？用户需要访问 service 下所有 pod 的场景有哪些？</p>
+</li>
+<li>
+<p>疑问：使用 headless service 后，是否代表负载均衡已经失效，需要用户自行实现？</p>
+</li>
+</ul>
 </blockquote>
 <p>这个 yaml 会创建一个 nginx rs，以及两个对应的 service，一个是正常的 service，还有一个是 headless 类型的 service：</p>
 <p>（ps：好像如果 pod 指定了 containerPort，那么 service 这边可以不指定 targetPort）</p>
@@ -1297,20 +1338,7 @@ dnsutils         1/1     Running   1 (40m ago)   43m   10.42.0.31   ubuntu   &lt
         </li>
       </ul>
     </li>
-    <li><a href="#特殊的-headless-service">特殊的 headless service</a>
-      <ul>
-        <li>
-          <ul>
-            <li>
-              <ul>
-                <li><a href="#疑问用户自行选择-pod-的场景有哪些用户需要访问-service-下所有-pod-的场景有哪些">疑问：用户自行选择 pod 的场景有哪些？用户需要访问 service 下所有 pod 的场景有哪些？</a></li>
-                <li><a href="#疑问使用-headless-service-后是否代表负载均衡已经失效需要用户自行实现">疑问：使用 headless service 后，是否代表负载均衡已经失效，需要用户自行实现？</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </li>
+    <li><a href="#特殊的-headless-service">特殊的 headless service</a></li>
   </ul>
 </nav>
 </div>
