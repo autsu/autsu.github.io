@@ -214,7 +214,7 @@
     },
     "headline": "k8s service | \/dev\/null","datePublished": "2022-05-08T15:46:11+00:00",
     "dateModified": "2022-05-08T15:46:11+00:00",
-    "wordCount":  2503 ,
+    "wordCount":  3239 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -396,7 +396,7 @@
   </div>
   <div class="me-6 my-2">
     <i class="fas fa-clock me-1"></i>
-    <span>12分钟阅读时长</span>
+    <span>16分钟阅读时长</span>
   </div>
 
   
@@ -410,7 +410,7 @@
 
   <h1 id="什么是-service">什么是 service</h1>
 <p>pod 往往需要与集群内的其他 pod 进行通信，同时可能也需要对外提供服务，让集群外部的 pod 也可以访问，如果需要管理员手动将 pod 的地址提供给访问者，显然太麻烦了，不适合作为解决方案，而且在 k8s 中 pod 的地址是不确定的，它是由 k8s 自动分配的；此外，pod 的地址也是随时可能变动的，这是因为 Pod 可能会在节点之间移动或者被重新创建。例如，当一个 Pod 从一个节点迁移到另一个节点时，它的 IP 地址也会随之改变。此外，当一个 Pod 被删除后，其 IP 地址也会随之消失。所以 k8s 需要提供一种稳定的资源类型来解决 pod 间通信的问题，避免直接使用 Pod IP 地址来访问 Pod。这个资源就是就是 service。</p>
-<p>service 为 <strong>一组功能相同</strong>（逻辑意义上的，例如使用相同的标签）的 pod 提供单一不变的接入点，service 的 IP 和端口不会改变，所以访问者可以统一连接到 service，service 再将请求转发给其管理的某一个 pod（会负载均衡的访问），这样，无论 Pod IP 是否变化，都能保证对 Service 的访问不会受到影响，就可以解决上面的 pod 地址变动问题。</p>
+<p>service 为 <strong>一组功能相同</strong>（逻辑意义上的，例如使用相同的标签）的 pod 提供单一不变的接入点，service 的 IP 和端口不会改变，所以访问者可以统一连接到 service，service 再将请求转发给其代理的某一个 pod（会负载均衡的访问），这样，无论 Pod IP 是否变化，都能保证对 Service 的访问不会受到影响，就可以解决上面的 pod 地址变动问题。</p>
 <h1 id="创建-service">创建 service</h1>
 <p>下面的 yaml 可以创建一个 service：</p>
 <pre><code class="language-yaml">apiVersion: v1
@@ -481,7 +481,7 @@ $ kubectl exec -it kubia-2qkls -- curl 10.43.87.107
 <li><code>MY_SERVICE_SERVICE_HOST</code>：值为 <code>10.0.0.1</code>。</li>
 <li><code>MY_SERVICE_SERVICE_PORT</code>：值为 <code>8080</code>。</li>
 </ul>
-<p><strong>实践</strong></p>
+<h3 id="实践">实践</h3>
 <p>service.yaml 如下：</p>
 <pre><code class="language-yaml">apiVersion: v1
 kind: Service
@@ -617,7 +617,8 @@ docker buildx build -t &lt;repo/imagename&gt; --platform=linux/arm64,linux/amd64
 <blockquote>
 <p>⚠️ 客户端仍然需要知道服务的端口号。如果服务使用标准端口号(例如，HTTP 的 80 端口或 Postgres 的 5432 端口)，这样是没问题的。 如果并不是标准端口， 客户端可以从环境变量中获取端口号 。</p>
 <p>（摘抄自书上）</p>
-<p>这里没看懂，都直接通过域名访问了，为什么客户端还需要知道端口号？</p>
+<p><del>这里没看懂，都直接通过域名访问了，为什么客户端还需要知道端口号？</del></p>
+<p>初学时的一个比较 2 的问题，说明基础不牢，域名只负责解析出 IP ，而只有 IP 没有端口号显然是不能访问服务的。</p>
 </blockquote>
 <p>如果访问 pod 和被访问 pod 在同一个命名空间，那么可以直接用 service.name 进行访问，后面的可以全部省略，比如下面的例子，直接使用 service 的名字 kubia 进行访问：</p>
 <pre><code class="language-shell"># 查看 service，获取 service 的名字
@@ -657,6 +658,124 @@ $ kubectl exec -it kubia-msv79 -- curl kubia.default.svc.cluster.local
 &lt;head&gt;
 &lt;title&gt;Welcome to nginx!&lt;/title&gt;
 </code></pre>
+<h3 id="实践-1">实践</h3>
+<p>需要先准备 service 和 deploy，可以直接沿用 <strong>使用环境变量</strong> 这一节实践里的 yaml，另外准备一个 yaml 用来通过 dns 和 port 访问 k8s service：</p>
+<p><strong>httpget_dns.yaml</strong></p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: http-get
+spec:
+  containers:
+  - name: http-get
+    image: stdoutt/service-dns-test
+    args: [&quot;-dns&quot;, &quot;kubia.default.svc.cluster.local&quot;, &quot;-p&quot;, &quot;80&quot;]
+</code></pre>
+<p>这个镜像需要提供两个参数 <code>-dns</code> 和 <code>-p</code>，顾名思义，分别对应 dns 和 port，然后程序会根据 dns 解析出对应的 IP，并将 IP 和 port 拼接成一个 HTTP URL，并通过 HTTP 访问。</p>
+<p>运行并查看效果：</p>
+<pre><code class="language-shell">$ kubectl apply -f httpget_dns.yaml
+pod/http-get created
+
+$ kubectl get po
+NAME                               READY   STATUS              RESTARTS      AGE
+http-get                           0/1     ContainerCreating   0             11s
+nginx-deployment-ff6774dc6-4nz9z   1/1     Running             2 (51m ago)   23h
+nginx-deployment-ff6774dc6-cwn7p   1/1     Running             2 (51m ago)   23h
+nginx-deployment-ff6774dc6-pjxhk   1/1     Running             2 (51m ago)   23h
+http-get                           0/1     Completed           0             21s
+
+# 通过 log 查看效果
+$ kubectl logs http-get
+# 这里会输出通过 dns 解析到的 ip
+http://10.110.49.109:80
+# 输出了 nginx 的欢迎页面
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+</code></pre>
+<blockquote>
+<p>附：</p>
+<p><code>http-get</code> 对应镜像 <code>stdoutt/service-dns-test</code> 的源码和 Dockerfile：</p>
+<p>go 源码：</p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;flag&quot;
+	&quot;fmt&quot;
+	&quot;io&quot;
+	&quot;net&quot;
+	&quot;net/http&quot;
+)
+
+func main() {
+	var (
+		dns  string
+		port string
+	)
+
+	flag.StringVar(&amp;dns, &quot;dns&quot;, &quot;&quot;, &quot;dns&quot;)
+	flag.StringVar(&amp;port, &quot;p&quot;, &quot;&quot;, &quot;port&quot;)
+	flag.Parse()
+
+	if dns == &quot;&quot; || port == &quot;&quot; {
+		panic(&quot;dns must not null&quot;)
+	}
+
+	addrs, err := net.LookupIP(dns)
+	if err != nil {
+		panic(err)
+	}
+
+	var httpGet = func(url string) {
+		resp, err := http.Get(url)
+		if err != nil {
+			panic(err)
+		}
+		defer resp.Body.Close()
+
+		b, err := io.ReadAll(resp.Body)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(string(b))
+	}
+
+	for _, addr := range addrs {
+		url := fmt.Sprintf(&quot;http://%v:%v&quot;, addr, port)
+		fmt.Println(url)
+		httpGet(url)
+	}
+
+}
+</code></pre>
+<p>Dockerfile</p>
+<pre><code class="language-dockerfile">FROM golang:alpine AS builder
+
+# 移动到工作目录：/build
+WORKDIR /build
+
+# 将代码复制到容器中
+COPY . .
+
+# 将我们的代码编译成二进制可执行文件 app
+RUN go build -o app .
+
+# 接下来创建一个小镜像
+FROM scratch
+
+# 从 builder 镜像中把 /dist/app 拷贝到当前目录
+COPY --from=builder /build/app /
+
+# 需要运行的命令
+ENTRYPOINT [&quot;/app&quot;]
+
+</code></pre>
+<p>build</p>
+<pre><code class="language-shell">$ docker buildx create --name mybuilder --use
+$ docker buildx build -t &lt;repo/imagename&gt; --platform=linux/arm64,linux/amd64 . --push
+</code></pre>
+</blockquote>
 <h1 id="集群内访问">集群内访问</h1>
 <h2 id="clusterip">ClusterIP</h2>
 <p>通过集群内部 IP 地址暴露服务，但该地址 <strong>仅在集群内部</strong> 可见、可达，它无法被集群外部的客户端访问，是 service 的默认访问类型。如果不明确指定 clusterIP，则由 K8S 动态指定一个，也支持用户手动明确指定。</p>
@@ -1126,15 +1245,26 @@ not connected&gt;
 <p>service 提供了稳定的对外访问服务，同时还提供了负载均衡的能力，每次访问 service，都会将其转发到该 service selector 对应的 pod 中的某一个，具体转发给哪个是由 service 决定的，访问者没有自主选择权，但是如果访问者想自主选择访问哪个 pod，或者想访问该 service 下的所有 pod，此时该如何处理呢？为了解决这类问题，就需要 Headless Service 闪亮登场了。</p>
 <blockquote>
 <ul>
-<li>
-<p>疑问：用户自行选择 pod 的场景有哪些？用户需要访问 service 下所有 pod 的场景有哪些？</p>
-</li>
-<li>
-<p>疑问：使用 headless service 后，是否代表负载均衡已经失效，需要用户自行实现？</p>
-</li>
+<li>疑问：用户自行选择 pod 的场景有哪些？用户需要访问 service 下所有 pod 的场景有哪些？</li>
+</ul>
+<p>用户自行选择 pod 的场景可能包括：</p>
+<ol>
+<li>特定的服务需要访问特定的 pod，例如需要使用某个 pod 上特定的配置或者数据。</li>
+<li>测试或者调试需要针对特定的 pod 进行操作，例如分析特定 pod 的日志或者性能数据。</li>
+</ol>
+<p>需要访问 service 下所有 pod 的场景可能包括：</p>
+<ol>
+<li>执行批量操作，例如向 service 下所有 pod 发送某个指令或者获取所有 pod 的状态信息。</li>
+<li>在服务发现场景下，需要获取 service 下所有可用的 pod 列表。</li>
+</ol>
+<p>需要注意的是，在 k8s 中，用户一般不需要直接访问 pod，而是通过 service 提供的稳定的对外访问服务来访问应用程序。只有在特定的情况下，才需要直接访问 pod。</p>
+<ul>
+<li>疑问：使用 headless service 后，是否代表负载均衡已经失效，需要用户自行实现？</li>
 </ul>
 </blockquote>
-<p>这个 yaml 会创建一个 nginx rs，以及两个对应的 service，一个是正常的 service，还有一个是 headless 类型的 service：</p>
+<h2 id="实践-1-1">实践 1</h2>
+<p>这个实践将会测试 headless service 的特性，并且会和普通的 service 进行对比，加深理解。</p>
+<p>下面这个 yaml 会创建一个 nginx rs，以及两个对应的 service，一个是正常的 service，还有一个是 headless 类型的 service：</p>
 <p>（ps：好像如果 pod 指定了 containerPort，那么 service 这边可以不指定 targetPort）</p>
 <pre><code class="language-yaml">---
 apiVersion: v1
@@ -1207,8 +1337,8 @@ nginx-service            ClusterIP   10.43.27.242   &lt;none&gt;        80/TCP  
 &lt;head&gt;
 &lt;title&gt;Welcome to nginx!&lt;/title&gt;
 </code></pre>
-<p>因为 headless service 明确指定了 clusterIP 为 None，所以不会给他分配一个集群内 IP，所以无法通过 curl 的方式访问。</p>
-<p>使用 nslookup 查看二者的 dns 解析，看看他们两的区别，service 的 dns 格式是 <code>&lt;service name&gt;.&lt;namespace&gt;.svc.cluster.local</code>，注意这里需要在容器内部执行</p>
+<p>可以看到，普通的 service 是可以正常访问的，但是 headless service 是不可以访问的，因为 headless service 明确指定了 clusterIP 为 None，所以不会给它分配一个集群内 IP，所以无法通过 curl 的方式访问。</p>
+<p>使用 nslookup 查看二者的 dns 解析，看看他们两的区别，service 的 dns 格式是 <code>&lt;service_name&gt;.&lt;namespace&gt;.svc.cluster.local</code>，注意这里需要在容器内部执行</p>
 <pre><code class="language-shell">$ kubectl exec -it nginx-rs-dhxz7 -- nslookup nginx-service.default.svc.cluster.local
 Server:		10.43.0.10
 Address:	10.43.0.10:53
@@ -1235,6 +1365,151 @@ nginx-rs-dhxz7   1/1     Running   1 (40m ago)   54m   10.42.0.30   ubuntu   &lt
 nginx-rs-sn8wk   1/1     Running   1 (40m ago)   54m   10.42.0.32   ubuntu   &lt;none&gt;           &lt;none&gt;
 dnsutils         1/1     Running   1 (40m ago)   43m   10.42.0.31   ubuntu   &lt;none&gt;           &lt;none&gt;
 </code></pre>
+<h2 id="实践-2">实践 2</h2>
+<p>这个实践会用通过代码的方式，从 headless service 中获取 pod 地址，然后访问这些 pod。</p>
+<p>首先需要准备下面的几个 yaml。</p>
+<p><strong>Deployment.yaml</strong></p>
+<p>这个 deploy 将会创建 3 个 pod，每个 pod 都是一个 http server ，通过 -h 来指定地址，-p 来指定监听端口，访问该 server 会返回包括主机名等基本信息。注意这里的 -h 需要指定为 0.0.0.0 而不是 localhost，指定为 localhost 的话其他 pod 将无法访问。（为什么呢？）</p>
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-app
+  labels:
+    app: hello-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hello-app
+  template:
+    metadata:
+      labels:
+        app: hello-app
+    spec:
+      containers:
+      - name: hello-app
+        image: stdoutt/hello-app
+        args: [&quot;-h&quot;, &quot;0.0.0.0&quot;, &quot;-p&quot;, &quot;8080&quot;]
+</code></pre>
+<p><strong>Service.yaml</strong></p>
+<p>这是一个 headless service。</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: hello-app
+spec:
+  clusterIP: None
+  ports:
+  - port: 80 # 该 service 的端口
+    targetPort: 8080 # 转发到 pod 的 80 端口
+  selector:
+    app: hello-app # 具有 app=hello-app 标签的 pod 都属于该 service
+</code></pre>
+<p><strong>httpget.yaml</strong></p>
+<p>这个 pod 通过 -s 来指定 headless service 的 FQDN，最终这个镜像内部的程序会调用 net.LookupSRV 解析出每个 pod 对应的 SRV 记录，然后通过 SRV 记录进行访问。</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: http-get
+spec:
+  containers:
+  - name: http-get
+    image: stdoutt/service-headless-test
+    args: [&quot;-s&quot;, &quot;hello-app.default.svc.cluster.local&quot;, &quot;-p&quot;, &quot;8080&quot;]
+</code></pre>
+<p>然后依次创建 Deployment，headless service：</p>
+<pre><code class="language-shell">$ kubectl get deploy
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+hello-app          3/3     3            3           130m
+
+$ kubectl get svc
+NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+hello-app    ClusterIP   None            &lt;none&gt;        80/TCP    119m
+kubernetes   ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP   80d
+
+$ kubectl get po
+NAME                               READY   STATUS    RESTARTS      AGE
+hello-app-7b5f4475c8-bv8lz         1/1     Running   0             131m
+hello-app-7b5f4475c8-pcrv8         1/1     Running   0             131m
+hello-app-7b5f4475c8-wm528         1/1     Running   0             131m
+</code></pre>
+<p>最后创建 httpget，然后等待一会，等 pod 起来后，通过 logs 查看输出：</p>
+<pre><code class="language-shell">$ kubectl apply -f httpget_headless.yaml
+pod/http-get created
+
+# 查看 log
+$ kubectl logs http-get
+url: http://10-1-0-117.hello-app.default.svc.cluster.local.:8080
+Hello, world!
+Version: 1.0.0
+Hostname: hello-app-7b5f4475c8-pcrv8
+
+url: http://10-1-0-118.hello-app.default.svc.cluster.local.:8080
+Hello, world!
+Version: 1.0.0
+Hostname: hello-app-7b5f4475c8-bv8lz
+
+url: http://10-1-0-116.hello-app.default.svc.cluster.local.:8080
+Hello, world!
+Version: 1.0.0
+Hostname: hello-app-7b5f4475c8-wm528
+</code></pre>
+<p>从 log 可以看到，我们成功访问到了每一个 pod，日志里的 3 个 Hostname 和 pod name 相符。</p>
+<blockquote>
+<p>附：</p>
+<p>http-get 镜像的 go 源码：</p>
+<p>通过 net.LookupSRV 解析出 SRV 记录，从 SRV 里可以拿到 taget 和 port，将这个两个拼接成一个完整的 HTTP URL 进行访问。</p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;flag&quot;
+	&quot;fmt&quot;
+	&quot;io&quot;
+	&quot;net&quot;
+	&quot;net/http&quot;
+)
+
+var (
+	HeadlessServiceName string
+)
+
+func main() {
+	flag.StringVar(&amp;HeadlessServiceName, &quot;s&quot;, &quot;&quot;, &quot;headless service name&quot;)
+	flag.Parse()
+
+	_, addrs, err := net.LookupSRV(&quot;&quot;, &quot;&quot;, HeadlessServiceName)
+	if err != nil {
+		panic(err)
+	}
+
+	var fn = func(url string) {
+		resp, err := http.Get(url)
+		if err != nil {
+			panic(err)
+		}
+		defer resp.Body.Close()
+
+		b, err := io.ReadAll(resp.Body)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(string(b))
+	}
+
+	for _, addr := range addrs {
+		url := fmt.Sprintf(&quot;http://%v:%v&quot;, addr.Target, addr.Port)
+		fmt.Printf(&quot;url: %v\n&quot;, url)
+		fn(url)
+	}
+
+}
+</code></pre>
+</blockquote>
+<blockquote>
+<p>待补充/疑问：</p>
+<p>SRV 记录是什么？</p>
+<p>为什么 net.LookupSRV 返回的 SRV.Target 是 <code>10-1-0-117.hello-app.default.svc.cluster.local. </code>这样的，而不是像 nslookup 那样直接返回 IP？</p>
+</blockquote>
 
 </article>
 
@@ -1314,8 +1589,16 @@ dnsutils         1/1     Running   1 (40m ago)   43m   10.42.0.31   ubuntu   &lt
     </li>
     <li><a href="#服务发现">服务发现</a>
       <ul>
-        <li><a href="#使用环境变量">使用环境变量</a></li>
-        <li><a href="#使用-dns">使用 DNS</a></li>
+        <li><a href="#使用环境变量">使用环境变量</a>
+          <ul>
+            <li><a href="#实践">实践</a></li>
+          </ul>
+        </li>
+        <li><a href="#使用-dns">使用 DNS</a>
+          <ul>
+            <li><a href="#实践-1">实践</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
     <li><a href="#集群内访问">集群内访问</a>
@@ -1338,7 +1621,12 @@ dnsutils         1/1     Running   1 (40m ago)   43m   10.42.0.31   ubuntu   &lt
         </li>
       </ul>
     </li>
-    <li><a href="#特殊的-headless-service">特殊的 headless service</a></li>
+    <li><a href="#特殊的-headless-service">特殊的 headless service</a>
+      <ul>
+        <li><a href="#实践-1-1">实践 1</a></li>
+        <li><a href="#实践-2">实践 2</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
 </div>

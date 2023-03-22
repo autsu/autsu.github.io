@@ -799,7 +799,7 @@ kubia-56ff78687    0         0         0       15h
 <p>在看官方的文档：maxUnavailable 说的是：百分比值会转换成绝对数并去除小数部分</p>
 <p>maxSurge 说的是：百分比值会通过向上取整转换为绝对数</p>
 <p>这显然和书上说的四舍五入有出入，那么到底实际情况如何呢？只有源码能揭晓答案了。</p>
-<p>对应的函数在 kubernetes/pkg/controller/deployment/util.deployment_util 下：</p>
+<p>对应的函数在 kubernetes/pkg/controller/deployment/util/deployment_util.go 下：</p>
 <pre><code class="language-go">// desired 代表副本数量
 func ResolveFenceposts(maxSurge, maxUnavailable *intstrutil.IntOrString, desired int32) (int32, int32, error) {
 	// maxSurge 没有设置，则使用默认值 0
