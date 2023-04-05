@@ -214,7 +214,7 @@
     },
     "headline": "计算机网络面试题 | \/dev\/null","datePublished": "2022-01-28T23:45:48+00:00",
     "dateModified": "2022-01-28T23:45:48+00:00",
-    "wordCount":  328 ,
+    "wordCount":  354 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -423,19 +423,26 @@
 <p>也有一些博客说，客户端四次挥手的最后一个 ACK 报文如果在网络中被丢失了，此时如果客户端 <code>TIME_WAIT</code> 过短或没有，则就直接进入了 <code>CLOSED</code> 状态了，那么服务端则会一直处在 <code>LASE_ACK</code> 状态。
 当客户端发起建立连接的 SYN 请求报文后，服务端会发送 RST 报文给客户端，连接建立的过程就会被终止。</p>
 <h2 id="2-tcp-如何保证可靠性">2. TCP 如何保证可靠性</h2>
+<p>TCP (Transmission Control Protocol) 通过以下机制来保证数据传输的可靠性：</p>
+<ol>
+<li>应答机制：TCP 采用应答机制确认数据是否被成功接收。接收方会向发送方发送一个 ACK (Acknowledgment) 确认报文，告诉发送方已经成功接收到数据。如果发送方在一个特定时间内没有收到 ACK，就会重新发送数据。</li>
+<li>超时重传：如果发送方没有收到 ACK，它就会重新发送数据。如果发送方连续多次没有收到 ACK，就会认为这个连接已经失效，并关闭这个连接。</li>
+<li>滑动窗口：TCP 使用滑动窗口机制来控制发送方和接收方之间的数据传输速度。发送方会将多个数据包打包成一个窗口，接收方会告诉发送方它可以接收的最大窗口大小。这样发送方就可以控制它发送的数据包数量，确保不会造成网络拥塞。</li>
+<li>重传机制：如果发送方发送的数据包在网络中丢失或损坏，接收方会发送一个 SACK (Selective Acknowledgment) 报文告诉发送方哪些数据包没有接收到。发送方会根据 SACK 报文重传这些数据包。</li>
+</ol>
+<p>综上所述，TCP 通过这些机制来保证数据传输的可靠性，确保数据能够在网络中成功传输并被正确接收。</p>
 <h2 id="3-三次握手对应到-socket-函数">3. 三次握手对应到 socket 函数</h2>
 <h2 id="4-四次挥手对应到-socket-函数">4. 四次挥手对应到 socket 函数</h2>
 <p>主动关闭方调用 close 发送第一次挥手
 被动关闭方调用 close 发送第三次挥手
-<img src="https://youseebiggirl.github.io/post-images/1643911879647.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1643911879647.png" alt=""></p>
 <h2 id="5-为什么断开连接需要四次挥手">5. 为什么断开连接需要四次挥手</h2>
 <h2 id="6-三次握手为什么需要-3-次2-次或者-4-次不行吗">6. 三次握手为什么需要 3 次？2 次或者 4 次不行吗</h2>
-<p><strong>2 次：无法阻止历史连接，造成资源浪费</strong>
-<img src="https://youseebiggirl.github.io/post-images/1643774767968.png" alt="">
-图片来源：https://blog.csdn.net/qq_34827674/article/details/122040501</p>
-<p>在上面的图片中，服务端一收到 SYN 就建立连接，无法辨认该 SYN 是否是旧连接，只有在收到客户端的 RST 后才知道，导致白白创建了一条连接</p>
-<p><img src="https://youseebiggirl.github.io/post-images/1643775093372.png" alt="">
-图片来源：https://blog.csdn.net/qq_34827674/article/details/122040501</p>
+<p><strong>2 次：无法阻止历史连接，造成资源浪费，比如<a href="https://blog.csdn.net/qq_34827674/article/details/122040501">下图</a>：</strong></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1643774767968.png" alt=""></p>
+<p>在上面的图片中，服务端一收到 SYN 就建立连接，但是却无法辨认该 SYN 是否是旧连接，只有在收到客户端的 RST 后才能知道，这导致白白创建了一条连接。</p>
+<p>而使用 3 次握手就可以避免上面的情况，如<a href="https://blog.csdn.net/qq_34827674/article/details/122040501">下图所示</a></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1643775093372.png" alt=""></p>
 <p>可以看到，在三次握手的情况下， 可以在服务端建立连接之前，阻止掉历史连接，从而保证建立的连接不是历史连接。</p>
 <p><strong>4 次：既然 3 次已经可以保证连接正常建立了，就没必要再多加一次了</strong></p>
 <h2 id="7-tcp-的拥塞控制">7. TCP 的拥塞控制</h2>
@@ -474,7 +481,7 @@
 </ol>
 <p>解决方式：
 <strong>静态编码表</strong>
-<img src="https://youseebiggirl.github.io/post-images/1644679813525.png" alt="">
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1644679813525.png" alt="">
 静态编码表为一些常见的 Header 进行了映射，用一个 index 来标识，比如在上图中，:method GET 使用 2 来代替，这样传输就会节省很多字节，服务器在接收到报文后，通过静态编码表就可以获取到相应的信息。
 但是也会发现一个问题，一些 index 是没有 header value 的，这是因为这些 Value 并不是固定的而是变化的，这些 Value 都会经过 Huffman 编码后，才会发送出去。具体的编码方式参考上面给出来的原文链接。</p>
 <p><strong>动态编码表</strong>

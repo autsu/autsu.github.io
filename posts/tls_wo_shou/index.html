@@ -185,7 +185,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
 
 <meta name="description"
-  content="引用自 cloudflare 学习中心
+  content="注：以下内容引用自 cloudflare 学习中心
 TLS 握手有哪些步骤？ TLS 握手是由客户端和服务器交换的一系列数据报或消息。TLS 握手涉及多个步骤，因为客户端和服务器要交换完成握手和进行进一步对话所需的信息。">
 <script type="application/ld+json">
 {
@@ -215,7 +215,7 @@ TLS 握手有哪些步骤？ TLS 握手是由客户端和服务器交换的一�
     },
     "headline": "TLS 握手流程 | \/dev\/null","datePublished": "2022-07-14T14:30:52+00:00",
     "dateModified": "2022-07-14T14:30:52+00:00",
-    "wordCount":  42 ,
+    "wordCount":  59 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -224,7 +224,7 @@ TLS 握手有哪些步骤？ TLS 握手是由客户端和服务器交换的一�
             "url": "/images/icon.png"
         }
         },
-    "description": "引用自 cloudflare 学习中心\nTLS 握手有哪些步骤？ TLS 握手是由客户端和服务器交换的一系列数据报或消息。TLS 握手涉及多个步骤，因为客户端和服务器要交换完成握手和进行进一步对话所需的信息。"
+    "description": "注：以下内容引用自 cloudflare 学习中心\nTLS 握手有哪些步骤？ TLS 握手是由客户端和服务器交换的一系列数据报或消息。TLS 握手涉及多个步骤，因为客户端和服务器要交换完成握手和进行进一步对话所需的信息。"
 }
 </script><meta property="og:title" content="TLS 握手流程 | /dev/null" />
 <meta property="og:type" content="article" />
@@ -238,7 +238,7 @@ TLS 握手有哪些步骤？ TLS 握手是由客户端和服务器交换的一�
 
 
 
-<meta property="og:description" content="引用自 cloudflare 学习中心
+<meta property="og:description" content="注：以下内容引用自 cloudflare 学习中心
 TLS 握手有哪些步骤？ TLS 握手是由客户端和服务器交换的一系列数据报或消息。TLS 握手涉及多个步骤，因为客户端和服务器要交换完成握手和进行进一步对话所需的信息。" />
 
 
@@ -410,23 +410,65 @@ TLS 握手有哪些步骤？ TLS 握手是由客户端和服务器交换的一�
   
   
 
-  <p><a href="https://www.cloudflare.com/zh-cn/learning/ssl/what-happens-in-a-tls-handshake/">引用自 cloudflare 学习中心</a></p>
+  <blockquote>
+<p>注：以下内容引用自 <a href="https://www.cloudflare.com/zh-cn/learning/ssl/what-happens-in-a-tls-handshake/">cloudflare 学习中心</a></p>
+</blockquote>
 <h1 id="tls-握手有哪些步骤">TLS 握手有哪些步骤？</h1>
 <p>TLS 握手是由客户端和服务器交换的一系列数据报或消息。TLS 握手涉及多个步骤，因为客户端和服务器要交换完成握手和进行进一步对话所需的信息。</p>
 <p>TLS 握手的确切步骤将根据所使用的密钥交换算法的类型以及双方支持的密码套件而有所不同。RSA 密钥交换算法最为常用。具体如下：</p>
 <ol>
-<li><strong>“客户端问候（client hello）” 消息：</strong> 客户端通过向服务器发送“问候”消息来开始握手。该消息将包含客户端支持的 TLS 版本，支持的密码套件，以及称为一串称为“客户端随机数（client random）”的随机字节。</li>
-<li><strong>“服务器问候（server hello）”消息：</strong> 作为对 client hello 消息的回复，服务器发送一条消息，内含服务器的 <a href="https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/">SSL 证书</a>、服务器选择的密码套件，以及“服务器随机数（server random）”，即由服务器生成的另一串随机字节。</li>
-<li><strong>身份验证：</strong> 客户端使用颁发该证书的证书颁发机构验证服务器的 SSL 证书。此举确认服务器是其声称的身份，且客户端正在与该域的实际所有者进行交互。</li>
-<li><strong>预主密钥：</strong> 客户端再发送一串随机字节，即“预主密钥（premaster secret）”。预主密钥是使用公钥加密的，只能使用服务器的私钥解密。（客户端从服务器的 SSL 证书中获得<a href="https://www.cloudflare.com/learning/ssl/how-does-public-key-encryption-work/">公钥</a>。）</li>
-<li>**私钥被使用：**服务器对预主密钥进行解密。</li>
-<li>**生成会话密钥：**客户端和服务器均使用客户端随机数、服务器随机数和预主密钥生成会话密钥。双方应得到相同的结果。</li>
-<li>**客户端就绪：**客户端发送一条“已完成”消息，该消息用会话密钥加密。</li>
-<li>**服务器就绪：**服务器发送一条“已完成”消息，该消息用会话密钥加密。</li>
-<li>**实现安全对称加密：**已完成握手，并使用会话密钥继续进行通信。</li>
+<li>
+<p><strong>“客户端问候（client hello）” 消息：</strong> 客户端通过向服务器发送“问候”消息来开始握手。该消息将包含 <strong>客户端支持的 TLS 版本，支持的密码套件</strong>，以及称为一串称为“<strong>客户端随机数（client random）</strong>”的随机字节。</p>
+</li>
+<li>
+<p><strong>“服务器问候（server hello）”消息：</strong> 作为对 client hello 消息的回复，服务器发送一条消息，内含<strong>服务器的 <a href="https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/">SSL 证书</a></strong>、<strong>服务器选择的密码套件（从客户端支持的套件中选择）</strong>，以及“<strong>服务器随机数</strong>（server random）”，即由服务器生成的另一串随机字节。</p>
+</li>
+<li>
+<p><strong>身份验证：</strong> 客户端使用颁发该证书的证书颁发机构验证服务器的 SSL 证书。此举确认服务器是其声称的身份，且客户端正在与该域的实际所有者进行交互。</p>
+</li>
+<li>
+<p><strong>预主密钥：</strong> 客户端再发送一串随机字节，即“<strong>预主密钥（premaster secret）</strong>”。预主密钥是使用公钥加密的，只能使用服务器的私钥解密。（客户端从服务器的 SSL 证书中获得<a href="https://www.cloudflare.com/learning/ssl/how-does-public-key-encryption-work/">公钥</a>。），也就是说，客户端将使用公钥加密预主密钥，然后发送给服务端。</p>
+</li>
+<li>
+<p><strong>私钥被使用</strong>：服务器使用自己的 <strong>私钥</strong> 对预主密钥进行解密。</p>
+</li>
+<li>
+<p><strong>生成会话密钥</strong>：至此，客户端和服务端经过一系列信息交换后，各自都拥有了以下数据：</p>
+<ol>
+<li>
+<p>客户端生成的随机数</p>
+</li>
+<li>
+<p>服务端生成的随机数</p>
+</li>
+<li>
+<p>预主密钥</p>
+</li>
 </ol>
+<p>然后，客户端和服务器均使用客户端随机数、服务器随机数和预主密钥生成 <strong>会话密钥</strong>。双方应得到相同的结果。</p>
+</li>
+<li>
+<p><strong>客户端就绪</strong>：客户端发送一条“已完成”消息，该消息用会话密钥加密。</p>
+</li>
+<li>
+<p><strong>服务器就绪</strong>：服务器发送一条“已完成”消息，该消息用会话密钥加密。</p>
+</li>
+<li>
+<p><strong>实现安全对称加密</strong>：已完成握手，并使用 <strong>会话密钥</strong> 继续进行通信，之后的通信都会使用该密钥，以 <strong>对称加密</strong> 的方式进行通信。</p>
+</li>
+</ol>
+<p>具体的流程可以用下面这张图来概括：</p>
+<blockquote>
 <p>图片来源：https://segmentfault.com/a/1190000021559557</p>
+</blockquote>
 <p><img src="https://raw.githubusercontent.com/autsu/diagrams/2d20c2027f78f57ae0087ea3b33de34456234cbf/img/tls%E6%8F%A1%E6%89%8B%E6%B5%81%E7%A8%8B.png" alt=""></p>
+<h1 id="疑问">疑问</h1>
+<ol>
+<li>
+<p>为什么不直接使用非对称加密进行通信？</p>
+<p>非对称加密的计算量比较大，加解密速度较慢，因此在数据量较大的情况下，使用非对称加密进行加解密会比较耗时，不利于高效的通信。而对称加密的计算量较小，加解密速度较快，可以很好地满足数据传输的需求。因此，<strong>TLS 在握手阶段使用非对称加密来协商对称密钥</strong>，并且之后的通信过程中使用对称加密方式，以保证通信的安全性和高效性。</p>
+</li>
+</ol>
 
 </article>
 
@@ -499,6 +541,7 @@ TLS 握手有哪些步骤？ TLS 握手是由客户端和服务器交换的一�
   <nav id="TableOfContents">
   <ul>
     <li><a href="#tls-握手有哪些步骤">TLS 握手有哪些步骤？</a></li>
+    <li><a href="#疑问">疑问</a></li>
   </ul>
 </nav>
 </div>

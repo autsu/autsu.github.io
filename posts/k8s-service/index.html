@@ -214,7 +214,7 @@
     },
     "headline": "k8s service | \/dev\/null","datePublished": "2022-05-08T15:46:11+00:00",
     "dateModified": "2022-05-08T15:46:11+00:00",
-    "wordCount":  3239 ,
+    "wordCount":  3339 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -1243,6 +1243,12 @@ not connected&gt;
 <p>这个问题暂时将其搁置，毕竟这里主要还是以学习 ingress 为主。</p>
 <h1 id="特殊的-headless-service">特殊的 headless service</h1>
 <p>service 提供了稳定的对外访问服务，同时还提供了负载均衡的能力，每次访问 service，都会将其转发到该 service selector 对应的 pod 中的某一个，具体转发给哪个是由 service 决定的，访问者没有自主选择权，但是如果访问者想自主选择访问哪个 pod，或者想访问该 service 下的所有 pod，此时该如何处理呢？为了解决这类问题，就需要 Headless Service 闪亮登场了。</p>
+<p>顾名思义，headless service 一种特殊的 service，它是没有 IP 的，想要访问它，只能通过 DNS 的方式访问，DNS 的固定格式是 &lt;service_name&gt;.<namespace>.svc.cluster.local。而访问 headless service 也不同于普通 service ，它不会随机访问其代理的某个 pod，而是直接将其代理的所有 pod 的 address 提供给你。</p>
+<p>除此以外，它还会为 <strong>其代理的每个 pod</strong> 的 IP 地址绑定一个如下格式的 DNS 记录：</p>
+<p>&lt;pod_name&gt;.&lt;service_name&gt;.<namespace>.svc.cluster.local</p>
+<p>通过上面这种格式的 DNS 记录，就可以获取 headless service 下的某个 pod 的 IP 地址了。</p>
+<p>更新：</p>
+<p>感觉 headless service 会为其代理的 pod 生成 DNS 不太准确？因为我实践了一下，用 headless service + 由 rs 创建出来的 pod，然后 exec 到随便一个 pod 执行 <code>nslookup &lt;pod_name&gt;.&lt;service_name&gt;.&lt;namespace&gt;.svc.cluster.local</code> 是无法解析到地址的，报错 <code>server can't find nginx-rs-wzc4r.nginx-service-headless.default.svc.cluster.local: NXDOMAIN</code>，而用 headless service + 由 StatefulSet 创建出来的 pod 则可以成功解析到地址。</p>
 <blockquote>
 <ul>
 <li>疑问：用户自行选择 pod 的场景有哪些？用户需要访问 service 下所有 pod 的场景有哪些？</li>
@@ -1263,7 +1269,7 @@ not connected&gt;
 </ul>
 </blockquote>
 <h2 id="实践-1-1">实践 1</h2>
-<p>这个实践将会测试 headless service 的特性，并且会和普通的 service 进行对比，加深理解。</p>
+<p><strong>这个实践将会测试 headless service 的特性，并且会和普通的 service 进行对比，加深理解。</strong></p>
 <p>下面这个 yaml 会创建一个 nginx rs，以及两个对应的 service，一个是正常的 service，还有一个是 headless 类型的 service：</p>
 <p>（ps：好像如果 pod 指定了 containerPort，那么 service 这边可以不指定 targetPort）</p>
 <pre><code class="language-yaml">---
@@ -1306,7 +1312,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:alpine
+        image: nginx
         ports:
         - containerPort: 80
 ---
@@ -1338,7 +1344,13 @@ nginx-service            ClusterIP   10.43.27.242   &lt;none&gt;        80/TCP  
 &lt;title&gt;Welcome to nginx!&lt;/title&gt;
 </code></pre>
 <p>可以看到，普通的 service 是可以正常访问的，但是 headless service 是不可以访问的，因为 headless service 明确指定了 clusterIP 为 None，所以不会给它分配一个集群内 IP，所以无法通过 curl 的方式访问。</p>
-<p>使用 nslookup 查看二者的 dns 解析，看看他们两的区别，service 的 dns 格式是 <code>&lt;service_name&gt;.&lt;namespace&gt;.svc.cluster.local</code>，注意这里需要在容器内部执行</p>
+<p>使用 nslookup 查看二者的 dns 解析，看看他们两的区别，service 的 dns 格式是 <code>&lt;service_name&gt;.&lt;namespace&gt;.svc.cluster.local</code>，注意这里需要在容器内部执行。</p>
+<blockquote>
+<p>Tips: nginx 容器默认应该是没有安装 nsloopup 的，你需要执行以下命令：</p>
+<pre><code class="language-shell">$ apt update
+$ apt install dnsutils
+</code></pre>
+</blockquote>
 <pre><code class="language-shell">$ kubectl exec -it nginx-rs-dhxz7 -- nslookup nginx-service.default.svc.cluster.local
 Server:		10.43.0.10
 Address:	10.43.0.10:53
@@ -1365,6 +1377,8 @@ nginx-rs-dhxz7   1/1     Running   1 (40m ago)   54m   10.42.0.30   ubuntu   &lt
 nginx-rs-sn8wk   1/1     Running   1 (40m ago)   54m   10.42.0.32   ubuntu   &lt;none&gt;           &lt;none&gt;
 dnsutils         1/1     Running   1 (40m ago)   43m   10.42.0.31   ubuntu   &lt;none&gt;           &lt;none&gt;
 </code></pre>
+<p><del>此外，我们还可以验证一下 headless 为其代理的 pod 生成的 DNS 记录：</del></p>
+<p><del>待完成，不知道为什么解析不出 IP，报错：`server can&rsquo;t find nginx-rs-wzc4r.nginx-service-headless.default.svc.cluster.local: NXDOMAIN</del></p>
 <h2 id="实践-2">实践 2</h2>
 <p>这个实践会用通过代码的方式，从 headless service 中获取 pod 地址，然后访问这些 pod。</p>
 <p>首先需要准备下面的几个 yaml。</p>
@@ -1458,7 +1472,7 @@ Hostname: hello-app-7b5f4475c8-wm528
 <blockquote>
 <p>附：</p>
 <p>http-get 镜像的 go 源码：</p>
-<p>通过 net.LookupSRV 解析出 SRV 记录，从 SRV 里可以拿到 taget 和 port，将这个两个拼接成一个完整的 HTTP URL 进行访问。</p>
+<p>通过 net.LookupSRV 解析出 SRV 记录，从 SRV 里可以拿到 taget 和 port，将这个两个参数拼接成一个完整的 HTTP URL 进行访问。</p>
 <pre><code class="language-go">package main
 
 import (

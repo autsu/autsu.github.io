@@ -185,9 +185,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
 
 <meta name="description"
-  content="创建一个 handless service：
-kubia-service-headless.yaml
-apiVersion: v1 kind: Service metadata: name: kubia spec: clusterIP: None selector: app: kubia ports: - name: http port: 80 运行：">
+  content="有状态与无状态 无状态应用，指的是在运行时不需要维护或跟踪任何特定状态的应用程序。例如，Web 服务器或 API 服务器通常可以处理来自客户端的请求，而无需了解以前的请求或客户端状态。这些应用程序可以很容易地水平扩展，因为它们不需要共享状态，所以可以在任何节点上运行。像 Deployment 也是一个典型的“无状态应用”，它会按照事先声明的模板创建出 pod，这表示每个 pod 的定义将会是一模一样的，此外，这些 pod 之间没有之间没有顺序相关性（什么事有顺序相关性？比如一些集群应用包含主节点和从节点，而主节点必须先于从节点启动，这便是顺序相关性），也无所谓在哪台宿主机上运行，任何一个 pod 都可以提供完全相同的功能，不需要时，也可以结束任意一个 pod。">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -216,7 +214,7 @@ apiVersion: v1 kind: Service metadata: name: kubia spec: clusterIP: None selecto
     },
     "headline": "k8s StatefulSet | \/dev\/null","datePublished": "2022-09-11T23:43:10+00:00",
     "dateModified": "2022-09-11T23:43:10+00:00",
-    "wordCount":  686 ,
+    "wordCount":  1380 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -225,7 +223,7 @@ apiVersion: v1 kind: Service metadata: name: kubia spec: clusterIP: None selecto
             "url": "/images/icon.png"
         }
         },
-    "description": "创建一个 handless service：\nkubia-service-headless.yaml\napiVersion: v1 kind: Service metadata: name: kubia spec: clusterIP: None selector: app: kubia ports: - name: http port: 80 运行："
+    "description": "有状态与无状态 无状态应用，指的是在运行时不需要维护或跟踪任何特定状态的应用程序。例如，Web 服务器或 API 服务器通常可以处理来自客户端的请求，而无需了解以前的请求或客户端状态。这些应用程序可以很容易地水平扩展，因为它们不需要共享状态，所以可以在任何节点上运行。像 Deployment 也是一个典型的“无状态应用”，它会按照事先声明的模板创建出 pod，这表示每个 pod 的定义将会是一模一样的，此外，这些 pod 之间没有之间没有顺序相关性（什么事有顺序相关性？比如一些集群应用包含主节点和从节点，而主节点必须先于从节点启动，这便是顺序相关性），也无所谓在哪台宿主机上运行，任何一个 pod 都可以提供完全相同的功能，不需要时，也可以结束任意一个 pod。"
 }
 </script><meta property="og:title" content="k8s StatefulSet | /dev/null" />
 <meta property="og:type" content="article" />
@@ -239,9 +237,7 @@ apiVersion: v1 kind: Service metadata: name: kubia spec: clusterIP: None selecto
 
 
 
-<meta property="og:description" content="创建一个 handless service：
-kubia-service-headless.yaml
-apiVersion: v1 kind: Service metadata: name: kubia spec: clusterIP: None selector: app: kubia ports: - name: http port: 80 运行：" />
+<meta property="og:description" content="有状态与无状态 无状态应用，指的是在运行时不需要维护或跟踪任何特定状态的应用程序。例如，Web 服务器或 API 服务器通常可以处理来自客户端的请求，而无需了解以前的请求或客户端状态。这些应用程序可以很容易地水平扩展，因为它们不需要共享状态，所以可以在任何节点上运行。像 Deployment 也是一个典型的“无状态应用”，它会按照事先声明的模板创建出 pod，这表示每个 pod 的定义将会是一模一样的，此外，这些 pod 之间没有之间没有顺序相关性（什么事有顺序相关性？比如一些集群应用包含主节点和从节点，而主节点必须先于从节点启动，这便是顺序相关性），也无所谓在哪台宿主机上运行，任何一个 pod 都可以提供完全相同的功能，不需要时，也可以结束任意一个 pod。" />
 
 
 
@@ -400,7 +396,7 @@ apiVersion: v1 kind: Service metadata: name: kubia spec: clusterIP: None selecto
   </div>
   <div class="me-6 my-2">
     <i class="fas fa-clock me-1"></i>
-    <span>4分钟阅读时长</span>
+    <span>7分钟阅读时长</span>
   </div>
 
   
@@ -412,7 +408,143 @@ apiVersion: v1 kind: Service metadata: name: kubia spec: clusterIP: None selecto
   
   
 
-  <p>创建一个 handless service：</p>
+  <h1 id="有状态与无状态">有状态与无状态</h1>
+<p><strong>无状态应用</strong>，指的是在运行时不需要维护或跟踪任何特定状态的应用程序。例如，Web 服务器或 API 服务器通常可以处理来自客户端的请求，而无需了解以前的请求或客户端状态。这些应用程序可以很容易地水平扩展，因为它们不需要共享状态，所以可以在任何节点上运行。像 Deployment 也是一个典型的“无状态应用”，它会按照事先声明的模板创建出 pod，这表示每个 pod 的定义将会是一模一样的，此外，这些 pod 之间没有之间没有顺序相关性（什么事有顺序相关性？比如一些集群应用包含主节点和从节点，而主节点必须先于从节点启动，这便是顺序相关性），也无所谓在哪台宿主机上运行，任何一个 pod 都可以提供完全相同的功能，不需要时，也可以结束任意一个 pod。</p>
+<p>相比之下，有状态，指的是那些在运行时需要维护和跟踪特定状态的应用程序，例如数据库或缓存。这些应用程序需要将数据持久化到存储中，并且需要一个唯一的标识符来标识它们的状态。这意味着当应用程序重新启动或迁移到其他节点时，必须能够重新获取其以前的状态。</p>
+<h1 id="statefulset">StatefulSet</h1>
+<h2 id="yaml-模板">yaml 模板</h2>
+<p>下面就是一个 StatefulSet 的 yaml 模板，这个 StatefulSet 中定义了一个包含 3 个副本的 Nginx Pod，每个 Pod 都有一个 PVC 挂载到 /data 目录，用于存储应用程序数据。它还定义了一个 Headless Service，名为 example，用于为 Pod 提供唯一的稳定 DNS 名称。</p>
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nginx
+spec:
+  serviceName: nginx
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: data
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ &quot;ReadWriteOnce&quot; ]
+      resources:
+        requests:
+          storage: 1Gi
+</code></pre>
+<p>乍一看和 deployment 的模板非常类似，只是多了 <code>serviceName</code> 和 <code>volumeClaimTemplates</code> 这两个字段，这两个字段的作用如下：</p>
+<ul>
+<li><code>serviceName</code> 指定了与 StatefulSet 相关联的 <strong>Headless Service</strong> 的名称，用于 DNS 解析。</li>
+<li><code>volumeClaimTemplates</code> 指定了 StatefulSet 中每个 Pod 对应的 PersistentVolumeClaim 模板，用于为每个 Pod 创建对应的 PVC。这些 PVC 可以用于存储 StatefulSet 中的数据，从而实现 StatefulSet 的持久化存储。</li>
+</ul>
+<p>所以要想创建 StatefulSet，还需要先创建一个 headless service，用如下的 yaml 来创建一个 headless service：</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  clusterIP: None
+  ports:
+  - port: 80 # 该 service 的端口，不指定 targetPort，则默认与 port 相同
+    name: web
+  selector:
+    app: nginx 
+</code></pre>
+<p>创建完成后，预期结果如下：</p>
+<pre><code class="language-shell">$ kubectl get sts
+NAME    READY   AGE
+nginx   3/3     18m
+
+$ kubectl get po
+NAME      READY   STATUS    RESTARTS   AGE
+nginx-0   1/1     Running   0          18m
+nginx-1   1/1     Running   0          17m
+nginx-2   1/1     Running   0          16m
+</code></pre>
+<p>现在我们要重点观察的是 <code>volumeClaimTemplates</code> 这个字段的作用，它会 <strong>为每个由 StatefulSet 创建的来的 pod 创建一个 pvc，并进行绑定</strong>：</p>
+<p>查看所有的 pvc，发现现在已经有 3 个 pvc 了，并且它们的命名格式都是 &lt;volumeClaimTemplates.metadata.name&gt;-&lt;statefulSet.name&gt;-&lt;连续的序号&gt;。</p>
+<pre><code class="language-shell">$ kubectl get pvc
+NAME           STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+data-nginx-0   Bound    pvc-03e2e475-c81b-47c6-932f-40a758640628   1Gi        RWO            local-path     21m
+data-nginx-1   Bound    pvc-71776884-824a-4773-8a4d-a626b0381329   1Gi        RWO            local-path     20m
+data-nginx-2   Bound    pvc-bf9d7f67-f59a-42e9-a1c1-03c29887dbbf   1Gi        RWO            local-path     20m
+</code></pre>
+<p>我们再查看一下每个 pod 绑定的 pvc：</p>
+<pre><code class="language-shell">$ kubectl get pods -l app=nginx -o=jsonpath='{range .items[*]}{&quot;Pod Name: &quot;}{.metadata.name} {&quot;\t&quot;} {&quot;PVC Name: &quot;}{.spec.volumes[*].persistentVolumeClaim.claimName}{&quot;\n&quot;}{end}'
+
+Pod Name: nginx-0 	 PVC Name: data-nginx-0
+Pod Name: nginx-1 	 PVC Name: data-nginx-1
+Pod Name: nginx-2 	 PVC Name: data-nginx-2
+</code></pre>
+<p>发现了吗，每个 pod 绑定的 pvc 的名字都是有规可循的，</p>
+<blockquote>
+<p>突发奇想：如果删除某个 pvc 会发生什么？</p>
+<p>实践了一下，发现执行了 <code>kubectl delete pvc data-nginx-0</code> 后，会输出 <code>persistentvolumeclaim &quot;data-nginx-0&quot; deleted</code>，然后整个终端就阻塞了，按 <code>Ctrl+c</code> 强制退出后，这个 pvc 的 Status 变为 Terminating，但是对应的 pod 仍然为 Running 状态</p>
+</blockquote>
+<p>然后我们再尝试向 pod 挂载的目录里创建一个文件，并像文件内写入一条数据，然后删除这个 pod，看看会发生什么。</p>
+<p>首先先创建文件并写入数据，我们这里写入的对象 pod 是 nginx-0：</p>
+<pre><code class="language-shell">$ kubectl exec -it nginx-0 -- /bin/bash
+# cd 到挂载目录
+root@nginx-0:/# cd /data
+root@nginx-0:/data# ls
+# 在该目录下创建文件并写入内容
+root@nginx-0:/data# echo &quot;test&quot; &gt; test.txt
+root@nginx-0:/data# ls
+test.txt
+root@nginx-0:/data# cat test.txt
+test
+</code></pre>
+<p>然后删除这个 pod：</p>
+<pre><code class="language-shell"># 删除前先看一下当前所有的 pod
+$ kubectl get po
+NAME      READY   STATUS    RESTARTS   AGE
+nginx-0   1/1     Running   0          4d22h
+nginx-1   1/1     Running   0          4d22h
+nginx-2   1/1     Running   0          4d22h
+
+# 删掉 nginx-0
+$ kubectl delete po nginx-0
+pod &quot;nginx-0&quot; deleted
+
+# 查看删除后效果
+$ kubectl get po
+NAME      READY   STATUS    RESTARTS   AGE
+nginx-1   1/1     Running   0          4d22h
+nginx-2   1/1     Running   0          4d22h
+nginx-0   0/1     Pending   0          3s
+
+# 等待一会，nginx-0 会重新建出来
+$ kubectl get po -w
+NAME      READY   STATUS              RESTARTS   AGE
+nginx-1   1/1     Running             0          4d22h
+nginx-2   1/1     Running             0          4d22h
+nginx-0   0/1     ContainerCreating   0          5s
+nginx-0   1/1     Running             0          5s
+
+# 再次查看 pod 的挂载目录
+$ kubectl exec -it nginx-0 -- ls /data
+test.txt
+
+$ kubectl exec -it nginx-0 -- cat /data/test.txt
+test
+</code></pre>
+<p>通过上面的实践，我们发现删除 pod 后，StatefulSet 会自动重建 pod，并且重要的是，<strong>重建的 pod 名字和先前的会保持一致</strong>，我们删掉了 nginx-0 ，然后重建出来的 pod 也叫 nginx-0，又因为名字和先前的一致，按照 pvc 的绑定规则，它依然会绑定到 data-nginx-0 这个 pvc，进而挂载到和这个 pvc 绑定的 pv。这也表明，删除 pod 并不会删除其对应的 pvc 和 pv，所以 pod 对应的数据才会安全的保存。</p>
+<h1 id="实践">实践</h1>
+<p>创建一个 handless service：</p>
 <p><strong>kubia-service-headless.yaml</strong></p>
 <pre><code class="language-yaml">apiVersion: v1
 kind: Service
@@ -494,7 +626,7 @@ spec:
     spec:
       containers:
       - name: kubia
-        image: stdoutt/kubia-pet-arm64 # 注意这里更换成了 arm64 版本的
+        image: stdoutt/kubia-pet-arm64 # 注意这里更换成了 arm64 架构的
         ports:
         - name: http
           containerPort: 8080
@@ -613,6 +745,96 @@ kubia-0.kubia.default.svc.cluster.local. 5 IN A	10.42.0.23
 
 pod &quot;srvlookup&quot; deleted
 </code></pre>
+<h1 id="使用-statefulset-搭建一个-mysql-集群">使用 StatefulSet 搭建一个 MySQL 集群</h1>
+<p>主节点和从节点需要不同的配置文件，可以通过一个 configmap 定义，如下所示，这里定义了 master.cnf 和 slave.cnf 两个 MySQL 的配置文件。</p>
+<ul>
+<li>master.cnf 开启了 log-bin，即使用二进制日志文件的方式进行主从复制，这是一个标准的设置。</li>
+<li>slave.cnf 开启了 super-read-only，表示从节点会拒绝除主节点的数据同步操作外的所有写操作，即它对用户是只读的。</li>
+</ul>
+<p><strong>mysql-configmap.yaml</strong></p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+    app.kubernetes.io/name: mysql
+data:
+  primary.cnf: |
+    # 仅在主服务器上应用此配置
+    [mysqld]
+    log-bin    
+  replica.cnf: |
+    # 仅在副本服务器上应用此配置
+    [mysqld]
+    super-read-only  
+</code></pre>
+<blockquote>
+<p>ps：也可以使用下面的命令 <code>&lt;&lt;EOF</code> 写入到文件，它将持续读取你的多行输入，直到你输入一个 EOF。</p>
+<pre><code class="language-shell">cat &lt;&lt;EOF &gt; mysql-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+    app.kubernetes.io/name: mysql
+data:
+  primary.cnf: |
+    # 仅在主服务器上应用此配置
+    [mysqld]
+    log-bin
+  replica.cnf: |
+    # 仅在副本服务器上应用此配置
+    [mysqld]
+    super-read-only
+EOF
+</code></pre>
+</blockquote>
+<p>创建这个 cm：</p>
+<pre><code class="language-shell">$ kubectl apply -f mysql-configmap.yaml
+configmap/mysql created
+
+$ kubectl get cm
+NAME               DATA   AGE
+kube-root-ca.crt   1      5d22h
+mysql              2      27s
+</code></pre>
+<p>接下来，需要创建两个 Service 来供 StatefulSet 以及用户使用。这两个 Service 的定义如下：</p>
+<pre><code class="language-yaml"># 为 StatefulSet 成员提供稳定的 DNS 表项的无头服务（Headless Service）
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+    app.kubernetes.io/name: mysql
+spec:
+  ports:
+  - name: mysql
+    port: 3306
+  clusterIP: None
+  selector:
+    app: mysql
+---
+# 用于连接到任一 MySQL 实例执行读操作的客户端服务
+# 对于写操作，你必须连接到主服务器：mysql-0.mysql
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-read
+  labels:
+    app: mysql
+    app.kubernetes.io/name: mysql
+    readonly: &quot;true&quot;
+spec:
+  ports:
+  - name: mysql
+    port: 3306
+  selector:
+    app: mysql
+</code></pre>
+<p>这两个 Service 都代理了含有 label <code>app: mysql</code> 的 Pod，端口映射都是用 Service 的 3306 端口对应 Pod 的 3306 端口，并且其中一个 Service 是 Headless Service（即 ClusterIP 为 None），它将为其代理的 Pod 分配一个 DNS 记录来固定其拓扑状态</p>
 
 </article>
 
@@ -684,7 +906,15 @@ pod &quot;srvlookup&quot; deleted
 >
   <nav id="TableOfContents">
   <ul>
+    <li><a href="#有状态与无状态">有状态与无状态</a></li>
+    <li><a href="#statefulset">StatefulSet</a>
+      <ul>
+        <li><a href="#yaml-模板">yaml 模板</a></li>
+      </ul>
+    </li>
+    <li><a href="#实践">实践</a></li>
     <li><a href="#在-statefulset-中发现伙伴节点">在 statefulset 中发现伙伴节点</a></li>
+    <li><a href="#使用-statefulset-搭建一个-mysql-集群">使用 StatefulSet 搭建一个 MySQL 集群</a></li>
   </ul>
 </nav>
 </div>

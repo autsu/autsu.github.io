@@ -185,7 +185,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
 
 <meta name="description"
-  content="引子 做过开发的同学都遇到过给程序进行配置的场景，比如非常常见的配置文件，将 Mysql 的地址、端口、用户名、密码等信息写到一个配置文件里，然后程序内部通过读取这个配置文件来获取信息，防止了硬编码信息到程序内部，这样如果发生变动只需要修改配置文件即可，无需重新编译整个程序；另一种常见的方式是运行程序时指定参数来进行配置，比如 Go 标准库里的 flag 包就可以方便的进行参数指定，然后运行时只要使用诸如 go run main.">
+  content="说明：文章的部分地方会用 cm 来指代 ConfigMap">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -214,7 +214,7 @@
     },
     "headline": "k8s ConfigMap | \/dev\/null","datePublished": "2022-06-07T19:17:35+00:00",
     "dateModified": "2022-06-07T19:17:35+00:00",
-    "wordCount":  2366 ,
+    "wordCount":  2370 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -223,7 +223,7 @@
             "url": "/images/icon.png"
         }
         },
-    "description": "引子 做过开发的同学都遇到过给程序进行配置的场景，比如非常常见的配置文件，将 Mysql 的地址、端口、用户名、密码等信息写到一个配置文件里，然后程序内部通过读取这个配置文件来获取信息，防止了硬编码信息到程序内部，这样如果发生变动只需要修改配置文件即可，无需重新编译整个程序；另一种常见的方式是运行程序时指定参数来进行配置，比如 Go 标准库里的 flag 包就可以方便的进行参数指定，然后运行时只要使用诸如 go run main."
+    "description": "说明：文章的部分地方会用 cm 来指代 ConfigMap"
 }
 </script><meta property="og:title" content="k8s ConfigMap | /dev/null" />
 <meta property="og:type" content="article" />
@@ -237,7 +237,7 @@
 
 
 
-<meta property="og:description" content="引子 做过开发的同学都遇到过给程序进行配置的场景，比如非常常见的配置文件，将 Mysql 的地址、端口、用户名、密码等信息写到一个配置文件里，然后程序内部通过读取这个配置文件来获取信息，防止了硬编码信息到程序内部，这样如果发生变动只需要修改配置文件即可，无需重新编译整个程序；另一种常见的方式是运行程序时指定参数来进行配置，比如 Go 标准库里的 flag 包就可以方便的进行参数指定，然后运行时只要使用诸如 go run main." />
+<meta property="og:description" content="说明：文章的部分地方会用 cm 来指代 ConfigMap" />
 
 
 
@@ -408,7 +408,10 @@
   
   
 
-  <h1 id="引子">引子</h1>
+  <blockquote>
+<p>说明：文章的部分地方会用 <code>cm</code> 来指代 <code>ConfigMap</code></p>
+</blockquote>
+<h1 id="引子">引子</h1>
 <p>做过开发的同学都遇到过给程序进行配置的场景，比如非常常见的配置文件，将 Mysql 的地址、端口、用户名、密码等信息写到一个配置文件里，然后程序内部通过读取这个配置文件来获取信息，防止了硬编码信息到程序内部，这样如果发生变动只需要修改配置文件即可，无需重新编译整个程序；另一种常见的方式是运行程序时指定参数来进行配置，比如 Go 标准库里的 flag 包就可以方便的进行参数指定，然后运行时只要使用诸如 <code>go run main.go -a 123 -b 456</code> 这样的方式，便可读取到配置信息，比如在这个例子里传递了两个参数：a=123，b=456</p>
 <p>那么在 k8s 中如何对容器进行配置呢？</p>
 <h2 id="在-docker-中定义命令与参数">在 docker 中定义命令与参数</h2>

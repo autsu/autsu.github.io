@@ -222,7 +222,7 @@
             "@type":"ListItem",
             "position":  5 ,
             "name": "k8s StatefulSet",
-            "description": "创建一个 handless service：\nkubia-service-headless.yaml\napiVersion: v1 kind: Service metadata: name: kubia spec: clusterIP: None selector: app: kubia ports: - name: http port: 80 运行：",
+            "description": "有状态与无状态 无状态应用，指的是在运行时不需要维护或跟踪任何特定状态的应用程序。例如，Web 服务器或 API 服务器通常可以处理来自客户端的请求，而无需了解以前的请求或客户端状态。这些应用程序可以很容易地水平扩展，因为它们不需要共享状态，所以可以在任何节点上运行。像 Deployment 也是一个典型的“无状态应用”，它会按照事先声明的模板创建出 pod，这表示每个 pod 的定义将会是一模一样的，此外，这些 pod 之间没有之间没有顺序相关性（什么事有顺序相关性？比如一些集群应用包含主节点和从节点，而主节点必须先于从节点启动，这便是顺序相关性），也无所谓在哪台宿主机上运行，任何一个 pod 都可以提供完全相同的功能，不需要时，也可以结束任意一个 pod。",
             "url": "/posts/k8s-statefulset/"
         },{
             "@type":"ListItem",
@@ -601,9 +601,7 @@ Reflector：负责从 api-server list（全量拉取数据） and watch（监听
     <h3 class="mt-0">k8s StatefulSet</h3>
   </a>
   
-    创建一个 handless service：
-kubia-service-headless.yaml
-apiVersion: v1 kind: Service metadata: name: kubia spec: clusterIP: None selector: app: kubia ports: - name: http port: 80 运行：
+    有状态与无状态 无状态应用，指的是在运行时不需要维护或跟踪任何特定状态的应用程序。例如，Web 服务器或 API 服务器通常可以处理来自客户端的请求，而无需了解以前的请求或客户端状态。这些应用程序可以很容易地水平扩展，因为它们不需要共享状态，所以可以在任何节点上运行。像 Deployment 也是一个典型的“无状态应用”，它会按照事先声明的模板创建出 pod，这表示每个 pod 的定义将会是一模一样的，此外，这些 pod 之间没有之间没有顺序相关性（什么事有顺序相关性？比如一些集群应用包含主节点和从节点，而主节点必须先于从节点启动，这便是顺序相关性），也无所谓在哪台宿主机上运行，任何一个 pod 都可以提供完全相同的功能，不需要时，也可以结束任意一个 pod。
   
 
   
@@ -618,7 +616,7 @@ apiVersion: v1 kind: Service metadata: name: kubia spec: clusterIP: None selecto
   </div>
   <div class="me-6 my-2">
     <i class="fas fa-clock me-1"></i>
-    <span>4分钟阅读时长</span>
+    <span>7分钟阅读时长</span>
   </div>
 
   
