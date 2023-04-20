@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<title>面经 | /dev/null</title>
+<title>nginx | /dev/null</title>
 
 <meta name="generator" content="Hugo Eureka 0.9.3" />
 <link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
@@ -197,8 +197,8 @@
       "item":"/tags/"},{
       "@type": "ListItem",
       "position": 2 ,
-      "name":"面经",
-      "item":"/tags/%E9%9D%A2%E7%BB%8F/"}]
+      "name":"nginx",
+      "item":"/tags/nginx/"}]
 }
 </script>
 
@@ -212,38 +212,20 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
-            "name": "面试题收集 1",
-            "description": "Go相关 map、channel、slice 的底层实现 map map 使用的是拉链法，用哈希桶来保存键值对，每个桶可以保存 8 个键值对，它会用哈希算法计算出 key 的 hash 值，然后用这个哈希值的高 8 位作为 tophash，用于在一个桶中区别出 key，然后桶的数量是 2^b ，用低 b 位来决定这个 key 放到哪个桶。每个桶还会连接一个溢出桶，如果一个桶已经满了，但是依然有 key 落入到这个桶，那么就会将其放到溢出桶中。",
-            "url": "/posts/mian_shi_ti_shou_ji1/"
-        },{
-            "@type":"ListItem",
-            "position":  2 ,
-            "name": "计算机网络面试题",
-            "description": "TCP 相关 1. 说说 TIME_WAIT 及其作用 当一端 主动 断开连接并发送最后一次挥手后，该端状态变为 TIME_WAIT ，此时会等待 2 MSL （MSL 是 Maximum Segment Lifetime，译为“报文最大生存时间”，可为 30s，1min 或 2min。） 作用：",
-            "url": "/posts/ji-suan-ji-wang-luo-mian-shi-ti/"
-        },{
-            "@type":"ListItem",
-            "position":  3 ,
-            "name": "GMP 面试题",
-            "description": "Goroutine 阻塞的话，是不是对应的 M 也会阻塞 如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么这个 G 会被标记为 runnable 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。",
-            "url": "/posts/gmp-mian-shi-ti/"
-        },{
-            "@type":"ListItem",
-            "position":  4 ,
-            "name": "MySQL 面经汇总",
-            "description": "MySQL 面经汇总，收集于牛客，不断更新中\n1. char 和 varchar 的区别 char 是固定长度，varchar 长度可变，存储时，前者不管实际存储数据的长度，直接规定 char 规定的长度分配存储空间；而后者会根据实际存储的数据分配最终的存储空间。",
-            "url": "/posts/mysql-mian-jing/"
+            "name": "通过实践学习 Nginx",
+            "description": "Nginx 反代 package main import ( \u0026quot;flag\u0026quot; \u0026quot;fmt\u0026quot; \u0026quot;net/http\u0026quot; ) var ( mark string ip string port string ) func main() { flag.",
+            "url": "/posts/nginx-practice/"
         }
     ]
 }
-</script><meta property="og:title" content="面经 | /dev/null" />
+</script><meta property="og:title" content="nginx | /dev/null" />
 <meta property="og:type" content="website" />
 
 
 <meta property="og:image" content="/images/icon.png">
 
 
-<meta property="og:url" content="/tags/%E9%9D%A2%E7%BB%8F/" />
+<meta property="og:url" content="/tags/nginx/" />
 
 
 
@@ -267,14 +249,14 @@
 
 
 
-<meta property="og:updated_time" content="2022-08-18T22:12:52&#43;00:00" />
+<meta property="og:updated_time" content="2023-04-07T00:20:10&#43;08:00" />
 
 
 
 <meta property="article:section" content="tags" />
 
 
-<link rel="alternate" type="application/rss+xml" href="/tags/%E9%9D%A2%E7%BB%8F/index.xml" title="/dev/null" />
+<link rel="alternate" type="application/rss+xml" href="/tags/nginx/index.xml" title="/dev/null" />
 
 
   <body class="flex min-h-screen flex-col">
@@ -369,23 +351,11 @@
         <div class="pl-scrollbar">
           <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
 <article class="mx-6 my-8">
-    <h1 class="font-bold text-3xl text-primary-text"><i class="fas fa-tag fa-fw" aria-hidden="true"></i>&nbsp;面经</h1>
+    <h1 class="font-bold text-3xl text-primary-text"><i class="fas fa-tag fa-fw" aria-hidden="true"></i>&nbsp;nginx</h1>
     <div class="bg-secondary-bg rounded " style="padding: 3rem!important;margin-top: 30px;">
-        <div class="overflow-hidden archive" style="font-size:15px;line-height: 2;padding-bottom: 0.8em"><h3 style="font-size: 1.5em;">2022</h3><article class="archive-item">
-                        <a href="/posts/mian_shi_ti_shou_ji1/" class="archive-item-link">
-                            >>&nbsp 08-18&nbsp&nbsp&nbsp面试题收集 1</a>
-                        
-                    </article><article class="archive-item">
-                        <a href="/posts/ji-suan-ji-wang-luo-mian-shi-ti/" class="archive-item-link">
-                            >>&nbsp 01-28&nbsp&nbsp&nbsp计算机网络面试题</a>
-                        
-                    </article><article class="archive-item">
-                        <a href="/posts/gmp-mian-shi-ti/" class="archive-item-link">
-                            >>&nbsp 01-26&nbsp&nbsp&nbspGMP 面试题</a>
-                        
-                    </article><h3 style="font-size: 1.5em;">2021</h3><article class="archive-item">
-                        <a href="/posts/mysql-mian-jing/" class="archive-item-link">
-                            >>&nbsp 07-25&nbsp&nbsp&nbspMySQL 面经汇总</a>
+        <div class="overflow-hidden archive" style="font-size:15px;line-height: 2;padding-bottom: 0.8em"><h3 style="font-size: 1.5em;">2023</h3><article class="archive-item">
+                        <a href="/posts/nginx-practice/" class="archive-item-link">
+                            >>&nbsp 04-07&nbsp&nbsp&nbsp通过实践学习 Nginx</a>
                         
                     </article></div>
     </div>

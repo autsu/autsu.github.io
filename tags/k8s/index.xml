@@ -8,7 +8,43 @@
     <language>zh</language>
     <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
 </copyright>
-    <lastBuildDate>Mon, 10 Oct 2022 22:11:10 +0000</lastBuildDate><atom:link href="/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 21 Apr 2023 00:10:31 +0800</lastBuildDate><atom:link href="/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Controller-Runtime 之 Source </title>
+      <link>/posts/controller-runtime-source/</link>
+      <pubDate>Fri, 21 Apr 2023 00:10:31 +0800</pubDate>
+      
+      <guid>/posts/controller-runtime-source/</guid>
+      <description>背景 Source 是 Watches() 的第一个参数，代表一种事件源，实际类型是一个 interface，原型：</description>
+    </item>
+    
+    <item>
+      <title>K8s Storageclass</title>
+      <link>/posts/k8s-storageclass/</link>
+      <pubDate>Tue, 18 Apr 2023 21:51:28 +0800</pubDate>
+      
+      <guid>/posts/k8s-storageclass/</guid>
+      <description>搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir /share # 编辑配置 sudo vim /etc/exports # 在最后一行添加 /share *(rw,sync,no_root_squash,no_subtree_check) /share *(rw,sync,no_root_squash,no_subtree_check)</description>
+    </item>
+    
+    <item>
+      <title>通过 Kubespray 搭建 k8s 集群</title>
+      <link>/posts/kubespray-install/</link>
+      <pubDate>Sun, 16 Apr 2023 22:05:14 +0800</pubDate>
+      
+      <guid>/posts/kubespray-install/</guid>
+      <description>⚠️ 安装前最好确保你的主机够干净，我的虚拟机就因为之前自行用二进制搭建过，导致使用 kubespray 安装出现各种奇奇怪怪的错误，最后删除重新创建了一台，一次就安装成功了</description>
+    </item>
+    
+    <item>
+      <title>K8s 二进制安装</title>
+      <link>/posts/k8s-binray-install/</link>
+      <pubDate>Thu, 13 Apr 2023 22:05:14 +0800</pubDate>
+      
+      <guid>/posts/k8s-binray-install/</guid>
+      <description>环境 主机系统为 win11，通过 vmware 创建了 3 台虚拟机，详情如下：</description>
+    </item>
+    
     <item>
       <title>k8s Secret</title>
       <link>/posts/k8s-secret/</link>

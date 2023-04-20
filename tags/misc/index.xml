@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>misc on /dev/null</title>
+    <link>/tags/misc/</link>
+    <description>Recent content in misc on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Fri, 14 Apr 2023 23:19:13 +0800</lastBuildDate><atom:link href="/tags/misc/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>装机记录</title>
+      <link>/posts/zhuangji-jilu/</link>
+      <pubDate>Fri, 14 Apr 2023 23:19:13 +0800</pubDate>
+      
+      <guid>/posts/zhuangji-jilu/</guid>
+      <description>最近组了台台式，用来当做迷你服务器使用，因为是自己第一次独立装机，所以特此记录一下期间的心路历程。
+坑爹 1：CPU 坑爹指数：⭐️
+老实说这玩意安装还是非常简单的，主要是包装和说明书上各种警告，还有网上各种压弯针脚的帖子，搞得人心惶惶的，其实感觉问题不大，按照说明书的步骤来，稍微小心一点，很容易就安装好了。</description>
+    </item>
+    
+  </channel>
+</rss>

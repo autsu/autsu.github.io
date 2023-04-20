@@ -8,13 +8,40 @@
     <language>zh</language>
     <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
 </copyright>
-    <lastBuildDate>Mon, 10 Oct 2022 22:11:10 +0000</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 21 Apr 2023 00:10:31 +0800</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>controller-runtime</title>
+      <link>/tags/controller-runtime/</link>
+      <pubDate>Fri, 21 Apr 2023 00:10:31 +0800</pubDate>
+      
+      <guid>/tags/controller-runtime/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>k8s</title>
       <link>/tags/k8s/</link>
-      <pubDate>Mon, 10 Oct 2022 22:11:10 +0000</pubDate>
+      <pubDate>Fri, 21 Apr 2023 00:10:31 +0800</pubDate>
       
       <guid>/tags/k8s/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>misc</title>
+      <link>/tags/misc/</link>
+      <pubDate>Fri, 14 Apr 2023 23:19:13 +0800</pubDate>
+      
+      <guid>/tags/misc/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>nginx</title>
+      <link>/tags/nginx/</link>
+      <pubDate>Fri, 07 Apr 2023 00:20:10 +0800</pubDate>
+      
+      <guid>/tags/nginx/</guid>
       <description></description>
     </item>
     

@@ -197,93 +197,93 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
+            "name": "操作系统面试题",
+            "description": "页的概念 线程怎么调度的 进程间通信有哪几种方式，哪种方式最快？ 1.无名管道( pipe )：管道是一种半双工的通信方式，数据只能单向流动，而且只能在具有亲缘关系的进程间使用。进程的亲缘关系通常是指父子进程关系。",
+            "url": "/posts/cao-zuo-xi-tong-mian-shi-ti/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "MVCC 与事务隔离",
+            "description": "申明：以下内容来自网上的博客、课程，通过自己的理解进行一下转述，可能存在一些错误和纰漏\n介绍 MySQL 的 可重复读 和 读已提交 是基于 MVCC 实现的，它的最大优点是读不加锁，因此读写不冲突，并发性能好，其实现主要基于以下技术及数据结构：",
+            "url": "/posts/mvcc-yu-shi-wu-ge-chi/"
+        },{
+            "@type":"ListItem",
+            "position":  3 ,
+            "name": "SO_REUSEADDR 和 SO_REUSEPORT 实践",
+            "description": "SO_REUSEADDR 该选项可以绑定处于 TIME_WAIT 状态的地址，实践： server 端：",
+            "url": "/posts/so_reuseaddr-he-so_reuseport-shi-jian/"
+        },{
+            "@type":"ListItem",
+            "position":  4 ,
+            "name": "TCP CLOSE_WAIT 和 FIN_WAIT_2",
+            "description": "问题记录 最近写了一个普通的 tcp demo，发现 server 的状态处于 CLOSE_WAIT，而 client 的状态处于 FIN_WAIT_2，为了排查这个问题，特此写了这篇文章作为记录，这也",
+            "url": "/posts/close_wait-he-fin_wait_2/"
+        },{
+            "@type":"ListItem",
+            "position":  5 ,
+            "name": "计算机网络面试题",
+            "description": "TCP 相关 1. 说说 TIME_WAIT 及其作用 当一端 主动 断开连接并发送最后一次挥手后，该端状态变为 TIME_WAIT ，此时会等待 2 MSL （MSL 是 Maximum Segment Lifetime，译为“报文最大生存时间”，可为 30s，1min 或 2min。） 作用：",
+            "url": "/posts/ji-suan-ji-wang-luo-mian-shi-ti/"
+        },{
+            "@type":"ListItem",
+            "position":  6 ,
+            "name": "GMP 面试题",
+            "description": "Goroutine 阻塞的话，是不是对应的 M 也会阻塞 如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么这个 G 会被标记为 runnable 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。",
+            "url": "/posts/gmp-mian-shi-ti/"
+        },{
+            "@type":"ListItem",
+            "position":  7 ,
             "name": "Mac环境下， VMware Fusion下的虚拟机（ CentOS 7/Ubuntu20）的 NAT网络配置",
             "description": "转载自：https://blog.csdn.net/u010476994/article/details/104001848 （Centos 7 部分） https://blog.",
             "url": "/posts/mac-huan-jing-xia-vmware-fusion-xia-de-xu-ni-ji-centos-7de-nat-wang-luo-pei-zhi/"
         },{
             "@type":"ListItem",
-            "position":  2 ,
+            "position":  8 ,
             "name": "Mysql 间隙锁实践",
             "description": "测试数据如下：\nCREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) DEFAULT NULL, PRIMARY KEY (`id`), KEY `c` (`c`) ) ENGINE=InnoDB; +----+------+------+ | id | c | d | +----+------+------+ | 0 | 0 | 0 | | 5 | 5 | 5 | | 10 | 10 | 10 | | 15 | 15 | 15 | | 20 | 20 | 20 | | 25 | 25 | 25 | +----+------+------+ 测试情景 1 不存在的主键，select 是否会加间隙锁 session A session B 1 begin 2 begin 3 select * from t where id = 9 for update; 4 insert into t values(11,5,5); 5 insert into t values(6,5,5); 6 insert into t values(10,5,5); 7 insert into t values(4,5,5); 8 select * from t where id = 9 for update; 结果：",
             "url": "/posts/mysql-jian-xi-suo-shi-jian/"
         },{
             "@type":"ListItem",
-            "position":  3 ,
+            "position":  9 ,
             "name": "MySQL实战笔记 20讲幻读是什么",
             "description": "全文基于此表：\nCREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) DEFAULT NULL, PRIMARY KEY (`id`), KEY `c` (`c`) ) ENGINE=InnoDB; insert into t values(0,0,0),(5,5,5), (10,10,10),(15,15,15),(20,20,20),(25,25,25); 1.",
             "url": "/posts/mysql-shi-zhan-bi-ji-20-jiang-huan-du-shi-shi-me/"
         },{
             "@type":"ListItem",
-            "position":  4 ,
+            "position":  10 ,
             "name": "[转载] 进程的虚拟地址空间分布",
             "description": "https://www.cnblogs.com/Joezzz/p/9803344.html",
             "url": "/posts/zhuan-zai-jin-cheng-de-xu-ni-di-zhi-kong-jian-fen-bu/"
         },{
             "@type":"ListItem",
-            "position":  5 ,
+            "position":  11 ,
             "name": "[转载] Mac 通过DOSBox搭建汇编环境（附编译、链接、执行、调试详细过程）",
             "description": "https://blog.csdn.net/qq_41855420/article/details/103746234",
             "url": "/posts/mac-tong-guo-dosbox-da-jian-hui-bian-huan-jing-fu-bian-yi-lian-jie-zhi-xing-diao-shi-xiang-xi-guo-cheng/"
         },{
             "@type":"ListItem",
-            "position":  6 ,
+            "position":  12 ,
             "name": "39. 组合总和",
             "description": "给定一个无重复元素的正整数数组 candidates 和一个正整数 target ，找出 candidates 中所有可以使数字和为目标数 target 的唯一组合。",
             "url": "/posts/39-zu-he-zong-he/"
         },{
             "@type":"ListItem",
-            "position":  7 ,
+            "position":  13 ,
             "name": "Linux 批量 kill 进程",
             "description": "命令： ps -ef | grep name | grep -v grep | awk '{print $2}' | xargs kill 解释： ps -ef：查看全格式的全部进程",
             "url": "/posts/linux-pi-liang-kill-jin-cheng/"
         },{
             "@type":"ListItem",
-            "position":  8 ,
-            "name": "我的面经",
-            "description": "2021.9.17 梦想工场 go 实习生\n现场面，只有纸和笔（吐槽：公司的大厦正好在装修，找了半天才找到，还好出门比较早，不然多半得迟到）",
-            "url": "/posts/wo-de-mian-jing/"
-        },{
-            "@type":"ListItem",
-            "position":  9 ,
+            "position":  14 ,
             "name": "MySQL 为什么使用 B+ 树",
             "description": "B 树和 B+ 树的区别 来源：https://draveness.me/whys-the-design-mysql-b-plus-tree/",
             "url": "/posts/mysql-wei-shi-me-shi-yong-b-shu/"
         },{
             "@type":"ListItem",
-            "position":  10 ,
+            "position":  15 ,
             "name": "Mac 下构建基于 C++ 的 gRPC",
             "description": "来源于官方文档（https://grpc.io/docs/languages/cpp/quickstart/），但是其中有一些坑，特此记录，系统为 macOS 11.0.1 (20B29)：\n1. 设置目录（很重要，必须执行该步骤） 选择一个目录来保存本地安装的软件包。此页面假定环境变量MY_INSTALL_DIR包含此目录路径。例如：",
             "url": "/posts/mac-xia-gou-jian-ji-yu-c-de-grpc/"
-        },{
-            "@type":"ListItem",
-            "position":  11 ,
-            "name": "MySQL 锁",
-            "description": "表锁 语法：\n加锁：\n加读锁 LOCK TABLES [tablename] READ;",
-            "url": "/posts/mysql-suo/"
-        },{
-            "@type":"ListItem",
-            "position":  12 ,
-            "name": "MySQL 的事务隔离级别",
-            "description": "1. 未提交读（脏读） 事务的修改，即使没有提交，对其他事务也是可见的。事务可以读取未提交的数据，称之为 脏读。它存在 4 个常见问题（脏读、不可重复读、幻读、丢失更新）。 2.",
-            "url": "/posts/mysql-de-shi-wu-ge-chi-ji-bie/"
-        },{
-            "@type":"ListItem",
-            "position":  13 ,
-            "name": "[牛客][笔试题] 兔子繁衍",
-            "description": "有一对兔子，从出生后的第五个月起每月生出一对小兔子（即满4月就开始生小兔），小兔子也会出生从第五个月起每月生一对小免子。假如兔子不会死，第n个月时，兔群有多少对兔子。\n输入描述: 第n月（n为自然数，n\u0026lt;101）\n输出描述: 第 n 个月时，兔子的对数（免群的兔子有多少对兔子）。 示例 1 输入 5 输出 2 说明 第五个月时，有两对兔子",
-            "url": "/posts/niu-ke-bi-shi-ti-tu-zi-fan-yan/"
-        },{
-            "@type":"ListItem",
-            "position":  14 ,
-            "name": "Redis zset 源码阅读",
-            "description": "types zskiplistNode typedef struct zskiplistNode { sds ele; // 成员 double score; // 分值 struct zskiplistNode *backward; // 后退指针 // 层 struct zskiplistLevel { struct zskiplistNode *forward; // 前进指针 unsigned long span; // 跨度 } level[]; } zskiplistNode; zskiplist typedef struct zskiplist { struct zskiplistNode *header, *tail; unsigned long length; int level; // 当前跳跃表内，层数最大的那个节点的层数 } zskiplist; zset typedef struct zset { dict *dict; zskiplist *zsl; } zset; functions zslCreate /* Create a new skiplist.",
-            "url": "/posts/redis-zset-yuan-ma-yue-du/"
-        },{
-            "@type":"ListItem",
-            "position":  15 ,
-            "name": "leetcode 1493. 删掉一个元素以后全为 1 的最长子数组",
-            "description": "给你一个二进制数组 nums ，你需要从中删掉一个元素。\n请你在删掉元素的结果数组中，返回最长的且只包含 1 的非空子数组的长度。",
-            "url": "/posts/leetcode-1493-shan-diao-yi-ge-yuan-su-yi-hou-quan-wei-1-de-zui-chang-zi-shu-zu/"
         }
     ]
 }
@@ -318,7 +318,7 @@
 
 
 
-<meta property="og:updated_time" content="2022-10-10T22:11:10&#43;00:00" />
+<meta property="og:updated_time" content="2023-04-21T00:10:31&#43;08:00" />
 
 
 
@@ -426,6 +426,253 @@
 
   <div class="bg-secondary-bg rounded px-6">
     <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/cao-zuo-xi-tong-mian-shi-ti/" class="no-underline">
+    <h3 class="mt-0">操作系统面试题</h3>
+  </a>
+  
+    页的概念 线程怎么调度的 进程间通信有哪几种方式，哪种方式最快？ 1.无名管道( pipe )：管道是一种半双工的通信方式，数据只能单向流动，而且只能在具有亲缘关系的进程间使用。进程的亲缘关系通常是指父子进程关系。
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-02-15</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>1分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/mvcc-yu-shi-wu-ge-chi/" class="no-underline">
+    <h3 class="mt-0">MVCC 与事务隔离</h3>
+  </a>
+  
+    申明：以下内容来自网上的博客、课程，通过自己的理解进行一下转述，可能存在一些错误和纰漏
+介绍 MySQL 的 可重复读 和 读已提交 是基于 MVCC 实现的，它的最大优点是读不加锁，因此读写不冲突，并发性能好，其实现主要基于以下技术及数据结构：
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-02-14</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>2分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/so_reuseaddr-he-so_reuseport-shi-jian/" class="no-underline">
+    <h3 class="mt-0">SO_REUSEADDR 和 SO_REUSEPORT 实践</h3>
+  </a>
+  
+    SO_REUSEADDR 该选项可以绑定处于 TIME_WAIT 状态的地址，实践： server 端：
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-02-10</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>1分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/close_wait-he-fin_wait_2/" class="no-underline">
+    <h3 class="mt-0">TCP CLOSE_WAIT 和 FIN_WAIT_2</h3>
+  </a>
+  
+    问题记录 最近写了一个普通的 tcp demo，发现 server 的状态处于 CLOSE_WAIT，而 client 的状态处于 FIN_WAIT_2，为了排查这个问题，特此写了这篇文章作为记录，这也
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-02-02</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>2分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/ji-suan-ji-wang-luo-mian-shi-ti/" class="no-underline">
+    <h3 class="mt-0">计算机网络面试题</h3>
+  </a>
+  
+    TCP 相关 1. 说说 TIME_WAIT 及其作用 当一端 主动 断开连接并发送最后一次挥手后，该端状态变为 TIME_WAIT ，此时会等待 2 MSL （MSL 是 Maximum Segment Lifetime，译为“报文最大生存时间”，可为 30s，1min 或 2min。） 作用：
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-01-28</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>2分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/gmp-mian-shi-ti/" class="no-underline">
+    <h3 class="mt-0">GMP 面试题</h3>
+  </a>
+  
+    Goroutine 阻塞的话，是不是对应的 M 也会阻塞 如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么这个 G 会被标记为 runnable 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-01-26</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>3分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
   
   <div class="py-6">
     <div class="flex flex-col-reverse lg:flex-row justify-between">
@@ -721,48 +968,6 @@ CREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) 
   
   <div class="w-full ">
     <div class="prose">
-  <a href="/posts/wo-de-mian-jing/" class="no-underline">
-    <h3 class="mt-0">我的面经</h3>
-  </a>
-  
-    2021.9.17 梦想工场 go 实习生
-现场面，只有纸和笔（吐槽：公司的大厦正好在装修，找了半天才找到，还好出门比较早，不然多半得迟到）
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2021-09-17</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>1分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
   <a href="/posts/mysql-wei-shi-me-shi-yong-b-shu/" class="no-underline">
     <h3 class="mt-0">MySQL 为什么使用 B&#43; 树</h3>
   </a>
@@ -841,216 +1046,6 @@ CREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) 
 </div>
   </div>
   
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/mysql-suo/" class="no-underline">
-    <h3 class="mt-0">MySQL 锁</h3>
-  </a>
-  
-    表锁 语法：
-加锁：
-加读锁 LOCK TABLES [tablename] READ;
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2021-08-29</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>2分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/mysql-de-shi-wu-ge-chi-ji-bie/" class="no-underline">
-    <h3 class="mt-0">MySQL 的事务隔离级别</h3>
-  </a>
-  
-    1. 未提交读（脏读） 事务的修改，即使没有提交，对其他事务也是可见的。事务可以读取未提交的数据，称之为 脏读。它存在 4 个常见问题（脏读、不可重复读、幻读、丢失更新）。 2.
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2021-08-27</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>1分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/niu-ke-bi-shi-ti-tu-zi-fan-yan/" class="no-underline">
-    <h3 class="mt-0">[牛客][笔试题] 兔子繁衍</h3>
-  </a>
-  
-    有一对兔子，从出生后的第五个月起每月生出一对小兔子（即满4月就开始生小兔），小兔子也会出生从第五个月起每月生一对小免子。假如兔子不会死，第n个月时，兔群有多少对兔子。
-输入描述: 第n月（n为自然数，n&lt;101）
-输出描述: 第 n 个月时，兔子的对数（免群的兔子有多少对兔子）。 示例 1 输入 5 输出 2 说明 第五个月时，有两对兔子
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2021-08-21</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>1分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/redis-zset-yuan-ma-yue-du/" class="no-underline">
-    <h3 class="mt-0">Redis zset 源码阅读</h3>
-  </a>
-  
-    types zskiplistNode typedef struct zskiplistNode { sds ele; // 成员 double score; // 分值 struct zskiplistNode *backward; // 后退指针 // 层 struct zskiplistLevel { struct zskiplistNode *forward; // 前进指针 unsigned long span; // 跨度 } level[]; } zskiplistNode; zskiplist typedef struct zskiplist { struct zskiplistNode *header, *tail; unsigned long length; int level; // 当前跳跃表内，层数最大的那个节点的层数 } zskiplist; zset typedef struct zset { dict *dict; zskiplist *zsl; } zset; functions zslCreate /* Create a new skiplist.
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2021-08-17</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>8分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/leetcode-1493-shan-diao-yi-ge-yuan-su-yi-hou-quan-wei-1-de-zui-chang-zi-shu-zu/" class="no-underline">
-    <h3 class="mt-0">leetcode 1493. 删掉一个元素以后全为 1 的最长子数组</h3>
-  </a>
-  
-    给你一个二进制数组 nums ，你需要从中删掉一个元素。
-请你在删掉元素的结果数组中，返回最长的且只包含 1 的非空子数组的长度。
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2021-08-12</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>1分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
 </div>
 
 
@@ -1082,7 +1077,7 @@ CREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) 
         <a href="/posts/page/6/" aria-label="Next" class="page-link" role="button"><span aria-hidden="true">&raquo;</span></a>
       </li>
       <li class="page-item">
-        <a href="/posts/page/10/" aria-label="Last" class="page-link" role="button"><span aria-hidden="true">&raquo;&raquo;</span></a>
+        <a href="/posts/page/11/" aria-label="Last" class="page-link" role="button"><span aria-hidden="true">&raquo;&raquo;</span></a>
       </li>
     </ul>
 

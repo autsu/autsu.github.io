@@ -197,93 +197,93 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
+            "name": "linux clone() 的坑",
+            "description": "环境：\nMacBook m1\nUbuntu 20.04.4 LTS（使用 cat /etc/issue 查看），基于 multipass 创建",
+            "url": "/posts/linux-clone-de-keng/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "HTTP MIME 嗅探 [待完善]",
+            "description": "实践 定义一个未知后缀名的文件（这个后缀名起的得随意一点，像 xyz 这种是不行的，会被 chrome 识别为 chemical/x-xyz 类型），但是文件里的内容是 HTML：",
+            "url": "/posts/http_mime_sniff/"
+        },{
+            "@type":"ListItem",
+            "position":  3 ,
+            "name": "k8s service",
+            "description": "什么是 service pod 往往需要与集群内的其他 pod 进行通信，同时可能也需要对外提供服务，让集群外部的 pod 也可以访问，如果需要管理员手动将 pod 的地址提供给访问者，显然太麻烦了，不适合作为解决方案，而且在 k8s 中 pod 的地址是不确定的，它是由 k8s 自动分配的；此外，pod 的地址也是随时可能变动的，这是因为 Pod 可能会在节点之间移动或者被重新创建。例如，当一个 Pod 从一个节点迁移到另一个节点时，它的 IP 地址也会随之改变。此外，当一个 Pod 被删除后，其 IP 地址也会随之消失。所以 k8s 需要提供一种稳定的资源类型来解决 pod 间通信的问题，避免直接使用 Pod IP 地址来访问 Pod。这个资源就是就是 service。",
+            "url": "/posts/k8s-service/"
+        },{
+            "@type":"ListItem",
+            "position":  4 ,
+            "name": "multipass 修改配置（内存、硬盘、CPU 等）适用于 m1 mac",
+            "description": "multipass 是一款比较轻量级的虚拟机方案，使用起来也比较方便，操作方式与容器类似，但是使用过程中发现没有直接提供修改配置的简单方法，比如默认创建的虚拟机硬盘大小只会分配 5G，如果要跑 k8s 之类的显然是不够用的（k3s 都不够），而且默认创建的 CPU 只有 1 核，连 minikube 都跑不起来（最低需要 2 核），所以就需要修改配置。",
+            "url": "/posts/multipass-xiu-gai-pei-zhi/"
+        },{
+            "@type":"ListItem",
+            "position":  5 ,
+            "name": "k8s nginx pod 的 containerPort 问题",
+            "description": "问题重现 有如下 yaml：\napiVersion: v1 kind: Pod metadata: name: nginx labels: app: nginx spec: containers: - name: nginx image: nginx:alpine ports: - containerPort: 8080 hostPort: 9527 此时 curl nodeIP:9527 会发现报 Connection refused 错误，使用 kubectl exec -it nginx -- curl localhost:8080 也是如此",
+            "url": "/posts/k8s-nginx-pod-de-containerport-wen-ti/"
+        },{
+            "@type":"ListItem",
+            "position":  6 ,
+            "name": "k8s DaemonSet",
+            "description": "顾名思义，daemon 代表守护程序，所以 DaemonSet （简称 ds）会在每个节点上运行一个专门的 pod，这个 pod 是特殊的，比如资源监控器或者日志收集器，或者 k8s 自己的 kube-proxy。与 rc 或者 rs 不同，这两个会随机地分布在整个集群中，比如副本数量为 5，一共有 4 个节点，可能会在节点 1 创建两个副本，节点 2 创建 1 个副本，节点 4 创建 2 个副本，但 DaemonSet 会保证这 4 个节点各自都有一个副本。",
+            "url": "/posts/k8s-daemonset/"
+        },{
+            "@type":"ListItem",
+            "position":  7 ,
             "name": "k8s ReplicaSet",
             "description": "本篇笔记摘自 《Kubernetes in Aciton 》",
             "url": "/posts/k8s-replicaset/"
         },{
             "@type":"ListItem",
-            "position":  2 ,
+            "position":  8 ,
             "name": "k8s ReplicationController",
             "description": "本篇笔记摘自 《Kubernetes in Aciton 》",
             "url": "/posts/k8s-replicationcontroller/"
         },{
             "@type":"ListItem",
-            "position":  3 ,
+            "position":  9 ,
             "name": "k8s 存活探针",
             "description": "本篇笔记摘自 《Kubernetes in Aciton 》4.",
             "url": "/posts/k8s-cun-huo-tan-zhen/"
         },{
             "@type":"ListItem",
-            "position":  4 ,
+            "position":  10 ,
             "name": "k8s pod",
             "description": "本篇笔记摘自 《Kubernetes in Aciton 》第三章：pod：运行于 Kubernetes 中的容器",
             "url": "/posts/k8s-pod-bi-ji/"
         },{
             "@type":"ListItem",
-            "position":  5 ,
+            "position":  11 ,
             "name": "vscode 选中文本时滑动速度过快",
             "description": "这是一个困扰我已久的问题，当选中一段代码并继续向下滑动时，滑动速度会非常快，导致无法准确选中我想要的部分，比如我的屏幕能显示200行代码，我想选中1-250行的代码，这就需要我向下滑动来选中剩余的50行，但是因为速度太快，导致我轻轻一滑就会瞬间跑到第800行代码的位置，于是我又要向上滑动，结果又瞬间到了第150行，非常令人蛋疼。\n在网上用中文搜索不到相关的问题，没办法只能用我蹩脚的英文搜索 vscode scroll too fast selecting，没想到还找出来不少，看来有时候还是得用英文搜索才能解决问题。https://github.",
             "url": "/posts/vscode-xuan-zhong-wen-ben-shi-hua-dong-su-du-guo-kuai/"
         },{
             "@type":"ListItem",
-            "position":  6 ,
+            "position":  12 ,
             "name": "k3s 踩坑记录",
             "description": "安装： curl -sfL https://rancher-mirror.rancher.cn/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh -s - --write-kubeconfig-mode 666 \u0026ndash;write-kubeconfig-mode设置读写权限，否则每次 kubectl 都要 sudo，同时使用国内镜像进行下载",
             "url": "/posts/k3s/"
         },{
             "@type":"ListItem",
-            "position":  7 ,
+            "position":  13 ,
             "name": "MySQL 索引",
             "description": "聚簇索引和非聚簇索引 索引类型分为主键索引和非主键索引。\n主键索引的叶子节点存的是整行数据。在InnoDB里，主键索引也被称为聚簇索引（clustered index）。\n非主键索引的叶子节点内容是主键的值。在InnoDB里，非主键索引也被称为二级索引（secondary index）。",
             "url": "/posts/mysql-suo-yin/"
         },{
             "@type":"ListItem",
-            "position":  8 ,
+            "position":  14 ,
             "name": "Mysql Buffer Pool 的一些疑问记录",
             "description": "这是我在看 Mysql Buffer Pool 时的一个疑问，先说说 Buffer Pool，为了提高性能，Mysql 为读写操作添加了一层缓存，这样就可以直接从内存中操作，速度相比操作硬盘要快很多，只要之后再将内存中的数据定期写入到磁盘中即可保证数据一致。但是这样就产生了一个问题：如果在内存写入到磁盘之前，Mysql 进程挂掉了，这样岂不是就丢失数据了？",
             "url": "/posts/mysql-buffer-pool-de-yi-xie-yi-wen-ji-lu/"
         },{
             "@type":"ListItem",
-            "position":  9 ,
+            "position":  15 ,
             "name": "Go slice append 的坑 [存疑]",
             "description": "引子 使用过 Go 的小伙伴应该都遇到过这样一个坑：当使用 slice 作为参数传递时，如果调用方函数内部发生了 append 操作，那么对应的改变不会在实参处体现出来，比如：",
             "url": "/posts/go-slice-append-de-keng-cun-yi/"
-        },{
-            "@type":"ListItem",
-            "position":  10 ,
-            "name": "操作系统面试题",
-            "description": "页的概念 线程怎么调度的 进程间通信有哪几种方式，哪种方式最快？ 1.无名管道( pipe )：管道是一种半双工的通信方式，数据只能单向流动，而且只能在具有亲缘关系的进程间使用。进程的亲缘关系通常是指父子进程关系。",
-            "url": "/posts/cao-zuo-xi-tong-mian-shi-ti/"
-        },{
-            "@type":"ListItem",
-            "position":  11 ,
-            "name": "MVCC 与事务隔离",
-            "description": "申明：以下内容来自网上的博客、课程，通过自己的理解进行一下转述，可能存在一些错误和纰漏\n介绍 MySQL 的 可重复读 和 读已提交 是基于 MVCC 实现的，它的最大优点是读不加锁，因此读写不冲突，并发性能好，其实现主要基于以下技术及数据结构：",
-            "url": "/posts/mvcc-yu-shi-wu-ge-chi/"
-        },{
-            "@type":"ListItem",
-            "position":  12 ,
-            "name": "SO_REUSEADDR 和 SO_REUSEPORT 实践",
-            "description": "SO_REUSEADDR 该选项可以绑定处于 TIME_WAIT 状态的地址，实践： server 端：",
-            "url": "/posts/so_reuseaddr-he-so_reuseport-shi-jian/"
-        },{
-            "@type":"ListItem",
-            "position":  13 ,
-            "name": "TCP CLOSE_WAIT 和 FIN_WAIT_2",
-            "description": "问题记录 最近写了一个普通的 tcp demo，发现 server 的状态处于 CLOSE_WAIT，而 client 的状态处于 FIN_WAIT_2，为了排查这个问题，特此写了这篇文章作为记录，这也",
-            "url": "/posts/close_wait-he-fin_wait_2/"
-        },{
-            "@type":"ListItem",
-            "position":  14 ,
-            "name": "计算机网络面试题",
-            "description": "TCP 相关 1. 说说 TIME_WAIT 及其作用 当一端 主动 断开连接并发送最后一次挥手后，该端状态变为 TIME_WAIT ，此时会等待 2 MSL （MSL 是 Maximum Segment Lifetime，译为“报文最大生存时间”，可为 30s，1min 或 2min。） 作用：",
-            "url": "/posts/ji-suan-ji-wang-luo-mian-shi-ti/"
-        },{
-            "@type":"ListItem",
-            "position":  15 ,
-            "name": "GMP 面试题",
-            "description": "Goroutine 阻塞的话，是不是对应的 M 也会阻塞 如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么这个 G 会被标记为 runnable 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。",
-            "url": "/posts/gmp-mian-shi-ti/"
         }
     ]
 }
@@ -318,7 +318,7 @@
 
 
 
-<meta property="og:updated_time" content="2022-10-10T22:11:10&#43;00:00" />
+<meta property="og:updated_time" content="2023-04-21T00:10:31&#43;08:00" />
 
 
 
@@ -426,6 +426,255 @@
 
   <div class="bg-secondary-bg rounded px-6">
     <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/linux-clone-de-keng/" class="no-underline">
+    <h3 class="mt-0">linux clone() 的坑</h3>
+  </a>
+  
+    环境：
+MacBook m1
+Ubuntu 20.04.4 LTS（使用 cat /etc/issue 查看），基于 multipass 创建
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-05-11</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>4分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/http_mime_sniff/" class="no-underline">
+    <h3 class="mt-0">HTTP MIME 嗅探 [待完善]</h3>
+  </a>
+  
+    实践 定义一个未知后缀名的文件（这个后缀名起的得随意一点，像 xyz 这种是不行的，会被 chrome 识别为 chemical/x-xyz 类型），但是文件里的内容是 HTML：
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-05-08</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>1分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/k8s-service/" class="no-underline">
+    <h3 class="mt-0">k8s service</h3>
+  </a>
+  
+    什么是 service pod 往往需要与集群内的其他 pod 进行通信，同时可能也需要对外提供服务，让集群外部的 pod 也可以访问，如果需要管理员手动将 pod 的地址提供给访问者，显然太麻烦了，不适合作为解决方案，而且在 k8s 中 pod 的地址是不确定的，它是由 k8s 自动分配的；此外，pod 的地址也是随时可能变动的，这是因为 Pod 可能会在节点之间移动或者被重新创建。例如，当一个 Pod 从一个节点迁移到另一个节点时，它的 IP 地址也会随之改变。此外，当一个 Pod 被删除后，其 IP 地址也会随之消失。所以 k8s 需要提供一种稳定的资源类型来解决 pod 间通信的问题，避免直接使用 Pod IP 地址来访问 Pod。这个资源就是就是 service。
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-05-08</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>16分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/multipass-xiu-gai-pei-zhi/" class="no-underline">
+    <h3 class="mt-0">multipass 修改配置（内存、硬盘、CPU 等）适用于 m1 mac</h3>
+  </a>
+  
+    multipass 是一款比较轻量级的虚拟机方案，使用起来也比较方便，操作方式与容器类似，但是使用过程中发现没有直接提供修改配置的简单方法，比如默认创建的虚拟机硬盘大小只会分配 5G，如果要跑 k8s 之类的显然是不够用的（k3s 都不够），而且默认创建的 CPU 只有 1 核，连 minikube 都跑不起来（最低需要 2 核），所以就需要修改配置。
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-05-08</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>1分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/k8s-nginx-pod-de-containerport-wen-ti/" class="no-underline">
+    <h3 class="mt-0">k8s nginx pod 的 containerPort 问题</h3>
+  </a>
+  
+    问题重现 有如下 yaml：
+apiVersion: v1 kind: Pod metadata: name: nginx labels: app: nginx spec: containers: - name: nginx image: nginx:alpine ports: - containerPort: 8080 hostPort: 9527 此时 curl nodeIP:9527 会发现报 Connection refused 错误，使用 kubectl exec -it nginx -- curl localhost:8080 也是如此
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-05-08</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>2分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/k8s-daemonset/" class="no-underline">
+    <h3 class="mt-0">k8s DaemonSet</h3>
+  </a>
+  
+    顾名思义，daemon 代表守护程序，所以 DaemonSet （简称 ds）会在每个节点上运行一个专门的 pod，这个 pod 是特殊的，比如资源监控器或者日志收集器，或者 k8s 自己的 kube-proxy。与 rc 或者 rs 不同，这两个会随机地分布在整个集群中，比如副本数量为 5，一共有 4 个节点，可能会在节点 1 创建两个副本，节点 2 创建 1 个副本，节点 4 创建 2 个副本，但 DaemonSet 会保证这 4 个节点各自都有一个副本。
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-05-07</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>1分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
   
   <div class="py-6">
     <div class="flex flex-col-reverse lg:flex-row justify-between">
@@ -799,253 +1048,6 @@
 </div>
   </div>
   
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/cao-zuo-xi-tong-mian-shi-ti/" class="no-underline">
-    <h3 class="mt-0">操作系统面试题</h3>
-  </a>
-  
-    页的概念 线程怎么调度的 进程间通信有哪几种方式，哪种方式最快？ 1.无名管道( pipe )：管道是一种半双工的通信方式，数据只能单向流动，而且只能在具有亲缘关系的进程间使用。进程的亲缘关系通常是指父子进程关系。
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2022-02-15</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>1分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/mvcc-yu-shi-wu-ge-chi/" class="no-underline">
-    <h3 class="mt-0">MVCC 与事务隔离</h3>
-  </a>
-  
-    申明：以下内容来自网上的博客、课程，通过自己的理解进行一下转述，可能存在一些错误和纰漏
-介绍 MySQL 的 可重复读 和 读已提交 是基于 MVCC 实现的，它的最大优点是读不加锁，因此读写不冲突，并发性能好，其实现主要基于以下技术及数据结构：
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2022-02-14</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>2分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/so_reuseaddr-he-so_reuseport-shi-jian/" class="no-underline">
-    <h3 class="mt-0">SO_REUSEADDR 和 SO_REUSEPORT 实践</h3>
-  </a>
-  
-    SO_REUSEADDR 该选项可以绑定处于 TIME_WAIT 状态的地址，实践： server 端：
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2022-02-10</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>1分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/close_wait-he-fin_wait_2/" class="no-underline">
-    <h3 class="mt-0">TCP CLOSE_WAIT 和 FIN_WAIT_2</h3>
-  </a>
-  
-    问题记录 最近写了一个普通的 tcp demo，发现 server 的状态处于 CLOSE_WAIT，而 client 的状态处于 FIN_WAIT_2，为了排查这个问题，特此写了这篇文章作为记录，这也
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2022-02-02</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>2分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/ji-suan-ji-wang-luo-mian-shi-ti/" class="no-underline">
-    <h3 class="mt-0">计算机网络面试题</h3>
-  </a>
-  
-    TCP 相关 1. 说说 TIME_WAIT 及其作用 当一端 主动 断开连接并发送最后一次挥手后，该端状态变为 TIME_WAIT ，此时会等待 2 MSL （MSL 是 Maximum Segment Lifetime，译为“报文最大生存时间”，可为 30s，1min 或 2min。） 作用：
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2022-01-28</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>2分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/gmp-mian-shi-ti/" class="no-underline">
-    <h3 class="mt-0">GMP 面试题</h3>
-  </a>
-  
-    Goroutine 阻塞的话，是不是对应的 M 也会阻塞 如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么这个 G 会被标记为 runnable 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2022-01-26</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>3分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
 </div>
 
 
@@ -1077,7 +1079,7 @@
         <a href="/posts/page/5/" aria-label="Next" class="page-link" role="button"><span aria-hidden="true">&raquo;</span></a>
       </li>
       <li class="page-item">
-        <a href="/posts/page/10/" aria-label="Last" class="page-link" role="button"><span aria-hidden="true">&raquo;&raquo;</span></a>
+        <a href="/posts/page/11/" aria-label="Last" class="page-link" role="button"><span aria-hidden="true">&raquo;&raquo;</span></a>
       </li>
     </ul>
 

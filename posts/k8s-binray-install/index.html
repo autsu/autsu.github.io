@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>K8s 二进制安装 | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-135903670-1');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="环境 主机系统为 win11，通过 vmware 创建了 3 台虚拟机，详情如下：">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"K8s 二进制安装",
+      "item":"/posts/k8s-binray-install/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/k8s-binray-install/"
+    },
+    "headline": "K8s 二进制安装 | \/dev\/null","datePublished": "2023-04-13T22:05:14+08:00",
+    "dateModified": "2023-04-13T22:05:14+08:00",
+    "wordCount":  3055 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "环境 主机系统为 win11，通过 vmware 创建了 3 台虚拟机，详情如下："
+}
+</script><meta property="og:title" content="K8s 二进制安装 | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/k8s-binray-install/" />
+
+
+
+
+<meta property="og:description" content="环境 主机系统为 win11，通过 vmware 创建了 3 台虚拟机，详情如下：" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2023-04-13T22:05:14&#43;08:00" />
+
+
+<meta property="article:modified_time" content="2023-04-13T22:05:14&#43;08:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="k8s" />
+
+
+
+
+
+<meta property="og:see_also" content="/posts/k8s-secret/" />
+
+<meta property="og:see_also" content="/posts/client-go-yuan-ma/" />
+
+<meta property="og:see_also" content="/posts/kubebuilder/" />
+
+<meta property="og:see_also" content="/posts/k8s-statefulset/" />
+
+<meta property="og:see_also" content="/posts/k8s-configmap/" />
+
+<meta property="og:see_also" content="/posts/k8s-namespace/" />
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">K8s 二进制安装</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-04-13</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>15分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h1 id="环境">环境</h1>
+<p>主机系统为 win11，通过 vmware 创建了 3 台虚拟机，详情如下：</p>
+<table>
+<thead>
+<tr>
+<th>hostname</th>
+<th>os</th>
+<th>ip</th>
+<th>cpu</th>
+<th>mem</th>
+<th>disk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>k8s-master</td>
+<td>Ubuntu 22.04.2 LTS</td>
+<td>192.168.223.128</td>
+<td>4c</td>
+<td>8g</td>
+<td>50g</td>
+</tr>
+<tr>
+<td>k8s-worker1</td>
+<td>Ubuntu 22.04.2 LTS</td>
+<td>192.168.223.129</td>
+<td>4c</td>
+<td>8g</td>
+<td>50g</td>
+</tr>
+<tr>
+<td>k8s-worker2</td>
+<td>Ubuntu 22.04.2 LTS</td>
+<td>192.168.223.130</td>
+<td>4c</td>
+<td>8g</td>
+<td>50g</td>
+</tr>
+</tbody>
+</table>
+<h1 id="基础环境准备">基础环境准备</h1>
+<h2 id="配置-hosts">配置 hosts</h2>
+<p>在 3 台主机的 /etc/hosts 文件中加入以下内容：</p>
+<pre><code>192.168.223.128 k8s-master
+192.168.223.129 k8s-worker1
+192.168.223.130 k8s-worker2
+</code></pre>
+<h2 id="配置免密登录">配置免密登录</h2>
+<p>首先在每台机器上执行下面的命令来生成 ssh 秘钥，直接回车到底：</p>
+<pre><code class="language-shell">$ ssh-keygen -t rsa
+</code></pre>
+<p>继续执行 <code>ssh-copy-id -i .ssh/id_rsa.pub &lt;hostname&gt;</code> 命令，其中 hostname 填写 <strong>另外两台主机的主机名</strong>，这里以 <code>k8s-worker1</code> 为例。 按照提示输入 yes，最后输入目标主机的密码。</p>
+<pre><code class="language-shell">$ ssh-copy-id -i .ssh/id_rsa.pub k8s-worker1
+</code></pre>
+<p>输入密码后，如果提示下面内容，说明配置免密成功，执行 <code>ssh 'k8s-worker1'</code>，发现无需输入密码即可直接 ssh 到目标主机。</p>
+<pre><code class="language-shell">Number of key(s) added: 1
+
+Now try logging into the machine, with:   &quot;ssh 'k8s-worker1'&quot;
+and check to make sure that only the key(s) you wanted were added.
+</code></pre>
+<p>按照上面的流程对每台主机执行相同操作，完成 3 台主机相互之间的免密登录，这里不再赘述。</p>
+<h2 id="关闭防火墙">关闭防火墙</h2>
+<p>在每台主机上执行：</p>
+<pre><code class="language-shell">$ systemctl disable --now ufw
+</code></pre>
+<p>查看效果：</p>
+<pre><code class="language-shell">$ sudo ufw status
+Status: inactive
+</code></pre>
+<h2 id="关闭交换分区">关闭交换分区</h2>
+<p>执行下面的命令关闭 swap：</p>
+<pre><code class="language-shell">sed -ri 's/.*swap.*/#&amp;/' /etc/fstab
+swapoff -a &amp;&amp; sysctl -w vm.swappiness=0
+</code></pre>
+<p>查看效果，Swap 这栏的 total 为 0，表示关闭成功。上面的命令会永久禁用 Swap，即使重启后也会生效。</p>
+<pre><code class="language-shell">$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:           7.7Gi       415Mi       6.5Gi       1.0Mi       851Mi       7.1Gi
+Swap:             0B          0B          0B
+</code></pre>
+<blockquote>
+<p>🤔️ 为什么安装 k8s 要需要关闭 Swap？</p>
+<p>在安装 Kubernetes 集群时，需要关闭 swap。原因是 Kubernetes 通过 cgroup 来对容器进行资源限制，而 cgroup 只能控制实际内存，无法控制 swap，因此开启 swap 后可能会导致资源不受限制，进而导致容器运行不稳定或者宕机。因此关闭 swap 可以提高 Kubernetes 集群的稳定性和安全性。</p>
+</blockquote>
+<h2 id="设置时间同步">设置时间同步</h2>
+<p>在所有主机上执行：</p>
+<pre><code class="language-shell"># 打开终端输入以下命令安装ntpdate工具。
+$ apt install ntpdate
+
+# 再输入命令设置系统时间与网络时间同步。
+$ ntpdate cn.pool.ntp.org
+
+# 最后输入命令将时间更新到硬件上即可。
+$ hwclock --systohc
+</code></pre>
+<blockquote>
+<p>🤔️ 安装 k8s 为什么需要设置时间同步？</p>
+<p>在 Kubernetes 集群中，各个节点之间需要进行协调和通信，如果各个节点的时间不同步，将会导致一些问题，例如：</p>
+<ol>
+<li>证书问题：Kubernetes 使用 TLS 证书进行节点间的认证和通信，如果各个节点的时间不同步，可能导致证书过期或者无法验证等问题。</li>
+<li>日志问题：各个节点的日志需要进行时间戳的记录，如果各个节点的时间不同步，可能导致日志顺序错乱或者无法定位问题。</li>
+</ol>
+<p>因此，在安装 Kubernetes 时需要设置时间同步，保证各个节点之间的时间是一致的，从而避免出现以上问题。</p>
+</blockquote>
+<h2 id="安装-docker"><del>安装 Docker</del></h2>
+<p><del>因为我在安装 Ubuntu 时勾选了 Docker，所以系统已经默认安装好了 Docker。</del></p>
+<h2 id="所有节点安装-containerd">所有节点安装 Containerd</h2>
+<p>在所有节点执行，master 节点和 worker 节点都需要</p>
+<pre><code class="language-shell">$ wget https://github.com/containernetworking/plugins/releases/download/v1.1.1/cni-plugins-linux-amd64-v1.1.1.tgz
+
+# 创建 cni 插件所需目录
+$ mkdir -p /etc/cni/net.d /opt/cni/bin 
+# 解压 cni 二进制包
+$ tar xf cni-plugins-linux-amd64-v1.1.1.tgz -C /opt/cni/bin/
+$ wget https://github.com/containerd/containerd/releases/download/v1.6.4/cri-containerd-cni-1.6.4-linux-amd64.tar.gz
+$ tar -C / -xzf cri-containerd-cni-1.6.4-linux-amd64.tar.gz
+
+# 创建服务启动文件
+cat &gt; /etc/systemd/system/containerd.service &lt;&lt;EOF
+[Unit]
+Description=containerd container runtime
+Documentation=https://containerd.io
+After=network.target local-fs.target
+[Service]
+ExecStartPre=-/sbin/modprobe overlay
+ExecStart=/usr/local/bin/containerd
+Type=notify
+Delegate=yes
+KillMode=process
+Restart=always
+RestartSec=5
+LimitNPROC=infinity
+LimitCORE=infinity
+LimitNOFILE=infinity
+TasksMax=infinity
+OOMScoreAdjust=-999
+[Install]
+WantedBy=multi-user.target
+EOF
+</code></pre>
+<p>配置 Containerd 所需的模块</p>
+<pre><code class="language-shell">cat &lt;&lt;EOF | sudo tee /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+EOF
+</code></pre>
+<p>加载模块，设置开机启动</p>
+<pre><code class="language-shell">$ systemctl restart systemd-modules-load.service
+</code></pre>
+<p>配置Containerd所需的内核</p>
+<pre><code class="language-shell">cat &lt;&lt;EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+
+# 加载内核 
+sysctl --system
+</code></pre>
+<p>创建 Containerd 的配置文件</p>
+<pre><code class="language-shell"># 创建配置文件
+mkdir -p /etc/containerd
+containerd config default | tee /etc/containerd/config.toml
+
+# 修改 Containerd 的配置文件
+sed -i &quot;s#SystemdCgroup\ \=\ false#SystemdCgroup\ \=\ true#g&quot; /etc/containerd/config.toml
+
+cat /etc/containerd/config.toml | grep SystemdCgroup
+
+sed -i &quot;s#k8s.gcr.io#registry.cn-hangzhou.aliyuncs.com/abcdocker#g&quot; /etc/containerd/config.toml
+
+cat /etc/containerd/config.toml | grep sandbox_image
+</code></pre>
+<p>手动删除 <code>/etc/containerd/config.toml</code> 中的 <code>systemd_cgroup = false</code> 这一行</p>
+<pre><code class="language-shell">vim /etc/containerd/config.toml
+</code></pre>
+<p>设置开机启动</p>
+<pre><code class="language-shell">systemctl daemon-reload
+systemctl enable --now containerd
+</code></pre>
+<p>验证</p>
+<pre><code class="language-shell">$ ctr version
+Client:
+  Version:  v1.6.4
+  Revision: 212e8b6fa2f44b9c21b2798135fc6fb7c53efc16
+  Go version: go1.17.9
+Server:
+  Version:  v1.6.4
+  Revision: 212e8b6fa2f44b9c21b2798135fc6fb7c53efc16
+  UUID: f3171aee-67b0-4e01-871b-2e93674af2ad
+</code></pre>
+<h1 id="k8s-环境部署">k8s 环境部署</h1>
+<h2 id="下载相关二进制文件">下载相关二进制文件</h2>
+<p>在 master 节点执行下面的命令，下载 k8s 相关的可执行文件：</p>
+<pre><code class="language-shell">$ wget https://dl.k8s.io/v1.24.3/kubernetes-server-linux-amd64.tar.gz
+$ wget https://github.com/etcd-io/etcd/releases/download/v3.5.4/etcd-v3.5.4-linux-amd64.tar.gz
+</code></pre>
+<p>解压获得可执行文件，将解压到 <code>/usr/local/bin</code> 目录下：</p>
+<pre><code class="language-shell">$ tar -xf kubernetes-server-linux-amd64.tar.gz  --strip-components=3 -C /usr/local/bin kubernetes/server/bin/kube{let,ctl,-apiserver,-controller-manager,-scheduler,-proxy}
+
+$ tar -xf etcd-v3.5.4-linux-amd64.tar.gz --strip-components=1 -C /usr/local/bin etcd-v3.5.4-linux-amd64/etcd{,ctl}
+</code></pre>
+<p>检查<code>/usr/local/bin</code>下内容</p>
+<pre><code class="language-shell">$ ls /usr/local/bin/
+cfssl      etcd     kube-apiserver           kubectl  kube-proxy
+cfssljson  etcdctl  kube-controller-manager  kubelet  kube-scheduler
+</code></pre>
+<p>验证二进制</p>
+<pre><code class="language-shell">$ kubelet --version
+Kubernetes v1.24.3
+$ etcdctl version
+etcdctl version: 3.5.4
+API version: 3.5
+</code></pre>
+<p>将刚刚解压的二进制文件拷贝到其它节点上（另外两个节点都是计算节点，所以其实不用拷贝 etcd 相关的可执行文件，但是 kubectl 什么的还是需要的，所以影响不大）</p>
+<pre><code class="language-shell">for i in k8s-worker1 k8s-worker2;do   
+	scp /usr/local/bin/kube* root@$i:/usr/local/bin/    
+	scp /usr/local/bin/{etcd,etcdctl}   root@$i:/usr/local/bin/
+done
+</code></pre>
+<h2 id="准备一个目录用来存放证书配置文件">准备一个目录用来存放证书配置文件</h2>
+<pre><code class="language-shell">$ mkdir pki
+</code></pre>
+<h2 id="下载配置-cfssl-证书">下载配置 cfssl 证书</h2>
+<blockquote>
+<p>⚠️ 只需在控制节点 k8s-master 上执行</p>
+</blockquote>
+<pre><code class="language-shell">$ wget &quot;https://github.com/cloudflare/cfssl/releases/download/v1.6.1/cfssl_1.6.1_linux_amd64&quot; -O /usr/local/bin/cfssl
+$ wget &quot;https://github.com/cloudflare/cfssl/releases/download/v1.6.1/cfssljson_1.6.1_linux_amd64&quot; -O /usr/local/bin/cfssljson
+
+$ chmod +x /usr/local/bin/cfssl /usr/local/bin/cfssljson
+</code></pre>
+<h2 id="创建证书配置文件">创建证书配置文件</h2>
+<pre><code class="language-shell">$ cd pki
+</code></pre>
+<p>下面这段 shell 是用来创建一个 admin 用户的证书签发请求文件 <code>admin-csr.json</code>，其中包含了以下信息：</p>
+<ul>
+<li><code>CN</code>：Common Name，即证书的名称，这里是 <code>admin</code>。</li>
+<li><code>key</code>：用于指定生成密钥的算法及长度，这里是 <code>rsa</code> 算法，长度是 <code>2048</code> 位。</li>
+<li><code>names</code>：用于指定证书中的主题（Subject）信息，包括国家（C）、省（ST）、城市（L）、组织（O）和组织单位（OU），这里主要指定了组织为 <code>system:masters</code>，也就是 Kubernetes 的管理员。</li>
+</ul>
+<p>该证书用于验证用户 <code>admin</code> 对 Kubernetes API Server 的访问权限，由 Kubernetes 的证书管理工具 <code>cfssl</code> 根据此文件生成证书。</p>
+<p>（以上内容来自 ChatGPT。。。）</p>
+<pre><code class="language-shell">$ cat &gt; admin-csr.json &lt;&lt; EOF 
+{
+  &quot;CN&quot;: &quot;admin&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;Beijing&quot;,
+      &quot;L&quot;: &quot;Beijing&quot;,
+      &quot;O&quot;: &quot;system:masters&quot;,
+      &quot;OU&quot;: &quot;Kubernetes-manual&quot;
+    }
+  ]
+}
+EOF
+</code></pre>
+<p>下面这段 shell 是定义 CA 的配置文件，主要包含两个部分，&ldquo;signing&rdquo; 和 &ldquo;profiles&rdquo;。</p>
+<p>其中，&ldquo;signing&rdquo; 部分定义了默认的证书过期时间，这里设置为 876000 小时，也就是 100 年。这个时间可以根据实际情况进行调整。</p>
+<p>&ldquo;profiles&rdquo; 部分定义了不同 profile 的配置信息。这里只定义了一个叫做 &ldquo;kubernetes&rdquo; 的 profile，该 profile 的用途包括 &ldquo;signing&rdquo;、&ldquo;key encipherment&rdquo;、&ldquo;server auth&rdquo; 和 &ldquo;client auth&rdquo;，也就是该 profile 适用于用于签发和验证服务器和客户端证书，同时也能用于加密传输数据。该 profile 的证书过期时间也设置为 876000 小时，与默认的证书过期时间相同。</p>
+<blockquote>
+<p>CA，即证书授权中心（Certificate Authority），是指负责签发、管理和吊销数字证书的可信机构。在网络通信中，数字证书起到验证通信双方身份的作用，CA 则是负责颁发数字证书，以及验证证书的真实性和有效性。</p>
+<p>CA 通常由政府、军队、金融机构等具有一定信誉和安全保障能力的机构所担任，以确保数字证书的安全性和可靠性。通过使用CA，数字证书的颁发和验证得以形成一个闭环，使得网络通信过程更加安全和可靠。</p>
+</blockquote>
+<pre><code class="language-shell">$ cat &gt; ca-config.json &lt;&lt; EOF 
+{
+  &quot;signing&quot;: {
+    &quot;default&quot;: {
+      &quot;expiry&quot;: &quot;876000h&quot;
+    },
+    &quot;profiles&quot;: {
+      &quot;kubernetes&quot;: {
+        &quot;usages&quot;: [
+            &quot;signing&quot;,
+            &quot;key encipherment&quot;,
+            &quot;server auth&quot;,
+            &quot;client auth&quot;
+        ],
+        &quot;expiry&quot;: &quot;876000h&quot;
+      }
+    }
+  }
+}
+EOF
+</code></pre>
+<p>下面这段 shell 是用于创建 etcd CA 证书签名请求文件的 JSON 配置文件。其中，&ldquo;CN&rdquo; 是证书的通用名称，&ldquo;key&rdquo; 定义了加密算法和密钥长度，&ldquo;names&rdquo; 列出了证书的主题，&ldquo;ca&rdquo; 定义了证书颁发机构的过期时间。该文件会被用于生成 etcd CA 证书，用于签发和管理 etcd 集群中的其他证书，保证集群通信的安全性。</p>
+<pre><code class="language-shell">$ cat &gt; etcd-ca-csr.json  &lt;&lt; EOF 
+{
+  &quot;CN&quot;: &quot;etcd&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;Beijing&quot;,
+      &quot;L&quot;: &quot;Beijing&quot;,
+      &quot;O&quot;: &quot;etcd&quot;,
+      &quot;OU&quot;: &quot;Etcd Security&quot;
+    }
+  ],
+  &quot;ca&quot;: {
+    &quot;expiry&quot;: &quot;876000h&quot;
+  }
+}
+EOF
+</code></pre>
+<h3 id="这部分直接看这里">这部分直接看这里</h3>
+<blockquote>
+<p>发现这部分 shell 有点多，懒得一个一个问 ChatGPT 什么意思了，暂时也不关注这些证书相关的东西了。。。</p>
+</blockquote>
+<p>直接将下面这些命令复制到 terminal 回车即可，会一并创建这些文件。</p>
+<pre><code class="language-shell">cat &gt; admin-csr.json &lt;&lt; EOF 
+{
+  &quot;CN&quot;: &quot;admin&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;Beijing&quot;,
+      &quot;L&quot;: &quot;Beijing&quot;,
+      &quot;O&quot;: &quot;system:masters&quot;,
+      &quot;OU&quot;: &quot;Kubernetes-manual&quot;
+    }
+  ]
+}
+EOF
+cat &gt; ca-config.json &lt;&lt; EOF 
+{
+  &quot;signing&quot;: {
+    &quot;default&quot;: {
+      &quot;expiry&quot;: &quot;876000h&quot;
+    },
+    &quot;profiles&quot;: {
+      &quot;kubernetes&quot;: {
+        &quot;usages&quot;: [
+            &quot;signing&quot;,
+            &quot;key encipherment&quot;,
+            &quot;server auth&quot;,
+            &quot;client auth&quot;
+        ],
+        &quot;expiry&quot;: &quot;876000h&quot;
+      }
+    }
+  }
+}
+EOF
+cat &gt; etcd-ca-csr.json  &lt;&lt; EOF 
+{
+  &quot;CN&quot;: &quot;etcd&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;Beijing&quot;,
+      &quot;L&quot;: &quot;Beijing&quot;,
+      &quot;O&quot;: &quot;etcd&quot;,
+      &quot;OU&quot;: &quot;Etcd Security&quot;
+    }
+  ],
+  &quot;ca&quot;: {
+    &quot;expiry&quot;: &quot;876000h&quot;
+  }
+}
+EOF
+cat &gt; front-proxy-ca-csr.json  &lt;&lt; EOF 
+{
+  &quot;CN&quot;: &quot;kubernetes&quot;,
+  &quot;key&quot;: {
+     &quot;algo&quot;: &quot;rsa&quot;,
+     &quot;size&quot;: 2048
+  },
+  &quot;ca&quot;: {
+    &quot;expiry&quot;: &quot;876000h&quot;
+  }
+}
+EOF
+cat &gt; kubelet-csr.json  &lt;&lt; EOF 
+{
+  &quot;CN&quot;: &quot;system:node:\$NODE&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;L&quot;: &quot;Beijing&quot;,
+      &quot;ST&quot;: &quot;Beijing&quot;,
+      &quot;O&quot;: &quot;system:nodes&quot;,
+      &quot;OU&quot;: &quot;Kubernetes-manual&quot;
+    }
+  ]
+}
+EOF
+cat &gt; manager-csr.json &lt;&lt; EOF 
+{
+  &quot;CN&quot;: &quot;system:kube-controller-manager&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;Beijing&quot;,
+      &quot;L&quot;: &quot;Beijing&quot;,
+      &quot;O&quot;: &quot;system:kube-controller-manager&quot;,
+      &quot;OU&quot;: &quot;Kubernetes-manual&quot;
+    }
+  ]
+}
+EOF
+cat &gt; apiserver-csr.json &lt;&lt; EOF 
+{
+  &quot;CN&quot;: &quot;kube-apiserver&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;Beijing&quot;,
+      &quot;L&quot;: &quot;Beijing&quot;,
+      &quot;O&quot;: &quot;Kubernetes&quot;,
+      &quot;OU&quot;: &quot;Kubernetes-manual&quot;
+    }
+  ]
+}
+EOF
+cat &gt; ca-csr.json   &lt;&lt; EOF 
+{
+  &quot;CN&quot;: &quot;kubernetes&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;Beijing&quot;,
+      &quot;L&quot;: &quot;Beijing&quot;,
+      &quot;O&quot;: &quot;Kubernetes&quot;,
+      &quot;OU&quot;: &quot;Kubernetes-manual&quot;
+    }
+  ],
+  &quot;ca&quot;: {
+    &quot;expiry&quot;: &quot;876000h&quot;
+  }
+}
+EOF
+cat &gt; etcd-csr.json &lt;&lt; EOF 
+{
+  &quot;CN&quot;: &quot;etcd&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;Beijing&quot;,
+      &quot;L&quot;: &quot;Beijing&quot;,
+      &quot;O&quot;: &quot;etcd&quot;,
+      &quot;OU&quot;: &quot;Etcd Security&quot;
+    }
+  ]
+}
+EOF
+cat &gt; front-proxy-client-csr.json  &lt;&lt; EOF 
+{
+  &quot;CN&quot;: &quot;front-proxy-client&quot;,
+  &quot;key&quot;: {
+     &quot;algo&quot;: &quot;rsa&quot;,
+     &quot;size&quot;: 2048
+  }
+}
+EOF
+cat &gt; kube-proxy-csr.json  &lt;&lt; EOF 
+{
+  &quot;CN&quot;: &quot;system:kube-proxy&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;Beijing&quot;,
+      &quot;L&quot;: &quot;Beijing&quot;,
+      &quot;O&quot;: &quot;system:kube-proxy&quot;,
+      &quot;OU&quot;: &quot;Kubernetes-manual&quot;
+    }
+  ]
+}
+EOF
+cat &gt; scheduler-csr.json &lt;&lt; EOF 
+{
+  &quot;CN&quot;: &quot;system:kube-scheduler&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;CN&quot;,
+      &quot;ST&quot;: &quot;Beijing&quot;,
+      &quot;L&quot;: &quot;Beijing&quot;,
+      &quot;O&quot;: &quot;system:kube-scheduler&quot;,
+      &quot;OU&quot;: &quot;Kubernetes-manual&quot;
+    }
+  ]
+}
+EOF
+</code></pre>
+<p>继续复制执行下面的命令。</p>
+<pre><code class="language-shell">cd ..
+mkdir bootstrap
+cd bootstrap
+cat &gt; bootstrap.secret.yaml &lt;&lt; EOF 
+apiVersion: v1
+kind: Secret
+metadata:
+  name: bootstrap-token-c8ad9c
+  namespace: kube-system
+type: bootstrap.kubernetes.io/token
+stringData:
+  description: &quot;The default bootstrap token generated by 'kubelet '.&quot;
+  token-id: c8ad9c
+  token-secret: 2e4d610cf3e7426e
+  usage-bootstrap-authentication: &quot;true&quot;
+  usage-bootstrap-signing: &quot;true&quot;
+  auth-extra-groups:  system:bootstrappers:default-node-token,system:bootstrappers:worker,system:bootstrappers:ingress
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubelet-bootstrap
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:node-bootstrapper
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: system:bootstrappers:default-node-token
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: node-autoapprove-bootstrap
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:certificates.k8s.io:certificatesigningrequests:nodeclient
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: system:bootstrappers:default-node-token
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: node-autoapprove-certificate-rotation
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:certificates.k8s.io:certificatesigningrequests:selfnodeclient
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: system:nodes
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    rbac.authorization.kubernetes.io/autoupdate: &quot;true&quot;
+  labels:
+    kubernetes.io/bootstrapping: rbac-defaults
+  name: system:kube-apiserver-to-kubelet
+rules:
+  - apiGroups:
+      - &quot;&quot;
+    resources:
+      - nodes/proxy
+      - nodes/stats
+      - nodes/log
+      - nodes/spec
+      - nodes/metrics
+    verbs:
+      - &quot;*&quot;
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: system:kube-apiserver
+  namespace: &quot;&quot;
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:kube-apiserver-to-kubelet
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: User
+    name: kube-apiserver
+EOF
+</code></pre>
+<p>这些 Kubernetes 配置包含以下内容：</p>
+<ol>
+<li><code>bootstrap-token-c8ad9c</code>: 用于启动 Kubernetes 集群的默认引导令牌及其相关权限信息，包括描述信息、令牌 ID、令牌密钥以及用于启动认证和签名等权限的标志。</li>
+<li><code>kubelet-bootstrap</code> ClusterRoleBinding：将 <code>system:node-bootstrapper</code> ClusterRole 分配给 <code>system:bootstrappers:default-node-token</code> 组，以便允许节点使用引导令牌进行身份验证和授权。</li>
+<li><code>node-autoapprove-bootstrap</code> ClusterRoleBinding：自动批准使用引导令牌发出的节点客户端证书签名请求。</li>
+<li><code>node-autoapprove-certificate-rotation</code> ClusterRoleBinding：自动批准用于自签名节点证书轮换的签名请求。</li>
+<li><code>system:kube-apiserver-to-kubelet</code> ClusterRole：定义了一个角色，该角色允许 kube-apiserver 访问 kubelet API，以便可以从 kube-apiserver 发送请求到节点的 kubelet API，以获取节点信息和执行操作。</li>
+<li><code>system:kube-apiserver</code> ClusterRoleBinding：将 <code>system:kube-apiserver-to-kubelet</code> ClusterRole 分配给 kube-apiserver 用户，以便在整个 Kubernetes 集群范围内允许 kube-apiserver 访问 kubelet API。</li>
+</ol>
+<h2 id="etcd-证书">ETCD 证书</h2>
+<blockquote>
+<p>本节操作只需要 master 节点执行即可。</p>
+</blockquote>
+<h3 id="创建证书文件">创建证书文件</h3>
+<p>创建用于存放证书的文件夹</p>
+<p>PS：因为我只有一个控制面节点 k8s-master，而 etcd 只需要部署在控制面即可，所以不需要在其他节点执行同样的操作，直接在本节点创建</p>
+<p><del>for i in k8s-master k8s-worker1 k8s-worker2;do</del>
+<del>ssh root@$i mkdir /etc/etcd/ssl -p</del>
+<del>echo $i create done</del>
+<del>done</del></p>
+<pre><code class="language-shell">mkdir /etc/etcd/ssl -p
+</code></pre>
+<h3 id="生成-etcd-证书和-etcd-证书的-key">生成 etcd 证书和 etcd 证书的 key</h3>
+<pre><code class="language-shell">$ cd pki
+$ cfssl gencert -initca etcd-ca-csr.json | cfssljson -bare /etc/etcd/ssl/etcd-ca
+</code></pre>
+<p>注意 <code>-hostname</code> 这里的参数，改成你对应 master 节点的 hostname 和 IP，别直接 cv 过来就执行，如果你不小心执行错了（和我一样没注意，直接 cv 过来就执行，导致后续 etcd 不认这个节点），直接修改下面的 shell 后再重新执行一遍即可</p>
+<pre><code class="language-shell">$ cfssl gencert \
+   -ca=/etc/etcd/ssl/etcd-ca.pem \
+   -ca-key=/etc/etcd/ssl/etcd-ca-key.pem \
+   -config=ca-config.json \
+   -hostname=k8s-master,192.168.223.128 \
+   -profile=kubernetes \
+   etcd-csr.json | cfssljson -bare /etc/etcd/ssl/etcd
+</code></pre>
+<p>执行完成后，将会在 <code>/etc/etcd/ssl</code> 目录下生成这些证书文件：</p>
+<pre><code class="language-shell">$ ls /etc/etcd/ssl
+etcd-ca.csr  etcd-ca-key.pem  etcd-ca.pem  etcd.csr  etcd-key.pem  etcd.pem
+</code></pre>
+<h3 id="将证书复制到其他节点">将证书复制到其他节点</h3>
+<p>我的单节点控制面用不上了</p>
+<p><del>for i in k8s-worker1 k8s-worker2;do</del>
+<del>ssh $i &ldquo;mkdir -p /etc/etcd/ssl&rdquo;</del>
+<del>scp /etc/etcd/ssl/* $i:/etc/etcd/ssl/</del>
+<del>done</del></p>
+<h2 id="k8s-集群证书">k8s 集群证书</h2>
+<blockquote>
+<p>本节操作只需要 master 节点执行即可。</p>
+</blockquote>
+<h3 id="创建所有证书的存放目录">创建所有证书的存放目录</h3>
+<pre><code class="language-shell">$ mkdir -p /etc/kubernetes/pki
+</code></pre>
+<h3 id="生成一个根证书">生成一个根证书</h3>
+<pre><code class="language-shell">$ cfssl gencert -initca ca-csr.json | cfssljson -bare /etc/kubernetes/pki/ca
+</code></pre>
+<h3 id="创建-api-server-凭证与私钥">创建 API Server 凭证与私钥</h3>
+<p>10.96.0.1 是 service 网段的第一个地址，hostname 中指定了生成的证书的 Subject Alternative Names (SANs)，即证书允许被使用的主机名或 IP 地址，这里我填写了 3 台虚拟机的 hostname 和 IP</p>
+<pre><code class="language-shell">$ cfssl gencert   \
+-ca=/etc/kubernetes/pki/ca.pem   \
+-ca-key=/etc/kubernetes/pki/ca-key.pem   \
+-config=ca-config.json   \
+-hostname=10.96.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.default.svc.cluster.local,k8s-master,k8s-worker1,k8s-worker2,192.168.223.128,192.168.223.129,192.168.223.130   \
+-profile=kubernetes   apiserver-csr.json | cfssljson -bare /etc/kubernetes/pki/apiserver
+</code></pre>
+<h3 id="生成-apiserver">生成 apiserver</h3>
+<pre><code class="language-shell">$ cfssl gencert   -initca front-proxy-ca-csr.json | cfssljson -bare /etc/kubernetes/pki/front-proxy-ca 
+
+$ cfssl gencert  \
+-ca=/etc/kubernetes/pki/front-proxy-ca.pem   \
+-ca-key=/etc/kubernetes/pki/front-proxy-ca-key.pem   \
+-config=ca-config.json   \
+-profile=kubernetes   front-proxy-client-csr.json | cfssljson -bare /etc/kubernetes/pki/front-proxy-client
+</code></pre>
+<h3 id="生成-controller-manage-证书">生成 controller-manage 证书</h3>
+<p>注意替换下面命令中的 &ndash;server，IP 填写 api-server 的 IP，在我这里是 master 节点的 IP，端口填写 api-server 的 port，这个值在 api server 配置中的 &ndash;secure-port=6443 指定</p>
+<blockquote>
+<p>疑问：</p>
+<p>我这里只有一个 master 节点，所以 api-server 的 IP 就是该 master 节点的 IP，那如果部署方式是多个 master 节点，此时 api-server 的 IP 又该如何填写呢？</p>
+</blockquote>
+<pre><code class="language-shell">$ cfssl gencert \
+   -ca=/etc/kubernetes/pki/ca.pem \
+   -ca-key=/etc/kubernetes/pki/ca-key.pem \
+   -config=ca-config.json \
+   -profile=kubernetes \
+   manager-csr.json | cfssljson -bare /etc/kubernetes/pki/controller-manager
+   
+   
+# 设置一个集群项
+kubectl config set-cluster kubernetes \
+     --certificate-authority=/etc/kubernetes/pki/ca.pem \
+     --embed-certs=true \
+     --server=https://192.168.223.128:6443 \
+     --kubeconfig=/etc/kubernetes/controller-manager.kubeconfig
+# 设置一个环境项，一个上下文
+kubectl config set-context system:kube-controller-manager@kubernetes \
+    --cluster=kubernetes \
+    --user=system:kube-controller-manager \
+    --kubeconfig=/etc/kubernetes/controller-manager.kubeconfig
+# 设置一个用户项
+kubectl config set-credentials system:kube-controller-manager \
+     --client-certificate=/etc/kubernetes/pki/controller-manager.pem \
+     --client-key=/etc/kubernetes/pki/controller-manager-key.pem \
+     --embed-certs=true \
+     --kubeconfig=/etc/kubernetes/controller-manager.kubeconfig
+# 设置默认环境
+kubectl config use-context system:kube-controller-manager@kubernetes \
+     --kubeconfig=/etc/kubernetes/controller-manager.kubeconfig
+cfssl gencert \
+   -ca=/etc/kubernetes/pki/ca.pem \
+   -ca-key=/etc/kubernetes/pki/ca-key.pem \
+   -config=ca-config.json \
+   -profile=kubernetes \
+   scheduler-csr.json | cfssljson -bare /etc/kubernetes/pki/scheduler
+kubectl config set-cluster kubernetes \
+     --certificate-authority=/etc/kubernetes/pki/ca.pem \
+     --embed-certs=true \
+     --server=https://192.168.223.128:6443 \
+     --kubeconfig=/etc/kubernetes/scheduler.kubeconfig
+kubectl config set-credentials system:kube-scheduler \
+     --client-certificate=/etc/kubernetes/pki/scheduler.pem \
+     --client-key=/etc/kubernetes/pki/scheduler-key.pem \
+     --embed-certs=true \
+     --kubeconfig=/etc/kubernetes/scheduler.kubeconfig
+kubectl config set-context system:kube-scheduler@kubernetes \
+     --cluster=kubernetes \
+     --user=system:kube-scheduler \
+     --kubeconfig=/etc/kubernetes/scheduler.kubeconfig
+kubectl config use-context system:kube-scheduler@kubernetes \
+     --kubeconfig=/etc/kubernetes/scheduler.kubeconfig
+cfssl gencert \
+   -ca=/etc/kubernetes/pki/ca.pem \
+   -ca-key=/etc/kubernetes/pki/ca-key.pem \
+   -config=ca-config.json \
+   -profile=kubernetes \
+   admin-csr.json | cfssljson -bare /etc/kubernetes/pki/admin
+kubectl config set-cluster kubernetes     \
+  --certificate-authority=/etc/kubernetes/pki/ca.pem     \
+  --embed-certs=true     \
+  --server=https://192.168.223.128:6443     \
+  --kubeconfig=/etc/kubernetes/admin.kubeconfig
+kubectl config set-credentials kubernetes-admin  \
+  --client-certificate=/etc/kubernetes/pki/admin.pem     \
+  --client-key=/etc/kubernetes/pki/admin-key.pem     \
+  --embed-certs=true     \
+  --kubeconfig=/etc/kubernetes/admin.kubeconfig
+kubectl config set-context kubernetes-admin@kubernetes    \
+  --cluster=kubernetes     \
+  --user=kubernetes-admin     \
+  --kubeconfig=/etc/kubernetes/admin.kubeconfig
+kubectl config use-context kubernetes-admin@kubernetes  --kubeconfig=/etc/kubernetes/admin.kubeconfig
+</code></pre>
+<h3 id="生成-kube-proxy-证书">生成 kube-proxy 证书</h3>
+<p>注意替换下面命令中的 &ndash;server</p>
+<pre><code class="language-shell">cfssl gencert \
+   -ca=/etc/kubernetes/pki/ca.pem \
+   -ca-key=/etc/kubernetes/pki/ca-key.pem \
+   -config=ca-config.json \
+   -profile=kubernetes \
+   kube-proxy-csr.json | cfssljson -bare /etc/kubernetes/pki/kube-proxy
+kubectl config set-cluster kubernetes     \
+  --certificate-authority=/etc/kubernetes/pki/ca.pem     \
+  --embed-certs=true     \
+  --server=https://192.168.223.128:6443     \
+  --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig
+kubectl config set-credentials kube-proxy  \
+  --client-certificate=/etc/kubernetes/pki/kube-proxy.pem     \
+  --client-key=/etc/kubernetes/pki/kube-proxy-key.pem     \
+  --embed-certs=true     \
+  --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig
+kubectl config set-context kube-proxy@kubernetes    \
+  --cluster=kubernetes     \
+  --user=kube-proxy     \
+  --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig
+kubectl config use-context kube-proxy@kubernetes  --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig
+</code></pre>
+<h3 id="创建-serviceaccount-key">创建 ServiceAccount Key</h3>
+<pre><code class="language-shell">$ openssl genrsa -out /etc/kubernetes/pki/sa.key 2048
+$ openssl rsa -in /etc/kubernetes/pki/sa.key -pubout -out /etc/kubernetes/pki/sa.pub
+</code></pre>
+<p>其他节点创建目录</p>
+<pre><code class="language-shell">for i in k8s-worker1 k8s-worker2;do    
+	ssh $i &quot;mkdir  /etc/kubernetes/pki/ -p&quot;    
+	scp -r /etc/kubernetes/pki $i:/etc/kubernetes/
+done
+</code></pre>
+<h3 id="查看各个节点的证书">查看各个节点的证书</h3>
+<pre><code class="language-shell">$ ls /etc/kubernetes/pki/
+admin.csr          ca.csr                      front-proxy-ca.csr          kube-proxy.csr      scheduler-key.pem
+admin-key.pem      ca-key.pem                  front-proxy-ca-key.pem      kube-proxy-key.pem  scheduler.pem
+admin.pem          ca.pem                      front-proxy-ca.pem          kube-proxy.pem
+apiserver.csr      controller-manager.csr      front-proxy-client.csr      sa.key
+apiserver-key.pem  controller-manager-key.pem  front-proxy-client-key.pem  sa.pub
+apiserver.pem      controller-manager.pem      front-proxy-client.pem      scheduler.csr
+
+# 一共 26 个就对了
+$ ls /etc/kubernetes/pki/ |wc -l
+26
+</code></pre>
+<h2 id="配置-etcd">配置 ETCD</h2>
+<h3 id="master-节点">master 节点</h3>
+<p>在 master 节点执行下面的 shell，注意将配置里的 IP 改为 master 节点的 IP，hostname 也要修改成对应的，initial-cluster 修改成对应的几个节点</p>
+<pre><code class="language-shell"># 如果要用 IPv6 那么把 IPv4 地址修改为 IPv6 即可
+cat &gt; /etc/etcd/etcd.config.yml &lt;&lt; EOF 
+name: 'k8s-master'
+data-dir: /var/lib/etcd
+wal-dir: /var/lib/etcd/wal
+snapshot-count: 5000
+heartbeat-interval: 100
+election-timeout: 1000
+quota-backend-bytes: 0
+listen-peer-urls: 'https://192.168.223.128:2380'
+listen-client-urls: 'https://192.168.223.128:2379,http://127.0.0.1:2379'
+max-snapshots: 3
+max-wals: 5
+cors:
+initial-advertise-peer-urls: 'https://192.168.223.128:2380'
+advertise-client-urls: 'https://192.168.223.128:2379'
+discovery:
+discovery-fallback: 'proxy'
+discovery-proxy:
+discovery-srv:
+initial-cluster: 'k8s-master=https://192.168.223.128:2380'
+initial-cluster-token: 'etcd-k8s-cluster'
+initial-cluster-state: 'new'
+strict-reconfig-check: false
+enable-v2: true
+enable-pprof: true
+proxy: 'off'
+proxy-failure-wait: 5000
+proxy-refresh-interval: 30000
+proxy-dial-timeout: 1000
+proxy-write-timeout: 5000
+proxy-read-timeout: 0
+client-transport-security:
+  cert-file: '/etc/kubernetes/pki/etcd/etcd.pem'
+  key-file: '/etc/kubernetes/pki/etcd/etcd-key.pem'
+  client-cert-auth: true
+  trusted-ca-file: '/etc/kubernetes/pki/etcd/etcd-ca.pem'
+  auto-tls: true
+peer-transport-security:
+  cert-file: '/etc/kubernetes/pki/etcd/etcd.pem'
+  key-file: '/etc/kubernetes/pki/etcd/etcd-key.pem'
+  peer-client-cert-auth: true
+  trusted-ca-file: '/etc/kubernetes/pki/etcd/etcd-ca.pem'
+  auto-tls: true
+debug: false
+log-package-levels:
+log-outputs: [default]
+force-new-cluster: false
+EOF
+</code></pre>
+<h3 id="k8s-worker1-节点"><del>k8s-worker1 节点</del></h3>
+<pre><code class="language-shell"># 如果要用 IPv6 那么把 IPv4 地址修改为 IPv6 即可
+cat &gt; /etc/etcd/etcd.config.yml &lt;&lt; EOF 
+name: 'k8s-worker1'
+data-dir: /var/lib/etcd
+wal-dir: /var/lib/etcd/wal
+snapshot-count: 5000
+heartbeat-interval: 100
+election-timeout: 1000
+quota-backend-bytes: 0
+listen-peer-urls: 'https://192.168.223.129:2380'
+listen-client-urls: 'https://192.168.223.129:2379,http://127.0.0.1:2379'
+max-snapshots: 3
+max-wals: 5
+cors:
+initial-advertise-peer-urls: 'https://192.168.223.129:2380'
+advertise-client-urls: 'https://192.168.223.129:2379'
+discovery:
+discovery-fallback: 'proxy'
+discovery-proxy:
+discovery-srv:
+initial-cluster: 'k8s-master=https://192.168.223.128:2380,k8s-worker1=https://192.168.223.129:2380,k8s-worker2=https://192.168.223.130:2380'
+initial-cluster-token: 'etcd-k8s-cluster'
+initial-cluster-state: 'new'
+strict-reconfig-check: false
+enable-v2: true
+enable-pprof: true
+proxy: 'off'
+proxy-failure-wait: 5000
+proxy-refresh-interval: 30000
+proxy-dial-timeout: 1000
+proxy-write-timeout: 5000
+proxy-read-timeout: 0
+client-transport-security:
+  cert-file: '/etc/kubernetes/pki/etcd/etcd.pem'
+  key-file: '/etc/kubernetes/pki/etcd/etcd-key.pem'
+  client-cert-auth: true
+  trusted-ca-file: '/etc/kubernetes/pki/etcd/etcd-ca.pem'
+  auto-tls: true
+peer-transport-security:
+  cert-file: '/etc/kubernetes/pki/etcd/etcd.pem'
+  key-file: '/etc/kubernetes/pki/etcd/etcd-key.pem'
+  peer-client-cert-auth: true
+  trusted-ca-file: '/etc/kubernetes/pki/etcd/etcd-ca.pem'
+  auto-tls: true
+debug: false
+log-package-levels:
+log-outputs: [default]
+force-new-cluster: false
+EOF
+</code></pre>
+<h3 id="k8s-worker2-节点"><del>k8s-worker2 节点</del></h3>
+<pre><code class="language-shell"># 如果要用 IPv6 那么把 IPv4 地址修改为 IPv6 即可
+cat &gt; /etc/etcd/etcd.config.yml &lt;&lt; EOF 
+name: 'k8s-worker2'
+data-dir: /var/lib/etcd
+wal-dir: /var/lib/etcd/wal
+snapshot-count: 5000
+heartbeat-interval: 100
+election-timeout: 1000
+quota-backend-bytes: 0
+listen-peer-urls: 'https://192.168.223.130:2380'
+listen-client-urls: 'https://192.168.223.130:2379,http://127.0.0.1:2379'
+max-snapshots: 3
+max-wals: 5
+cors:
+initial-advertise-peer-urls: 'https://192.168.223.130:2380'
+advertise-client-urls: 'https://192.168.223.130:2379'
+discovery:
+discovery-fallback: 'proxy'
+discovery-proxy:
+discovery-srv:
+initial-cluster: 'k8s-master=https://192.168.223.128:2380,k8s-worker1=https://192.168.223.129:2380,k8s-worker2=https://192.168.223.130:2380'
+initial-cluster-token: 'etcd-k8s-cluster'
+initial-cluster-state: 'new'
+strict-reconfig-check: false
+enable-v2: true
+enable-pprof: true
+proxy: 'off'
+proxy-failure-wait: 5000
+proxy-refresh-interval: 30000
+proxy-dial-timeout: 1000
+proxy-write-timeout: 5000
+proxy-read-timeout: 0
+client-transport-security:
+  cert-file: '/etc/kubernetes/pki/etcd/etcd.pem'
+  key-file: '/etc/kubernetes/pki/etcd/etcd-key.pem'
+  client-cert-auth: true
+  trusted-ca-file: '/etc/kubernetes/pki/etcd/etcd-ca.pem'
+  auto-tls: true
+peer-transport-security:
+  cert-file: '/etc/kubernetes/pki/etcd/etcd.pem'
+  key-file: '/etc/kubernetes/pki/etcd/etcd-key.pem'
+  peer-client-cert-auth: true
+  trusted-ca-file: '/etc/kubernetes/pki/etcd/etcd-ca.pem'
+  auto-tls: true
+debug: false
+log-package-levels:
+log-outputs: [default]
+force-new-cluster: false
+EOF
+</code></pre>
+<p>创建 etcd 启动服务（需要在所有 master 节点操作）</p>
+<pre><code class="language-shell">cat &gt; /usr/lib/systemd/system/etcd.service &lt;&lt; EOF
+[Unit]
+Description=Etcd Service
+Documentation=https://coreos.com/etcd/docs/latest/
+After=network.target
+[Service]
+Type=notify
+ExecStart=/usr/local/bin/etcd --config-file=/etc/etcd/etcd.config.yml
+Restart=on-failure
+RestartSec=10
+LimitNOFILE=65536
+[Install]
+WantedBy=multi-user.target
+Alias=etcd3.service
+EOF
+</code></pre>
+<p>拷贝 ETCD 证书</p>
+<pre><code class="language-shell">mkdir /etc/kubernetes/pki/etcd
+ln -s /etc/etcd/ssl/* /etc/kubernetes/pki/etcd/
+systemctl daemon-reload
+systemctl enable --now etcd
+</code></pre>
+<p>查看 etcd 状态</p>
+<pre><code class="language-shell">$ etcdctl --endpoints=&quot;k8s-master:2379&quot; --cacert=/etc/kubernetes/pki/etcd/etcd-ca.pem --cert=/etc/kubernetes/pki/etcd/etcd.pem --key=/etc/kubernetes/pki/etcd/etcd-key.pem  endpoint status --write-out=table
+</code></pre>
+<blockquote>
+<p>之前的配置文件写错了，应该只有 master 节点需要运行 etcd，所以配置文件中的 initial-cluster 需要改为 k8s-master=https://192.168.223.128:2380&rsquo;，也就是只添加 master 本身即可，删掉之前加入的两个 worker 节点，修改为：</p>
+<p><code>initial-cluster: 'k8s-master=https://192.168.223.128:2380'</code></p>
+<p>然后执行</p>
+<pre><code class="language-shell">$ systemctl daemon-reload
+$ sudo systemctl restart etcd
+</code></pre>
+<p>重新运行 etcd，但是发现无法运行，手动执行 etcd &ndash;config-file=/etc/etcd/etcd.config.yml（也可以使用 <code>sudo journalctl -u etcd</code>），发现日志里输出 &ldquo;error&rdquo;:&ldquo;dial tcp 192.168.223.129:2380: connect: connection refused&rdquo;，这表示 etcd 依旧在尝试连接 worker1 的 etcd，明明改了 initial-cluster，为什么没有生效呢？</p>
+<p>我重新排查日志，发现有这么一行有点可疑：</p>
+<p>{&ldquo;level&rdquo;:&ldquo;info&rdquo;,&ldquo;ts&rdquo;:&ldquo;2023-04-15T16:58:41.252Z&rdquo;,&ldquo;caller&rdquo;:&ldquo;etcdmain/etcd.go:116&rdquo;,&ldquo;msg&rdquo;:&ldquo;server has been already initialized&rdquo;,&ldquo;data-dir&rdquo;:&quot;/var/lib/etcd&quot;,&ldquo;dir-type&rdquo;:&ldquo;member&rdquo;}</p>
+<p>尝试删掉 /var/lib/etcd/member，再次执行 sudo systemctl restart etcd，发现命令不会阻塞了，etcd 成功运行。（此时我只想夸自己一句牛逼 plus）</p>
+</blockquote>
+<p>如果输出下面这些内容，说明你搞对了</p>
+<pre><code class="language-shell">+-----------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+|    ENDPOINT     |        ID        | VERSION | DB SIZE | IS LEADER | IS LEARNER | RAFT TERM | RAFT INDEX | RAFT APPLIED INDEX | ERRORS |
++-----------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+| k8s-master:2379 | 2918d818e481030f |   3.5.4 |   20 kB |      true |      false |         5 |         10 |                 10 |        |
++-----------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+</code></pre>
+<h2 id="apiserver-配置">ApiServer 配置</h2>
+<p>创建 apiserver 服务启动文件</p>
+<p>需要在每台节点自行修改对应的信息</p>
+<ul>
+<li>&ndash;advertise-address 当前节点 IP</li>
+<li>&ndash;etcd-servers ETCD 节点信息</li>
+<li>&ndash;secure-port apiserver 端口号</li>
+</ul>
+<pre><code class="language-shell">cat &gt; /usr/lib/systemd/system/kube-apiserver.service &lt;&lt; EOF
+[Unit]
+Description=Kubernetes API Server
+Documentation=https://github.com/kubernetes/kubernetes
+After=network.target
+[Service]
+ExecStart=/usr/local/bin/kube-apiserver \
+      --v=2  \
+      --logtostderr=true  \
+      --allow-privileged=true  \
+      --bind-address=0.0.0.0  \
+      --secure-port=6443  \
+      --advertise-address=192.168.223.128 \
+      --service-cluster-ip-range=10.96.0.0/12,fd00::/108  \
+      --feature-gates=IPv6DualStack=true  \
+      --service-node-port-range=30000-32767  \
+      --etcd-servers=https://k8s-master:2379 \
+      --etcd-cafile=/etc/etcd/ssl/etcd-ca.pem  \
+      --etcd-certfile=/etc/etcd/ssl/etcd.pem  \
+      --etcd-keyfile=/etc/etcd/ssl/etcd-key.pem  \
+      --client-ca-file=/etc/kubernetes/pki/ca.pem  \
+      --tls-cert-file=/etc/kubernetes/pki/apiserver.pem  \
+      --tls-private-key-file=/etc/kubernetes/pki/apiserver-key.pem  \
+      --kubelet-client-certificate=/etc/kubernetes/pki/apiserver.pem  \
+      --kubelet-client-key=/etc/kubernetes/pki/apiserver-key.pem  \
+      --service-account-key-file=/etc/kubernetes/pki/sa.pub  \
+      --service-account-signing-key-file=/etc/kubernetes/pki/sa.key  \
+      --service-account-issuer=https://kubernetes.default.svc.cluster.local \
+      --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname  \
+      --enable-admission-plugins=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,NodeRestriction,ResourceQuota  \
+      --authorization-mode=Node,RBAC  \
+      --enable-bootstrap-token-auth=true  \
+      --requestheader-client-ca-file=/etc/kubernetes/pki/front-proxy-ca.pem  \
+      --proxy-client-cert-file=/etc/kubernetes/pki/front-proxy-client.pem  \
+      --proxy-client-key-file=/etc/kubernetes/pki/front-proxy-client-key.pem  \
+      --requestheader-allowed-names=aggregator  \
+      --requestheader-group-headers=X-Remote-Group  \
+      --requestheader-extra-headers-prefix=X-Remote-Extra-  \
+      --requestheader-username-headers=X-Remote-User \
+      --enable-aggregator-routing=true
+      # --token-auth-file=/etc/kubernetes/token.csv
+Restart=on-failure
+RestartSec=10s
+LimitNOFILE=65535
+[Install]
+WantedBy=multi-user.target
+EOF
+</code></pre>
+<p>启动 apiserver（所有 master 节点）</p>
+<p><del>for i in k8s-01 k8s-02 k8s-03;do</del>
+<del>ssh $i &ldquo;systemctl daemon-reload &amp;&amp; systemctl enable &ndash;now kube-apiserver&rdquo;</del>
+<del>echo &ldquo;$i&rdquo;</del>
+<del>sleep 5</del>
+<del>ssh $i &ldquo;systemctl status kube-apiserver&rdquo;</del>
+<del>done</del></p>
+<p>单 master 节点只需要执行下面的：</p>
+<pre><code class="language-shell">$ systemctl daemon-reload &amp;&amp; systemctl enable --now kube-apiserver
+$ sleep 5
+$ systemctl status kube-apiserver
+</code></pre>
+<p>如果输出类似这样，即 Active: active (running)，则代表成功</p>
+<pre><code class="language-shell">● kube-apiserver.service - Kubernetes API Server
+     Loaded: loaded (/lib/systemd/system/kube-apiserver.service; enabled; vendor preset: enabled)
+     Active: active (running) since Sat 2023-04-15 18:01:27 UTC; 6s ago
+       Docs: https://github.com/kubernetes/kubernetes
+   Main PID: 54969 (kube-apiserver)
+      Tasks: 15 (limit: 9362)
+     Memory: 290.8M
+        CPU: 3.201s
+</code></pre>
+<h2 id="controller-manage-配置">Controller-Manage 配置</h2>
+<p>172.16.0.0/12 为 pod 网段，按需求设置你自己的网段</p>
+<pre><code class="language-shell">cat &gt; /usr/lib/systemd/system/kube-controller-manager.service &lt;&lt; EOF
+[Unit]
+Description=Kubernetes Controller Manager
+Documentation=https://github.com/kubernetes/kubernetes
+After=network.target
+[Service]
+ExecStart=/usr/local/bin/kube-controller-manager \
+      --v=2 \
+      --logtostderr=true \
+      --bind-address=127.0.0.1 \
+      --root-ca-file=/etc/kubernetes/pki/ca.pem \
+      --cluster-signing-cert-file=/etc/kubernetes/pki/ca.pem \
+      --cluster-signing-key-file=/etc/kubernetes/pki/ca-key.pem \
+      --service-account-private-key-file=/etc/kubernetes/pki/sa.key \
+      --kubeconfig=/etc/kubernetes/controller-manager.kubeconfig \
+      --leader-elect=true \
+      --use-service-account-credentials=true \
+      --node-monitor-grace-period=40s \
+      --node-monitor-period=5s \
+      --pod-eviction-timeout=2m0s \
+      --controllers=*,bootstrapsigner,tokencleaner \
+      --allocate-node-cidrs=true \
+      --feature-gates=IPv6DualStack=true \
+      --service-cluster-ip-range=10.96.0.0/12,fd00::/108 \
+      --cluster-cidr=172.16.0.0/12,fc00::/48 \
+      --node-cidr-mask-size-ipv4=24 \
+      --node-cidr-mask-size-ipv6=64 \
+      --requestheader-client-ca-file=/etc/kubernetes/pki/front-proxy-ca.pem 
+Restart=always
+RestartSec=10s
+[Install]
+WantedBy=multi-user.target
+EOF
+</code></pre>
+<p><strong>配置文件拷贝到其它节点</strong></p>
+<p><del>for i in k8s-02 k8s-03;do <br>
+scp /usr/lib/systemd/system/kube-controller-manager.service  $i:/usr/lib/systemd/system/    	scp /etc/kubernetes/controller-manager.kubeconfig  $i:/etc/kubernetes/</del>
+<del>done</del></p>
+<p>我这边就用不着了</p>
+<p><strong>启动所有节点服务</strong></p>
+<p><del>for i in k8s-01 k8s-02 k8s-03;do</del>
+<del>ssh $i &ldquo;systemctl daemon-reload &amp;&amp; systemctl enable &ndash;now kube-controller-manager &amp;&amp; systemctl  status kube-controller-manager&rdquo;</del>
+<del>done</del></p>
+<p>我这里也用不着了，只需要执行下面这段即可</p>
+<pre><code class="language-shell">$ systemctl daemon-reload &amp;&amp; systemctl enable --now kube-controller-manager &amp;&amp; systemctl  status kube-controller-manager
+</code></pre>
+<p>输出类似下面这样</p>
+<pre><code class="language-shell">Created symlink /etc/systemd/system/multi-user.target.wants/kube-controller-manager.service → /lib/systemd/system/kube-controller-manager.service.
+● kube-controller-manager.service - Kubernetes Controller Manager
+     Loaded: loaded (/lib/systemd/system/kube-controller-manager.service; enabled; vendor preset: enabled)
+     Active: active (running) since Sat 2023-04-15 18:14:05 UTC; 5ms ago
+       Docs: https://github.com/kubernetes/kubernetes
+   Main PID: 55081 (kube-controller)
+      Tasks: 6 (limit: 9362)
+     Memory: 1.6M
+        CPU: 3ms
+</code></pre>
+<h2 id="scheduler-配置">Scheduler 配置</h2>
+<pre><code class="language-shell">cat &gt; /usr/lib/systemd/system/kube-scheduler.service &lt;&lt; EOF
+[Unit]
+Description=Kubernetes Scheduler
+Documentation=https://github.com/kubernetes/kubernetes
+After=network.target
+[Service]
+ExecStart=/usr/local/bin/kube-scheduler \
+      --v=2 \
+      --logtostderr=true \
+      --bind-address=127.0.0.1 \
+      --leader-elect=true \
+      --kubeconfig=/etc/kubernetes/scheduler.kubeconfig
+Restart=always
+RestartSec=10s
+[Install]
+WantedBy=multi-user.target
+EOF
+</code></pre>
+<p><del>配置文件拷贝到其它节点</del></p>
+<p><del>for i in k8s-02 k8s-03;do <br>
+scp /usr/lib/systemd/system/kube-scheduler.service  $i:/usr/lib/systemd/system/ <br>
+scp /etc/kubernetes/scheduler.kubeconfig $i:/etc/kubernetes/</del>
+<del>done</del></p>
+<p>启动所有节点服务</p>
+<p><del>for i in k8s-01 k8s-02 k8s-03;do   <br>
+ssh $i &ldquo;systemctl daemon-reload &amp;&amp; systemctl enable &ndash;now kube-scheduler &amp;&amp; systemctl  status kube-scheduler&rdquo;</del>
+<del>done</del></p>
+<pre><code class="language-shell">$ systemctl daemon-reload &amp;&amp; systemctl enable --now kube-scheduler &amp;&amp; systemctl  status kube-scheduler
+</code></pre>
+<h2 id="上下文配置">上下文配置</h2>
+<pre><code class="language-shell">cd /root/bootstrap
+kubectl config set-cluster kubernetes     \
+--certificate-authority=/etc/kubernetes/pki/ca.pem     \
+--embed-certs=true     
+--server=https://192.168.223.128:6443     \
+--kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig
+kubectl config set-credentials tls-bootstrap-token-user     \
+--token=c8ad9c.2e4d610cf3e7426e \
+--kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig
+kubectl config set-context tls-bootstrap-token-user@kubernetes     \
+--cluster=kubernetes     \
+--user=tls-bootstrap-token-user     \
+--kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig
+kubectl config use-context tls-bootstrap-token-user@kubernetes     \
+--kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig
+# token的位置在bootstrap.secret.yaml，如果修改的话到这个文件修改
+mkdir -p /root/.kube ; cp /etc/kubernetes/admin.kubeconfig /root/.kube/config
+</code></pre>
+<p>查看集群状态</p>
+<pre><code class="language-shell">$ kubectl get cs
+
+# 这样就对了
+Warning: v1 ComponentStatus is deprecated in v1.19+
+NAME                 STATUS    MESSAGE                         ERROR
+scheduler            Healthy   ok
+controller-manager   Healthy   ok
+etcd-0               Healthy   {&quot;health&quot;:&quot;true&quot;,&quot;reason&quot;:&quot;&quot;}
+</code></pre>
+<p>执行</p>
+<pre><code class="language-shell">$ kubectl create -f bootstrap.secret.yaml
+</code></pre>
+<h2 id="kubelet">kubelet</h2>
+<h3 id="创建-kubelet-启动文件">创建 kubelet 启动文件</h3>
+<pre><code class="language-shell">cat &gt; /usr/lib/systemd/system/kubelet.service &lt;&lt; EOF
+[Unit]
+Description=Kubernetes Kubelet
+Documentation=https://github.com/kubernetes/kubernetes
+After=containerd.service
+Requires=containerd.service
+[Service]
+ExecStart=/usr/local/bin/kubelet \
+    --bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig  \
+    --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
+    --config=/etc/kubernetes/kubelet-conf.yml \
+    --container-runtime=remote  \
+    --runtime-request-timeout=15m  \
+    --container-runtime-endpoint=unix:///run/containerd/containerd.sock  \
+    --cgroup-driver=systemd \
+    --node-labels=node.kubernetes.io/node='' \
+    --feature-gates=IPv6DualStack=true
+[Install]
+WantedBy=multi-user.target
+EOF
+</code></pre>
+<h3 id="创建-kubelet-配置文件">创建 kubelet 配置文件</h3>
+<pre><code class="language-shell">cat &gt; /etc/kubernetes/kubelet-conf.yml &lt;&lt;EOF
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+address: 0.0.0.0
+port: 10250
+readOnlyPort: 10255
+authentication:
+  anonymous:
+    enabled: false
+  webhook:
+    cacheTTL: 2m0s
+    enabled: true
+  x509:
+    clientCAFile: /etc/kubernetes/pki/ca.pem
+authorization:
+  mode: Webhook
+  webhook:
+    cacheAuthorizedTTL: 5m0s
+    cacheUnauthorizedTTL: 30s
+cgroupDriver: systemd
+cgroupsPerQOS: true
+clusterDNS:
+- 10.96.0.10
+clusterDomain: cluster.local
+containerLogMaxFiles: 5
+containerLogMaxSize: 10Mi
+contentType: application/vnd.kubernetes.protobuf
+cpuCFSQuota: true
+cpuManagerPolicy: none
+cpuManagerReconcilePeriod: 10s
+enableControllerAttachDetach: true
+enableDebuggingHandlers: true
+enforceNodeAllocatable:
+- pods
+eventBurst: 10
+eventRecordQPS: 5
+evictionHard:
+  imagefs.available: 15%
+  memory.available: 100Mi
+  nodefs.available: 10%
+  nodefs.inodesFree: 5%
+evictionPressureTransitionPeriod: 5m0s
+failSwapOn: true
+fileCheckFrequency: 20s
+hairpinMode: promiscuous-bridge
+healthzBindAddress: 127.0.0.1
+healthzPort: 10248
+httpCheckFrequency: 20s
+imageGCHighThresholdPercent: 85
+imageGCLowThresholdPercent: 80
+imageMinimumGCAge: 2m0s
+iptablesDropBit: 15
+iptablesMasqueradeBit: 14
+kubeAPIBurst: 10
+kubeAPIQPS: 5
+makeIPTablesUtilChains: true
+maxOpenFiles: 1000000
+maxPods: 110
+nodeStatusUpdateFrequency: 10s
+oomScoreAdj: -999
+podPidsLimit: -1
+registryBurst: 10
+registryPullQPS: 5
+resolvConf: /etc/resolv.conf
+rotateCertificates: true
+runtimeRequestTimeout: 2m0s
+serializeImagePulls: true
+staticPodPath: /etc/kubernetes/manifests
+streamingConnectionIdleTimeout: 4h0m0s
+syncFrequency: 1m0s
+volumeStatsAggPeriod: 1m0s
+EOF
+</code></pre>
+<h3 id="拷贝证书到其它节点"><del>拷贝证书到其它节点</del></h3>
+<p><del>for i in k8s-01 k8s-02 k8s-03;do<br>
+ssh $i &ldquo;mkdir -p /var/lib/kubelet /var/log/kubernetes  /etc/kubernetes/manifests/&rdquo;   		scp /etc/kubernetes/kubelet-conf.yml $i:/etc/kubernetes/<br>
+scp /usr/lib/systemd/system/kubelet.service  $i:/usr/lib/systemd/system/<br>
+scp /etc/kubernetes/bootstrap-kubelet.kubeconfig $i:/etc/kubernetes/</del>
+<del>done</del></p>
+<pre><code class="language-shell">$ mkdir -p /var/lib/kubelet /var/log/kubernetes  /etc/kubernetes/manifests/
+</code></pre>
+<h3 id="启动服务">启动服务</h3>
+<pre><code class="language-shell">systemctl daemon-reload
+systemctl enable --now kubelet
+systemctl status kubelet
+</code></pre>
+<h3 id="查看集群">查看集群</h3>
+<pre><code class="language-shell">$ kubectl get node
+
+No resources found
+</code></pre>
+<p>失败了。。。没有任何节点</p>
+<h1 id="参考">参考</h1>
+<p><a href="https://i4t.com/5636.html">https://i4t.com/5636.html</a></p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/k8s/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#k8s</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/zhuangji-jilu/" class="block">装机记录</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/nginx-practice/" class="block">通过实践学习 Nginx</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#环境">环境</a></li>
+    <li><a href="#基础环境准备">基础环境准备</a>
+      <ul>
+        <li><a href="#配置-hosts">配置 hosts</a></li>
+        <li><a href="#配置免密登录">配置免密登录</a></li>
+        <li><a href="#关闭防火墙">关闭防火墙</a></li>
+        <li><a href="#关闭交换分区">关闭交换分区</a></li>
+        <li><a href="#设置时间同步">设置时间同步</a></li>
+        <li><a href="#安装-docker">安装 Docker</a></li>
+        <li><a href="#所有节点安装-containerd">所有节点安装 Containerd</a></li>
+      </ul>
+    </li>
+    <li><a href="#k8s-环境部署">k8s 环境部署</a>
+      <ul>
+        <li><a href="#下载相关二进制文件">下载相关二进制文件</a></li>
+        <li><a href="#准备一个目录用来存放证书配置文件">准备一个目录用来存放证书配置文件</a></li>
+        <li><a href="#下载配置-cfssl-证书">下载配置 cfssl 证书</a></li>
+        <li><a href="#创建证书配置文件">创建证书配置文件</a>
+          <ul>
+            <li><a href="#这部分直接看这里">这部分直接看这里</a></li>
+          </ul>
+        </li>
+        <li><a href="#etcd-证书">ETCD 证书</a>
+          <ul>
+            <li><a href="#创建证书文件">创建证书文件</a></li>
+            <li><a href="#生成-etcd-证书和-etcd-证书的-key">生成 etcd 证书和 etcd 证书的 key</a></li>
+            <li><a href="#将证书复制到其他节点">将证书复制到其他节点</a></li>
+          </ul>
+        </li>
+        <li><a href="#k8s-集群证书">k8s 集群证书</a>
+          <ul>
+            <li><a href="#创建所有证书的存放目录">创建所有证书的存放目录</a></li>
+            <li><a href="#生成一个根证书">生成一个根证书</a></li>
+            <li><a href="#创建-api-server-凭证与私钥">创建 API Server 凭证与私钥</a></li>
+            <li><a href="#生成-apiserver">生成 apiserver</a></li>
+            <li><a href="#生成-controller-manage-证书">生成 controller-manage 证书</a></li>
+            <li><a href="#生成-kube-proxy-证书">生成 kube-proxy 证书</a></li>
+            <li><a href="#创建-serviceaccount-key">创建 ServiceAccount Key</a></li>
+            <li><a href="#查看各个节点的证书">查看各个节点的证书</a></li>
+          </ul>
+        </li>
+        <li><a href="#配置-etcd">配置 ETCD</a>
+          <ul>
+            <li><a href="#master-节点">master 节点</a></li>
+            <li><a href="#k8s-worker1-节点">k8s-worker1 节点</a></li>
+            <li><a href="#k8s-worker2-节点">k8s-worker2 节点</a></li>
+          </ul>
+        </li>
+        <li><a href="#apiserver-配置">ApiServer 配置</a></li>
+        <li><a href="#controller-manage-配置">Controller-Manage 配置</a></li>
+        <li><a href="#scheduler-配置">Scheduler 配置</a></li>
+        <li><a href="#上下文配置">上下文配置</a></li>
+        <li><a href="#kubelet">kubelet</a>
+          <ul>
+            <li><a href="#创建-kubelet-启动文件">创建 kubelet 启动文件</a></li>
+            <li><a href="#创建-kubelet-配置文件">创建 kubelet 配置文件</a></li>
+            <li><a href="#拷贝证书到其它节点">拷贝证书到其它节点</a></li>
+            <li><a href="#启动服务">启动服务</a></li>
+            <li><a href="#查看集群">查看集群</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/k8s-secret/" class="no-underline">k8s Secret</a>
+          <br />
+        
+          <a href="/posts/client-go-yuan-ma/" class="no-underline">k8s client-go 源码阅读</a>
+          <br />
+        
+          <a href="/posts/kubebuilder/" class="no-underline">kubebuilder 实践</a>
+          <br />
+        
+          <a href="/posts/k8s-statefulset/" class="no-underline">k8s StatefulSet</a>
+          <br />
+        
+          <a href="/posts/k8s-configmap/" class="no-underline">k8s ConfigMap</a>
+          <br />
+        
+          <a href="/posts/k8s-namespace/" class="no-underline">k8s namespace</a>
+          <br />
+        
+      </div>
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>controller-runtime on /dev/null</title>
+    <link>/tags/controller-runtime/</link>
+    <description>Recent content in controller-runtime on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+</copyright>
+    <lastBuildDate>Fri, 21 Apr 2023 00:10:31 +0800</lastBuildDate><atom:link href="/tags/controller-runtime/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Controller-Runtime 之 Source </title>
+      <link>/posts/controller-runtime-source/</link>
+      <pubDate>Fri, 21 Apr 2023 00:10:31 +0800</pubDate>
+      
+      <guid>/posts/controller-runtime-source/</guid>
+      <description>背景 Source 是 Watches() 的第一个参数，代表一种事件源，实际类型是一个 interface，原型：</description>
+    </item>
+    
+  </channel>
+</rss>

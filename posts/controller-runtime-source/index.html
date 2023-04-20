@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<title>MySQL 为什么使用 B&#43; 树 | /dev/null</title>
+<title>Controller-Runtime 之 Source  | /dev/null</title>
 
 <meta name="generator" content="Hugo Eureka 0.9.3" />
 <link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
@@ -185,7 +185,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
 
 <meta name="description"
-  content="B 树和 B&#43; 树的区别 来源：https://draveness.me/whys-the-design-mysql-b-plus-tree/">
+  content="背景 Source 是 Watches() 的第一个参数，代表一种事件源，实际类型是一个 interface，原型：">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -197,8 +197,8 @@
       "item":"/posts/"},{
       "@type": "ListItem",
       "position": 2 ,
-      "name":"MySQL 为什么使用 B+ 树",
-      "item":"/posts/mysql-wei-shi-me-shi-yong-b-shu/"}]
+      "name":"Controller-Runtime 之 Source ",
+      "item":"/posts/controller-runtime-source/"}]
 }
 </script>
 
@@ -210,11 +210,11 @@
     "@type": "Article",
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "/posts/mysql-wei-shi-me-shi-yong-b-shu/"
+        "@id": "/posts/controller-runtime-source/"
     },
-    "headline": "MySQL 为什么使用 B\u002b 树 | \/dev\/null","datePublished": "2021-09-11T19:56:55+00:00",
-    "dateModified": "2021-09-11T19:56:55+00:00",
-    "wordCount":  158 ,
+    "headline": "Controller-Runtime 之 Source  | \/dev\/null","datePublished": "2023-04-21T00:10:31+08:00",
+    "dateModified": "2023-04-21T00:10:31+08:00",
+    "wordCount":  534 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -223,21 +223,21 @@
             "url": "/images/icon.png"
         }
         },
-    "description": "B 树和 B\u002b 树的区别 来源：https:\/\/draveness.me\/whys-the-design-mysql-b-plus-tree\/"
+    "description": "背景 Source 是 Watches() 的第一个参数，代表一种事件源，实际类型是一个 interface，原型："
 }
-</script><meta property="og:title" content="MySQL 为什么使用 B&#43; 树 | /dev/null" />
+</script><meta property="og:title" content="Controller-Runtime 之 Source  | /dev/null" />
 <meta property="og:type" content="article" />
 
 
 <meta property="og:image" content="/images/icon.png">
 
 
-<meta property="og:url" content="/posts/mysql-wei-shi-me-shi-yong-b-shu/" />
+<meta property="og:url" content="/posts/controller-runtime-source/" />
 
 
 
 
-<meta property="og:description" content="B 树和 B&#43; 树的区别 来源：https://draveness.me/whys-the-design-mysql-b-plus-tree/" />
+<meta property="og:description" content="背景 Source 是 Watches() 的第一个参数，代表一种事件源，实际类型是一个 interface，原型：" />
 
 
 
@@ -254,29 +254,35 @@
 
 
 
-<meta property="article:published_time" content="2021-09-11T19:56:55&#43;00:00" />
+<meta property="article:published_time" content="2023-04-21T00:10:31&#43;08:00" />
 
 
-<meta property="article:modified_time" content="2021-09-11T19:56:55&#43;00:00" />
+<meta property="article:modified_time" content="2023-04-21T00:10:31&#43;08:00" />
 
 
 
 <meta property="article:section" content="posts" />
 
 
-<meta property="article:tag" content="mysql" />
+<meta property="article:tag" content="k8s" />
+
+<meta property="article:tag" content="controller-runtime" />
 
 
 
 
 
-<meta property="og:see_also" content="/posts/mysql-suo/" />
+<meta property="og:see_also" content="/posts/k8s-storageclass/" />
 
-<meta property="og:see_also" content="/posts/mysql-de-shi-wu-ge-chi-ji-bie/" />
+<meta property="og:see_also" content="/posts/kubespray-install/" />
 
-<meta property="og:see_also" content="/posts/mysql-zui-zuo-qian-zhui-yuan-ze-shi-xiao/" />
+<meta property="og:see_also" content="/posts/k8s-binray-install/" />
 
-<meta property="og:see_also" content="/posts/mysql-mian-jing/" />
+<meta property="og:see_also" content="/posts/k8s-secret/" />
+
+<meta property="og:see_also" content="/posts/client-go-yuan-ma/" />
+
+<meta property="og:see_also" content="/posts/kubebuilder/" />
 
 
 
@@ -379,7 +385,7 @@
       class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
     >
       <article class="prose">
-  <h1 class="mb-4">MySQL 为什么使用 B&#43; 树</h1>
+  <h1 class="mb-4">Controller-Runtime 之 Source </h1>
 
   <div
   class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
@@ -387,12 +393,12 @@
   <div class="me-6 my-2">
     <i class="fas fa-calendar me-1"></i>
     <span
-      >2021-09-11</span
+      >2023-04-21</span
     >
   </div>
   <div class="me-6 my-2">
     <i class="fas fa-clock me-1"></i>
-    <span>1分钟阅读时长</span>
+    <span>3分钟阅读时长</span>
   </div>
 
   
@@ -404,40 +410,207 @@
   
   
 
-  <h1 id="b-树和-b-树的区别">B 树和 B+ 树的区别</h1>
-<p><strong>来源：https://draveness.me/whys-the-design-mysql-b-plus-tree/</strong></p>
-<p>B 树与 B+ 树的最大区别就是，B 树可以在非叶结点中存储数据，但是 B+ 树的<strong>所有数据其实都存储在叶子节点中</strong>，当一个表底层的数据结构是 B 树时，假设我们需要访问所有『大于 4，并且小于 9 的数据』：
-<img src="https://youseebiggirl.github.io/post-images/1631366394543.png" alt=""></p>
-<p>如果不考虑任何优化，在上面的简单 B 树中我们需要进行 4 次磁盘的随机 I/O 才能找到所有满足条件的数据行：</p>
-<ol>
-<li>加载根节点所在的页，发现根节点的第一个元素是 6，大于 4；</li>
-<li>通过根节点的指针加载左子节点所在的页，遍历页面中的数据，找到 5；</li>
-<li>重新加载根节点所在的页，发现根节点不包含第二个元素；</li>
-<li>通过根节点的指针加载右子节点所在的页，遍历页面中的数据，找到 7 和 8；</li>
-</ol>
-<p>当然我们可以通过各种方式来对上述的过程进行优化，不过 B 树能做的优化 B+ 树基本都可以，所以我们不需要考虑优化 B 树而带来的收益，直接来看看什么样的优化 B+ 树可以做，而 B 树不行。</p>
-<p>由于<strong>所有的节点都可能包含目标数据</strong>，我们总是要<strong>从根节点向下遍历子树</strong>查找满足条件的数据行，这个特点带来了大量的<strong>随机 I/O</strong>，也是 B 树最大的性能问题。</p>
-<p>B+ 树中就不存在这个问题了，因为所有的数据行都存储在叶节点中，而这些叶节点可以<strong>通过『指针』依次按顺序连接</strong>，当我们在如下所示的 B+ 树<strong>遍历数据时可以直接在多个子节点之间进行跳转</strong>，这样能够节省大量的磁盘 I/O 时间，也不需要在不同层级的节点之间对数据进行拼接和排序；通过一个 B+ 树最左侧的叶子节点，我们可以像链表一样遍历整个树中的全部数据，我们也可以引入双向链表保证倒序遍历时的性能。</p>
-<p><img src="https://youseebiggirl.github.io/post-images/1631366964858.png" alt=""></p>
-<p>我的理解：因为 B+ 树把所有数据存储在了叶节点，并且叶节点全部连接起来形成了一个<strong>双向链表</strong>，所以在<strong>范围查找</strong>时特别高效，只需要通过指针前后移动即可，这也是其相对于 B 树而言最大的优势，不再需要像 B 树那样进行回溯操作了（比如上面的例子中，要查找一个范围内的数据，需要在叶节点和根节点之间移动）。</p>
-<p>** 补充一点：**
-B+ 树更适合外部存储。由于内节点无 data 域，每个节点能索引的范围更大更精确</p>
-<p>这个很好理解，由于 B- 树节点内部每个 key 都带着 data 域，而 B+ 树节点只存储 key 的副本，真实的 key 和 data 域都在叶子节点存储。前面说过磁盘是分 block 的，一次磁盘 IO 会读取若干个 block，具体和操作系统有关，那么由于磁盘 IO 数据大小是固定的，在一次 IO 中，单个元素越小，量就越大。这就意味着 B+ 树单次磁盘 IO 的信息量大于 B- 树，从这点来看 B+ 树相对 B- 树磁盘 IO 次数少。</p>
-<h1 id="总结">总结</h1>
-<p><strong>来源：https://leetcode-cn.com/circle/discuss/F7bKlM/</strong></p>
-<p><strong>1. B+ 树和 B 树的区别？</strong>
-B 树非叶子结点和叶子结点都存储数据,因此查询数据时，时间复杂度最好为 O(1)，最坏为 O(log n)。
-B+ 树只在叶子结点存储数据，非叶子结点存储关键字，且不同非叶子结点的关键字可能重复，因此查询数据时，时间复杂度固定为 O(log n)。</p>
-<p>B+ 树叶子结点之间用链表相互连接，因而只需扫描叶子结点的链表就可以完成一次遍历操作，B树只能通过中序遍历。</p>
-<p><strong>2. 为什么 B+ 树比 B 树更适合应用于数据库索引？</strong>
-B+ 树更加适应磁盘的特性，相比 B 树减少了 I/O 读写的次数。由于索引文件很大因此索引文件存储在磁盘上，B+ 树的非叶子结点只存关键字不存数据，因而<strong>单个页可以存储更多的关键字</strong>，即<strong>一次性读入内存的需要查找的关键字也就越多</strong>，磁盘的随机 I/O 读取次数相对就减少了。</p>
-<p>B+ 树的查询效率相比 B树 更加稳定，由于数据只存在在叶子结点上，所以查找效率固定为 O(log n)。</p>
-<p>B+ 树叶子结点之间用链表有序连接，所以扫描全部数据只需扫描一遍叶子结点，<strong>利于扫库和范围查询</strong>；B 树由于非叶子结点也存数据，所以只能通过中序遍历按序来扫。也就是说，对于范围查询和有序遍历而言，B+ 树的效率更高。</p>
-<h1 id="引申">引申</h1>
-<h2 id="为什么不使用二叉搜索树">为什么不使用二叉搜索树？</h2>
-<p>树可以有二叉，也可以有多叉。多叉树就是每个节点有多个儿子，儿子之间的大小保证从左到右递增。二叉树是搜索效率最高的，但是实际上大多数的数据库存储却并不使用二叉树。其原因是，<strong>索引不止存在内存中，还要写到磁盘上</strong>。</p>
-<p>你可以想象一下一棵100万节点的平衡二叉树，树高20（2^20 = 1048576）。一次查询可能需要访问20个数据块。在机械硬盘时代，从磁盘随机读一个数据块需要10 ms左右的寻址时间。也就是说，对于一个100万行的表，如果使用二叉树来存储，单独访问一个行可能需要20个10 ms的时间，这个查询可真够慢的。</p>
-<p>为了让一个查询尽量少地读磁盘，就必须让查询过程访问尽量少的数据块。那么，我们就不应该使用二叉树，而是要使用“N叉”树。这里，“N叉”树中的“N”取决于数据块的大小。</p>
+  <h1 id="背景">背景</h1>
+<p><code>Source</code> 是 <code>Watches()</code> 的第一个参数，代表一种事件源，实际类型是一个 interface，原型：</p>
+<pre><code class="language-go">type Source interface {
+	Start(context.Context, handler.EventHandler, workqueue.RateLimitingInterface, ...predicate.Predicate) error
+}
+</code></pre>
+<p>只有一个 Start 方法</p>
+<p>TODO: Start 方法参数的作用，在哪里被调用，如何工作</p>
+<h1 id="实践">实践</h1>
+<p>老实说光看注释说明还是挺懵逼的，在网上也找不到太多相关的内容，不少博客讲的都是偏概念性质的，对 Source 这个东西还是一头雾水，不知道到底是干嘛的，实际该怎么使用。感觉想要快速了解一个功能的用途，还是想办法做一个 demo 最靠谱，下面我就做了一个 demo，通过自定义一个 Source 事件源，来达到监听文件的目的，当监听的文件内容发生变动时，就会触发一次 Reconcile。</p>
+<p>首先先定义一个 struct 来实现 Source 接口，完整代码如下：</p>
+<h2 id="sourcego"><strong>source.go</strong></h2>
+<pre><code class="language-go">package main
+
+import (
+	&quot;context&quot;
+	&quot;os&quot;
+	&quot;time&quot;
+
+	&quot;k8s.io/apimachinery/pkg/types&quot;
+	&quot;k8s.io/client-go/util/workqueue&quot;
+	&quot;k8s.io/klog/v2&quot;
+	ctrl &quot;sigs.k8s.io/controller-runtime&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/handler&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/predicate&quot;
+)
+
+type FileWatch struct {
+	p           string
+	f           *os.File
+	q           workqueue.RateLimitingInterface
+	lastModTime time.Time
+}
+
+func NewFileWatch(filepath string) *FileWatch {
+	fw := new(FileWatch)
+	fw.p = filepath
+
+	f, err := os.Open(filepath)
+	if err != nil {
+		panic(err)
+	}
+	fw.f = f
+
+	stat, err := f.Stat()
+	if err != nil {
+		panic(err)
+	}
+	fw.lastModTime = stat.ModTime()
+
+	return fw
+}
+
+func (f *FileWatch) Sync() {
+	ticket := time.NewTicker(time.Second * 3)
+	go func() {
+		for {
+			select {
+			case &lt;-ticket.C:
+				modify, modTime, err := f.FileIsModify()
+				if err != nil {
+					return
+				}
+				if modify {
+					// Add 的参数必须是 ctrl.Request 类型的，其他类型会直接被 controller 丢弃
+					f.q.Add(ctrl.Request{NamespacedName: types.NamespacedName{Name: f.p}})
+					f.lastModTime = modTime
+				}
+			}
+		}
+	}()
+}
+
+func (f *FileWatch) FileIsModify() (bool, time.Time, error) {
+	stat, err := os.Stat(f.p)
+	if err != nil {
+		return false, time.Time{}, err
+	}
+	if stat.ModTime().After(f.lastModTime) {
+		return true, stat.ModTime(), nil
+	}
+	return false, stat.ModTime(), nil
+}
+
+func (f *FileWatch) Start(ctx context.Context, h handler.EventHandler, queue workqueue.RateLimitingInterface, p ...predicate.Predicate) error {
+	klog.Info(&quot;fileWatch start...&quot;)
+	f.q = queue
+	go f.Sync()
+	return nil
+}
+
+</code></pre>
+<p>文件监听相关的代码比较简单，这里就不说明了，也不是本文的重点，这里主要需要关注的是 Sync() 里的 <code>f.q.Add(ctrl.Request{NamespacedName: types.NamespacedName{Name: f.p}})</code> 这一行，表示当文件发生修改时，添加一个 ctrl.Request 到队列中，Request 的 Name 是该文件的路径，然后在 Start() 里，我们运行了 Sync() 这个函数。</p>
+<p>需要注意的是，队列里添加的对象一定要是 ctrl.Request 类型的，如果是其他类型，会直接被内部 controller 丢弃，具体的代码在 <code>controller-runtime/pkg/internal/controller/controller.go</code> 的 reconcileHandler 函数，如下：</p>
+<pre><code class="language-go">func (c *Controller) reconcileHandler(ctx context.Context, obj interface{}) {
+	//....
+
+	// Make sure that the object is a valid request.
+  // 在这里进行了判断，如果不是 Request 类型会直接丢弃
+	req, ok := obj.(reconcile.Request)
+	if !ok {
+		// As the item in the workqueue is actually invalid, we call
+		// Forget here else we'd go into a loop of attempting to
+		// process a work item that is invalid.
+		c.Queue.Forget(obj)
+		
+	}
+</code></pre>
+<p>接下来编写调协相关的代码：</p>
+<h2 id="ctrlgo">ctrl.go</h2>
+<pre><code class="language-go">package main
+
+import (
+	&quot;context&quot;
+
+	corev1 &quot;k8s.io/api/core/v1&quot;
+	&quot;k8s.io/klog/v2&quot;
+	ctrl &quot;sigs.k8s.io/controller-runtime&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/event&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/handler&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/predicate&quot;
+)
+
+type Ctrl struct {
+	fw *FileWatch
+}
+
+func (c *Ctrl) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+	klog.Info(&quot;new modify event, file path: &quot;, req.String())
+	return ctrl.Result{}, nil
+}
+
+func (c *Ctrl) SetupWithManager(mgr ctrl.Manager) error {
+	return ctrl.NewControllerManagedBy(mgr).
+		// controller-runtime 必须要指定一种监听的资源，否则无法启动，这里设置为 Pod
+		For(&amp;corev1.Pod{}).
+		Watches(c.fw, &amp;handler.EnqueueRequestForObject{}).
+		WithEventFilter(&amp;predicate.Funcs{
+			// 在这里设置过滤事件，只监听指定 namespace 的 pod 的创建事件，
+			// 这里的 namespace 我随便设置了一个，进而可以达到忽略 Pod 事件的目的，
+      // 因为我们的主要目的是观察自定义 Source 的效果，所以尽量避免其他资源的干扰
+			CreateFunc: func(e event.CreateEvent) bool {
+				return e.Object.GetNamespace() == &quot;UNKNOWN_NAMESPACE&quot;
+			},
+		}).
+		Complete(c)
+}
+</code></pre>
+<p>在 <code>Reconcile</code> 中，我们只会简单输出一条日志，表示发生了文件修改事件，在 <code>SetupWithManager</code> 中，我们指定了 <code>Watches</code> 的第一个参数为 fw，也就是我们自定义的 Source。</p>
+<p>最后是主函数 main.go。</p>
+<h2 id="maingo">main.go</h2>
+<pre><code class="language-go">package main
+
+import (
+	&quot;os&quot;
+
+	&quot;k8s.io/klog/v2&quot;
+	ctrl &quot;sigs.k8s.io/controller-runtime&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/client/config&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/manager&quot;
+)
+
+func main() {
+	filepath := os.Getenv(&quot;FILE_PATH&quot;)
+	if filepath == &quot;&quot; {
+		panic(&quot;file path can't be nil&quot;)
+	}
+
+	cfg, err := config.GetConfig()
+	if err != nil {
+		klog.Error(err, &quot;unable to get kubeconfig&quot;)
+		os.Exit(1)
+	}
+
+	mgr, err := manager.New(cfg, manager.Options{})
+	if err != nil {
+		klog.Error(err, &quot;unable to set up manager&quot;)
+		os.Exit(1)
+	}
+	if err := (&amp;Ctrl{
+		fw: NewFileWatch(filepath),
+	}).SetupWithManager(mgr); err != nil {
+		klog.Error(err)
+		os.Exit(1)
+	}
+	klog.Info(&quot;starting manager&quot;)
+	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
+		klog.Error(err, &quot;problem running manager&quot;)
+		os.Exit(1)
+	}
+}
+
+</code></pre>
+<p>然后我们启动整个程序，你需要通过环境变量 <code>FILE_PATH</code> 来指定你要监听的文件路径，比如像下面这样。</p>
+<pre><code class="language-shell">FILE_PATH=testdata/test.txt  go run .
+</code></pre>
+<p>运行后，对你监听的文件进行修改，观察 terminal 的输出：</p>
+<pre><code class="language-shell">I0420 16:47:42.610297 3741467 main.go:35] starting manager
+I0420 16:47:42.610718 3741467 source.go:74] fileWatch start...
+I0420 16:48:00.611223 3741467 ctrl.go:19] new modify event, file path: /testdata/test.txt
+</code></pre>
 
 </article>
 
@@ -445,7 +618,9 @@ B+ 树更加适应磁盘的特性，相比 B 树减少了 I/O 读写的次数。
       
         <div class="my-4">
     
-    <a href="/tags/mysql/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#mysql</a>
+    <a href="/tags/k8s/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#k8s</a>
+    
+    <a href="/tags/controller-runtime/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#controller-runtime</a>
     
 </div>
       
@@ -462,16 +637,11 @@ B+ 树更加适应磁盘的特性，相比 B 树减少了 I/O 读写的次数。
   >
     <div>
       
-        <span class="text-primary-text block font-bold"
-          >上一页</span
-        >
-        <a href="/posts/linux-pi-liang-kill-jin-cheng/" class="block">Linux 批量 kill 进程</a>
-      
     </div>
     <div class="mt-4 md:mt-0 md:text-right">
       
         <span class="text-primary-text block font-bold">下一页</span>
-        <a href="/posts/mac-xia-gou-jian-ji-yu-c-de-grpc/" class="block">Mac 下构建基于 C&#43;&#43; 的 gRPC</a>
+        <a href="/posts/k8s-storageclass/" class="block">K8s Storageclass</a>
       
     </div>
   </div>
@@ -509,11 +679,12 @@ B+ 树更加适应磁盘的特性，相比 B 树减少了 I/O 读写的次数。
 >
   <nav id="TableOfContents">
   <ul>
-    <li><a href="#b-树和-b-树的区别">B 树和 B+ 树的区别</a></li>
-    <li><a href="#总结">总结</a></li>
-    <li><a href="#引申">引申</a>
+    <li><a href="#背景">背景</a></li>
+    <li><a href="#实践">实践</a>
       <ul>
-        <li><a href="#为什么不使用二叉搜索树">为什么不使用二叉搜索树？</a></li>
+        <li><a href="#sourcego"><strong>source.go</strong></a></li>
+        <li><a href="#ctrlgo">ctrl.go</a></li>
+        <li><a href="#maingo">main.go</a></li>
       </ul>
     </li>
   </ul>
@@ -536,16 +707,22 @@ B+ 树更加适应磁盘的特性，相比 B 树减少了 I/O 读写的次数。
       >
         <h3>相关</h3>
         
-          <a href="/posts/mysql-suo/" class="no-underline">MySQL 锁</a>
+          <a href="/posts/k8s-storageclass/" class="no-underline">K8s Storageclass</a>
           <br />
         
-          <a href="/posts/mysql-de-shi-wu-ge-chi-ji-bie/" class="no-underline">MySQL 的事务隔离级别</a>
+          <a href="/posts/kubespray-install/" class="no-underline">通过 Kubespray 搭建 k8s 集群</a>
           <br />
         
-          <a href="/posts/mysql-zui-zuo-qian-zhui-yuan-ze-shi-xiao/" class="no-underline">Mysql 最左前缀原则失效</a>
+          <a href="/posts/k8s-binray-install/" class="no-underline">K8s 二进制安装</a>
           <br />
         
-          <a href="/posts/mysql-mian-jing/" class="no-underline">MySQL 面经汇总</a>
+          <a href="/posts/k8s-secret/" class="no-underline">k8s Secret</a>
+          <br />
+        
+          <a href="/posts/client-go-yuan-ma/" class="no-underline">k8s client-go 源码阅读</a>
+          <br />
+        
+          <a href="/posts/kubebuilder/" class="no-underline">kubebuilder 实践</a>
           <br />
         
       </div>

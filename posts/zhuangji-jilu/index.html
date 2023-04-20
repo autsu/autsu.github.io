@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<title>面经 | /dev/null</title>
+<title>装机记录 | /dev/null</title>
 
 <meta name="generator" content="Hugo Eureka 0.9.3" />
 <link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
@@ -185,7 +185,9 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
 
 <meta name="description"
-  content="Eureka is a elegant and powerful theme for Hugo.">
+  content="最近组了台台式，用来当做迷你服务器使用，因为是自己第一次独立装机，所以特此记录一下期间的心路历程。
+坑爹 1：CPU 坑爹指数：⭐️
+老实说这玩意安装还是非常简单的，主要是包装和说明书上各种警告，还有网上各种压弯针脚的帖子，搞得人心惶惶的，其实感觉问题不大，按照说明书的步骤来，稍微小心一点，很容易就安装好了。">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -193,64 +195,53 @@
   "itemListElement": [{
       "@type": "ListItem",
       "position": 1 ,
-      "name":"Tags",
-      "item":"/tags/"},{
+      "name":"文章",
+      "item":"/posts/"},{
       "@type": "ListItem",
       "position": 2 ,
-      "name":"面经",
-      "item":"/tags/%E9%9D%A2%E7%BB%8F/"}]
+      "name":"装机记录",
+      "item":"/posts/zhuangji-jilu/"}]
 }
 </script>
 
 
 
-
 <script type="application/ld+json">
 {
-    "@context":"https://schema.org",
-    "@type":"ItemList",
-    "itemListElement":[{
-            "@type":"ListItem",
-            "position":  1 ,
-            "name": "面试题收集 1",
-            "description": "Go相关 map、channel、slice 的底层实现 map map 使用的是拉链法，用哈希桶来保存键值对，每个桶可以保存 8 个键值对，它会用哈希算法计算出 key 的 hash 值，然后用这个哈希值的高 8 位作为 tophash，用于在一个桶中区别出 key，然后桶的数量是 2^b ，用低 b 位来决定这个 key 放到哪个桶。每个桶还会连接一个溢出桶，如果一个桶已经满了，但是依然有 key 落入到这个桶，那么就会将其放到溢出桶中。",
-            "url": "/posts/mian_shi_ti_shou_ji1/"
-        },{
-            "@type":"ListItem",
-            "position":  2 ,
-            "name": "计算机网络面试题",
-            "description": "TCP 相关 1. 说说 TIME_WAIT 及其作用 当一端 主动 断开连接并发送最后一次挥手后，该端状态变为 TIME_WAIT ，此时会等待 2 MSL （MSL 是 Maximum Segment Lifetime，译为“报文最大生存时间”，可为 30s，1min 或 2min。） 作用：",
-            "url": "/posts/ji-suan-ji-wang-luo-mian-shi-ti/"
-        },{
-            "@type":"ListItem",
-            "position":  3 ,
-            "name": "GMP 面试题",
-            "description": "Goroutine 阻塞的话，是不是对应的 M 也会阻塞 如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么这个 G 会被标记为 runnable 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。",
-            "url": "/posts/gmp-mian-shi-ti/"
-        },{
-            "@type":"ListItem",
-            "position":  4 ,
-            "name": "MySQL 面经汇总",
-            "description": "MySQL 面经汇总，收集于牛客，不断更新中\n1. char 和 varchar 的区别 char 是固定长度，varchar 长度可变，存储时，前者不管实际存储数据的长度，直接规定 char 规定的长度分配存储空间；而后者会根据实际存储的数据分配最终的存储空间。",
-            "url": "/posts/mysql-mian-jing/"
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/zhuangji-jilu/"
+    },
+    "headline": "装机记录 | \/dev\/null","datePublished": "2023-04-14T23:19:13+08:00",
+    "dateModified": "2023-04-14T23:19:13+08:00",
+    "wordCount":  48 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
         }
-    ]
+        },
+    "description": "最近组了台台式，用来当做迷你服务器使用，因为是自己第一次独立装机，所以特此记录一下期间的心路历程。\n坑爹 1：CPU 坑爹指数：⭐️\n老实说这玩意安装还是非常简单的，主要是包装和说明书上各种警告，还有网上各种压弯针脚的帖子，搞得人心惶惶的，其实感觉问题不大，按照说明书的步骤来，稍微小心一点，很容易就安装好了。"
 }
-</script><meta property="og:title" content="面经 | /dev/null" />
-<meta property="og:type" content="website" />
+</script><meta property="og:title" content="装机记录 | /dev/null" />
+<meta property="og:type" content="article" />
 
 
 <meta property="og:image" content="/images/icon.png">
 
 
-<meta property="og:url" content="/tags/%E9%9D%A2%E7%BB%8F/" />
+<meta property="og:url" content="/posts/zhuangji-jilu/" />
 
 
 
 
-
-<meta property="og:description" content="Eureka is a elegant and powerful theme for Hugo." />
-
+<meta property="og:description" content="最近组了台台式，用来当做迷你服务器使用，因为是自己第一次独立装机，所以特此记录一下期间的心路历程。
+坑爹 1：CPU 坑爹指数：⭐️
+老实说这玩意安装还是非常简单的，主要是包装和说明书上各种警告，还有网上各种压弯针脚的帖子，搞得人心惶惶的，其实感觉问题不大，按照说明书的步骤来，稍微小心一点，很容易就安装好了。" />
 
 
 
@@ -267,14 +258,21 @@
 
 
 
-<meta property="og:updated_time" content="2022-08-18T22:12:52&#43;00:00" />
+<meta property="article:published_time" content="2023-04-14T23:19:13&#43;08:00" />
+
+
+<meta property="article:modified_time" content="2023-04-14T23:19:13&#43;08:00" />
 
 
 
-<meta property="article:section" content="tags" />
+<meta property="article:section" content="posts" />
 
 
-<link rel="alternate" type="application/rss+xml" href="/tags/%E9%9D%A2%E7%BB%8F/index.xml" title="/dev/null" />
+<meta property="article:tag" content="misc" />
+
+
+
+
 
 
   <body class="flex min-h-screen flex-col">
@@ -297,8 +295,8 @@
         class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
         <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
-            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">文章</a>
-            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">标签</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
             <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
             <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
         </div>
@@ -368,28 +366,164 @@
     <main class="grow pt-16">
         <div class="pl-scrollbar">
           <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
-<article class="mx-6 my-8">
-    <h1 class="font-bold text-3xl text-primary-text"><i class="fas fa-tag fa-fw" aria-hidden="true"></i>&nbsp;面经</h1>
-    <div class="bg-secondary-bg rounded " style="padding: 3rem!important;margin-top: 30px;">
-        <div class="overflow-hidden archive" style="font-size:15px;line-height: 2;padding-bottom: 0.8em"><h3 style="font-size: 1.5em;">2022</h3><article class="archive-item">
-                        <a href="/posts/mian_shi_ti_shou_ji1/" class="archive-item-link">
-                            >>&nbsp 08-18&nbsp&nbsp&nbsp面试题收集 1</a>
-                        
-                    </article><article class="archive-item">
-                        <a href="/posts/ji-suan-ji-wang-luo-mian-shi-ti/" class="archive-item-link">
-                            >>&nbsp 01-28&nbsp&nbsp&nbsp计算机网络面试题</a>
-                        
-                    </article><article class="archive-item">
-                        <a href="/posts/gmp-mian-shi-ti/" class="archive-item-link">
-                            >>&nbsp 01-26&nbsp&nbsp&nbspGMP 面试题</a>
-                        
-                    </article><h3 style="font-size: 1.5em;">2021</h3><article class="archive-item">
-                        <a href="/posts/mysql-mian-jing/" class="archive-item-link">
-                            >>&nbsp 07-25&nbsp&nbsp&nbspMySQL 面经汇总</a>
-                        
-                    </article></div>
-    </div>
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">装机记录</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-04-14</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>1分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <p>最近组了台台式，用来当做迷你服务器使用，因为是自己第一次独立装机，所以特此记录一下期间的心路历程。</p>
+<h1 id="坑爹-1cpu">坑爹 1：CPU</h1>
+<p>坑爹指数：⭐️</p>
+<p>老实说这玩意安装还是非常简单的，主要是包装和说明书上各种警告，还有网上各种压弯针脚的帖子，搞得人心惶惶的，其实感觉问题不大，按照说明书的步骤来，稍微小心一点，很容易就安装好了。</p>
+<h1 id="坑爹-2-主板">坑爹 2： 主板</h1>
+<p>坑爹指数：⭐️⭐️⭐️⭐️</p>
+<p>主板本身的安装没什么难的，对准螺丝柱，拧上螺丝就 OK 了，蛋疼的是这玩意不能太早安装，作为初次装机的练习生，在这点上就踩了大坑了，前前后后装了拆拆了装了好几次，印象如下：</p>
+<p>第一次：主板电源插线，发现需要用点力才能插进去，但是因为已经固定在螺丝柱上了，而有一部分线又需要插在主板角落，害怕把持不住把主板搞弯了，保险起见只能把主板拆掉再插线</p>
+<p>第二次：安装散热，发现散热底座螺丝柱需要从主板背面安装，没办法又得拆下主板</p>
+<p>第三次：安装机箱挡板，这玩意要安装在机箱内部，然后再用力往外压才能完成安装，我一开始还以为是从外到内安装。。。没办法只能拆掉主板</p>
+<p>第四次：安装网卡 wifi-go 盒子，同样也是要从主板背面安装螺丝，没办法又得拆下主板</p>
+<h1 id="坑爹-3主板跳线">坑爹 3：主板跳线</h1>
+<p>坑爹指数：⭐️⭐️</p>
+<p>这个乍一看挺复杂的，其实对着网上的视频教学，还是不难的，不过话虽这么说，但我还是没有一次成功，装好后电源键没反应，当时吓了我一跳，还以为硬件有问题，还好把跳线全部拔掉再照着视频插了一遍后成功解决了，总的来说还是不难的</p>
+<h1 id="坑爹-4主板电源线">坑爹 4：主板电源线</h1>
+<p>坑爹指数：⭐️⭐️⭐️⭐️⭐️</p>
+<p>插这破玩意的时候直接让我破防，主要是太紧了，看视频要全部插到底才算 OK，否则有烧主板的风险，但是想插到底真的是费劲的一批，而且用太大劲又怕把针脚给搞弯，搞的是用劲不是，不用劲也不是，最后磨了半天最后才完全插进去，属实是恶心</p>
+<h1 id="坑爹-5网卡">坑爹 5：网卡</h1>
+<p>坑爹指数：⭐️⭐️⭐️⭐️⭐️</p>
+<p>千算万算没想到，这个 jb 玩意是我安装过程中最恶心的一个部位，首先是那两根破线，就是连接天线和网卡的那根线，连接纽扣处太小了，难装的一批，后来看视频里的是斜着装的，然后调整了半天角度才扣上去，装好后又发现一个问题：我不知道如何将天线固定在机箱，虽然包装里给了两个带洞的铁片，好像是什么挡板，但是我不知道装在机箱的哪里，网上找到的视频也都是 wifi-go 盒子安装的，折腾了半天也没头绪，浪费了好多时间，最后没办法只能再买一个 wifi-go 盒子了，不过我发现单网卡不插天线，其实也是可以使用的，网速也有个 4 5M 每秒。</p>
+<h1 id="坑爹-6机箱挡板">坑爹 6：机箱挡板</h1>
+<p>坑爹指数：⭐️</p>
+<p>这玩意其实没啥坑爹的，就是按压的时候要用点力，听见咔嚓的声音就可以了</p>
+<h1 id="傻瓜级内存固态电源">傻瓜级：内存，固态，电源</h1>
+<p>这三玩意基本都是简单无脑，也无需担心不小心装坏了什么的，像内存和电源都有防呆缺口，然后插进去就 OK 了，电源也是直接对准机箱屁股拧上螺丝就好了，主要是电源接线麻烦一些，电源本身安装非常简单</p>
+
 </article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/misc/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#misc</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/kubespray-install/" class="block">通过 Kubespray 搭建 k8s 集群</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/k8s-binray-install/" class="block">K8s 二进制安装</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#坑爹-1cpu">坑爹 1：CPU</a></li>
+    <li><a href="#坑爹-2-主板">坑爹 2： 主板</a></li>
+    <li><a href="#坑爹-3主板跳线">坑爹 3：主板跳线</a></li>
+    <li><a href="#坑爹-4主板电源线">坑爹 4：主板电源线</a></li>
+    <li><a href="#坑爹-5网卡">坑爹 5：网卡</a></li>
+    <li><a href="#坑爹-6机箱挡板">坑爹 6：机箱挡板</a></li>
+    <li><a href="#傻瓜级内存固态电源">傻瓜级：内存，固态，电源</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
 
           </div>
         </div>

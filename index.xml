@@ -8,7 +8,63 @@
     <language>zh</language>
     <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
 </copyright>
-    <lastBuildDate>Mon, 10 Oct 2022 22:11:10 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 21 Apr 2023 00:10:31 +0800</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Controller-Runtime 之 Source </title>
+      <link>/posts/controller-runtime-source/</link>
+      <pubDate>Fri, 21 Apr 2023 00:10:31 +0800</pubDate>
+      
+      <guid>/posts/controller-runtime-source/</guid>
+      <description>背景 Source 是 Watches() 的第一个参数，代表一种事件源，实际类型是一个 interface，原型：</description>
+    </item>
+    
+    <item>
+      <title>K8s Storageclass</title>
+      <link>/posts/k8s-storageclass/</link>
+      <pubDate>Tue, 18 Apr 2023 21:51:28 +0800</pubDate>
+      
+      <guid>/posts/k8s-storageclass/</guid>
+      <description>搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir /share # 编辑配置 sudo vim /etc/exports # 在最后一行添加 /share *(rw,sync,no_root_squash,no_subtree_check) /share *(rw,sync,no_root_squash,no_subtree_check)</description>
+    </item>
+    
+    <item>
+      <title>通过 Kubespray 搭建 k8s 集群</title>
+      <link>/posts/kubespray-install/</link>
+      <pubDate>Sun, 16 Apr 2023 22:05:14 +0800</pubDate>
+      
+      <guid>/posts/kubespray-install/</guid>
+      <description>⚠️ 安装前最好确保你的主机够干净，我的虚拟机就因为之前自行用二进制搭建过，导致使用 kubespray 安装出现各种奇奇怪怪的错误，最后删除重新创建了一台，一次就安装成功了</description>
+    </item>
+    
+    <item>
+      <title>装机记录</title>
+      <link>/posts/zhuangji-jilu/</link>
+      <pubDate>Fri, 14 Apr 2023 23:19:13 +0800</pubDate>
+      
+      <guid>/posts/zhuangji-jilu/</guid>
+      <description>最近组了台台式，用来当做迷你服务器使用，因为是自己第一次独立装机，所以特此记录一下期间的心路历程。
+坑爹 1：CPU 坑爹指数：⭐️
+老实说这玩意安装还是非常简单的，主要是包装和说明书上各种警告，还有网上各种压弯针脚的帖子，搞得人心惶惶的，其实感觉问题不大，按照说明书的步骤来，稍微小心一点，很容易就安装好了。</description>
+    </item>
+    
+    <item>
+      <title>K8s 二进制安装</title>
+      <link>/posts/k8s-binray-install/</link>
+      <pubDate>Thu, 13 Apr 2023 22:05:14 +0800</pubDate>
+      
+      <guid>/posts/k8s-binray-install/</guid>
+      <description>环境 主机系统为 win11，通过 vmware 创建了 3 台虚拟机，详情如下：</description>
+    </item>
+    
+    <item>
+      <title>通过实践学习 Nginx</title>
+      <link>/posts/nginx-practice/</link>
+      <pubDate>Fri, 07 Apr 2023 00:20:10 +0800</pubDate>
+      
+      <guid>/posts/nginx-practice/</guid>
+      <description>Nginx 反代 package main import ( &amp;quot;flag&amp;quot; &amp;quot;fmt&amp;quot; &amp;quot;net/http&amp;quot; ) var ( mark string ip string port string ) func main() { flag.</description>
+    </item>
+    
     <item>
       <title>k8s Secret</title>
       <link>/posts/k8s-secret/</link>
@@ -640,16 +696,6 @@ CREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) 
       
       <guid>/posts/linux-pi-liang-kill-jin-cheng/</guid>
       <description>命令： ps -ef | grep name | grep -v grep | awk &#39;{print $2}&#39; | xargs kill 解释： ps -ef：查看全格式的全部进程</description>
-    </item>
-    
-    <item>
-      <title>我的面经</title>
-      <link>/posts/wo-de-mian-jing/</link>
-      <pubDate>Fri, 17 Sep 2021 18:32:23 +0000</pubDate>
-      
-      <guid>/posts/wo-de-mian-jing/</guid>
-      <description>2021.9.17 梦想工场 go 实习生
-现场面，只有纸和笔（吐槽：公司的大厦正好在装修，找了半天才找到，还好出门比较早，不然多半得迟到）</description>
     </item>
     
     <item>
