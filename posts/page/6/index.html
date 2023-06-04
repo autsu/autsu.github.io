@@ -70,12 +70,12 @@
 <script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
   integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
 <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-80J26VFWFL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag() { dataLayer.push(arguments); }
   gtag('js', new Date());
-  gtag('config', 'UA-135903670-1');
+  gtag('config', 'G-80J26VFWFL');
 </script>
 
 <meta name="referrer" content="no-referrer" />
@@ -197,93 +197,93 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
+            "name": "39. 组合总和",
+            "description": "给定一个无重复元素的正整数数组 candidates 和一个正整数 target ，找出 candidates 中所有可以使数字和为目标数 target 的唯一组合。",
+            "url": "/posts/39-zu-he-zong-he/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "Linux 批量 kill 进程",
+            "description": "命令： ps -ef | grep name | grep -v grep | awk '{print $2}' | xargs kill 解释： ps -ef：查看全格式的全部进程",
+            "url": "/posts/linux-pi-liang-kill-jin-cheng/"
+        },{
+            "@type":"ListItem",
+            "position":  3 ,
+            "name": "MySQL 为什么使用 B+ 树",
+            "description": "B 树和 B+ 树的区别 来源：https://draveness.me/whys-the-design-mysql-b-plus-tree/",
+            "url": "/posts/mysql-wei-shi-me-shi-yong-b-shu/"
+        },{
+            "@type":"ListItem",
+            "position":  4 ,
+            "name": "Mac 下构建基于 C++ 的 gRPC",
+            "description": "来源于官方文档（https://grpc.io/docs/languages/cpp/quickstart/），但是其中有一些坑，特此记录，系统为 macOS 11.0.1 (20B29)：\n1. 设置目录（很重要，必须执行该步骤） 选择一个目录来保存本地安装的软件包。此页面假定环境变量MY_INSTALL_DIR包含此目录路径。例如：",
+            "url": "/posts/mac-xia-gou-jian-ji-yu-c-de-grpc/"
+        },{
+            "@type":"ListItem",
+            "position":  5 ,
             "name": "MySQL 锁",
             "description": "表锁 语法：\n加锁：\n加读锁 LOCK TABLES [tablename] READ;",
             "url": "/posts/mysql-suo/"
         },{
             "@type":"ListItem",
-            "position":  2 ,
+            "position":  6 ,
             "name": "MySQL 的事务隔离级别",
             "description": "1. 未提交读（脏读） 事务的修改，即使没有提交，对其他事务也是可见的。事务可以读取未提交的数据，称之为 脏读。它存在 4 个常见问题（脏读、不可重复读、幻读、丢失更新）。 2.",
             "url": "/posts/mysql-de-shi-wu-ge-chi-ji-bie/"
         },{
             "@type":"ListItem",
-            "position":  3 ,
+            "position":  7 ,
             "name": "[牛客][笔试题] 兔子繁衍",
             "description": "有一对兔子，从出生后的第五个月起每月生出一对小兔子（即满4月就开始生小兔），小兔子也会出生从第五个月起每月生一对小免子。假如兔子不会死，第n个月时，兔群有多少对兔子。\n输入描述: 第n月（n为自然数，n\u0026lt;101）\n输出描述: 第 n 个月时，兔子的对数（免群的兔子有多少对兔子）。 示例 1 输入 5 输出 2 说明 第五个月时，有两对兔子",
             "url": "/posts/niu-ke-bi-shi-ti-tu-zi-fan-yan/"
         },{
             "@type":"ListItem",
-            "position":  4 ,
+            "position":  8 ,
             "name": "Redis zset 源码阅读",
             "description": "types zskiplistNode typedef struct zskiplistNode { sds ele; // 成员 double score; // 分值 struct zskiplistNode *backward; // 后退指针 // 层 struct zskiplistLevel { struct zskiplistNode *forward; // 前进指针 unsigned long span; // 跨度 } level[]; } zskiplistNode; zskiplist typedef struct zskiplist { struct zskiplistNode *header, *tail; unsigned long length; int level; // 当前跳跃表内，层数最大的那个节点的层数 } zskiplist; zset typedef struct zset { dict *dict; zskiplist *zsl; } zset; functions zslCreate /* Create a new skiplist.",
             "url": "/posts/redis-zset-yuan-ma-yue-du/"
         },{
             "@type":"ListItem",
-            "position":  5 ,
+            "position":  9 ,
             "name": "leetcode 1493. 删掉一个元素以后全为 1 的最长子数组",
             "description": "给你一个二进制数组 nums ，你需要从中删掉一个元素。\n请你在删掉元素的结果数组中，返回最长的且只包含 1 的非空子数组的长度。",
             "url": "/posts/leetcode-1493-shan-diao-yi-ge-yuan-su-yi-hou-quan-wei-1-de-zui-chang-zi-shu-zu/"
         },{
             "@type":"ListItem",
-            "position":  6 ,
+            "position":  10 ,
             "name": "git clone 速度慢的解决方法",
             "description": "使用国内镜像，目前已知Github国内镜像网站有 github.com.cnpmjs.org 和 git.sdut.me/ 。速度根据各地情况而定，在clone某个项目的时候将 github.",
             "url": "/posts/git-clone-su-du-man/"
         },{
             "@type":"ListItem",
-            "position":  7 ,
+            "position":  11 ,
             "name": "git push error: remote: fatal error in commit_refs",
             "description": "在一如既往地执行 git push 到 Github 时，出现了一个从未遇到过的错误：",
             "url": "/posts/git-push-error-remote-fatal-error-in-commit_refs/"
         },{
             "@type":"ListItem",
-            "position":  8 ,
+            "position":  12 ,
             "name": "两个 main goroutine 操作一个 channel 会怎样",
             "description": "引子 定义一个全局变量 chan，然后创建两个 main goroutine，一个往全局 chan 里发送数据，一个从全局 chan 里读取数据，会发生什么？",
             "url": "/posts/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/"
         },{
             "@type":"ListItem",
-            "position":  9 ,
+            "position":  13 ,
             "name": "Mysql 最左前缀原则失效",
             "description": "引子 （以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看）\n有如下表，结构如下：",
             "url": "/posts/mysql-zui-zuo-qian-zhui-yuan-ze-shi-xiao/"
         },{
             "@type":"ListItem",
-            "position":  10 ,
+            "position":  14 ,
             "name": "进程间通信的方式",
             "description": "这是一道面试高频题\n无名管道 无名管道只能用于父子进程之间的通信，代码如下：\n// // Created by zz on 2021/3/5.",
             "url": "/posts/jin-cheng-jian-tong-xin-de-fang-shi/"
         },{
             "@type":"ListItem",
-            "position":  11 ,
+            "position":  15 ,
             "name": "leetcode 153. 寻找旋转排序数组中的最小值",
             "description": "已知一个长度为 n 的数组，预先按照升序排列，经由 1 到 n 次 旋转 后，得到输入数组。例如，原数组 nums = [0,1,2,4,5,6,7] 在变化后可能得到： 若旋转 4 次，则可以得到 [4,5,6,7,0,1,2] 若旋转 7 次，则可以得到 [0,1,2,4,5,6,7] 注意，数组 [a[0], a[1], a[2], \u0026hellip;, a[n-1]] 旋转一次 的结果为数组 [a[n-1], a[0], a[1], a[2], \u0026hellip;, a[n-2]] 。",
             "url": "/posts/leetcode-153-xun-zhao-xuan-zhuan-pai-xu-shu-zu-zhong-de-zui-xiao-zhi/"
-        },{
-            "@type":"ListItem",
-            "position":  12 ,
-            "name": "多级页表为什么节省内存",
-            "description": "首先明确几个概念 逻辑地址：是程序编译后，生成的目标模块进行编址时都是从0号单元开始编址，称之为目标模块的相对地址，即为逻辑地址。\n页：将虚拟内存划分的块，对应的大小就叫页面大小。\n页框：将物理内存划分的块。\n页和页框二者一一对应，一个页放入一个页框，（理论上）页的大小和页框的大小相等。",
-            "url": "/posts/duo-ji-ye-biao/"
-        },{
-            "@type":"ListItem",
-            "position":  13 ,
-            "name": "leetcode 225. 用队列实现栈",
-            "description": "请你仅使用两个队列实现一个后入先出（LIFO）的栈，并支持普通栈的全部四种操作（push、top、pop 和 empty）。\n实现 MyStack 类：",
-            "url": "/posts/leetcode-225-yong-dui-lie-shi-xian-zhan/"
-        },{
-            "@type":"ListItem",
-            "position":  14 ,
-            "name": "leetcode 155. 最小栈",
-            "description": "设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈。",
-            "url": "/posts/leetcode-155-zui-xiao-zhan/"
-        },{
-            "@type":"ListItem",
-            "position":  15 ,
-            "name": "[牛客][腾讯2020笔试题] 第二题. 逛街",
-            "description": "小Q在周末的时候和他的小伙伴来到大城市逛街，一条步行街上有很多高楼，共有n座高楼排成一行。 小Q从第一栋一直走到了最后一栋，小Q从来都没有见到这么多的楼，所以他想知道他在每栋楼的位置处能看到多少栋楼呢？（当前面的楼的高度大于等于后面的楼时，后面的楼将被挡住）\n输入例子1: [5,3,8,3,2,5]",
-            "url": "/posts/niu-ke-teng-xun-2020-bi-shi-ti-di-er-ti-guang-jie/"
         }
     ]
 }
@@ -318,7 +318,7 @@
 
 
 
-<meta property="og:updated_time" content="2023-04-21T00:10:31&#43;08:00" />
+<meta property="og:updated_time" content="2023-05-27T11:51:13&#43;08:00" />
 
 
 
@@ -426,6 +426,171 @@
 
   <div class="bg-secondary-bg rounded px-6">
     <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/39-zu-he-zong-he/" class="no-underline">
+    <h3 class="mt-0">39. 组合总和</h3>
+  </a>
+  
+    给定一个无重复元素的正整数数组 candidates 和一个正整数 target ，找出 candidates 中所有可以使数字和为目标数 target 的唯一组合。
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2021-09-25</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>1分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/linux-pi-liang-kill-jin-cheng/" class="no-underline">
+    <h3 class="mt-0">Linux 批量 kill 进程</h3>
+  </a>
+  
+    命令： ps -ef | grep name | grep -v grep | awk &#39;{print $2}&#39; | xargs kill 解释： ps -ef：查看全格式的全部进程
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2021-09-21</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>2分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/mysql-wei-shi-me-shi-yong-b-shu/" class="no-underline">
+    <h3 class="mt-0">MySQL 为什么使用 B&#43; 树</h3>
+  </a>
+  
+    B 树和 B&#43; 树的区别 来源：https://draveness.me/whys-the-design-mysql-b-plus-tree/
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2021-09-11</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>1分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/mac-xia-gou-jian-ji-yu-c-de-grpc/" class="no-underline">
+    <h3 class="mt-0">Mac 下构建基于 C&#43;&#43; 的 gRPC</h3>
+  </a>
+  
+    来源于官方文档（https://grpc.io/docs/languages/cpp/quickstart/），但是其中有一些坑，特此记录，系统为 macOS 11.0.1 (20B29)：
+1. 设置目录（很重要，必须执行该步骤） 选择一个目录来保存本地安装的软件包。此页面假定环境变量MY_INSTALL_DIR包含此目录路径。例如：
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2021-08-31</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>2分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
   
   <div class="py-6">
     <div class="flex flex-col-reverse lg:flex-row justify-between">
@@ -886,175 +1051,6 @@
 </div>
   </div>
   
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/duo-ji-ye-biao/" class="no-underline">
-    <h3 class="mt-0">多级页表为什么节省内存</h3>
-  </a>
-  
-    首先明确几个概念 逻辑地址：是程序编译后，生成的目标模块进行编址时都是从0号单元开始编址，称之为目标模块的相对地址，即为逻辑地址。
-页：将虚拟内存划分的块，对应的大小就叫页面大小。
-页框：将物理内存划分的块。
-页和页框二者一一对应，一个页放入一个页框，（理论上）页的大小和页框的大小相等。
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2021-08-05</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>1分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/leetcode-225-yong-dui-lie-shi-xian-zhan/" class="no-underline">
-    <h3 class="mt-0">leetcode 225. 用队列实现栈</h3>
-  </a>
-  
-    请你仅使用两个队列实现一个后入先出（LIFO）的栈，并支持普通栈的全部四种操作（push、top、pop 和 empty）。
-实现 MyStack 类：
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2021-08-04</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>2分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/leetcode-155-zui-xiao-zhan/" class="no-underline">
-    <h3 class="mt-0">leetcode 155. 最小栈</h3>
-  </a>
-  
-    设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈。
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2021-08-04</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>1分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/niu-ke-teng-xun-2020-bi-shi-ti-di-er-ti-guang-jie/" class="no-underline">
-    <h3 class="mt-0">[牛客][腾讯2020笔试题] 第二题. 逛街</h3>
-  </a>
-  
-    小Q在周末的时候和他的小伙伴来到大城市逛街，一条步行街上有很多高楼，共有n座高楼排成一行。 小Q从第一栋一直走到了最后一栋，小Q从来都没有见到这么多的楼，所以他想知道他在每栋楼的位置处能看到多少栋楼呢？（当前面的楼的高度大于等于后面的楼时，后面的楼将被挡住）
-输入例子1: [5,3,8,3,2,5]
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2021-08-03</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>2分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
 </div>
 
 
@@ -1096,7 +1092,7 @@
     </main>
     <footer class="pl-scrollbar">
       <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
-    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a>
  &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
 </div></div>
     </footer>

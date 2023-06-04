@@ -70,12 +70,12 @@
 <script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
   integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
 <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-80J26VFWFL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag() { dataLayer.push(arguments); }
   gtag('js', new Date());
-  gtag('config', 'UA-135903670-1');
+  gtag('config', 'G-80J26VFWFL');
 </script>
 
 <meta name="referrer" content="no-referrer" />
@@ -212,93 +212,93 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
+            "name": "k8s loadbalancer —— Metallb [draft] ",
+            "description": "安装（Layer2 模式） 首先需要查看你的 kube-proxy 使用的是不是 ipvs 模式，执行下面的命令：",
+            "url": "/posts/metallb/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
             "name": "Controller-Runtime 之 Source ",
             "description": "背景 Source 是 Watches() 的第一个参数，代表一种事件源，实际类型是一个 interface，原型：",
             "url": "/posts/controller-runtime-source/"
         },{
             "@type":"ListItem",
-            "position":  2 ,
+            "position":  3 ,
             "name": "K8s Storageclass",
-            "description": "搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir /share # 编辑配置 sudo vim /etc/exports # 在最后一行添加 /share *(rw,sync,no_root_squash,no_subtree_check) /share *(rw,sync,no_root_squash,no_subtree_check)",
+            "description": "搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir /share # 编辑配置 sudo vim /etc/exports # 在最后一行添加 /share *(rw,sync,no_root_squash,no_subtree_check) 修改完成后，:wq 保存，然后执行 exportfs -rav 命令使配置生效，不然客户端挂载 NFS 会报错无权限。",
             "url": "/posts/k8s-storageclass/"
         },{
             "@type":"ListItem",
-            "position":  3 ,
+            "position":  4 ,
             "name": "通过 Kubespray 搭建 k8s 集群",
             "description": "⚠️ 安装前最好确保你的主机够干净，我的虚拟机就因为之前自行用二进制搭建过，导致使用 kubespray 安装出现各种奇奇怪怪的错误，最后删除重新创建了一台，一次就安装成功了",
             "url": "/posts/kubespray-install/"
         },{
             "@type":"ListItem",
-            "position":  4 ,
+            "position":  5 ,
             "name": "K8s 二进制安装",
             "description": "环境 主机系统为 win11，通过 vmware 创建了 3 台虚拟机，详情如下：",
             "url": "/posts/k8s-binray-install/"
         },{
             "@type":"ListItem",
-            "position":  5 ,
+            "position":  6 ,
             "name": "k8s Secret",
             "description": "Opaque Secret 要求 value 必须是 base64 编码的",
             "url": "/posts/k8s-secret/"
         },{
             "@type":"ListItem",
-            "position":  6 ,
+            "position":  7 ,
             "name": "k8s client-go 源码阅读",
             "description": "架构 Informers 由几个核心的组件构成：\nReflector：负责从 api-server list（全量拉取数据） and watch（监听数据变更） DeltaFIFO：一个存储事件的队列，里面记录了事件的类型 Indexer：存储数据，数据来源是从 DeltaFIFO 中 pop 出来的，然后会根据事件类型进行对于的操作 sharedProcessor：用于运行用户设置的事件回调函数，里面用 map 存储了所有的 listener，每次调用 AddEventHandler 都会创建一个 listener，同时这个函数可以调用多次，也就是创建多个 listener，当发送事件时，会调用所有的 listener 的对应回调函数 controller：上面提到的 Reflector、DeltaFIFO、Indexer 各自有各自的作用，但是它们彼此之间还没有关联起来，而 controller 就是负责这件事的，它是这 3 个组件的 master，让它们可以协同运作，大致流程是：当 Reflector watch 到事件时会将其保存到 DeltaFIFO 中，controller 这件会持续从 DeltaFIFO 中 pop 元素，然后根据事件类型对 indexer 进行相应操作（add、update、delete），使得 indexer 中的数据和 api-server 中的一致，同时还会调用 sharedProcessor 的对应回调，来完成用户设置的对应事件操作。 informers/factory.",
             "url": "/posts/client-go-yuan-ma/"
         },{
             "@type":"ListItem",
-            "position":  7 ,
+            "position":  8 ,
             "name": "kubebuilder 实践",
             "description": "快速入门 下载 kubebuiler $ os=$(go env GOOS) $ arch=$(go env GOARCH) $ curl -L -o kubebuilder https://go.",
             "url": "/posts/kubebuilder/"
         },{
             "@type":"ListItem",
-            "position":  8 ,
+            "position":  9 ,
             "name": "k8s StatefulSet",
             "description": "有状态与无状态 无状态应用，指的是在运行时不需要维护或跟踪任何特定状态的应用程序。例如，Web 服务器或 API 服务器通常可以处理来自客户端的请求，而无需了解以前的请求或客户端状态。这些应用程序可以很容易地水平扩展，因为它们不需要共享状态，所以可以在任何节点上运行。像 Deployment 也是一个典型的“无状态应用”，它会按照事先声明的模板创建出 pod，这表示每个 pod 的定义将会是一模一样的，此外，这些 pod 之间没有之间没有顺序相关性（什么事有顺序相关性？比如一些集群应用包含主节点和从节点，而主节点必须先于从节点启动，这便是顺序相关性），也无所谓在哪台宿主机上运行，任何一个 pod 都可以提供完全相同的功能，不需要时，也可以结束任意一个 pod。",
             "url": "/posts/k8s-statefulset/"
         },{
             "@type":"ListItem",
-            "position":  9 ,
+            "position":  10 ,
             "name": "k8s ConfigMap",
             "description": "说明：文章的部分地方会用 cm 来指代 ConfigMap",
             "url": "/posts/k8s-configmap/"
         },{
             "@type":"ListItem",
-            "position":  10 ,
+            "position":  11 ,
             "name": "k8s namespace",
             "description": "简介 Namespace 是对一组资源和对象的抽象集合，比如可以用来将系统内部的对象划分为不同的项目组或用户组。常见的 pods, services, replication controllers 和 deployments 等都是属于某一个 namespace 的（默认是default），而 node, persistentVolumes 等则不属于任何 namespace。",
             "url": "/posts/k8s-namespace/"
         },{
             "@type":"ListItem",
-            "position":  11 ,
+            "position":  12 ,
             "name": "k8s 卷",
             "description": "为什么需要卷 pod 类似逻辑主机，在逻辑主机中运行的进程共享诸如 CPU、RAM、网络接口等资源。有时候人们会期望进程也能共享磁盘，但是因为 pod 中运行的是一个个容器，而每个容器都有自己独立的文件系统（因为文件系统来自于容器镜像），所以不能共享磁盘。有时候可能存在这样一种需求：pod 中某个容器存储的数据需要持久化，但是因为容器存在挂掉的可能，如果挂掉后会新创建一个 pod 来顶替，但是因为 pod 因为无法共享磁盘，导致无法继承先前 pod 里存储的数据，先前的那部分数据就永久丢失了。",
             "url": "/posts/k8s-juan/"
         },{
             "@type":"ListItem",
-            "position":  12 ,
+            "position":  13 ,
             "name": "k8s Deployment",
             "description": "deplopyment 用于 pod 的更新相关操作。\n如何更新 pod 更新是一个非常常见的场景，比如：当前 pod 运行的是某个 v1 版本的镜像，一个月后该镜像发布了 v2 版本，此时想将所有的 pod 更新到 v2 版本，该怎么做呢？",
             "url": "/posts/k8s-deployment/"
         },{
             "@type":"ListItem",
-            "position":  13 ,
+            "position":  14 ,
             "name": "k8s service",
             "description": "什么是 service pod 往往需要与集群内的其他 pod 进行通信，同时可能也需要对外提供服务，让集群外部的 pod 也可以访问，如果需要管理员手动将 pod 的地址提供给访问者，显然太麻烦了，不适合作为解决方案，而且在 k8s 中 pod 的地址是不确定的，它是由 k8s 自动分配的；此外，pod 的地址也是随时可能变动的，这是因为 Pod 可能会在节点之间移动或者被重新创建。例如，当一个 Pod 从一个节点迁移到另一个节点时，它的 IP 地址也会随之改变。此外，当一个 Pod 被删除后，其 IP 地址也会随之消失。所以 k8s 需要提供一种稳定的资源类型来解决 pod 间通信的问题，避免直接使用 Pod IP 地址来访问 Pod。这个资源就是就是 service。",
             "url": "/posts/k8s-service/"
         },{
             "@type":"ListItem",
-            "position":  14 ,
+            "position":  15 ,
             "name": "k8s nginx pod 的 containerPort 问题",
             "description": "问题重现 有如下 yaml：\napiVersion: v1 kind: Pod metadata: name: nginx labels: app: nginx spec: containers: - name: nginx image: nginx:alpine ports: - containerPort: 8080 hostPort: 9527 此时 curl nodeIP:9527 会发现报 Connection refused 错误，使用 kubectl exec -it nginx -- curl localhost:8080 也是如此",
             "url": "/posts/k8s-nginx-pod-de-containerport-wen-ti/"
-        },{
-            "@type":"ListItem",
-            "position":  15 ,
-            "name": "k8s DaemonSet",
-            "description": "顾名思义，daemon 代表守护程序，所以 DaemonSet （简称 ds）会在每个节点上运行一个专门的 pod，这个 pod 是特殊的，比如资源监控器或者日志收集器，或者 k8s 自己的 kube-proxy。与 rc 或者 rs 不同，这两个会随机地分布在整个集群中，比如副本数量为 5，一共有 4 个节点，可能会在节点 1 创建两个副本，节点 2 创建 1 个副本，节点 4 创建 2 个副本，但 DaemonSet 会保证这 4 个节点各自都有一个副本。",
-            "url": "/posts/k8s-daemonset/"
         }
     ]
 }
@@ -333,7 +333,7 @@
 
 
 
-<meta property="og:updated_time" content="2023-04-21T00:10:31&#43;08:00" />
+<meta property="og:updated_time" content="2023-05-08T20:37:53&#43;08:00" />
 
 
 
@@ -438,6 +438,10 @@
     <h1 class="font-bold text-3xl text-primary-text"><i class="fas fa-tag fa-fw" aria-hidden="true"></i>&nbsp;k8s</h1>
     <div class="bg-secondary-bg rounded " style="padding: 3rem!important;margin-top: 30px;">
         <div class="overflow-hidden archive" style="font-size:15px;line-height: 2;padding-bottom: 0.8em"><h3 style="font-size: 1.5em;">2023</h3><article class="archive-item">
+                        <a href="/posts/metallb/" class="archive-item-link">
+                            >>&nbsp 05-08&nbsp&nbsp&nbspk8s loadbalancer —— Metallb [draft] </a>
+                        
+                    </article><article class="archive-item">
                         <a href="/posts/controller-runtime-source/" class="archive-item-link">
                             >>&nbsp 04-21&nbsp&nbsp&nbspController-Runtime 之 Source </a>
                         
@@ -523,7 +527,7 @@
     </main>
     <footer class="pl-scrollbar">
       <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
-    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a>
  &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
 </div></div>
     </footer>

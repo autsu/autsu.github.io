@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>chatgpt on /dev/null</title>
+    <link>/tags/chatgpt/</link>
+    <description>Recent content in chatgpt on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt;
+</copyright>
+    <lastBuildDate>Sun, 07 May 2023 16:57:44 +0800</lastBuildDate><atom:link href="/tags/chatgpt/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Chatgpt Q&amp;A</title>
+      <link>/posts/chatgpt-qa/</link>
+      <pubDate>Sun, 07 May 2023 16:57:44 +0800</pubDate>
+      
+      <guid>/posts/chatgpt-qa/</guid>
+      <description>这个文档记录了 chatGPT 的一些有帮助的回答。
+网络 为什么网络协议栈要分层？不能直接把应用层的东西一起放到传输层吗 网络协议栈之所以要分层，主要是为了提高网络协议的可维护性、可扩展性、互操作性以及灵活性。</description>
+    </item>
+    
+  </channel>
+</rss>

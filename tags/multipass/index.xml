@@ -6,9 +6,18 @@
     <description>Recent content in multipass on /dev/null</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sun, 08 May 2022 15:46:11 +0000</lastBuildDate><atom:link href="/tags/multipass/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 19 May 2023 22:23:10 +0800</lastBuildDate><atom:link href="/tags/multipass/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>使用 Multipass 快速搭建虚拟机</title>
+      <link>/posts/multipass-create-vm-so-easy/</link>
+      <pubDate>Fri, 19 May 2023 22:23:10 +0800</pubDate>
+      
+      <guid>/posts/multipass-create-vm-so-easy/</guid>
+      <description>之前搭建 k8s 集群一直使用的是 Vmware，虽然总的来说用起来还算 OK，但是总感觉比较重，安装系统什么的也比较耗时（后来发现可以先创建好一台，然后克隆），加上 k8s 老被我搞坏，每次搞坏又都要重新创建集群（貌似可以做一个快照），搞得有点烦，就想看看有没有什么别的虚机工具，能够方便且快速的搭建虚机，最好还能支持命令行操作，找来找去，最终还是找到了之前用过的老朋友 multipass</description>
+    </item>
+    
     <item>
       <title>multipass 修改配置（内存、硬盘、CPU 等）适用于 m1 mac</title>
       <link>/posts/multipass-xiu-gai-pei-zhi/</link>

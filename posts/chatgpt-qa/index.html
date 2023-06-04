@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>Chatgpt Q&amp;A | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-80J26VFWFL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-80J26VFWFL');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="这个文档记录了 chatGPT 的一些有帮助的回答。
+网络 为什么网络协议栈要分层？不能直接把应用层的东西一起放到传输层吗 网络协议栈之所以要分层，主要是为了提高网络协议的可维护性、可扩展性、互操作性以及灵活性。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Chatgpt Q\u0026A",
+      "item":"/posts/chatgpt-qa/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/chatgpt-qa/"
+    },
+    "headline": "Chatgpt Q\u0026A | \/dev\/null","datePublished": "2023-05-07T16:57:44+08:00",
+    "dateModified": "2023-05-07T16:57:44+08:00",
+    "wordCount":  485 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "这个文档记录了 chatGPT 的一些有帮助的回答。\n网络 为什么网络协议栈要分层？不能直接把应用层的东西一起放到传输层吗 网络协议栈之所以要分层，主要是为了提高网络协议的可维护性、可扩展性、互操作性以及灵活性。"
+}
+</script><meta property="og:title" content="Chatgpt Q&amp;A | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/chatgpt-qa/" />
+
+
+
+
+<meta property="og:description" content="这个文档记录了 chatGPT 的一些有帮助的回答。
+网络 为什么网络协议栈要分层？不能直接把应用层的东西一起放到传输层吗 网络协议栈之所以要分层，主要是为了提高网络协议的可维护性、可扩展性、互操作性以及灵活性。" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2023-05-07T16:57:44&#43;08:00" />
+
+
+<meta property="article:modified_time" content="2023-05-07T16:57:44&#43;08:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="chatgpt" />
+
+
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">Chatgpt Q&amp;A</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-05-07</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>3分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <p>这个文档记录了 chatGPT 的一些有帮助的回答。</p>
+<h1 id="网络">网络</h1>
+<h2 id="为什么网络协议栈要分层不能直接把应用层的东西一起放到传输层吗">为什么网络协议栈要分层？不能直接把应用层的东西一起放到传输层吗</h2>
+<p>网络协议栈之所以要分层，主要是为了提高网络协议的可维护性、可扩展性、互操作性以及灵活性。</p>
+<p>具体来说，网络协议栈分层的好处包括：</p>
+<p>模块化设计：将协议栈分成不同的层次，每一层都有明确的功能和接口，可以独立设计、测试、实现和优化，提高了系统的可维护性和可扩展性。</p>
+<p>抽象层次：每一层都通过下一层提供的服务来实现其功能，上一层不需要了解下一层的具体实现细节，只需要知道它提供的服务即可，从而实现了协议栈的抽象层次，减少了复杂性。</p>
+<p>互操作性：不同的厂商和组织可以通过实现相同的协议层次，实现跨平台、跨系统的互操作性，提高了网络的兼容性和可扩展性。</p>
+<p>灵活性：协议栈的分层使得每一层都可以根据具体需求进行优化和改进，不需要影响其他层的实现，从而提高了协议栈的灵活性。</p>
+<p>如果将应用层的东西直接放到传输层，就会导致协议栈的混乱和复杂性增加。应用层的功能通常是应用程序特定的，而传输层的功能则是提供可靠的数据传输服务。如果把这两个不同的功能合并在一起，就会导致协议栈的复杂性增加，而且应用程序就需要直接处理传输层的细节，这会使得应用程序的实现更加困难。</p>
+<p>因此，网络协议栈分层的设计思想是十分必要的。它使得协议栈的实现更加简单、灵活、可维护，也能够提高网络的可靠性和性能。</p>
+<h2 id="四层负载均衡和七层负载均衡的区别">四层负载均衡和七层负载均衡的区别</h2>
+<p>四层负载均衡和七层负载均衡是指负载均衡器的不同工作层次。</p>
+<p>四层负载均衡器（L4）工作在 OSI 模型中的传输层，基于 IP 地址和端口号来进行负载均衡。它可以实现对 TCP/UDP 等传输层协议的负载均衡，但不能实现应用层协议的负载均衡，比如 HTTP 协议等。</p>
+<p>七层负载均衡器（L7）工作在 OSI 模型中的应用层，能够实现对 HTTP、FTP、SMTP 等应用层协议的负载均衡，同时也可以进行传输层协议的负载均衡。L7 负载均衡器可以深入到协议头部和数据内容中，对数据进行检查和修改，比如根据请求的 URL 或用户代理等信息来进行请求的路由。</p>
+<p>总的来说，四层负载均衡器主要关注传输层的负载均衡，可以在 IP 地址和端口号等信息上进行调度和分配；而七层负载均衡器则可以更细粒度地进行负载均衡，考虑到应用层协议中更多的信息，如请求类型、URI、Cookie 等，以此进行流量的路由和控制。另外，七层负载均衡器还可以对请求进行内容处理和过滤，提高了安全性和性能。</p>
+<p><strong>You:</strong></p>
+<p>也就是说七层可以获得的信息更多，所以可以更加精细的进行负载均衡，而四层则只能根据 IP 和端口进行负载均衡</p>
+<p><strong>ChatGPT:</strong></p>
+<p>是的，七层负载均衡器可以获取到应用层协议中更多的信息，如请求类型、URI、Cookie 等，这些信息可以帮助负载均衡器更精细地进行流量的路由和控制。而四层负载均衡器则只能根据 IP 地址和端口号进行负载均衡，无法获取到应用层协议中的这些信息。因此，七层负载均衡器在应用层面上具有更高的可控性和可定制性，可以更好地适应不同的应用场景。</p>
+<h1 id="k8s">k8s</h1>
+<h2 id="clientcmdbuildconfigfromflags-和-clientcmdbuildconfigfromkubeconfiggetter-有什么区别">clientcmd.BuildConfigFromFlags 和 clientcmd.BuildConfigFromKubeconfigGetter() 有什么区别</h2>
+<p><strong>You:</strong>
+clientcmd.BuildConfigFromFlags 和 clientcmd.BuildConfigFromKubeconfigGetter() 有什么区别</p>
+<p><strong>ChatGPT:</strong>
+<code>clientcmd.BuildConfigFromFlags()</code> 和 <code>clientcmd.BuildConfigFromKubeconfigGetter()</code> 都是用于创建 Kubernetes API client 的方法，但是有一些区别。</p>
+<p><code>clientcmd.BuildConfigFromFlags()</code> 会从 command-line flags 或者环境变量中获取 kubeconfig 文件的路径，然后读取 kubeconfig 文件中的配置信息，最后返回一个 <code>*rest.Config</code> 对象。如果没有指定 kubeconfig 文件，<code>BuildConfigFromFlags()</code> 方法会使用默认路径 <code>~/.kube/config</code>。</p>
+<p><code>clientcmd.BuildConfigFromKubeconfigGetter()</code> 也是从 kubeconfig 文件中读取配置信息，但是它需要传入一个 <code>clientcmd.KubeconfigGetter</code> 接口作为参数。这个接口定义了一个方法 <code>Get() (*clientcmdapi.Config, error)</code>，用于返回 kubeconfig 文件中的配置信息。你可以使用 <code>clientcmd.NewDefaultClientConfigLoadingRules().Load()</code> 或者 <code>clientcmd.NewNonInteractiveDeferredLoadingClientConfig()</code> 来创建一个 <code>KubeconfigGetter</code> 对象，然后将其传递给 <code>BuildConfigFromKubeconfigGetter()</code> 方法。</p>
+<p>所以，两者的区别主要在于 <code>BuildConfigFromFlags()</code> 只需要传递 kubeconfig 文件的路径，而 <code>BuildConfigFromKubeconfigGetter()</code> 需要传递一个实现了 <code>KubeconfigGetter</code> 接口的对象。另外，<code>BuildConfigFromKubeconfigGetter()</code> 可以更灵活地控制 kubeconfig 文件的加载和解析过程。</p>
+<p><strong>You:</strong>
+BuildConfigFromKubeconfigGetter() 可以更灵活地控制 kubeconfig 文件的加载和解析过程 为什么这么说，举个例子</p>
+<p><strong>ChatGPT:</strong></p>
+<p><code>BuildConfigFromKubeconfigGetter()</code>  允许您提供一个自定义的函数来获取 kubeconfig 数据，从而可以更灵活地控制 kubeconfig 文件的加载和解析过程。</p>
+<p>举个例子，如果您的应用程序在 Kubernetes 集群内运行，并且您想要使用集群内部的 ServiceAccount 来进行身份验证，则可以使用 <code>BuildConfigFromKubeconfigGetter()</code> 函数并提供一个自定义的 kubeconfig getter 函数来加载 ServiceAccount 的 token 和 CA 证书，例如：</p>
+<pre><code class="language-go">func getServiceAccountToken() (string, error) {
+    // Get the service account token
+    tokenPath := &quot;/var/run/secrets/kubernetes.io/serviceaccount/token&quot;
+    tokenBytes, err := ioutil.ReadFile(tokenPath)
+    if err != nil {
+        return &quot;&quot;, err
+    }
+    token := string(tokenBytes)
+
+    // Get the service account CA cert
+    caPath := &quot;/var/run/secrets/kubernetes.io/serviceaccount/ca.crt&quot;
+    caBytes, err := ioutil.ReadFile(caPath)
+    if err != nil {
+        return &quot;&quot;, err
+    }
+
+    // Return a kubeconfig with the service account token and CA cert
+    return clientcmd.Write(clientcmdapi.Config{
+        Clusters: map[string]*clientcmdapi.Cluster{
+            &quot;default&quot;: {
+                Server:                   &quot;https://kubernetes.default.svc&quot;,
+                CertificateAuthorityData: caBytes,
+            },
+        },
+        AuthInfos: map[string]*clientcmdapi.AuthInfo{
+            &quot;default&quot;: {
+                Token: token,
+            },
+        },
+        Contexts: map[string]*clientcmdapi.Context{
+            &quot;default&quot;: {
+                Cluster:  &quot;default&quot;,
+                AuthInfo: &quot;default&quot;,
+            },
+        },
+        CurrentContext: &quot;default&quot;,
+    })
+}
+
+cfg, err := clientcmd.BuildConfigFromKubeconfigGetter(&quot;&quot;, getServiceAccountToken)
+if err != nil {
+    panic(err)
+}
+</code></pre>
+<p>在此示例中，我们使用了 <code>ioutil</code> 包中的 <code>ReadFile()</code> 函数来获取 ServiceAccount 的 token 和 CA 证书。然后，我们构造了一个包含这些信息的 kubeconfig 对象，并将其转换为 YAML 格式的字符串。最后，我们将该字符串传递给 <code>BuildConfigFromKubeconfig()</code> 函数以获取 Kubernetes API 客户端的配置。</p>
+<p>通过这种方式，您可以使用 ServiceAccount 的 token 和 CA 证书来进行身份验证，而不是使用默认的 kubeconfig 文件，从而更灵活地控制 kubeconfig 文件的加载和解析过程。</p>
+<h1 id="c">C++</h1>
+<h2 id="链接符号名">链接符号名</h2>
+<p><strong>You:</strong></p>
+<p>在 a 文件夹下有 3 个 c++ 文件：math.h , main.cc, foo.cc，math.h 里定义了一个 add 函数，然后 main.cc 和 foo.cc 都 #include &ldquo;math.h&rdquo;，执行 g++ main.cc foo.cc math.h  后报错 duplicate symbol &lsquo;__Z3addii&rsquo; in:，这是为什么？</p>
+<p><strong>ChatGPT:</strong></p>
+<p>这是因为在执行 g++ main.cc foo.cc math.h 时，你把 math.h 文件也当作了源文件来编译，而不是头文件。你在 main.cc 和 foo.cc 中都包含了 &ldquo;math.h&rdquo;，那么 add 函数就在两个文件中都被编译进去了，因此在链接阶段就会出现重复符号的错误。</p>
+<p>解决方法是只将 math.h 文件作为头文件，源文件分别编译，最后再链接。例如：</p>
+<p>g++ -c main.cc
+g++ -c foo.cc
+g++ main.o foo.o</p>
+<p>这样，在链接阶段 add 函数的定义就只会在一个文件中出现，避免了重复符号的错误。</p>
+<p><strong>You:</strong></p>
+<p>g++ -c 是什么意思</p>
+<p><strong>ChatGPT:</strong></p>
+<p><code>g++ -c</code> 是在编译 C++ 程序时使用的一个选项，它表示只编译源代码文件，不进行链接。通常我们会先使用 <code>g++ -c</code> 对所有源文件分别进行编译，最后再使用 <code>g++</code> 对所有生成的目标文件进行链接。</p>
+<p>这个选项对大型项目来说很有用，因为它可以让我们在修改源代码时只编译被修改的文件，然后再与其他目标文件链接，从而减少编译时间。</p>
+<p><strong>You:</strong></p>
+<p>duplicate symbol &lsquo;__Z3addii&rsquo; in 为什么报错信息这么古怪？这个重复定义的函数叫 add，为什么报错提示的是 Z3addii？</p>
+<p><strong>ChatGPT:</strong></p>
+<p>这是因为 <code>__Z3addii</code> 是 add 函数的符号名，而不是函数名。</p>
+<p>在 C++ 中，函数名通常是一个字符串，但是编译器并不直接使用这个字符串，而是使用一个符号名来代替它。这个符号名是一个与函数名相关的数字，用于在编译后的代码中对函数进行引用。</p>
+<p>在 Linux 系统上，一般使用 C++ 的默认符号命名约定是 C++ 运行时符号约定，即 &ldquo;C++ ABI&rdquo;（Application Binary Interface）。根据 C++ ABI 规定，函数符号名的格式通常是 __Zn，其中 n 是一个数字，表示函数名称。</p>
+<p>因此，在报错信息中出现的 <code>__Z3addii</code> 其实是 add 函数的符号名，而不是函数名。编译器把函数名编译成了符号名，以便在链接阶段进行引用，因此在报错信息中出现了符号名而不是函数名。</p>
+<p><strong>You:</strong></p>
+<p>那我如何分辨是哪个函数重复定义了呢，如果在一个大型项目下</p>
+<p><strong>ChatGPT:</strong></p>
+<p>如果您在大型项目中遇到了重复定义的问题，您可以使用一些工具来帮助您解决这个问题。</p>
+<p>一种方法是使用 c++filt 工具。c++filt 可以将符号名转换成函数名，因此您可以使用 c++filt 来分析编译器报错信息。例如：</p>
+<pre><code class="language-sh">$ c++filt __Z3addii
+add(int, int)
+</code></pre>
+<p>还有一种方法是使用 nm 工具。nm 可以列出一个可执行文件或目标文件的符号表。您可以使用 nm 来检查每个目标文件，以确定是哪个文件定义了重复的符号。例如：</p>
+<pre><code class="language-sh">$ nm main.o
+0000000000000030 T __Z3addii
+
+$ nm foo.o
+0000000000000030 T __Z3addii
+</code></pre>
+<p>在这个例子中，两个目标文件都定义了符号 __Z3addii，因此这两个文件都会导致重复定义的问题。</p>
+<p>通过使用这些工具，您可以快速确定重复定义的问题所在，从而解决问题。</p>
+<h1 id="操作系统">操作系统</h1>
+<h2 id="进程的优劣">进程的优劣</h2>
+<p>进程是指操作系统中正在运行的一个程序的实例。每个进程都有自己的地址空间、内存、文件句柄等资源，它们彼此独立，但可以通过 IPC（进程间通信）机制进行通信和交互。进程有以下优点：</p>
+<ol>
+<li>稳定性：每个进程在其自己的地址空间中运行，不会影响其他进程的运行，这使得进程非常稳定。</li>
+<li>灵活性：进程可以独立运行，可以有自己的权限，可以使用不同的资源。</li>
+<li>安全性：由于每个进程都运行在其自己的地址空间中，因此其他进程无法访问该进程的内存，这提高了系统的安全性。</li>
+<li>可移植性：进程可以在不同的系统中移植，因为它们与底层硬件无关，只需要操作系统提供支持。</li>
+</ol>
+<p>进程的缺点是：</p>
+<ol>
+<li>资源占用：每个进程都需要占用一定的内存和 CPU 资源，如果系统中运行过多的进程，就会导致资源的浪费和系统的崩溃。</li>
+<li>上下文切换开销：当系统中有多个进程运行时，它们之间的切换会带来一定的开销，这会影响系统的性能。</li>
+<li>进程间通信复杂：进程之间需要进行通信和同步，这需要一定的机制和代码来实现，增加了系统的复杂性。</li>
+</ol>
+<h2 id="为什么进程上下文切换开销大">为什么进程上下文切换开销大</h2>
+<p>进程的上下文切换开销大主要是因为进程拥有独立的虚拟地址空间、文件描述符、寄存器等资源，当进程进行上下文切换时需要保存当前进程的所有状态并恢复下一个进程的所有状态，这个过程需要大量的时间和计算资源。</p>
+<p>进程上下文切换的主要步骤包括：</p>
+<ol>
+<li>保存当前进程的 CPU 寄存器状态；</li>
+<li>将当前进程的程序计数器指向下一条要执行的指令；</li>
+<li>将当前进程的程序状态字保存到内存中；</li>
+<li>切换虚拟地址空间和内存映射关系；</li>
+<li>切换内核栈；</li>
+<li>恢复下一个进程的 CPU 寄存器状态；</li>
+<li>将程序状态字设置为下一个进程的状态。</li>
+</ol>
+<p>上下文切换的过程中需要频繁地读写内存和寄存器，这会导致 CPU 缓存失效，从而影响 CPU 的性能。此外，进程的上下文切换还会导致 TLB（Translation Lookaside Buffer）缓存失效，从而影响内存访问速度。</p>
+<p>因此，为了减少进程上下文切换的开销，通常可以采用以下策略：</p>
+<ol>
+<li>减少进程的数量：通过合理规划进程数量，尽可能地利用每个进程的资源，减少进程间的切换次数；</li>
+<li>采用线程：线程是轻量级的进程，它们共享同一个虚拟地址空间和文件描述符等资源，因此线程的上下文切换开销通常比进程小；</li>
+<li>采用异步 I/O：异步 I/O 可以避免进程在等待 I/O 操作完成时被阻塞，从而减少进程的上下文切换次数；</li>
+<li>采用事件驱动模型：事件驱动模型可以避免进程在等待事件完成时被阻塞，从而减少进程的上下文切换次数。</li>
+</ol>
+<h2 id="tlb-是什么">TLB 是什么</h2>
+<p>TLB（Translation Lookaside Buffer）是一种硬件缓存，用于加速虚拟内存管理中的地址翻译过程。当CPU需要访问虚拟地址时，需要将虚拟地址转换成物理地址，这个过程会访问页表。如果页表非常大，需要访问的页表项也非常多，那么地址翻译过程的开销就会很大，影响系统性能。TLB的作用就是缓存最近使用的页表项，加速地址翻译过程，从而提高系统性能。当CPU需要访问一个虚拟地址时，它首先会在TLB中查找对应的物理地址，如果TLB中没有对应的物理地址，就会触发一次页表访问，将页表项加载到TLB中，以加速后续的访问。由于TLB通常比页表小得多，因此可以极大地减少访问页表的次数，从而提高系统性能。</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/chatgpt/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#chatgpt</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >上一页</span
+        >
+        <a href="/posts/metallb/" class="block">k8s loadbalancer —— Metallb [draft] </a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/controller-runtime-source/" class="block">Controller-Runtime 之 Source </a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#网络">网络</a>
+      <ul>
+        <li><a href="#为什么网络协议栈要分层不能直接把应用层的东西一起放到传输层吗">为什么网络协议栈要分层？不能直接把应用层的东西一起放到传输层吗</a></li>
+        <li><a href="#四层负载均衡和七层负载均衡的区别">四层负载均衡和七层负载均衡的区别</a></li>
+      </ul>
+    </li>
+    <li><a href="#k8s">k8s</a>
+      <ul>
+        <li><a href="#clientcmdbuildconfigfromflags-和-clientcmdbuildconfigfromkubeconfiggetter-有什么区别">clientcmd.BuildConfigFromFlags 和 clientcmd.BuildConfigFromKubeconfigGetter() 有什么区别</a></li>
+      </ul>
+    </li>
+    <li><a href="#c">C++</a>
+      <ul>
+        <li><a href="#链接符号名">链接符号名</a></li>
+      </ul>
+    </li>
+    <li><a href="#操作系统">操作系统</a>
+      <ul>
+        <li><a href="#进程的优劣">进程的优劣</a></li>
+        <li><a href="#为什么进程上下文切换开销大">为什么进程上下文切换开销大</a></li>
+        <li><a href="#tlb-是什么">TLB 是什么</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

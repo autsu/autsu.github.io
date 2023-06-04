@@ -70,12 +70,12 @@
 <script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
   integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
 <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-80J26VFWFL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag() { dataLayer.push(arguments); }
   gtag('js', new Date());
-  gtag('config', 'UA-135903670-1');
+  gtag('config', 'G-80J26VFWFL');
 </script>
 
 <meta name="referrer" content="no-referrer" />
@@ -197,93 +197,93 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
+            "name": "Istio Bookinfo",
+            "description": "前言 Bookinfo 是 istio 官方提供的一个演示应用，并且官方也给出了详细的功能描述：",
+            "url": "/posts/istio-bookinfo/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "使用 Multipass 快速搭建虚拟机",
+            "description": "之前搭建 k8s 集群一直使用的是 Vmware，虽然总的来说用起来还算 OK，但是总感觉比较重，安装系统什么的也比较耗时（后来发现可以先创建好一台，然后克隆），加上 k8s 老被我搞坏，每次搞坏又都要重新创建集群（貌似可以做一个快照），搞得有点烦，就想看看有没有什么别的虚机工具，能够方便且快速的搭建虚机，最好还能支持命令行操作，找来找去，最终还是找到了之前用过的老朋友 multipass",
+            "url": "/posts/multipass-create-vm-so-easy/"
+        },{
+            "@type":"ListItem",
+            "position":  3 ,
+            "name": "k8s loadbalancer —— Metallb [draft] ",
+            "description": "安装（Layer2 模式） 首先需要查看你的 kube-proxy 使用的是不是 ipvs 模式，执行下面的命令：",
+            "url": "/posts/metallb/"
+        },{
+            "@type":"ListItem",
+            "position":  4 ,
+            "name": "Chatgpt Q\u0026A",
+            "description": "这个文档记录了 chatGPT 的一些有帮助的回答。\n网络 为什么网络协议栈要分层？不能直接把应用层的东西一起放到传输层吗 网络协议栈之所以要分层，主要是为了提高网络协议的可维护性、可扩展性、互操作性以及灵活性。",
+            "url": "/posts/chatgpt-qa/"
+        },{
+            "@type":"ListItem",
+            "position":  5 ,
             "name": "Controller-Runtime 之 Source ",
             "description": "背景 Source 是 Watches() 的第一个参数，代表一种事件源，实际类型是一个 interface，原型：",
             "url": "/posts/controller-runtime-source/"
         },{
             "@type":"ListItem",
-            "position":  2 ,
+            "position":  6 ,
             "name": "K8s Storageclass",
-            "description": "搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir /share # 编辑配置 sudo vim /etc/exports # 在最后一行添加 /share *(rw,sync,no_root_squash,no_subtree_check) /share *(rw,sync,no_root_squash,no_subtree_check)",
+            "description": "搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir /share # 编辑配置 sudo vim /etc/exports # 在最后一行添加 /share *(rw,sync,no_root_squash,no_subtree_check) 修改完成后，:wq 保存，然后执行 exportfs -rav 命令使配置生效，不然客户端挂载 NFS 会报错无权限。",
             "url": "/posts/k8s-storageclass/"
         },{
             "@type":"ListItem",
-            "position":  3 ,
+            "position":  7 ,
             "name": "通过 Kubespray 搭建 k8s 集群",
             "description": "⚠️ 安装前最好确保你的主机够干净，我的虚拟机就因为之前自行用二进制搭建过，导致使用 kubespray 安装出现各种奇奇怪怪的错误，最后删除重新创建了一台，一次就安装成功了",
             "url": "/posts/kubespray-install/"
         },{
             "@type":"ListItem",
-            "position":  4 ,
+            "position":  8 ,
             "name": "装机记录",
             "description": "最近组了台台式，用来当做迷你服务器使用，因为是自己第一次独立装机，所以特此记录一下期间的心路历程。\n坑爹 1：CPU 坑爹指数：⭐️\n老实说这玩意安装还是非常简单的，主要是包装和说明书上各种警告，还有网上各种压弯针脚的帖子，搞得人心惶惶的，其实感觉问题不大，按照说明书的步骤来，稍微小心一点，很容易就安装好了。",
             "url": "/posts/zhuangji-jilu/"
         },{
             "@type":"ListItem",
-            "position":  5 ,
+            "position":  9 ,
             "name": "K8s 二进制安装",
             "description": "环境 主机系统为 win11，通过 vmware 创建了 3 台虚拟机，详情如下：",
             "url": "/posts/k8s-binray-install/"
         },{
             "@type":"ListItem",
-            "position":  6 ,
+            "position":  10 ,
             "name": "通过实践学习 Nginx",
             "description": "Nginx 反代 package main import ( \u0026quot;flag\u0026quot; \u0026quot;fmt\u0026quot; \u0026quot;net/http\u0026quot; ) var ( mark string ip string port string ) func main() { flag.",
             "url": "/posts/nginx-practice/"
         },{
             "@type":"ListItem",
-            "position":  7 ,
+            "position":  11 ,
             "name": "k8s Secret",
             "description": "Opaque Secret 要求 value 必须是 base64 编码的",
             "url": "/posts/k8s-secret/"
         },{
             "@type":"ListItem",
-            "position":  8 ,
+            "position":  12 ,
             "name": "k8s client-go 源码阅读",
             "description": "架构 Informers 由几个核心的组件构成：\nReflector：负责从 api-server list（全量拉取数据） and watch（监听数据变更） DeltaFIFO：一个存储事件的队列，里面记录了事件的类型 Indexer：存储数据，数据来源是从 DeltaFIFO 中 pop 出来的，然后会根据事件类型进行对于的操作 sharedProcessor：用于运行用户设置的事件回调函数，里面用 map 存储了所有的 listener，每次调用 AddEventHandler 都会创建一个 listener，同时这个函数可以调用多次，也就是创建多个 listener，当发送事件时，会调用所有的 listener 的对应回调函数 controller：上面提到的 Reflector、DeltaFIFO、Indexer 各自有各自的作用，但是它们彼此之间还没有关联起来，而 controller 就是负责这件事的，它是这 3 个组件的 master，让它们可以协同运作，大致流程是：当 Reflector watch 到事件时会将其保存到 DeltaFIFO 中，controller 这件会持续从 DeltaFIFO 中 pop 元素，然后根据事件类型对 indexer 进行相应操作（add、update、delete），使得 indexer 中的数据和 api-server 中的一致，同时还会调用 sharedProcessor 的对应回调，来完成用户设置的对应事件操作。 informers/factory.",
             "url": "/posts/client-go-yuan-ma/"
         },{
             "@type":"ListItem",
-            "position":  9 ,
+            "position":  13 ,
             "name": "kubebuilder 实践",
             "description": "快速入门 下载 kubebuiler $ os=$(go env GOOS) $ arch=$(go env GOARCH) $ curl -L -o kubebuilder https://go.",
             "url": "/posts/kubebuilder/"
         },{
             "@type":"ListItem",
-            "position":  10 ,
+            "position":  14 ,
             "name": "docker tag 的用处",
             "description": "docker tag 相当于对镜像做一次备份，将当前的镜像（比如 tag:latest）备份出去一份（比如 tag: v1），然后如果开发了新的镜像，可以直接覆盖掉当前的（tag:latest），然后再给 latest 打个标签：tag:v2，相当于又备份了一份，现在就有了 v1，v2，latest 三个镜像，使用 tag 不仅可以备份镜像，还可以对镜像做标注区分。",
             "url": "/posts/docker-tag/"
         },{
             "@type":"ListItem",
-            "position":  11 ,
+            "position":  15 ,
             "name": "k8s StatefulSet",
             "description": "有状态与无状态 无状态应用，指的是在运行时不需要维护或跟踪任何特定状态的应用程序。例如，Web 服务器或 API 服务器通常可以处理来自客户端的请求，而无需了解以前的请求或客户端状态。这些应用程序可以很容易地水平扩展，因为它们不需要共享状态，所以可以在任何节点上运行。像 Deployment 也是一个典型的“无状态应用”，它会按照事先声明的模板创建出 pod，这表示每个 pod 的定义将会是一模一样的，此外，这些 pod 之间没有之间没有顺序相关性（什么事有顺序相关性？比如一些集群应用包含主节点和从节点，而主节点必须先于从节点启动，这便是顺序相关性），也无所谓在哪台宿主机上运行，任何一个 pod 都可以提供完全相同的功能，不需要时，也可以结束任意一个 pod。",
             "url": "/posts/k8s-statefulset/"
-        },{
-            "@type":"ListItem",
-            "position":  12 ,
-            "name": "ubuntu arm64 使用 apt-get 安装 docker，以及 snap 的一些问题记录",
-            "description": "使用 snap 可以比较方便的安装 docker，但是有一次出现了 k8s pod 无法拉取镜像的问题，看了下 pod describe，发现是因为走代理的问题（我使用的是 ubuntu 虚拟机，连接宿主机的 clashx 进行代理），连接的代理是宿主机的老地址 192.",
-            "url": "/posts/ubuntu-arm64-an-zhuang-docker/"
-        },{
-            "@type":"ListItem",
-            "position":  13 ,
-            "name": "GoLand/Idea 启动闪退，报错 NSInternalInconsistencyException 的解决方法",
-            "description": "环境：\n机器：MacBook Air (M1, 2020) 系统：MacOS 12.",
-            "url": "/posts/jetbrain_crash/"
-        },{
-            "@type":"ListItem",
-            "position":  14 ,
-            "name": "Linux 虚拟网络设备 veth-pair [未完]",
-            "description": "介绍 veth-pair 是什么 两个 namespace 间通信 直接连接 # 创建 2 个 namespace $ ip netns add ns1 $ ip netns add ns2 # 查看创建的 namespace $ ip netns ns2 ns1 # 创建一对 veth-pair veth0 veth1 $ ip l a veth0 type veth peer name veth1 # 也可以写成： # ip link add veth0 type veth peer name veth1 # 将 veth0 veth1 分别加入两个 ns $ ip l s veth0 netns ns1 $ ip l s veth1 netns ns2 # 给两个 veth0 veth1 配上 IP 并启用 $ ip netns exec ns1 ip a a 10.",
-            "url": "/posts/linux_veth_pair/"
-        },{
-            "@type":"ListItem",
-            "position":  15 ,
-            "name": "一个 EOF 引发的低级错误",
-            "description": "今天更新了一下之前写的 tcp server，结果测试的时候发现了一个十分诡异的 BUG：客户端这边发送完数据，进程都已经退出了，但是服务端却依然源源不断的接收到客户端发来的数据，而且数据包的大小都为 0，这个 BUG 花费了我大半天的时间，终于找到了问题所在，特此记录。",
-            "url": "/posts/eof_cuo_wu/"
         }
     ]
 }
@@ -318,7 +318,7 @@
 
 
 
-<meta property="og:updated_time" content="2023-04-21T00:10:31&#43;08:00" />
+<meta property="og:updated_time" content="2023-05-27T11:51:13&#43;08:00" />
 
 
 
@@ -432,6 +432,171 @@
   
   <div class="w-full ">
     <div class="prose">
+  <a href="/posts/istio-bookinfo/" class="no-underline">
+    <h3 class="mt-0">Istio Bookinfo</h3>
+  </a>
+  
+    前言 Bookinfo 是 istio 官方提供的一个演示应用，并且官方也给出了详细的功能描述：
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-05-27</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>7分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/multipass-create-vm-so-easy/" class="no-underline">
+    <h3 class="mt-0">使用 Multipass 快速搭建虚拟机</h3>
+  </a>
+  
+    之前搭建 k8s 集群一直使用的是 Vmware，虽然总的来说用起来还算 OK，但是总感觉比较重，安装系统什么的也比较耗时（后来发现可以先创建好一台，然后克隆），加上 k8s 老被我搞坏，每次搞坏又都要重新创建集群（貌似可以做一个快照），搞得有点烦，就想看看有没有什么别的虚机工具，能够方便且快速的搭建虚机，最好还能支持命令行操作，找来找去，最终还是找到了之前用过的老朋友 multipass
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-05-19</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>2分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/metallb/" class="no-underline">
+    <h3 class="mt-0">k8s loadbalancer —— Metallb [draft] </h3>
+  </a>
+  
+    安装（Layer2 模式） 首先需要查看你的 kube-proxy 使用的是不是 ipvs 模式，执行下面的命令：
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-05-08</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>2分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/chatgpt-qa/" class="no-underline">
+    <h3 class="mt-0">Chatgpt Q&amp;A</h3>
+  </a>
+  
+    这个文档记录了 chatGPT 的一些有帮助的回答。
+网络 为什么网络协议栈要分层？不能直接把应用层的东西一起放到传输层吗 网络协议栈之所以要分层，主要是为了提高网络协议的可维护性、可扩展性、互操作性以及灵活性。
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-05-07</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>3分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
   <a href="/posts/controller-runtime-source/" class="no-underline">
     <h3 class="mt-0">Controller-Runtime 之 Source </h3>
   </a>
@@ -477,7 +642,7 @@
     <h3 class="mt-0">K8s Storageclass</h3>
   </a>
   
-    搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir /share # 编辑配置 sudo vim /etc/exports # 在最后一行添加 /share *(rw,sync,no_root_squash,no_subtree_check) /share *(rw,sync,no_root_squash,no_subtree_check)
+    搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir /share # 编辑配置 sudo vim /etc/exports # 在最后一行添加 /share *(rw,sync,no_root_squash,no_subtree_check) 修改完成后，:wq 保存，然后执行 exportfs -rav 命令使配置生效，不然客户端挂载 NFS 会报错无权限。
   
 
   
@@ -881,171 +1046,6 @@ Reflector：负责从 api-server list（全量拉取数据） and watch（监听
 </div>
   </div>
   
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/ubuntu-arm64-an-zhuang-docker/" class="no-underline">
-    <h3 class="mt-0">ubuntu arm64 使用 apt-get 安装 docker，以及 snap 的一些问题记录</h3>
-  </a>
-  
-    使用 snap 可以比较方便的安装 docker，但是有一次出现了 k8s pod 无法拉取镜像的问题，看了下 pod describe，发现是因为走代理的问题（我使用的是 ubuntu 虚拟机，连接宿主机的 clashx 进行代理），连接的代理是宿主机的老地址 192.
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2022-09-10</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>1分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/jetbrain_crash/" class="no-underline">
-    <h3 class="mt-0">GoLand/Idea 启动闪退，报错 NSInternalInconsistencyException 的解决方法</h3>
-  </a>
-  
-    环境：
-机器：MacBook Air (M1, 2020) 系统：MacOS 12.
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2022-09-08</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>2分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/linux_veth_pair/" class="no-underline">
-    <h3 class="mt-0">Linux 虚拟网络设备 veth-pair [未完]</h3>
-  </a>
-  
-    介绍 veth-pair 是什么 两个 namespace 间通信 直接连接 # 创建 2 个 namespace $ ip netns add ns1 $ ip netns add ns2 # 查看创建的 namespace $ ip netns ns2 ns1 # 创建一对 veth-pair veth0 veth1 $ ip l a veth0 type veth peer name veth1 # 也可以写成： # ip link add veth0 type veth peer name veth1 # 将 veth0 veth1 分别加入两个 ns $ ip l s veth0 netns ns1 $ ip l s veth1 netns ns2 # 给两个 veth0 veth1 配上 IP 并启用 $ ip netns exec ns1 ip a a 10.
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2022-09-06</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>1分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/eof_cuo_wu/" class="no-underline">
-    <h3 class="mt-0">一个 EOF 引发的低级错误</h3>
-  </a>
-  
-    今天更新了一下之前写的 tcp server，结果测试的时候发现了一个十分诡异的 BUG：客户端这边发送完数据，进程都已经退出了，但是服务端却依然源源不断的接收到客户端发来的数据，而且数据包的大小都为 0，这个 BUG 花费了我大半天的时间，终于找到了问题所在，特此记录。
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2022-09-06</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>2分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
 </div>
 
 
@@ -1087,7 +1087,7 @@ Reflector：负责从 api-server list（全量拉取数据） and watch（监听
     </main>
     <footer class="pl-scrollbar">
       <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
-    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a>
  &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
 </div></div>
     </footer>

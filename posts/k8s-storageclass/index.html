@@ -70,12 +70,12 @@
 <script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
   integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
 <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-80J26VFWFL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag() { dataLayer.push(arguments); }
   gtag('js', new Date());
-  gtag('config', 'UA-135903670-1');
+  gtag('config', 'G-80J26VFWFL');
 </script>
 
 <meta name="referrer" content="no-referrer" />
@@ -185,7 +185,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
 
 <meta name="description"
-  content="搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir /share # 编辑配置 sudo vim /etc/exports # 在最后一行添加 /share *(rw,sync,no_root_squash,no_subtree_check) /share *(rw,sync,no_root_squash,no_subtree_check)">
+  content="搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir /share # 编辑配置 sudo vim /etc/exports # 在最后一行添加 /share *(rw,sync,no_root_squash,no_subtree_check) 修改完成后，:wq 保存，然后执行 exportfs -rav 命令使配置生效，不然客户端挂载 NFS 会报错无权限。">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -214,7 +214,7 @@
     },
     "headline": "K8s Storageclass | \/dev\/null","datePublished": "2023-04-18T21:51:28+08:00",
     "dateModified": "2023-04-18T21:51:28+08:00",
-    "wordCount":  553 ,
+    "wordCount":  608 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -223,7 +223,7 @@
             "url": "/images/icon.png"
         }
         },
-    "description": "搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir \/share # 编辑配置 sudo vim \/etc\/exports # 在最后一行添加 \/share *(rw,sync,no_root_squash,no_subtree_check) \/share *(rw,sync,no_root_squash,no_subtree_check)"
+    "description": "搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir \/share # 编辑配置 sudo vim \/etc\/exports # 在最后一行添加 \/share *(rw,sync,no_root_squash,no_subtree_check) 修改完成后，:wq 保存，然后执行 exportfs -rav 命令使配置生效，不然客户端挂载 NFS 会报错无权限。"
 }
 </script><meta property="og:title" content="K8s Storageclass | /dev/null" />
 <meta property="og:type" content="article" />
@@ -237,7 +237,7 @@
 
 
 
-<meta property="og:description" content="搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir /share # 编辑配置 sudo vim /etc/exports # 在最后一行添加 /share *(rw,sync,no_root_squash,no_subtree_check) /share *(rw,sync,no_root_squash,no_subtree_check)" />
+<meta property="og:description" content="搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir /share # 编辑配置 sudo vim /etc/exports # 在最后一行添加 /share *(rw,sync,no_root_squash,no_subtree_check) 修改完成后，:wq 保存，然后执行 exportfs -rav 命令使配置生效，不然客户端挂载 NFS 会报错无权限。" />
 
 
 
@@ -421,6 +421,7 @@ sudo vim /etc/exports
 # 在最后一行添加
 /share *(rw,sync,no_root_squash,no_subtree_check)
 </code></pre>
+<p>修改完成后，:wq 保存，然后执行 <code>exportfs -rav</code> 命令使配置生效，不然客户端挂载 NFS 会报错无权限。</p>
 <p><code>/share *(rw,sync,no_root_squash,no_subtree_check)</code></p>
 <p>其中 /share 就是我们的 NFS 共享目录</p>
 <p>*(rw,sync,no_root_squash,no_subtree_check) 是一条配置行，用于指定 NFS 共享目录的权限设置</p>
@@ -440,6 +441,14 @@ sudo vim /etc/exports
 <pre><code class="language-shell">$ sudo mount -t nfs 192.168.223.129:/share /mnt
 </code></pre>
 <p>其中，192.168.223.129 是 NFS Server 的 IP，/share 是该 server 的共享目录，/mnt 是客户端要挂载到本机的目的目录。</p>
+<blockquote>
+<p>如果执行后报错</p>
+<p>mount: /mnt: bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program.</p>
+<p>表示你没有安装 NFS 客户端，执行下面的命令进行安装 ：</p>
+<pre><code class="language-shell">sudo apt update
+sudo apt install -y nfs-common
+</code></pre>
+</blockquote>
 <p>执行完成后如果没有任何错误信息则代表成功，查看当前主机的 /mnt 目录：</p>
 <pre><code class="language-shell">$ ls /mnt
 123.txt
@@ -520,6 +529,10 @@ roleRef:
 <p>否则 pvc 无法 bound，报错 selfLink was empty, can&rsquo;t make reference</p>
 <p>下面这个镜像无法正常工作</p>
 <p>quay.io/external_storage/nfs-client-provisioner:latest</p>
+<p>此外还需要注意的是，你需要确保所有节点上都已经安装好了 NFS 客户端，因为 pod 可能被调度到任何一个 worker 节点。如果没有，你可以执行下面的命令安装：</p>
+<pre><code class="language-shell">sudo apt update
+sudo apt install -y nfs-common
+</code></pre>
 </blockquote>
 <pre><code class="language-yaml"># nft-provisioner-deployment.yaml
 # kubectl apply -f nft-provisioner-deployment.yaml
@@ -606,7 +619,8 @@ NAME           STATUS    VOLUME                                     CAPACITY   A
 test-claim     Bound     pvc-969d9309-4510-46ac-90c1-8e9cc1d8f2ec   1Mi        RWX            nfs-storage    22m
 </code></pre>
 <p>TODO 测试 pod 能否挂载上这个 pvc</p>
-<h1 id="设置为默认-storageclass">设置为默认 storageclass</h1>
+<h1 id="设置默认-storageclass">设置默认 StorageClass</h1>
+<p>执行下面的命令将某个 sc 设置为默认：</p>
 <pre><code class="language-shell">$ kubectl patch storageclass &lt;storageclass-name&gt; -p '{&quot;metadata&quot;: {&quot;annotations&quot;:{&quot;storageclass.kubernetes.io/is-default-class&quot;:&quot;true&quot;}}}'
 </code></pre>
 <p>比如现在有一个名为 nfs-storage 的 sc，要将其设置为默认 sc：</p>
@@ -711,7 +725,7 @@ nfs-storage (default)   nfs-provisioner   Delete          Immediate           fa
         </li>
       </ul>
     </li>
-    <li><a href="#设置为默认-storageclass">设置为默认 storageclass</a></li>
+    <li><a href="#设置默认-storageclass">设置默认 StorageClass</a></li>
   </ul>
 </nav>
 </div>
@@ -767,7 +781,7 @@ nfs-storage (default)   nfs-provisioner   Delete          Immediate           fa
     </main>
     <footer class="pl-scrollbar">
       <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
-    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a>
  &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
 </div></div>
     </footer>

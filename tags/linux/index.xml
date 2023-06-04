@@ -6,7 +6,7 @@
     <description>Recent content in linux on /dev/null</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt;
 </copyright>
     <lastBuildDate>Tue, 06 Sep 2022 22:37:45 +0000</lastBuildDate><atom:link href="/tags/linux/index.xml" rel="self" type="application/rss+xml" />
     <item>
@@ -34,9 +34,8 @@
       <pubDate>Mon, 16 May 2022 10:53:35 +0000</pubDate>
       
       <guid>/posts/iptables/</guid>
-      <description>参考：
-https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2
-规则相关命令 查看规则 # 查看 filter 表的所有规则，-t 后面跟表名 $ iptables -t filter -L # 查看 raw 表的所有规则 $ iptables -t raw -L # 查看 filter 表（-t 缺省时，默认为 filter 表）的 INPUT 链上的所有规则 $ iptables -L INPUT # 加 -v 可以输出更详细的信息 $ iptables -vL INPUT # 加 -n 会直接输出 IP 地址，不加的话会继续转换，比如 0.</description>
+      <description>文档状态：Draft
+链，表和规则 规则 顾名思义，规则就是针对网络包的不同 行为，做出对应的 处理操作，比如如果我收到的网络包的 IP 是 xx.</description>
     </item>
     
     <item>

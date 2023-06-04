@@ -6,24 +6,60 @@
     <description>Recent content in Tags on /dev/null</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Fri, 21 Apr 2023 00:10:31 +0800</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 27 May 2023 11:51:13 +0800</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>controller-runtime</title>
-      <link>/tags/controller-runtime/</link>
-      <pubDate>Fri, 21 Apr 2023 00:10:31 +0800</pubDate>
+      <title>istio</title>
+      <link>/tags/istio/</link>
+      <pubDate>Sat, 27 May 2023 11:51:13 +0800</pubDate>
       
-      <guid>/tags/controller-runtime/</guid>
+      <guid>/tags/istio/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>multipass</title>
+      <link>/tags/multipass/</link>
+      <pubDate>Fri, 19 May 2023 22:23:10 +0800</pubDate>
+      
+      <guid>/tags/multipass/</guid>
       <description></description>
     </item>
     
     <item>
       <title>k8s</title>
       <link>/tags/k8s/</link>
-      <pubDate>Fri, 21 Apr 2023 00:10:31 +0800</pubDate>
+      <pubDate>Mon, 08 May 2023 20:37:53 +0800</pubDate>
       
       <guid>/tags/k8s/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>loadbalancer</title>
+      <link>/tags/loadbalancer/</link>
+      <pubDate>Mon, 08 May 2023 20:37:53 +0800</pubDate>
+      
+      <guid>/tags/loadbalancer/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>chatgpt</title>
+      <link>/tags/chatgpt/</link>
+      <pubDate>Sun, 07 May 2023 16:57:44 +0800</pubDate>
+      
+      <guid>/tags/chatgpt/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>controller-runtime</title>
+      <link>/tags/controller-runtime/</link>
+      <pubDate>Fri, 21 Apr 2023 00:10:31 +0800</pubDate>
+      
+      <guid>/tags/controller-runtime/</guid>
       <description></description>
     </item>
     
@@ -231,15 +267,6 @@
       <pubDate>Sun, 08 May 2022 15:46:11 +0000</pubDate>
       
       <guid>/tags/http/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>multipass</title>
-      <link>/tags/multipass/</link>
-      <pubDate>Sun, 08 May 2022 15:46:11 +0000</pubDate>
-      
-      <guid>/tags/multipass/</guid>
       <description></description>
     </item>
     

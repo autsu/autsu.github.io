@@ -70,12 +70,12 @@
 <script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
   integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
 <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-80J26VFWFL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag() { dataLayer.push(arguments); }
   gtag('js', new Date());
-  gtag('config', 'UA-135903670-1');
+  gtag('config', 'G-80J26VFWFL');
 </script>
 
 <meta name="referrer" content="no-referrer" />
@@ -214,7 +214,7 @@
     },
     "headline": "k8s service | \/dev\/null","datePublished": "2022-05-08T15:46:11+00:00",
     "dateModified": "2022-05-08T15:46:11+00:00",
-    "wordCount":  3339 ,
+    "wordCount":  3352 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -1004,6 +1004,7 @@ spec:
   containers:
   - name: hello-app
     image: stdoutt/hello-app-arm64 # 注意这里使用的镜像仅适用于 arm64 机器
+    # image: gcr.io/google-samples/hello-app:2.0 # 如果你的机器是 amd64 的可以使用这个
     ports:
     - containerPort: 8080
 ---
@@ -1078,6 +1079,7 @@ kind: Ingress
 metadata:
   name: example-ingress
 spec:
+	# ingressClassName: nginx # 如果你使用的不是 minikube，需要加上这行
   rules:
   - host: ingress.example.com
     http:
@@ -1696,7 +1698,7 @@ func main() {
     </main>
     <footer class="pl-scrollbar">
       <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
-    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a>
  &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
 </div></div>
     </footer>

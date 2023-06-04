@@ -70,12 +70,12 @@
 <script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
   integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
 <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-80J26VFWFL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag() { dataLayer.push(arguments); }
   gtag('js', new Date());
-  gtag('config', 'UA-135903670-1');
+  gtag('config', 'G-80J26VFWFL');
 </script>
 
 <meta name="referrer" content="no-referrer" />
@@ -185,9 +185,8 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
 
 <meta name="description"
-  content="参考：
-https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2
-规则相关命令 查看规则 # 查看 filter 表的所有规则，-t 后面跟表名 $ iptables -t filter -L # 查看 raw 表的所有规则 $ iptables -t raw -L # 查看 filter 表（-t 缺省时，默认为 filter 表）的 INPUT 链上的所有规则 $ iptables -L INPUT # 加 -v 可以输出更详细的信息 $ iptables -vL INPUT # 加 -n 会直接输出 IP 地址，不加的话会继续转换，比如 0.">
+  content="文档状态：Draft
+链，表和规则 规则 顾名思义，规则就是针对网络包的不同 行为，做出对应的 处理操作，比如如果我收到的网络包的 IP 是 xx.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -216,7 +215,7 @@ https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/
     },
     "headline": "linux iptables | \/dev\/null","datePublished": "2022-05-16T10:53:35+00:00",
     "dateModified": "2022-05-16T10:53:35+00:00",
-    "wordCount":  858 ,
+    "wordCount":  891 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -225,7 +224,7 @@ https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/
             "url": "/images/icon.png"
         }
         },
-    "description": "参考：\nhttps:\/\/www.zsythink.net\/archives\/category\/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3\/iptables\/page\/2\n规则相关命令 查看规则 # 查看 filter 表的所有规则，-t 后面跟表名 $ iptables -t filter -L # 查看 raw 表的所有规则 $ iptables -t raw -L # 查看 filter 表（-t 缺省时，默认为 filter 表）的 INPUT 链上的所有规则 $ iptables -L INPUT # 加 -v 可以输出更详细的信息 $ iptables -vL INPUT # 加 -n 会直接输出 IP 地址，不加的话会继续转换，比如 0."
+    "description": "文档状态：Draft\n链，表和规则 规则 顾名思义，规则就是针对网络包的不同 行为，做出对应的 处理操作，比如如果我收到的网络包的 IP 是 xx."
 }
 </script><meta property="og:title" content="linux iptables | /dev/null" />
 <meta property="og:type" content="article" />
@@ -239,9 +238,8 @@ https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/
 
 
 
-<meta property="og:description" content="参考：
-https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2
-规则相关命令 查看规则 # 查看 filter 表的所有规则，-t 后面跟表名 $ iptables -t filter -L # 查看 raw 表的所有规则 $ iptables -t raw -L # 查看 filter 表（-t 缺省时，默认为 filter 表）的 INPUT 链上的所有规则 $ iptables -L INPUT # 加 -v 可以输出更详细的信息 $ iptables -vL INPUT # 加 -n 会直接输出 IP 地址，不加的话会继续转换，比如 0." />
+<meta property="og:description" content="文档状态：Draft
+链，表和规则 规则 顾名思义，规则就是针对网络包的不同 行为，做出对应的 处理操作，比如如果我收到的网络包的 IP 是 xx." />
 
 
 
@@ -409,9 +407,26 @@ https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/
   
 
   <blockquote>
-<p>参考：</p>
-<p><a href="https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2">https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2</a></p>
+<p>文档状态：Draft</p>
 </blockquote>
+<hr>
+<h1 id="链表和规则">链，表和规则</h1>
+<h2 id="规则">规则</h2>
+<p>顾名思义，规则就是针对网络包的不同 <strong>行为</strong>，做出对应的 <strong>处理操作</strong>，比如如果我收到的网络包的 IP 是 xx.xx.xx.xx，那么我就将其丢弃；如果我收到的包的端口是 8080，我就将其转发给 XXX 之类的，也可以说，<strong>规则就是匹配条件 + 处理操作</strong>。</p>
+<p><strong>匹配条件</strong></p>
+<p><strong>示例</strong></p>
+<ul>
+<li>
+<p>阻止特定的 ip 地址</p>
+<p>在我们继续进行其他示例之前，如果您想阻止特定的 ip 地址，您应该首先执行如下所示的操作。将下面示例中的“xxxx”更改为您要阻止的特定IP地址。</p>
+<pre><code class="language-shell">BLOCK_THIS_IP=&quot;xxxx&quot;
+iptables -A INPUT -s &quot;$BLOCK_THIS_IP&quot; -j DROP
+</code></pre>
+</li>
+</ul>
+<p>相互之间的关系如下：</p>
+<p>一条链上可以有多条规则。</p>
+<p>一张表里可以存多条相同种类的规则</p>
 <h1 id="规则相关命令">规则相关命令</h1>
 <h2 id="查看规则">查看规则</h2>
 <pre><code class="language-shell"># 查看 filter 表的所有规则，-t 后面跟表名
@@ -627,6 +642,8 @@ $ go build tcp_9090.go
 $ nohup ./tcp_8080 &gt; 8080 &amp;
 $ nohup ./tcp_9090 &gt; 9090 &amp;
 </code></pre>
+<h1 id="参考">参考</h1>
+<p><a href="https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2">https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2</a></p>
 
 </article>
 
@@ -698,6 +715,11 @@ $ nohup ./tcp_9090 &gt; 9090 &amp;
 >
   <nav id="TableOfContents">
   <ul>
+    <li><a href="#链表和规则">链，表和规则</a>
+      <ul>
+        <li><a href="#规则">规则</a></li>
+      </ul>
+    </li>
     <li><a href="#规则相关命令">规则相关命令</a>
       <ul>
         <li><a href="#查看规则">查看规则</a></li>
@@ -722,6 +744,7 @@ $ nohup ./tcp_9090 &gt; 9090 &amp;
         <li><a href="#dnt-转发">DNT 转发</a></li>
       </ul>
     </li>
+    <li><a href="#参考">参考</a></li>
   </ul>
 </nav>
 </div>
@@ -771,7 +794,7 @@ $ nohup ./tcp_9090 &gt; 9090 &amp;
     </main>
     <footer class="pl-scrollbar">
       <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
-    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a>
  &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
 </div></div>
     </footer>

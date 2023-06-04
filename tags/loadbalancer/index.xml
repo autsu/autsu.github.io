@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>loadbalancer on /dev/null</title>
+    <link>/tags/loadbalancer/</link>
+    <description>Recent content in loadbalancer on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt;
+</copyright>
+    <lastBuildDate>Mon, 08 May 2023 20:37:53 +0800</lastBuildDate><atom:link href="/tags/loadbalancer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>k8s loadbalancer —— Metallb [draft] </title>
+      <link>/posts/metallb/</link>
+      <pubDate>Mon, 08 May 2023 20:37:53 +0800</pubDate>
+      
+      <guid>/posts/metallb/</guid>
+      <description>安装（Layer2 模式） 首先需要查看你的 kube-proxy 使用的是不是 ipvs 模式，执行下面的命令：</description>
+    </item>
+    
+  </channel>
+</rss>

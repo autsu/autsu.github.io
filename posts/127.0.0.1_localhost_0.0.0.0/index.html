@@ -70,12 +70,12 @@
 <script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
   integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
 <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-80J26VFWFL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag() { dataLayer.push(arguments); }
   gtag('js', new Date());
-  gtag('config', 'UA-135903670-1');
+  gtag('config', 'G-80J26VFWFL');
 </script>
 
 <meta name="referrer" content="no-referrer" />
@@ -214,7 +214,7 @@
     },
     "headline": "127.0.0.1，localhost，0.0.0.0 的区别（包含虚拟网卡相关操作） | \/dev\/null","datePublished": "2022-06-24T20:50:11+00:00",
     "dateModified": "2022-06-24T20:50:11+00:00",
-    "wordCount":  533 ,
+    "wordCount":  537 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -409,9 +409,9 @@
 <p>从应用层到传输层再到网络层，到了网络层，系统会根据目的IP，在路由表中获取对应的<strong>路由信息</strong>，而这其中就包含选择<strong>哪个网卡</strong>把消息发出。</p>
 <p>当发现 <strong>目标IP是外网IP</strong> 时，会从&quot;真网卡&quot;发出。</p>
 <p>当发现 <strong>目标IP是回环地址</strong> 时，就会选择 <strong>本地网卡</strong>。</p>
-<p>本地网卡，其实就是个**&ldquo;假网卡&rdquo;**，它不像&quot;真网卡&quot;那样有个<code>ring buffer</code>什么的，&ldquo;假网卡&quot;会把数据推到一个叫 <code>input_pkt_queue</code> 的 <strong>链表</strong> 中。这个链表，其实是所有网卡共享的，上面挂着发给本机的各种消息。消息被发送到这个链表后，会再触发一个 <strong>软中断</strong>。</p>
-<p>专门处理软中断的工具人**&ldquo;ksoftirqd&rdquo;** （这是个<strong>内核线程</strong>），它在收到软中断后就会立马去链表里把消息取出，然后顺着数据链路层、网络层等层层往上传递最后给到应用程序。</p>
-<p>**之所以127.0.0.1叫本地回环地址，可以理解为，消息发出到这个地址上的话，就不会出网络，在本机打个转就又回来了。**所以断网，依然能 <code>ping</code> 通 <code>127.0.0.1</code>。</p>
+<p>本地网卡，其实就是个&quot;<strong>假网卡</strong>&quot;，它不像&quot;真网卡&quot;那样有个<code>ring buffer</code>什么的，&ldquo;假网卡&quot;会把数据推到一个叫 <code>input_pkt_queue</code> 的 <strong>链表</strong> 中。这个链表，其实是所有网卡共享的，上面挂着发给本机的各种消息。消息被发送到这个链表后，会再触发一个 <strong>软中断</strong>。</p>
+<p>专门处理软中断的工具人&rdquo;<strong>ksoftirqd</strong>&quot; （这是个<strong>内核线程</strong>），它在收到软中断后就会立马去链表里把消息取出，然后顺着数据链路层、网络层等层层往上传递最后给到应用程序。</p>
+<p><strong>之所以把 127.0.0.1 叫本地回环地址，可以理解为，消息发出到这个地址上的话，就不会出网络，而是在本机打个转就又回来了</strong>。所以即便断网，也依然能 <code>ping</code> 通 <code>127.0.0.1</code>。</p>
 <p>以上内容摘自：</p>
 <p>硬核图解！断网了，还能ping通 127.0.0.1 吗？为什么？https://www.eet-china.com/mp/a67490.html</p>
 <blockquote>
@@ -421,7 +421,7 @@
 <p><a href="https://www.zhihu.com/question/43590414">https://www.zhihu.com/question/43590414</a></p>
 </blockquote>
 <h1 id="localhost">localhost</h1>
-<p>localhost是个 <strong>域名</strong> ，而不是一个 ip 地址。之所以我们经常把 localhost 与 127.0.0.1 认为是同一个东西，是因为我们使用的大多数电脑上都将 localhost 指向了127.0.0.1这个地址，在 linux 中这个文件的位置是 /etc/hosts ：</p>
+<p>localhost是个 <strong>域名</strong> ，而不是一个 ip 地址。之所以我们经常把 localhost 与 127.0.0.1 认为是同一个东西，是因为我们使用的大多数电脑上都将 localhost 指向了 127.0.0.1 这个地址，在 linux 中这个文件的位置是 /etc/hosts ：</p>
 <pre><code class="language-shell">$ cat /etc/hosts
 # Your system has configured 'manage_etc_hosts' as True.
 # As a result, if you wish for changes to this file to persist
@@ -676,7 +676,7 @@ nc: connectx to 192.168.64.9 port 8080 (tcp) failed: Connection refused
     </main>
     <footer class="pl-scrollbar">
       <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
-    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a>
  &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
 </div></div>
     </footer>

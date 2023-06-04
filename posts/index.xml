@@ -6,9 +6,46 @@
     <description>Recent content in 文章 on /dev/null</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Fri, 21 Apr 2023 00:10:31 +0800</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 27 May 2023 11:51:13 +0800</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Istio Bookinfo</title>
+      <link>/posts/istio-bookinfo/</link>
+      <pubDate>Sat, 27 May 2023 11:51:13 +0800</pubDate>
+      
+      <guid>/posts/istio-bookinfo/</guid>
+      <description>前言 Bookinfo 是 istio 官方提供的一个演示应用，并且官方也给出了详细的功能描述：</description>
+    </item>
+    
+    <item>
+      <title>使用 Multipass 快速搭建虚拟机</title>
+      <link>/posts/multipass-create-vm-so-easy/</link>
+      <pubDate>Fri, 19 May 2023 22:23:10 +0800</pubDate>
+      
+      <guid>/posts/multipass-create-vm-so-easy/</guid>
+      <description>之前搭建 k8s 集群一直使用的是 Vmware，虽然总的来说用起来还算 OK，但是总感觉比较重，安装系统什么的也比较耗时（后来发现可以先创建好一台，然后克隆），加上 k8s 老被我搞坏，每次搞坏又都要重新创建集群（貌似可以做一个快照），搞得有点烦，就想看看有没有什么别的虚机工具，能够方便且快速的搭建虚机，最好还能支持命令行操作，找来找去，最终还是找到了之前用过的老朋友 multipass</description>
+    </item>
+    
+    <item>
+      <title>k8s loadbalancer —— Metallb [draft] </title>
+      <link>/posts/metallb/</link>
+      <pubDate>Mon, 08 May 2023 20:37:53 +0800</pubDate>
+      
+      <guid>/posts/metallb/</guid>
+      <description>安装（Layer2 模式） 首先需要查看你的 kube-proxy 使用的是不是 ipvs 模式，执行下面的命令：</description>
+    </item>
+    
+    <item>
+      <title>Chatgpt Q&amp;A</title>
+      <link>/posts/chatgpt-qa/</link>
+      <pubDate>Sun, 07 May 2023 16:57:44 +0800</pubDate>
+      
+      <guid>/posts/chatgpt-qa/</guid>
+      <description>这个文档记录了 chatGPT 的一些有帮助的回答。
+网络 为什么网络协议栈要分层？不能直接把应用层的东西一起放到传输层吗 网络协议栈之所以要分层，主要是为了提高网络协议的可维护性、可扩展性、互操作性以及灵活性。</description>
+    </item>
+    
     <item>
       <title>Controller-Runtime 之 Source </title>
       <link>/posts/controller-runtime-source/</link>
@@ -24,7 +61,7 @@
       <pubDate>Tue, 18 Apr 2023 21:51:28 +0800</pubDate>
       
       <guid>/posts/k8s-storageclass/</guid>
-      <description>搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir /share # 编辑配置 sudo vim /etc/exports # 在最后一行添加 /share *(rw,sync,no_root_squash,no_subtree_check) /share *(rw,sync,no_root_squash,no_subtree_check)</description>
+      <description>搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir /share # 编辑配置 sudo vim /etc/exports # 在最后一行添加 /share *(rw,sync,no_root_squash,no_subtree_check) 修改完成后，:wq 保存，然后执行 exportfs -rav 命令使配置生效，不然客户端挂载 NFS 会报错无权限。</description>
     </item>
     
     <item>
@@ -404,9 +441,8 @@ package main import ( &amp;quot;log&amp;quot; .</description>
       <pubDate>Mon, 16 May 2022 10:53:35 +0000</pubDate>
       
       <guid>/posts/iptables/</guid>
-      <description>参考：
-https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2
-规则相关命令 查看规则 # 查看 filter 表的所有规则，-t 后面跟表名 $ iptables -t filter -L # 查看 raw 表的所有规则 $ iptables -t raw -L # 查看 filter 表（-t 缺省时，默认为 filter 表）的 INPUT 链上的所有规则 $ iptables -L INPUT # 加 -v 可以输出更详细的信息 $ iptables -vL INPUT # 加 -n 会直接输出 IP 地址，不加的话会继续转换，比如 0.</description>
+      <description>文档状态：Draft
+链，表和规则 规则 顾名思义，规则就是针对网络包的不同 行为，做出对应的 处理操作，比如如果我收到的网络包的 IP 是 xx.</description>
     </item>
     
     <item>

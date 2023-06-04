@@ -70,12 +70,12 @@
 <script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
   integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
 <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135903670-1"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-80J26VFWFL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag() { dataLayer.push(arguments); }
   gtag('js', new Date());
-  gtag('config', 'UA-135903670-1');
+  gtag('config', 'G-80J26VFWFL');
 </script>
 
 <meta name="referrer" content="no-referrer" />
@@ -197,93 +197,93 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
+            "name": "rabbitmq 学习笔记",
+            "description": "本笔记主要记录 go rabbitmq 库的使用示例，同时结合学习 rabbitmq",
+            "url": "/posts/go-rabbitmq/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "TLS 握手流程",
+            "description": "注：以下内容引用自 cloudflare 学习中心\nTLS 握手有哪些步骤？ TLS 握手是由客户端和服务器交换的一系列数据报或消息。TLS 握手涉及多个步骤，因为客户端和服务器要交换完成握手和进行进一步对话所需的信息。",
+            "url": "/posts/tls_wo_shou/"
+        },{
+            "@type":"ListItem",
+            "position":  3 ,
+            "name": "输入 url 到浏览器显示网页，期间发生了什么？（未完）",
+            "description": "从请求 URL 中获取请求域名，通过 DNS 获取域名对应的 IP 地址",
+            "url": "/posts/url_dao_xian_shi_wang_ye_fa_shen_le_shen_me/"
+        },{
+            "@type":"ListItem",
+            "position":  4 ,
+            "name": "go mutex 原理",
+            "description": "参考： https://www.bilibili.com/video/BV15V411n7fM?p=2\u0026amp;spm_id_from=pageDriver\u0026amp;vd_source=2ff613424b86c58a71ba91b7304ffe9b\n总览 mutex 的数据结构：",
+            "url": "/posts/go-mutex-yuan-ma/"
+        },{
+            "@type":"ListItem",
+            "position":  5 ,
             "name": "go chan 原理（人话版）",
             "description": "chan 原理（人话版） 说明：这里只是用大白话来阐述 chan 的大致原理，不保证严谨性，也不考虑一些繁枝细节（比如 sudog，gopark，goready），仅作为一个简单的参考理解，如果想深入理解 chan 的底层实现，请自行参阅其他博客",
             "url": "/posts/go-chan-yuan-ma/"
         },{
             "@type":"ListItem",
-            "position":  2 ,
+            "position":  6 ,
             "name": "127.0.0.1，localhost，0.0.0.0 的区别（包含虚拟网卡相关操作）",
             "description": "127.0.0.1 127.0.0.1 是 回环地址，当报文的目的地址是回环地址时，依然会走一遍网络协议栈，但是不会经过物理网卡，而是经过一个名为 lo 的虚拟网卡（mac 上交 lo0），具体的流程是：",
             "url": "/posts/127.0.0.1_localhost_0.0.0.0/"
         },{
             "@type":"ListItem",
-            "position":  3 ,
+            "position":  7 ,
             "name": "go 熔断器 gobreaker 源码阅读",
             "description": "该文章仅作为本人笔记，不具备太大的参考价值\n该文章着重记录源码，没有对熔断器这一概念做过多理念上的说明解释\n该文章排版、思路较为混乱，后续可能会进行修改\n示例 官方示例 官方示例有点太简单了，完全无法体会到 熔断 这一概念",
             "url": "/posts/gobreaker/"
         },{
             "@type":"ListItem",
-            "position":  4 ,
+            "position":  8 ,
             "name": "go 文件操作的\"坑\"之 Seek()",
             "description": "引子 最近买了块机械硬盘作为仓库盘，用硬盘盒连接到 mac，但是这块硬盘貌似有休眠机制（不确定），如果一段时间没有读写操作就会停转，等到需要操作时才会唤醒，唤醒会有比较明显的磁盘启动声音，并且需要等待 5s 左右才能使用。",
             "url": "/posts/go_seek/"
         },{
             "@type":"ListItem",
-            "position":  5 ,
+            "position":  9 ,
             "name": "k8s ConfigMap",
             "description": "说明：文章的部分地方会用 cm 来指代 ConfigMap",
             "url": "/posts/k8s-configmap/"
         },{
             "@type":"ListItem",
-            "position":  6 ,
+            "position":  10 ,
             "name": "go gc 白话版",
             "description": "主流的垃圾回收算法 引用计数法 根据对象自身的引用计数来回收，当引用计数归零时进行回收，但是计数频繁更新会带来更多开销，且无法解决循环引用的问题。\n优点：简单直接，回收速度快 缺点：需要额外的空间存放计数，无法处理循环引用的情况； 标记清除法 标记出所有不需要回收的对象，在标记完成后统一回收掉所有未被标记的对象。",
             "url": "/posts/go-gc/"
         },{
             "@type":"ListItem",
-            "position":  7 ,
+            "position":  11 ,
             "name": "k8s namespace",
             "description": "简介 Namespace 是对一组资源和对象的抽象集合，比如可以用来将系统内部的对象划分为不同的项目组或用户组。常见的 pods, services, replication controllers 和 deployments 等都是属于某一个 namespace 的（默认是default），而 node, persistentVolumes 等则不属于任何 namespace。",
             "url": "/posts/k8s-namespace/"
         },{
             "@type":"ListItem",
-            "position":  8 ,
+            "position":  12 ,
             "name": "Go errgroup 使用",
             "description": "简介 errgroup 是 WaitGroup 的强化版，其在 WaitGroup 的基础上添加了错误处理的功能：如果一组 goroutine 中的某一个发生了错误，那么后续的所有 gorouine 都不会被执行。",
             "url": "/posts/errgroup/"
         },{
             "@type":"ListItem",
-            "position":  9 ,
+            "position":  13 ,
             "name": "kqueue",
             "description": "一个 echo server 示例：\npackage main import ( \u0026quot;log\u0026quot; .",
             "url": "/posts/kqueue/"
         },{
             "@type":"ListItem",
-            "position":  10 ,
+            "position":  14 ,
             "name": "k8s 卷",
             "description": "为什么需要卷 pod 类似逻辑主机，在逻辑主机中运行的进程共享诸如 CPU、RAM、网络接口等资源。有时候人们会期望进程也能共享磁盘，但是因为 pod 中运行的是一个个容器，而每个容器都有自己独立的文件系统（因为文件系统来自于容器镜像），所以不能共享磁盘。有时候可能存在这样一种需求：pod 中某个容器存储的数据需要持久化，但是因为容器存在挂掉的可能，如果挂掉后会新创建一个 pod 来顶替，但是因为 pod 因为无法共享磁盘，导致无法继承先前 pod 里存储的数据，先前的那部分数据就永久丢失了。",
             "url": "/posts/k8s-juan/"
         },{
             "@type":"ListItem",
-            "position":  11 ,
+            "position":  15 ,
             "name": "在 mac 上制作 windows10 启动盘，亲测可用",
             "description": "来源：https://chinese.freecodecamp.org/news/how-make-a-windows-10-usb-using-your-mac-build-a-bootable-iso-from-your-macs-terminal/\n准备 windows iso 文件 一个大小至少 8G 的 U 盘 mac 上安装好 homebrew 步骤 1 查看 U 盘的名称：",
             "url": "/posts/mac-shang-zhi-zuo-windows/"
-        },{
-            "@type":"ListItem",
-            "position":  12 ,
-            "name": "linux iptables",
-            "description": "参考：\nhttps://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2\n规则相关命令 查看规则 # 查看 filter 表的所有规则，-t 后面跟表名 $ iptables -t filter -L # 查看 raw 表的所有规则 $ iptables -t raw -L # 查看 filter 表（-t 缺省时，默认为 filter 表）的 INPUT 链上的所有规则 $ iptables -L INPUT # 加 -v 可以输出更详细的信息 $ iptables -vL INPUT # 加 -n 会直接输出 IP 地址，不加的话会继续转换，比如 0.",
-            "url": "/posts/iptables/"
-        },{
-            "@type":"ListItem",
-            "position":  13 ,
-            "name": "k8s Deployment",
-            "description": "deplopyment 用于 pod 的更新相关操作。\n如何更新 pod 更新是一个非常常见的场景，比如：当前 pod 运行的是某个 v1 版本的镜像，一个月后该镜像发布了 v2 版本，此时想将所有的 pod 更新到 v2 版本，该怎么做呢？",
-            "url": "/posts/k8s-deployment/"
-        },{
-            "@type":"ListItem",
-            "position":  14 ,
-            "name": "一段莫名阻塞的 reflect 代码",
-            "description": "package main import ( \u0026quot;fmt\u0026quot; \u0026quot;reflect\u0026quot; ) type I interface { Do() } type S struct{} func (s *S) Do() {} func EnforcePtr(obj interface{}) { v := reflect.",
-            "url": "/posts/block-code/"
-        },{
-            "@type":"ListItem",
-            "position":  15 ,
-            "name": "ssh 输入卡顿",
-            "description": "ssh 到家里的另外一台电脑，发现输入延迟比较严重，体验不是很好，ping 发现延迟普遍在 100 -200 之间，有几次甚至超过了 400，在网上找到了一个解决方法：",
-            "url": "/posts/ssh-shu-ru-qia-dun/"
         }
     ]
 }
@@ -318,7 +318,7 @@
 
 
 
-<meta property="og:updated_time" content="2023-04-21T00:10:31&#43;08:00" />
+<meta property="og:updated_time" content="2023-05-27T11:51:13&#43;08:00" />
 
 
 
@@ -426,6 +426,172 @@
 
   <div class="bg-secondary-bg rounded px-6">
     <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/go-rabbitmq/" class="no-underline">
+    <h3 class="mt-0">rabbitmq 学习笔记</h3>
+  </a>
+  
+    本笔记主要记录 go rabbitmq 库的使用示例，同时结合学习 rabbitmq
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-07-14</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>8分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/tls_wo_shou/" class="no-underline">
+    <h3 class="mt-0">TLS 握手流程</h3>
+  </a>
+  
+    注：以下内容引用自 cloudflare 学习中心
+TLS 握手有哪些步骤？ TLS 握手是由客户端和服务器交换的一系列数据报或消息。TLS 握手涉及多个步骤，因为客户端和服务器要交换完成握手和进行进一步对话所需的信息。
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-07-14</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>1分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/url_dao_xian_shi_wang_ye_fa_shen_le_shen_me/" class="no-underline">
+    <h3 class="mt-0">输入 url 到浏览器显示网页，期间发生了什么？（未完）</h3>
+  </a>
+  
+    从请求 URL 中获取请求域名，通过 DNS 获取域名对应的 IP 地址
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-07-14</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>1分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/go-mutex-yuan-ma/" class="no-underline">
+    <h3 class="mt-0">go mutex 原理</h3>
+  </a>
+  
+    参考： https://www.bilibili.com/video/BV15V411n7fM?p=2&amp;spm_id_from=pageDriver&amp;vd_source=2ff613424b86c58a71ba91b7304ffe9b
+总览 mutex 的数据结构：
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-07-12</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>1分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
   
   <div class="py-6">
     <div class="flex flex-col-reverse lg:flex-row justify-between">
@@ -884,173 +1050,6 @@ package main import ( &#34;log&#34; .
 </div>
   </div>
   
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/iptables/" class="no-underline">
-    <h3 class="mt-0">linux iptables</h3>
-  </a>
-  
-    参考：
-https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2
-规则相关命令 查看规则 # 查看 filter 表的所有规则，-t 后面跟表名 $ iptables -t filter -L # 查看 raw 表的所有规则 $ iptables -t raw -L # 查看 filter 表（-t 缺省时，默认为 filter 表）的 INPUT 链上的所有规则 $ iptables -L INPUT # 加 -v 可以输出更详细的信息 $ iptables -vL INPUT # 加 -n 会直接输出 IP 地址，不加的话会继续转换，比如 0.
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2022-05-16</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>5分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/k8s-deployment/" class="no-underline">
-    <h3 class="mt-0">k8s Deployment</h3>
-  </a>
-  
-    deplopyment 用于 pod 的更新相关操作。
-如何更新 pod 更新是一个非常常见的场景，比如：当前 pod 运行的是某个 v1 版本的镜像，一个月后该镜像发布了 v2 版本，此时想将所有的 pod 更新到 v2 版本，该怎么做呢？
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2022-05-13</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>12分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/block-code/" class="no-underline">
-    <h3 class="mt-0">一段莫名阻塞的 reflect 代码</h3>
-  </a>
-  
-    package main import ( &#34;fmt&#34; &#34;reflect&#34; ) type I interface { Do() } type S struct{} func (s *S) Do() {} func EnforcePtr(obj interface{}) { v := reflect.
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2022-05-13</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>1分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/ssh-shu-ru-qia-dun/" class="no-underline">
-    <h3 class="mt-0">ssh 输入卡顿</h3>
-  </a>
-  
-    ssh 到家里的另外一台电脑，发现输入延迟比较严重，体验不是很好，ping 发现延迟普遍在 100 -200 之间，有几次甚至超过了 400，在网上找到了一个解决方法：
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2022-05-11</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>1分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
 </div>
 
 
@@ -1092,7 +1091,7 @@ https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/
     </main>
     <footer class="pl-scrollbar">
       <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
-    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a> 
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a>
  &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
 </div></div>
     </footer>

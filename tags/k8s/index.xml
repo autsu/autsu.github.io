@@ -6,9 +6,18 @@
     <description>Recent content in k8s on /dev/null</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt; 
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Fri, 21 Apr 2023 00:10:31 +0800</lastBuildDate><atom:link href="/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 08 May 2023 20:37:53 +0800</lastBuildDate><atom:link href="/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>k8s loadbalancer —— Metallb [draft] </title>
+      <link>/posts/metallb/</link>
+      <pubDate>Mon, 08 May 2023 20:37:53 +0800</pubDate>
+      
+      <guid>/posts/metallb/</guid>
+      <description>安装（Layer2 模式） 首先需要查看你的 kube-proxy 使用的是不是 ipvs 模式，执行下面的命令：</description>
+    </item>
+    
     <item>
       <title>Controller-Runtime 之 Source </title>
       <link>/posts/controller-runtime-source/</link>
@@ -24,7 +33,7 @@
       <pubDate>Tue, 18 Apr 2023 21:51:28 +0800</pubDate>
       
       <guid>/posts/k8s-storageclass/</guid>
-      <description>搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir /share # 编辑配置 sudo vim /etc/exports # 在最后一行添加 /share *(rw,sync,no_root_squash,no_subtree_check) /share *(rw,sync,no_root_squash,no_subtree_check)</description>
+      <description>搭建 NFS StorageClass 搭建 NFS Server # 安装 NFS 服务端 sudo apt-get install nfs-kernel-server # 创建一个 dir 作为 NFS 共享目录 mkdir /share # 编辑配置 sudo vim /etc/exports # 在最后一行添加 /share *(rw,sync,no_root_squash,no_subtree_check) 修改完成后，:wq 保存，然后执行 exportfs -rav 命令使配置生效，不然客户端挂载 NFS 会报错无权限。</description>
     </item>
     
     <item>

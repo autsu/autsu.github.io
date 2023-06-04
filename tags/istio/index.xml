@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>istio on /dev/null</title>
+    <link>/tags/istio/</link>
+    <description>Recent content in istio on /dev/null</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt;
+</copyright>
+    <lastBuildDate>Sat, 27 May 2023 11:51:13 +0800</lastBuildDate><atom:link href="/tags/istio/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Istio Bookinfo</title>
+      <link>/posts/istio-bookinfo/</link>
+      <pubDate>Sat, 27 May 2023 11:51:13 +0800</pubDate>
+      
+      <guid>/posts/istio-bookinfo/</guid>
+      <description>前言 Bookinfo 是 istio 官方提供的一个演示应用，并且官方也给出了详细的功能描述：</description>
+    </item>
+    
+  </channel>
+</rss>

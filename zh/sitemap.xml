@@ -5,7 +5,7 @@
     <loc>/authors/void/</loc>
   </url><url>
     <loc>/</loc>
-    <lastmod>2023-04-21T00:10:31+08:00</lastmod>
+    <lastmod>2023-05-27T11:51:13+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
@@ -17,17 +17,14 @@
                 href="/"
                 />
   </url><url>
-    <loc>/tags/controller-runtime/</loc>
-    <lastmod>2023-04-21T00:10:31+08:00</lastmod>
+    <loc>/tags/istio/</loc>
+    <lastmod>2023-05-27T11:51:13+08:00</lastmod>
   </url><url>
-    <loc>/posts/controller-runtime-source/</loc>
-    <lastmod>2023-04-21T00:10:31+08:00</lastmod>
-  </url><url>
-    <loc>/tags/k8s/</loc>
-    <lastmod>2023-04-21T00:10:31+08:00</lastmod>
+    <loc>/posts/istio-bookinfo/</loc>
+    <lastmod>2023-05-27T11:51:13+08:00</lastmod>
   </url><url>
     <loc>/tags/</loc>
-    <lastmod>2023-04-21T00:10:31+08:00</lastmod>
+    <lastmod>2023-05-27T11:51:13+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
@@ -40,6 +37,33 @@
                 />
   </url><url>
     <loc>/posts/</loc>
+    <lastmod>2023-05-27T11:51:13+08:00</lastmod>
+  </url><url>
+    <loc>/tags/multipass/</loc>
+    <lastmod>2023-05-19T22:23:10+08:00</lastmod>
+  </url><url>
+    <loc>/posts/multipass-create-vm-so-easy/</loc>
+    <lastmod>2023-05-19T22:23:10+08:00</lastmod>
+  </url><url>
+    <loc>/tags/k8s/</loc>
+    <lastmod>2023-05-08T20:37:53+08:00</lastmod>
+  </url><url>
+    <loc>/posts/metallb/</loc>
+    <lastmod>2023-05-08T20:37:53+08:00</lastmod>
+  </url><url>
+    <loc>/tags/loadbalancer/</loc>
+    <lastmod>2023-05-08T20:37:53+08:00</lastmod>
+  </url><url>
+    <loc>/tags/chatgpt/</loc>
+    <lastmod>2023-05-07T16:57:44+08:00</lastmod>
+  </url><url>
+    <loc>/posts/chatgpt-qa/</loc>
+    <lastmod>2023-05-07T16:57:44+08:00</lastmod>
+  </url><url>
+    <loc>/tags/controller-runtime/</loc>
+    <lastmod>2023-04-21T00:10:31+08:00</lastmod>
+  </url><url>
+    <loc>/posts/controller-runtime-source/</loc>
     <lastmod>2023-04-21T00:10:31+08:00</lastmod>
   </url><url>
     <loc>/posts/k8s-storageclass/</loc>
@@ -250,9 +274,6 @@
     <lastmod>2022-05-08T15:46:11+00:00</lastmod>
   </url><url>
     <loc>/posts/k8s-service/</loc>
-    <lastmod>2022-05-08T15:46:11+00:00</lastmod>
-  </url><url>
-    <loc>/tags/multipass/</loc>
     <lastmod>2022-05-08T15:46:11+00:00</lastmod>
   </url><url>
     <loc>/posts/multipass-xiu-gai-pei-zhi/</loc>

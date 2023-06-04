@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html
+  lang="zh"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>Istio Bookinfo | /dev/null</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/atom-one-dark.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/python.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="/js/fontawesome.min.7ecdf591e18d9b7d9a9acfee01f5545be9b15d3fb9a6235fc83f0f7b48df77c7d3fd123037395d75224bf17af86143c1.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-80J26VFWFL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-80J26VFWFL');
+</script>
+
+<meta name="referrer" content="no-referrer" />
+<style>
+    .search-container {
+    margin-top: -0.3rem;
+    }
+    .search-container .search {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    }
+    .search-container input {
+    padding-left: 1rem;
+    line-height: 2rem;
+    outline: none;
+    background: transparent;
+    }
+    .search-container button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    color: #e2e8f0;
+    }
+
+     
+    .categories-card {
+    margin: 0 auto;
+     
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    line-height: 1.6rem;
+    }
+
+    .categories-card .card-item {
+    font-size: .875rem;
+    text-align: left;
+    width: 45%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 2rem;
+    min-height: 10rem;
+    padding: 0 2%;
+    position: relative;
+    }
+
+    .categories-card .card-item .card-item-wrapper {
+    width: 100%;
+    overflow: hidden;
+    }
+
+    .categories-card .card-item .card-item-wrapper .card-item-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: .75rem;
+    }
+
+    .categories-card .card-item .card-item-wrapper span {
+    float: right;
+    padding-right: 1rem;
+    }
+
+    .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: .25rem 0 .25rem 1.5rem;
+    }
+
+    .more-post {
+    text-align: right;
+    }
+    .tag-cloud-tags {
+    margin: 10px 0;
+    }
+
+    .tag-cloud-tags a {
+    display: inline-block;
+    position: relative;
+    margin: 5px 10px;
+    }
+    
+    .archive .single-title {
+    text-align: right;
+    }
+
+    .archive .group-title {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    .archive .archive-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0.25rem 0 0.25rem 1.5rem;
+    }
+     
+
+</style>
+<script src="/fontawesome/js/all.min.js"></script>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="前言 Bookinfo 是 istio 官方提供的一个演示应用，并且官方也给出了详细的功能描述：">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"文章",
+      "item":"/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Istio Bookinfo",
+      "item":"/posts/istio-bookinfo/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/posts/istio-bookinfo/"
+    },
+    "headline": "Istio Bookinfo | \/dev\/null","datePublished": "2023-05-27T11:51:13+08:00",
+    "dateModified": "2023-05-27T11:51:13+08:00",
+    "wordCount":  1315 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "void",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "/images/icon.png"
+        }
+        },
+    "description": "前言 Bookinfo 是 istio 官方提供的一个演示应用，并且官方也给出了详细的功能描述："
+}
+</script><meta property="og:title" content="Istio Bookinfo | /dev/null" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="/images/icon.png">
+
+
+<meta property="og:url" content="/posts/istio-bookinfo/" />
+
+
+
+
+<meta property="og:description" content="前言 Bookinfo 是 istio 官方提供的一个演示应用，并且官方也给出了详细的功能描述：" />
+
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+
+<meta property="og:site_name" content="/dev/null" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2023-05-27T11:51:13&#43;08:00" />
+
+
+<meta property="article:modified_time" content="2023-05-27T11:51:13&#43;08:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="istio" />
+
+
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">/dev/null</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">关于</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">文章</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">标签</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">分类</a>
+            <a href="/archive/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">归档</a>
+        </div>
+
+        <div class="flex">
+            
+            <div class="search-container relative pt-4 md:pt-0">
+                <div class="search">
+                    <form role="search" class="search-form" action="/search" method="get">
+                    <label>
+                        <input name="q" type="text" placeholder="搜索 ..." class="search-field">
+                    </label>
+                    <button>
+                        <i class="fas fa-search"></i>
+                    </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="relative pt-4 md:pt-0" style="margin-left: 1rem">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">Istio Bookinfo</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-05-27</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>7分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h1 id="前言">前言</h1>
+<p>Bookinfo 是 istio 官方提供的一个演示应用，并且官方也给出了详细的功能描述：</p>
+<blockquote>
+<p>这个应用模仿在线书店的一个分类，显示一本书的信息。 页面上会显示一本书的描述，书籍的细节（ISBN、页数等），以及关于这本书的一些评论。</p>
+<p>Bookinfo 应用分为四个单独的微服务：</p>
+<ul>
+<li><code>productpage</code>. 这个微服务会调用 <code>details</code> 和 <code>reviews</code> 两个微服务，用来生成页面。</li>
+<li><code>details</code>. 这个微服务中包含了书籍的信息。</li>
+<li><code>reviews</code>. 这个微服务中包含了书籍相关的评论。它还会调用 <code>ratings</code> 微服务。</li>
+<li><code>ratings</code>. 这个微服务中包含了由书籍评价组成的评级信息。</li>
+</ul>
+<p><code>reviews</code> 微服务有 3 个版本：</p>
+<ul>
+<li>v1 版本不会调用 <code>ratings</code> 服务。</li>
+<li>v2 版本会调用 <code>ratings</code> 服务，并使用 1 到 5 个黑色星形图标来显示评分信息。</li>
+<li>v3 版本会调用 <code>ratings</code> 服务，并使用 1 到 5 个红色星形图标来显示评分信息。</li>
+</ul>
+</blockquote>
+<p>我们可以通过 bookinfo 了解到 istio 的</p>
+<p>首先看看创建 bookinfo 用到的几个 yaml 文件</p>
+<h2 id="bookinfoyaml">bookinfo.yaml</h2>
+<p>这个 yaml 定义了一些 bookinfo 相关的 Deploy，Service，ServiceAccount，没什么好说的</p>
+<pre><code class="language-yaml"># Copyright Istio Authors
+#
+#   Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+##################################################################################################
+# This file defines the services, service accounts, and deployments for the Bookinfo sample.
+#
+# To apply all 4 Bookinfo services, their corresponding service accounts, and deployments:
+#
+#   kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+#
+# Alternatively, you can deploy any resource separately:
+#
+#   kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml -l service=reviews # reviews Service
+#   kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml -l account=reviews # reviews ServiceAccount
+#   kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml -l app=reviews,version=v3 # reviews-v3 Deployment
+##################################################################################################
+
+##################################################################################################
+# Details service
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: details
+  labels:
+    app: details
+    service: details
+spec:
+  ports:
+  - port: 9080
+    name: http
+  selector:
+    app: details
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: bookinfo-details
+  labels:
+    account: details
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: details-v1
+  labels:
+    app: details
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: details
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: details
+        version: v1
+    spec:
+      serviceAccountName: bookinfo-details
+      containers:
+      - name: details
+        image: docker.io/istio/examples-bookinfo-details-v1:1.17.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9080
+        securityContext:
+          runAsUser: 1000
+---
+##################################################################################################
+# Ratings service
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: ratings
+  labels:
+    app: ratings
+    service: ratings
+spec:
+  ports:
+  - port: 9080
+    name: http
+  selector:
+    app: ratings
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: bookinfo-ratings
+  labels:
+    account: ratings
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ratings-v1
+  labels:
+    app: ratings
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ratings
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: ratings
+        version: v1
+    spec:
+      serviceAccountName: bookinfo-ratings
+      containers:
+      - name: ratings
+        image: docker.io/istio/examples-bookinfo-ratings-v1:1.17.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9080
+        securityContext:
+          runAsUser: 1000
+---
+##################################################################################################
+# Reviews service
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: reviews
+  labels:
+    app: reviews
+    service: reviews
+spec:
+  ports:
+  - port: 9080
+    name: http
+  selector:
+    app: reviews
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: bookinfo-reviews
+  labels:
+    account: reviews
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reviews-v1
+  labels:
+    app: reviews
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reviews
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: reviews
+        version: v1
+    spec:
+      serviceAccountName: bookinfo-reviews
+      containers:
+      - name: reviews
+        image: docker.io/istio/examples-bookinfo-reviews-v1:1.17.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: LOG_DIR
+          value: &quot;/tmp/logs&quot;
+        ports:
+        - containerPort: 9080
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: wlp-output
+          mountPath: /opt/ibm/wlp/output
+        securityContext:
+          runAsUser: 1000
+      volumes:
+      - name: wlp-output
+        emptyDir: {}
+      - name: tmp
+        emptyDir: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reviews-v2
+  labels:
+    app: reviews
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reviews
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: reviews
+        version: v2
+    spec:
+      serviceAccountName: bookinfo-reviews
+      containers:
+      - name: reviews
+        image: docker.io/istio/examples-bookinfo-reviews-v2:1.17.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: LOG_DIR
+          value: &quot;/tmp/logs&quot;
+        ports:
+        - containerPort: 9080
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: wlp-output
+          mountPath: /opt/ibm/wlp/output
+        securityContext:
+          runAsUser: 1000
+      volumes:
+      - name: wlp-output
+        emptyDir: {}
+      - name: tmp
+        emptyDir: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reviews-v3
+  labels:
+    app: reviews
+    version: v3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reviews
+      version: v3
+  template:
+    metadata:
+      labels:
+        app: reviews
+        version: v3
+    spec:
+      serviceAccountName: bookinfo-reviews
+      containers:
+      - name: reviews
+        image: docker.io/istio/examples-bookinfo-reviews-v3:1.17.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: LOG_DIR
+          value: &quot;/tmp/logs&quot;
+        ports:
+        - containerPort: 9080
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: wlp-output
+          mountPath: /opt/ibm/wlp/output
+        securityContext:
+          runAsUser: 1000
+      volumes:
+      - name: wlp-output
+        emptyDir: {}
+      - name: tmp
+        emptyDir: {}
+---
+##################################################################################################
+# Productpage services
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: productpage
+  labels:
+    app: productpage
+    service: productpage
+spec:
+  ports:
+  - port: 9080
+    name: http
+  selector:
+    app: productpage
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: bookinfo-productpage
+  labels:
+    account: productpage
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productpage-v1
+  labels:
+    app: productpage
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productpage
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: productpage
+        version: v1
+    spec:
+      serviceAccountName: bookinfo-productpage
+      containers:
+      - name: productpage
+        image: docker.io/istio/examples-bookinfo-productpage-v1:1.17.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9080
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        securityContext:
+          runAsUser: 1000
+      volumes:
+      - name: tmp
+        emptyDir: {}
+---
+
+</code></pre>
+<h2 id="bookinfo-gatewayyaml">bookinfo-gateway.yaml</h2>
+<pre><code class="language-yaml">apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: bookinfo-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - &quot;*&quot;
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: bookinfo
+spec:
+  hosts:
+  - &quot;*&quot;
+  gateways:
+  - bookinfo-gateway
+  http:
+  - match:
+    - uri:
+        exact: /productpage
+    - uri:
+        prefix: /static
+    - uri:
+        exact: /login
+    - uri:
+        exact: /logout
+    - uri:
+        prefix: /api/v1/products
+    route:
+    - destination:
+        host: productpage
+        port:
+          number: 9080
+
+</code></pre>
+<p>这个 yaml 里面包括了<code>Gateway</code> （注意是其 apiVersion 是 istio，不是 k8s 原生的 Gateway 资源 ）和 <code>VirtualService</code> 两种资源，下面来简单说明一下这两个资源。</p>
+<h3 id="gateway">Gateway</h3>
+<p><code>Gateway</code> 在网格边缘接收外部访问，并将流量转发到网格内的服务。<code>Gateway</code> 一般需要和 <code>VirtualService</code> 配合使用，其中 <code>Gateway</code> 定义了服务怎样从外面访问，而 <code>VirtualService</code> 定义了请求进入到内部后，其流量如何流转。</p>
+<p>在这个 yaml 里，<code>Gateway</code> 包含了 <code>selector</code> 和 <code>servers</code> 两个字段，下面对这两个字段的作用进行一下记录。</p>
+<h4 id="selector">selector</h4>
+<p>Gateway 的  <code>spec.selector</code> 字段用于指定入口处运行了 Envoy 的 Pod，这些 Pod 会执行 Gateway 定义的规则。在 bookinfo 里指定的是<code>istio: ingressgateway</code> ，即所有拥有 <code>istio: ingressgateway</code> label 的 Pod。这些 Pod 由 istio-system namespace 下的名为  istio-ingressgateway 的 Deploy 创建，可以看一下这个 Deploy 的定义：</p>
+<pre><code class="language-shell">k describe -n istio-system deploy istio-ingressgateway
+
+spec:
+  template:
+    metadata:
+    # .... 省略
+      labels:
+        app: istio-ingressgateway
+        istio: ingressgateway # 这里
+    spec:
+      image: docker.io/istio/proxyv2:1.17.2
+      imagePullPolicy: IfNotPresent
+      name: istio-proxy
+</code></pre>
+<p>可以看到在 label 这里定义了这个 <code>istio: ingressgateway</code> label，同时还注意到其使用的镜像是 <code>docker.io/istio/proxyv2:1.17.2</code>，<code>docker.io/istio/proxyv2</code> 是 Istio 中的 Envoy 代理镜像，表明其创建的 Pod 运行的都是 Envoy，用于接收外部请求并将其转发到 Istio 网格中的适当服务。</p>
+<h4 id="servers">servers</h4>
+<p>TODO：spec.servers</p>
+<p>TODO：Gateway 貌似需要通过定义一个 service 来进行访问，验证这个猜想</p>
+<p>发现在 istio-system 命名空间下有一个 istio-ingressgateway service，貌似是安装 istio 后自动创建的？不太清楚，并且监听了这些端口</p>
+<pre><code>15021/TCP,80/TCP,443/TCP,31400/TCP,15443/TCP
+</code></pre>
+<pre><code class="language-yaml">k describe svc -n istio-system                   istio-ingressgateway
+Name:                     istio-ingressgateway
+Namespace:                istio-system
+Labels:                   app=istio-ingressgateway
+                          install.operator.istio.io/owning-resource=unknown
+                          install.operator.istio.io/owning-resource-namespace=istio-system
+                          istio=ingressgateway # 注意这里？代理了 ingress Envoy pod ？
+</code></pre>
+<h3 id="virtualservice">VirtualService</h3>
+<p><code>VirtualService</code> 定义了对特定目标服务的一组流量规则，即满足什么条件的流量被哪个后端处理。</p>
+<p>先来看看 <code>VirtualService</code> 有哪些字段</p>
+<h4 id="hosts">hosts</h4>
+<p>这里的 hosts 定义貌似和 Gateway 中某个 servers 中定义的 Host 有关系，会判断二者的 hosts 是否匹配，如果匹配，则代表当你访问该 Gateway servers 时，会进一步走 VirtualService 定义的流量规则，为了验证这个猜想是否正确，可以手动实践一下：</p>
+<p>首先需要在 /etc/hosts 中配置一下我们将要添加的域名，其中 IP 从 istio-ingressgateway 这个 service 中获得，因为我使用的是 NodePort 类型的，所以这里的 IP 可以设置为集群内任意一个节点的 IP：</p>
+<pre><code class="language-shell">echo 192.168.31.108 test.com &gt;&gt; /etc/hosts
+</code></pre>
+<p>修改 Gateway Resource 的声明：</p>
+<pre><code class="language-shell">k edit gw -n meshapp bookinfo-gateway
+</code></pre>
+<p>添加一个 server，声明如下所示：</p>
+<pre><code class="language-yaml">spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - '*'
+    port:
+      name: http
+      number: 80
+      protocol: HTTP
+  # 新添加的 server
+  - hosts:
+    - test.com
+    port:
+      name: http1
+      number: 9527
+      protocol: HTTP
+</code></pre>
+<p>这里我添加的新的 server 将通过 test.com 作为 host 来访问（似乎必须这样，如果用 IP 访问会 404），当然还要加上对应的端口号（比如 <a href="http://test.com:31225/login">http://test.com:31225/login</a>），这里我定义为 9527 这个端口。</p>
+<p>然后我们再添加一个新的 VirtualService ：</p>
+<pre><code class="language-yaml">apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: bookinfo1
+spec:
+  hosts:
+  - test.com # 与 gateway 新添加的 server 的 hosts 相匹配
+  gateways:
+  - bookinfo-gateway
+  http:
+  - match:
+    - uri:
+        exact: /productpage
+    - uri:
+        prefix: /static
+    - uri:
+        exact: /login
+    - uri:
+        exact: /logout
+    - uri:
+        prefix: /api/v1/products
+    route:
+    - destination:
+        host: productpage
+        port:
+          number: 9080
+</code></pre>
+<p>修改 service，新暴露一个端口，让其指向我们新创建的 Gateway server 的 port（即 targetPort），也就是 9527，并且该 server 也监听在 9527 端口，然后通过 NodePort 31225 暴露给外界。</p>
+<pre><code class="language-yaml">- name: http3
+  nodePort: 31225
+  port: 9527
+  protocol: TCP
+  targetPort: 9527
+</code></pre>
+<p>现在我们就可以尝试通过 serviceIP + nodePort 来访问这个新定义的服务了：</p>
+<pre><code class="language-shell">curl http://test.com:31225/productpage
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Simple Bookstore App&lt;/title&gt;
+</code></pre>
+<p>可以看到我们可以成功访问这个 server。</p>
+<blockquote>
+<p>❓为什么明明是一样的 URL，但是通过 curl 可以访问，chrome 访问却会报错 404？</p>
+<p>好吧，发现是开了代理的原因，把 clash 关了就好了</p>
+<p>如果你尝试使用 Postman 访问，哪些需要取消勾选请求头中默认的 Host，然后自己创建一个 Host，指定值为 <code>test.com</code> 或者 <code>test.com:31225</code>，似乎 curl 和 chrome 访问时都会默认加上这个请求头</p>
+</blockquote>
+<h2 id="destination-rule-allyaml">destination-rule-all.yaml</h2>
+<pre><code class="language-yaml">apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: productpage
+spec:
+  host: productpage
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: reviews
+spec:
+  host: reviews
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
+  - name: v3
+    labels:
+      version: v3
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: ratings
+spec:
+  host: ratings
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
+  - name: v2-mysql
+    labels:
+      version: v2-mysql
+  - name: v2-mysql-vm
+    labels:
+      version: v2-mysql-vm
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: details
+spec:
+  host: details
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
+---
+
+</code></pre>
+<h3 id="destinationrule">DestinationRule</h3>
+<p><code>VirtualService</code> 和 <code>DestinationRule</code> 有什么区别？</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="/tags/istio/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#istio</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">下一页</span>
+        <a href="/posts/multipass-create-vm-so-easy/" class="block">使用 Multipass 快速搭建虚拟机</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+  <div id="valine-comments" class="mt-4"></div>
+<script defer src="https://cdn.jsdelivr.net/npm/valine@1.4.16/dist/Valine.min.js" 
+  integrity="sha384-e0&#43;DNUCJo75aOAzHQbFWYBCM9/S4f0BhRJXvEgbE3mMS85RM20MSSGStHuNdY2QK"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Valine({
+      el: "#valine-comments",appId:"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz",appKey:"qIMQwH4WrxTe8ds3Ua4HAbet",
+    })
+  });
+</script>
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>本页内容</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a>
+      <ul>
+        <li><a href="#bookinfoyaml">bookinfo.yaml</a></li>
+        <li><a href="#bookinfo-gatewayyaml">bookinfo-gateway.yaml</a>
+          <ul>
+            <li><a href="#gateway">Gateway</a>
+              <ul>
+                <li><a href="#selector">selector</a></li>
+                <li><a href="#servers">servers</a></li>
+              </ul>
+            </li>
+            <li><a href="#virtualservice">VirtualService</a>
+              <ul>
+                <li><a href="#hosts">hosts</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#destination-rule-allyaml">destination-rule-all.yaml</a>
+          <ul>
+            <li><a href="#destinationrule">DestinationRule</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 0000 <a>null</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>
