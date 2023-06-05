@@ -426,18 +426,18 @@ insert into t values(0,0,0),(5,5,5),
 </code></pre>
 <h1 id="1-什么是幻读">1. 什么是幻读</h1>
 <p>如下是文章中的图，需要注意的是，这里的 result 是基于 <strong>如果只在id=5这一行加锁，而其他行的不加锁</strong> （也就是行锁）这一基础上的，当时没注意这句话，导致自己用 Mysql 做实验时出现了不一样的结果：session A 的 T1 执行完成后，session B 的 T2 被阻塞，直到 A 事务结束，因为 B 被阻塞了，所以 A 的 T3 查询结果依然是 (5,5,5) 而不是图中的 (0,0,5)(5,5,5)
-<img src="https://youseebiggirl.github.io/post-images/1634646186038.webp" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1634646186038.webp" alt=""></p>
 <p><strong>幻读</strong> 指的是一个事务在前后两次查询同一个范围的时候，后一次查询看到了前一次查询没有看到的行。比如在上图中，Q3 读到了 (1,1,5) ，便是幻读。</p>
 <p><strong>幻读</strong> 在 <strong>当前读</strong> 下才会出现，图中的 <code>select</code> 都加了 <code>for update</code>，代表当前读。（当前读：读取的是记录数据的最新版本，并且当前读返回的记录都会加上锁，保证其他事务不会再并发的修改这条记录），在<strong>快照读</strong>下不会出现（可重复读隔离级别下），因为快照读看不到别的事务插入的数据。</p>
 <p><strong>幻读</strong> 仅专指 <strong>新插入的行</strong>，所以 session B T2 的 update 操作，导致的 A T3 结果不算是幻读。比如在上图中，Q2 读到了 (0,0,5) ，但不是幻读。</p>
 <h1 id="2-幻读有什么问题">2. 幻读有什么问题</h1>
 <p>这是原文中的标题，但是我不是很理解之后举的例子和幻读有什么关系，倒是换成 <strong>只加行锁有什么问题</strong> 更贴切（个人拙见）。</p>
 <h2 id="21-语义被破坏">2.1 语义被破坏</h2>
-<p><img src="https://youseebiggirl.github.io/post-images/1634648873422.webp" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1634648873422.webp" alt=""></p>
 <p>session A 里 Q1 语句，表示要锁住所有 d=5 的行，阻塞其他事务的读写操作。但是在 session B T2 中找个了漏洞，先将 id=0 这一行的 d 改成 5，再对这一行进行更改，这样就破坏了 A 中锁住所有 d=5 这一语句进行了破坏，session C 也是一样的道理。</p>
 <h2 id="22-数据一致性的问题">2.2 数据一致性的问题</h2>
 <p>锁的设计是为了保证数据的一致性。而这个一致性，不止是数据库内部数据状态在此刻的一致性，还包含了数据和日志在逻辑上的一致性。</p>
-<p><img src="https://youseebiggirl.github.io/post-images/1634649601817.webp" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1634649601817.webp" alt=""></p>
 <p>看看 binlog 里面的内容：</p>
 <ol>
 <li>
@@ -478,7 +478,7 @@ update t set c=5 where id=0; /*(0,5,5)*/
 <h2 id="31-间隙锁">3.1 间隙锁</h2>
 <p>产生幻读的原因是，行锁只能锁住行，但是新插入记录这个动作，要更新的是记录之间的<strong>间隙</strong>。</p>
 <p>何为间隙？比如 (0,0,0),(5,5,5),(10,10,10),(15,15,15),(20,20,20),(25,25,25) 这六条记录中，便存在以下 7 个间隙：
-<img src="https://youseebiggirl.github.io/post-images/1634652727224.webp" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1634652727224.webp" alt=""></p>
 <p>这样，当你执行 select * from t where d=5 for update 的时候，就不止是给数据库中已有的6个记录加上了行锁，还同时加了7个间隙锁。这样就确保了无法再插入新的记录。</p>
 <p>跟 <strong>间隙锁</strong> 存在冲突关系的，是“往这个间隙中<strong>插入一个记录</strong>”这个操作。间隙锁之间都不存在冲突关系。</p>
 <p>对于指定<strong>查询某一条记录</strong>的加锁语句，如果该记录<strong>不存在，会产生记录锁和间隙锁</strong>，如果记录存在，则只会产生记录锁。（注意这里的查询一条记录，如果是范围查询，或者查询出多条结果，那么不管存不存在，都会加间隙锁）</p>
@@ -486,7 +486,7 @@ update t set c=5 where id=0; /*(0,5,5)*/
 <p>间隙锁是在可重复读隔离级别下才会生效的。</p>
 <p>间隙锁和行锁合称 <code>next-key lock</code>，每个 <code>next-key lock</code> 是<strong>前开后闭</strong>区间。</p>
 <h2 id="32-间隙锁导致的死锁案例">3.2 间隙锁导致的死锁案例</h2>
-<p><img src="https://youseebiggirl.github.io/post-images/1634653283134.webp" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1634653283134.webp" alt=""></p>
 <ol>
 <li>
 <p>session A 执行select &hellip; for update语句，由于id=9这一行并不存在，因此会加上间隙锁(5,10);</p>

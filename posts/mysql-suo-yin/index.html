@@ -416,7 +416,7 @@
 <p>索引类型分为主键索引和非主键索引。</p>
 <p>主键索引的叶子节点存的是整行数据。在InnoDB里，主键索引也被称为聚簇索引（clustered index）。</p>
 <p>非主键索引的叶子节点内容是主键的值。在InnoDB里，非主键索引也被称为二级索引（secondary index）。</p>
-<p><img src="https://youseebiggirl.github.io/post-images/1648609254561.webp" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1648609254561.webp" alt=""></p>
 <p>比如在上图中，ID 就是聚簇索引，K 是非聚簇索引</p>
 <p>根据上面的索引结构说明，我们来讨论一个问题：<strong>基于主键索引和普通索引的查询有什么区别？</strong></p>
 <ul>
@@ -425,7 +425,7 @@
 </ul>
 <p>也就是说，基于非主键索引的查询需要多扫描一棵索引树。因此，我们在应用中应该尽量使用主键查询。</p>
 <h1 id="回表查询">回表查询</h1>
-<p><img src="https://youseebiggirl.github.io/post-images/1648609254561.webp" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1648609254561.webp" alt=""></p>
 <p>在上图中，如果执行 <code>select * from T where k between 3 and 5</code>，需要执行几次树的搜索操作，会扫描多少行？</p>
 <ol>
 <li>

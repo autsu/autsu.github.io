@@ -402,20 +402,20 @@
 
   <h1 id="1-未提交读脏读">1. 未提交读（脏读）</h1>
 <p>事务的修改，即使没有提交，对其他事务也是可见的。事务可以读取未提交的数据，称之为 <strong>脏读</strong>。它存在 4 个常见问题（脏读、不可重复读、幻读、丢失更新）。
-<img src="https://zengh1.github.io/post-images/1630079564434.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1630079564434.png" alt=""></p>
 <h1 id="2-提交读不可重复读">2. 提交读（不可重复读）</h1>
 <p>就是一个事务要等另一个事务提交后才能读取数据。 它解决了脏读问题，存在 3 个常见问题（不可重复读、幻读、丢失更新）。
-<img src="https://zengh1.github.io/post-images/1630079641737.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1630079641737.png" alt=""></p>
 <p>新的问题：更新丢失（提交覆盖）
-<img src="https://zengh1.github.io/post-images/1630079512354.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1630079512354.png" alt=""></p>
 <p>新的问题：不可重复读
-<img src="https://zengh1.github.io/post-images/1630080187823.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1630080187823.png" alt=""></p>
 <p>新的问题：回滚丢失（回滚覆盖）
 和 <strong>更新丢失</strong> 一样，撤消一个事务时，在该事务内的写操作要回滚，把其它已提交的事务写入的数据覆盖了。</p>
 <h1 id="3-可重复读">3. 可重复读</h1>
 <p>一个事务执行过程中看到的数据，总是跟这个事务在启动时看到的数据是一致的。
 就是在开始读取数据（事务开启）时，不再允许修改操作 。它解决了脏读和不可重复读，还存在2个常见问题（幻读、丢失更新）。</p>
-<p><img src="https://zengh1.github.io/post-images/1630296234940.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1630296234940.png" alt=""></p>
 <p>实现原理：
 数据库里面会创建一个视图，访问的时候以视图的逻辑结果为准。在“可重复读”隔离级别下，这个视图是在事务启动时创建的，整个事务存在期间都用这个视图。</p>
 <p>适用场景：
@@ -440,7 +440,7 @@
 <h1 id="4-可串行化">4. 可串行化</h1>
 <p>串行化，顾名思义是对于同一行记录，“写”会加“写锁”，“读”会加“读锁”。当出现读写锁冲突的时候，后访问的事务必须等前一个事务执行完成，才能继续执行。</p>
 <p>串行化是最高的隔离级别，会强制事务串行执行，它将隔离问题全部解决，但是这种事务隔离级别效率低下，比较耗数据库性能，一般不使用。
-<img src="https://zengh1.github.io/post-images/1630293732934.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1630293732934.png" alt=""></p>
 
 </article>
 

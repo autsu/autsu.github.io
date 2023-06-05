@@ -214,7 +214,7 @@
     },
     "headline": "计算机网络面试题 | \/dev\/null","datePublished": "2022-01-28T23:45:48+00:00",
     "dateModified": "2022-01-28T23:45:48+00:00",
-    "wordCount":  354 ,
+    "wordCount":  362 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -409,15 +409,13 @@
 <p>当一端 <strong>主动</strong> 断开连接并发送最后一次挥手后，该端状态变为 <code>TIME_WAIT</code> ，此时会等待 2 MSL （MSL 是  Maximum Segment Lifetime，译为“报文最大生存时间”，可为 30s，1min 或 2min。）
 作用：</p>
 <ol>
-<li>
-<p>避免新旧连接混淆
-如果一个 tcp 连接被关闭了，紧接着马上又有一个相同四元组的 tcp 连接建立了，且此时刚好旧连接中有一个延迟的报文到达了，那么这个旧报文就会错误的被新连接接收（seq 对新连接恰好有效），进而可能会产生一些诡异或者错误的现象。TIME_WAIT 可以在一定程度确保这些延迟的旧报文在网络中消失。</p>
-</li>
-<li>
-<p>确保双方的连接都可以正常关闭
-假设 A 主动关闭，那么根据四次挥手可知，最后一次挥手，A 需要发送一个 ACK 给 B，如果发送之后没有 <code>TIME_WAIT</code>，而是直接 <code>CLOSED</code>，那么如果该 ACK 丢失，B 会因为超时而重发 FIN，但是因为 A 已经关闭了，所以会回复一个 RST，B 就会认为发生了错误，实际上并没有。如果 A 在发送最后一个 ACK 后进入 <code>TIME_WAIT</code> 等待一段时间，那么 B 的重传 FIN 就可以被正常接收了。</p>
-</li>
+<li><strong>避免新旧连接混淆</strong></li>
 </ol>
+<p>如果一个 tcp 连接被关闭了，紧接着马上又有一个相同四元组的 tcp 连接建立了，且此时刚好旧连接中有一个延迟的报文到达了，那么这个旧报文就会错误的被新连接接收（seq 对新连接恰好有效），进而可能会产生一些诡异或者错误的现象。TIME_WAIT 可以在一定程度确保这些延迟的旧报文在网络中消失。</p>
+<ol start="2">
+<li><strong>确保双方的连接都可以正常关闭</strong></li>
+</ol>
+<p>假设 A 主动关闭，那么根据四次挥手可知，最后一次挥手，A 需要发送一个 ACK 给 B，如果发送之后没有 <code>TIME_WAIT</code>，而是直接 <code>CLOSED</code>，那么如果该 ACK 丢失，B 会因为超时而重发 FIN，但是因为 A 已经关闭了，所以会回复一个 RST，B 就会认为发生了错误，实际上并没有。如果 A 在发送最后一个 ACK 后进入 <code>TIME_WAIT</code> 等待一段时间，那么 B 的重传 FIN 就可以被正常接收了。</p>
 <p>也有一些博客说，客户端四次挥手的最后一个 ACK 报文如果在网络中被丢失了，此时如果客户端 <code>TIME_WAIT</code> 过短或没有，则就直接进入了 <code>CLOSED</code> 状态了，那么服务端则会一直处在 <code>LASE_ACK</code> 状态。
 当客户端发起建立连接的 SYN 请求报文后，服务端会发送 RST 报文给客户端，连接建立的过程就会被终止。</p>
 <h2 id="2-tcp-如何保证可靠性">2. TCP 如何保证可靠性</h2>
@@ -494,11 +492,11 @@
 </li>
 <li>
 <p>多路复用
-为了解决 HTTP 1/1.1 中的对头阻塞问题，HTTP 2 使用了**流（stream）**的概念，每一次请求对应一个流，有一个唯一的 ID，用来区分不同的请求，多个 stream 复用一条 TCP 连接，达到并发的效果。在每个 stream 中还有多个 <strong>message</strong>，<strong>message</strong> 对应 HTTP1 中的请求或响应，有 header 和 body 组成。message 中有一个或多个 <strong>frame</strong>（帧），frame 是 HTTP2 的最小单位，以二进制压缩格式存放 HTTP1 中的内容。一个请求的数据会被分成多个帧，方便进行数据分割传输，每个帧都唯一属于某一个流ID，将帧按照流ID进行分组，即可分离出不同的请求。这样同一个TCP连接中就可以同时并发多个请求，不同请求的帧数据可穿插在一起，根据流ID分组即可。</p>
+为了解决 HTTP 1/1.1 中的对头阻塞问题，HTTP 2 使用了<strong>流 (stream)</strong> 的概念，每一次请求对应一个流，有一个唯一的 ID，用来区分不同的请求，多个 stream 复用一条 TCP 连接，达到并发的效果。在每个 stream 中还有多个 <strong>message</strong>，<strong>message</strong> 对应 HTTP1 中的请求或响应，由 header 和 body 组成。message 中有一个或多个 <strong>frame</strong>（帧），frame 是 HTTP2 的最小单位，以二进制压缩格式存放 HTTP1 中的内容。一个请求的数据会被分成多个帧，方便进行数据分割传输，每个帧都唯一属于某一个流 ID，将帧按照流 ID进行分组，即可分离出不同的请求。这样同一个TCP连接中就可以同时并发多个请求，不同请求的帧数据可穿插在一起，根据流 ID 分组即可。</p>
 </li>
 </ol>
 <p>HTTP2 依然存在的问题：TCP 的队头阻塞
-如果HTTP/2连接双方的网络中有一个数据包丢失，或者任何一方的网络出现中断，整个TCP连接就会暂停，丢失的数据包需要被重新传输。 因为TCP是一个按序传输的链条，因此如果其中一个点丢失了，链路上之后的内容就都需要等待。 这种单个数据包造成的阻塞，就是TCP上的队头阻塞（head of line blocking）。</p>
+如果 HTTP/2 连接双方的网络中有一个数据包丢失，或者任何一方的网络出现中断，整个TCP连接就会暂停，丢失的数据包需要被重新传输。 因为TCP是一个按序传输的链条，因此如果其中一个点丢失了，链路上之后的内容就都需要等待。 这种单个数据包造成的阻塞，就是TCP上的队头阻塞（head of line blocking）。</p>
 <h3 id="http-3">HTTP 3</h3>
 <p>TODO</p>
 <h2 id="http-状态码1xx-5xx">HTTP 状态码，1xx-5xx</h2>

@@ -214,7 +214,7 @@
     },
     "headline": "leetcode 15. 三数之和 | \/dev\/null","datePublished": "2021-04-16T19:38:53+00:00",
     "dateModified": "2021-04-16T19:38:53+00:00",
-    "wordCount":  608 ,
+    "wordCount":  675 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -394,7 +394,7 @@
   </div>
   <div class="me-6 my-2">
     <i class="fas fa-clock me-1"></i>
-    <span>3分钟阅读时长</span>
+    <span>4分钟阅读时长</span>
   </div>
 
   
@@ -435,27 +435,35 @@
 <li>准备三个指针 k、i、j</li>
 <li>初始化，将 k 放置在第一个元素，i 放置在 k+1 处，j 放置在最后一个元素处</li>
 <li>开始循环，条件为 k &lt; len(nums)-2</li>
-<li>如果当前 nums[k] &gt; 0，则 break</li>
-<li>如果 nums[k&ndash;] 和 nums[k] 相同，则 continue 去重</li>
-<li>固定 k ，先移动 i 和 j，当 i == j 时，再移动 k</li>
+<li>如果当前 <code>nums[k]</code> &gt; 0，则 break</li>
+<li>如果 <code>nums[k-1]</code> 和 <code>nums[k]</code> 相同，则 continue 跳过本轮循环，达到去重的效果</li>
+<li>固定 k（外层 for 循环） ，先移动 i 和 j （内层 for 循序），当 i == j 时 break 掉内层 for 循环，让外层 for 循环 k 继续移动</li>
 <li>在移动 i 和 j 时计算 <code>nums[k] + nums[j] + nums[i]</code> 的值，记为 s
 <ol>
-<li>如果 s &lt; 0，将 i++，如果 nums[i++] == nums[i]，则继续 + 1，这样可以保证不取到重复元素</li>
-<li>如果 s &gt; 0，将 j&ndash;，如果 nums[j&ndash;] == nums[j]，则继续 - 1，原因同上</li>
-<li>如果 s == 0，记录当前的三个数字，之后将 i++，j&ndash;，移动同时和上面一样，进行去重处理</li>
+<li>如果 s &lt; 0，先判断是否重复，即 <code>for nums[i++] == nums[i] {i++}</code> 进行去重，然后再 <code>i++</code> 将指针 i 向后移动，<strong>这里一定要注意顺序，先去重，再移动指针 <code>i++</code>，原因后面会说明。</strong></li>
+<li>如果 s &gt; 0，与上面类似，也是先判断是否重复，再执行 <code>j--</code></li>
+<li>如果 s == 0，记录当前的三个数字，之后移动 i 和 j 两个指针，将 i++，<code>j--</code>，和上面一样，也是先去重，再移动。</li>
 </ol>
 </li>
 </ol>
 <p>分析：</p>
 <p>因为数组是排好序的，所以 k 指向的是最小元素，i 指向次小元素，j 指向最大元素（排除一些特殊情况比如 [0, 0, 0, 0]）</p>
 <p>这里的 k 起的是固定作用，目的是枚举全部情况，当三个值的和小于 0 时，可以将 i++ 使和增大，同理当和大于 0 时，可以将 j&ndash; 将和减小，当和等于 0 时，说明此时已经搜集到了结果，可以将 k++ 进行下个数的枚举</p>
-<p>第 5 步的原因是：因为 nums[j] &gt;= nums[i] &gt;= nums[k] &gt; 0，即 3 个数字都大于 0 ，在此固定指针 k 之后不可能再找到结果了。</p>
+<p>第 5 步的原因是：因为 nums[j] &gt;= nums[i] &gt;= nums[k]，而当前 nums[k] &gt; 0，则代表 3 个数字都大于 0 ，必然不可能再找到结果了。</p>
 <p>第 4 步的条件为 k &lt; len(nums)-2，原因是 i 和 j 都在 k 之后，当 k 在 len(nums)-2-1 处时，j 在最后一个，i 在倒数第二个，k，i，j 刚好对应最后三个数，所以可以作为最后一次判断。这只是一个优化，可以减少 2 次不必要的循环，k &lt; len(nums) 依然是正确的。</p>
 <p>关于去重的条件 <code>i &lt; j &amp;&amp; nums[i] == nums[i+1]</code> 中需要首先判断 i &lt; j 的原因是防止越界，例如：</p>
 <p>测试用例 [0, 0, 0]，k 在 [0]，i 在 [1]，j 在 [2]，sum = 0，此时因为 nums[i] == nums[i+1]，所以执行 i++ 到 [1]，还是重复，继续 i++ 到 [2]，如果没有 i &lt; j 的条件，这里会执行判断语句 nums[i] == nums[i+1] 即 nums[2] == nums[3]，而这个 nums[3] 就会导致越界致使程序错误，但加了 i &lt; j 会导致短路，使得后面的 nums[i] == nums[i+1] 不执行。</p>
 <p>对于 <code>i &lt; j &amp;&amp; nums[j] == nums[j-1]</code> 也是一样的道理，还是测试用例 [0, 0, 0]，如果没有 i &lt; j 的约束，则 j 会一直执行 j&ndash;，当 j 到达 0 时，[j-1] 就会发生数组越界问题。</p>
-<p>流程如下图：</p>
-<p><img src="https://zengh1.github.io/post-images/1618573149147.png" alt=""></p>
+<p><strong>为什么在判断 sum 的分支中，都需要先去重，再移动指针呢？考虑如下情况：</strong></p>
+<p>[ (k) -2, (i) 0, 1, 1, (j) 2]</p>
+<p>此时 nums[k] + nums[i] + nums[j] == 0，按照分支的流程，应该是先去重，再移动指针，那如果我反着来会发生什么情况呢？</p>
+<p>如果先 i++，再去重，那么：</p>
+<ol>
+<li>i++，变为 =&gt; [ (k) -2, 0, (i) 1, 1, (j) 2]</li>
+<li>此时再去重，nums[i] == nums[i+1]，导致 i 又要 +1，变为 [ (k) -2, 0, 1, (i) 1, (j) 2]，这将导致一种正确结果 [-2, 1, 1] 无法获得了</li>
+</ol>
+<p><strong>整个算法的流程如下图所示。</strong></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618573149147.png" alt=""></p>
 <p>代码如下：</p>
 <p>未优化版，是我根据上面思路写的：</p>
 <pre><code class="language-go">func threeSum(nums []int) [][]int {

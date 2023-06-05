@@ -501,7 +501,7 @@ where id=#{id} and version=#{version};
 </tbody>
 </table>
 <h1 id="死锁">死锁</h1>
-<p><img src="https://youseebiggirl.github.io/post-images/1648548013859.webp" alt="">
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1648548013859.webp" alt="">
 这时候，事务A在等待事务B释放id=2的行锁，而事务B在等待事务A释放id=1的行锁。 事务A和事务B在互相等待对方的资源释放，就是进入了死锁状态。</p>
 <h1 id="for-update-加行锁还是表锁">for update 加行锁还是表锁？</h1>
 <p>实验：
