@@ -485,7 +485,7 @@ runtime.bmap 中的其他字段在运行时也都是通过计算内存地址的�
 </blockquote>
 <p>计算 tophash 的函数是：func tophash(hash uintptr) uint8</p>
 <p>bmap 的结构图示：
-<img src="https://zengh1.github.io/post-images/1627563904668.webp" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1627563904668.webp" alt=""></p>
 <p>在8个键值对数据后面有一个overflow指针，因为桶中最多只能装 8 个键值对，如果有多余的键值对落到了当前桶，那么就需要再构建一个桶（称为溢出桶），通过 overflow 指针链接起来。</p>
 <pre><code class="language-go">// A bucket for a Go map.
 type bmap struct {
