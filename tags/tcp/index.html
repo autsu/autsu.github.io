@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<title>tcp | /dev/null</title>
+<title>TCP | /dev/null</title>
 
 <meta name="generator" content="Hugo Eureka 0.9.3" />
 <link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
@@ -197,7 +197,7 @@
       "item":"/tags/"},{
       "@type": "ListItem",
       "position": 2 ,
-      "name":"tcp",
+      "name":"TCP",
       "item":"/tags/tcp/"}]
 }
 </script>
@@ -212,13 +212,31 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
-            "name": "tcp 粘包/拆包问题",
-            "description": "简介 tcp 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 tcp 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。",
+            "name": "TCP 滑动窗口与流量控制",
+            "description": "流量控制与滑动窗口图解 ps: 下面的图片皆源自 B 站课程 计算机网络微课堂（有字幕无背景音乐版）",
+            "url": "/posts/tcp-liu-liang-kong-zhi/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "TCP 粘包/拆包问题",
+            "description": "简介 TCP 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 TCP 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。",
             "url": "/posts/tcp_zhan_bao/"
+        },{
+            "@type":"ListItem",
+            "position":  3 ,
+            "name": "TCP 拥塞控制",
+            "description": "发送方维护一个叫做 拥塞窗口 cwnd 的状态变量，其值 取决于网络的拥塞程度，并且 动态变化。",
+            "url": "/posts/tcp_yong_se_kong_zhi/"
+        },{
+            "@type":"ListItem",
+            "position":  4 ,
+            "name": "TCP CLOSE_WAIT 和 FIN_WAIT_2",
+            "description": "问题记录 最近写了一个普通的 tcp demo，发现 server 的状态处于 CLOSE_WAIT，而 client 的状态处于 FIN_WAIT_2，为了排查这个问题，特此写了这篇文章作为记录，这也",
+            "url": "/posts/close_wait-he-fin_wait_2/"
         }
     ]
 }
-</script><meta property="og:title" content="tcp | /dev/null" />
+</script><meta property="og:title" content="TCP | /dev/null" />
 <meta property="og:type" content="website" />
 
 
@@ -249,7 +267,7 @@
 
 
 
-<meta property="og:updated_time" content="2022-09-05T00:51:45&#43;00:00" />
+<meta property="og:updated_time" content="2023-06-06T21:12:08&#43;08:00" />
 
 
 
@@ -351,11 +369,23 @@
         <div class="pl-scrollbar">
           <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
 <article class="mx-6 my-8">
-    <h1 class="font-bold text-3xl text-primary-text"><i class="fas fa-tag fa-fw" aria-hidden="true"></i>&nbsp;tcp</h1>
+    <h1 class="font-bold text-3xl text-primary-text"><i class="fas fa-tag fa-fw" aria-hidden="true"></i>&nbsp;TCP</h1>
     <div class="bg-secondary-bg rounded " style="padding: 3rem!important;margin-top: 30px;">
-        <div class="overflow-hidden archive" style="font-size:15px;line-height: 2;padding-bottom: 0.8em"><h3 style="font-size: 1.5em;">2022</h3><article class="archive-item">
+        <div class="overflow-hidden archive" style="font-size:15px;line-height: 2;padding-bottom: 0.8em"><h3 style="font-size: 1.5em;">2023</h3><article class="archive-item">
+                        <a href="/posts/tcp-liu-liang-kong-zhi/" class="archive-item-link">
+                            >>&nbsp 06-06&nbsp&nbsp&nbspTCP 滑动窗口与流量控制</a>
+                        
+                    </article><h3 style="font-size: 1.5em;">2022</h3><article class="archive-item">
                         <a href="/posts/tcp_zhan_bao/" class="archive-item-link">
-                            >>&nbsp 09-05&nbsp&nbsp&nbsptcp 粘包/拆包问题</a>
+                            >>&nbsp 09-05&nbsp&nbsp&nbspTCP 粘包/拆包问题</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/tcp_yong_se_kong_zhi/" class="archive-item-link">
+                            >>&nbsp 08-02&nbsp&nbsp&nbspTCP 拥塞控制</a>
+                        
+                    </article><article class="archive-item">
+                        <a href="/posts/close_wait-he-fin_wait_2/" class="archive-item-link">
+                            >>&nbsp 02-02&nbsp&nbsp&nbspTCP CLOSE_WAIT 和 FIN_WAIT_2</a>
                         
                     </article></div>
     </div>

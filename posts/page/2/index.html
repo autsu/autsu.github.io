@@ -197,93 +197,93 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
+            "name": "k8s StatefulSet",
+            "description": "有状态与无状态 无状态应用，指的是在运行时不需要维护或跟踪任何特定状态的应用程序。例如，Web 服务器或 API 服务器通常可以处理来自客户端的请求，而无需了解以前的请求或客户端状态。这些应用程序可以很容易地水平扩展，因为它们不需要共享状态，所以可以在任何节点上运行。像 Deployment 也是一个典型的“无状态应用”，它会按照事先声明的模板创建出 pod，这表示每个 pod 的定义将会是一模一样的，此外，这些 pod 之间没有之间没有顺序相关性（什么事有顺序相关性？比如一些集群应用包含主节点和从节点，而主节点必须先于从节点启动，这便是顺序相关性），也无所谓在哪台宿主机上运行，任何一个 pod 都可以提供完全相同的功能，不需要时，也可以结束任意一个 pod。",
+            "url": "/posts/k8s-statefulset/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
             "name": "ubuntu arm64 使用 apt-get 安装 docker，以及 snap 的一些问题记录",
             "description": "使用 snap 可以比较方便的安装 docker，但是有一次出现了 k8s pod 无法拉取镜像的问题，看了下 pod describe，发现是因为走代理的问题（我使用的是 ubuntu 虚拟机，连接宿主机的 clashx 进行代理），连接的代理是宿主机的老地址 192.",
             "url": "/posts/ubuntu-arm64-an-zhuang-docker/"
         },{
             "@type":"ListItem",
-            "position":  2 ,
+            "position":  3 ,
             "name": "GoLand/Idea 启动闪退，报错 NSInternalInconsistencyException 的解决方法",
             "description": "环境：\n机器：MacBook Air (M1, 2020) 系统：MacOS 12.",
             "url": "/posts/jetbrain_crash/"
         },{
             "@type":"ListItem",
-            "position":  3 ,
+            "position":  4 ,
             "name": "Linux 虚拟网络设备 veth-pair [未完]",
             "description": "介绍 veth-pair 是什么 两个 namespace 间通信 直接连接 # 创建 2 个 namespace $ ip netns add ns1 $ ip netns add ns2 # 查看创建的 namespace $ ip netns ns2 ns1 # 创建一对 veth-pair veth0 veth1 $ ip l a veth0 type veth peer name veth1 # 也可以写成： # ip link add veth0 type veth peer name veth1 # 将 veth0 veth1 分别加入两个 ns $ ip l s veth0 netns ns1 $ ip l s veth1 netns ns2 # 给两个 veth0 veth1 配上 IP 并启用 $ ip netns exec ns1 ip a a 10.",
             "url": "/posts/linux_veth_pair/"
         },{
             "@type":"ListItem",
-            "position":  4 ,
+            "position":  5 ,
             "name": "一个 EOF 引发的低级错误",
             "description": "今天更新了一下之前写的 tcp server，结果测试的时候发现了一个十分诡异的 BUG：客户端这边发送完数据，进程都已经退出了，但是服务端却依然源源不断的接收到客户端发来的数据，而且数据包的大小都为 0，这个 BUG 花费了我大半天的时间，终于找到了问题所在，特此记录。",
             "url": "/posts/eof_cuo_wu/"
         },{
             "@type":"ListItem",
-            "position":  5 ,
-            "name": "tcp 粘包/拆包问题",
-            "description": "简介 tcp 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 tcp 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。",
+            "position":  6 ,
+            "name": "TCP 粘包/拆包问题",
+            "description": "简介 TCP 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 TCP 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。",
             "url": "/posts/tcp_zhan_bao/"
         },{
             "@type":"ListItem",
-            "position":  6 ,
+            "position":  7 ,
             "name": "一个 go nil pointer 错误记录",
             "description": "看看下面这段代码的运行结果是什么？\npackage main import ( \u0026quot;fmt\u0026quot; \u0026quot;net\u0026quot; ) func main() { lis, err := net.",
             "url": "/posts/go_nil_pointer/"
         },{
             "@type":"ListItem",
-            "position":  7 ,
+            "position":  8 ,
             "name": "epoll 打断/唤醒",
             "description": "写这篇文章是因为最近在看 go netpoll 的源码，里面有一部分代码是创建一个管道，一开始没有搞懂用意何在，后来查阅了网上的文章，有说法是这个管道是为了打断 epoll_wait 的等待，将这个管道的 fd 添加到 epoll 中，如果想主动打断 epoll_wait，那么就往管道中写入数据，然后在 epoll_wait 处就会产生事件，终止阻塞。",
             "url": "/posts/epoll_zhong_duan/"
         },{
             "@type":"ListItem",
-            "position":  8 ,
+            "position":  9 ,
             "name": "孤儿进程与僵尸进程",
             "description": "来源：https://www.cnblogs.com/Anker/p/3271773.html\n基本概念 孤儿进程：一个父进程退出，而它的一个或多个子进程还在运行，那么那些子进程将成为孤儿进程。孤儿进程将被 init 进程(进程号为 1 )所收养，并由 init 进程对它们完成状态收集工作。",
             "url": "/posts/gu_er_jin_cheng_he_jiang_shi_jin_cheng/"
         },{
             "@type":"ListItem",
-            "position":  9 ,
+            "position":  10 ,
             "name": "如何保证缓存和数据库的一致性",
-            "description": "先更新数据库，再更新缓存 存在的问题：\n更新数据库成功，更新缓存失败\n并发情况下可能会存在问题，如下（纵轴代表时间线）：\nA B 更新 DB x = 1 更新 DB，x = 2 更新缓存，x = 2 更新缓存，x = 1 可以看到因为并发操作导致 A 把 B 的更新缓存结果给覆盖了，最终使得数据库结果（x = 2）和缓存结果（x = 1）不一致",
+            "description": "一道高频面试题：如何保证缓存和数据库的一致性\n先更新数据库，再更新缓存 存在的问题：\n更新数据库成功，更新缓存失败\n并发情况下可能会存在问题，如下（纵轴代表时间线）：",
             "url": "/posts/huan_cun_yi_zhi_xing/"
         },{
             "@type":"ListItem",
-            "position":  10 ,
+            "position":  11 ,
             "name": "面试题收集 1",
             "description": "Go相关 map、channel、slice 的底层实现 map map 使用的是拉链法，用哈希桶来保存键值对，每个桶可以保存 8 个键值对，它会用哈希算法计算出 key 的 hash 值，然后用这个哈希值的高 8 位作为 tophash，用于在一个桶中区别出 key，然后桶的数量是 2^b ，用低 b 位来决定这个 key 放到哪个桶。每个桶还会连接一个溢出桶，如果一个桶已经满了，但是依然有 key 落入到这个桶，那么就会将其放到溢出桶中。",
             "url": "/posts/mian_shi_ti_shou_ji1/"
         },{
             "@type":"ListItem",
-            "position":  11 ,
+            "position":  12 ,
             "name": "两个类似的堆问题：leetcode 347 前 K 个高频元素 和 692. 前 K 个高频单词 ",
             "description": "首先先来看一下这两个问题：\n347. 前 K 个高频元素 给你一个整数数组 nums 和一个整数 k ，请你返回其中出现频率前 k 高的元素。你可以按 任意顺序 返回答案。",
             "url": "/posts/leetcode_347_and_692/"
         },{
             "@type":"ListItem",
-            "position":  12 ,
+            "position":  13 ,
             "name": "go binary 使用指南 ",
             "description": "一个示例 demo：\npackage main import ( \u0026quot;bytes\u0026quot; \u0026quot;encoding/binary\u0026quot; \u0026quot;fmt\u0026quot; \u0026quot;io\u0026quot; ) type I interface { Do() } type S struct { Id int64 Name [10]byte } func (s *S) Do() { fmt.",
             "url": "/posts/go_binary/"
         },{
             "@type":"ListItem",
-            "position":  13 ,
+            "position":  14 ,
             "name": "TCP 拥塞控制",
             "description": "发送方维护一个叫做 拥塞窗口 cwnd 的状态变量，其值 取决于网络的拥塞程度，并且 动态变化。",
             "url": "/posts/tcp_yong_se_kong_zhi/"
         },{
             "@type":"ListItem",
-            "position":  14 ,
+            "position":  15 ,
             "name": "为什么 go 需要 nil chan",
             "description": "如果没有调用 make 来对一个 chan 进行初始化，那么这个 chan 就是 nil chan。",
             "url": "/posts/wei-shen-me-go-you-nil-chan/"
-        },{
-            "@type":"ListItem",
-            "position":  15 ,
-            "name": "minikube 问题汇总",
-            "description": "设置代理后，minikube kubectl 无响应 在给虚拟机设置了代理后，整个网络体验爽快多了，再也不用担心拉不下来包了。。。\n只需要将虚拟机的网络设置为桥接模式，然后开启 clashx 的 “允许局域网连接”（非常重要的一步，之前就是因为忽略了这一步，导致虚拟机无法使用宿主机代理），然后再点击 clashx 的 “复制终端代理命令”，将里面的 127.",
-            "url": "/posts/minikube_wen_ti_hui_zong/"
         }
     ]
 }
@@ -318,7 +318,7 @@
 
 
 
-<meta property="og:updated_time" content="2023-05-27T11:51:13&#43;08:00" />
+<meta property="og:updated_time" content="2023-06-06T21:12:08&#43;08:00" />
 
 
 
@@ -426,6 +426,47 @@
 
   <div class="bg-secondary-bg rounded px-6">
     <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/k8s-statefulset/" class="no-underline">
+    <h3 class="mt-0">k8s StatefulSet</h3>
+  </a>
+  
+    有状态与无状态 无状态应用，指的是在运行时不需要维护或跟踪任何特定状态的应用程序。例如，Web 服务器或 API 服务器通常可以处理来自客户端的请求，而无需了解以前的请求或客户端状态。这些应用程序可以很容易地水平扩展，因为它们不需要共享状态，所以可以在任何节点上运行。像 Deployment 也是一个典型的“无状态应用”，它会按照事先声明的模板创建出 pod，这表示每个 pod 的定义将会是一模一样的，此外，这些 pod 之间没有之间没有顺序相关性（什么事有顺序相关性？比如一些集群应用包含主节点和从节点，而主节点必须先于从节点启动，这便是顺序相关性），也无所谓在哪台宿主机上运行，任何一个 pod 都可以提供完全相同的功能，不需要时，也可以结束任意一个 pod。
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-09-11</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>7分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
   
   <div class="py-6">
     <div class="flex flex-col-reverse lg:flex-row justify-between">
@@ -598,10 +639,10 @@
   <div class="w-full ">
     <div class="prose">
   <a href="/posts/tcp_zhan_bao/" class="no-underline">
-    <h3 class="mt-0">tcp 粘包/拆包问题</h3>
+    <h3 class="mt-0">TCP 粘包/拆包问题</h3>
   </a>
   
-    简介 tcp 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 tcp 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。
+    简介 TCP 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 TCP 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。
   
 
   
@@ -767,10 +808,10 @@ package main import ( &#34;fmt&#34; &#34;net&#34; ) func main() { lis, err := ne
     <h3 class="mt-0">如何保证缓存和数据库的一致性</h3>
   </a>
   
-    先更新数据库，再更新缓存 存在的问题：
+    一道高频面试题：如何保证缓存和数据库的一致性
+先更新数据库，再更新缓存 存在的问题：
 更新数据库成功，更新缓存失败
 并发情况下可能会存在问题，如下（纵轴代表时间线）：
-A B 更新 DB x = 1 更新 DB，x = 2 更新缓存，x = 2 更新缓存，x = 1 可以看到因为并发操作导致 A 把 B 的更新缓存结果给覆盖了，最终使得数据库结果（x = 2）和缓存结果（x = 1）不一致
   
 
   
@@ -993,48 +1034,6 @@ package main import ( &#34;bytes&#34; &#34;encoding/binary&#34; &#34;fmt&#34; &#
   <div class="me-6 my-2">
     <i class="fas fa-clock me-1"></i>
     <span>1分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/minikube_wen_ti_hui_zong/" class="no-underline">
-    <h3 class="mt-0">minikube 问题汇总</h3>
-  </a>
-  
-    设置代理后，minikube kubectl 无响应 在给虚拟机设置了代理后，整个网络体验爽快多了，再也不用担心拉不下来包了。。。
-只需要将虚拟机的网络设置为桥接模式，然后开启 clashx 的 “允许局域网连接”（非常重要的一步，之前就是因为忽略了这一步，导致虚拟机无法使用宿主机代理），然后再点击 clashx 的 “复制终端代理命令”，将里面的 127.
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2022-07-14</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>4分钟阅读时长</span>
   </div>
 
   

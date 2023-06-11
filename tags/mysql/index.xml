@@ -94,8 +94,7 @@ CREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) 
       <pubDate>Sat, 07 Aug 2021 11:17:51 +0000</pubDate>
       
       <guid>/posts/mysql-zui-zuo-qian-zhui-yuan-ze-shi-xiao/</guid>
-      <description>引子 （以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看）
-有如下表，结构如下：</description>
+      <description>引子 （以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看 凑合看就完事了）</description>
     </item>
     
     <item>
@@ -104,8 +103,7 @@ CREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) 
       <pubDate>Sun, 25 Jul 2021 10:04:25 +0000</pubDate>
       
       <guid>/posts/mysql-mian-jing/</guid>
-      <description>MySQL 面经汇总，收集于牛客，不断更新中
-1. char 和 varchar 的区别 char 是固定长度，varchar 长度可变，存储时，前者不管实际存储数据的长度，直接规定 char 规定的长度分配存储空间；而后者会根据实际存储的数据分配最终的存储空间。</description>
+      <description>1. char 和 varchar 的区别 char 是固定长度，varchar 长度可变，存储时，前者不管实际存储数据的长度，直接规定 char 规定的长度分配存储空间；而后者会根据实际存储的数据分配最终的存储空间。</description>
     </item>
     
   </channel>

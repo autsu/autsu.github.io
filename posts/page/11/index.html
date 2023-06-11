@@ -197,42 +197,48 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
+            "name": "c++：如何理解函数返回一个引用【未完】",
+            "description": "有如下函数，其返回了一个引用：\nint \u0026amp;ret_val(int \u0026amp;a) { return a; } 另一个函数用来接收返回的引用：",
+            "url": "/posts/2021-4-15-cpp_func_return_reference/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
             "name": "go container/list 源码分析【未完】",
             "description": "List // List代表一个双向链表。List零值为一个空的、可用的链表。 type List struct { // 哨兵节点，连接链表的头节点和尾结点，root.",
             "url": "/posts/2021-2-24-go-container-list-source-code/"
         },{
             "@type":"ListItem",
-            "position":  2 ,
+            "position":  3 ,
             "name": "go 交换 container/list 的值",
             "description": "场景 在 LeetCode 255.用队列实现栈 这道题里，需要用到两个队列来实现一个栈，并且在算法流程中，需要交换这两个队列的内容，例如：队列 A =\u0026gt; [1, 2, 3]，队列 B =\u0026gt; [555]，交换后：A =\u0026gt; [555]，B =\u0026gt; [1, 2, 3]。",
             "url": "/posts/2021-2-24-go-container-list-swap/"
         },{
             "@type":"ListItem",
-            "position":  3 ,
+            "position":  4 ,
             "name": "go 发送 post 请求",
             "description": "go 基础之使用原生 http 库发送 post 请求",
             "url": "/posts/2021-1-24-go-post-request/"
         },{
             "@type":"ListItem",
-            "position":  4 ,
+            "position":  5 ,
             "name": "c++ 引用：如何理解\"引用被初始化后，不能再指向其他对象\"",
             "description": "在 c++ 的引用规则中，有这么一条：一旦初始化完成 ，引用将和它的初始值对象一直绑定在一起（即不能再指向其他对象）。抱着初学者的好奇心态，我尝试改变引用的指向，写出了如下代码：\n// 定义两个 string 变量 std::string s = \u0026quot;123\u0026quot;; std::string s2 = \u0026quot;456\u0026quot;; // 让 s1 引用 s std::string \u0026amp;s1 = s; std::cout \u0026lt;\u0026lt; \u0026quot;修改前：\u0026quot; \u0026lt;\u0026lt; \u0026quot;s1: \u0026quot; \u0026lt;\u0026lt; s1 \u0026lt;\u0026lt; std::endl; // 修改 s1 的引用？ s1 = s2; std::cout \u0026lt;\u0026lt; \u0026quot;修改后：\u0026quot; \u0026lt;\u0026lt; \u0026quot;s1: \u0026quot; \u0026lt;\u0026lt; s1 \u0026lt;\u0026lt; std::endl; // output 修改前：s1: 123 修改后：s1: 456 这里我让 s1 重新指向 s2，并且从输出结果来看，s1 的值也确实被修改了，不对啊，规则中明明说好了不能修改的，怎么实际代码中可以？为了验证引用是否真的被修改，将三个变量的指针打印出来：",
             "url": "/posts/2021-1-11-reference_c++/"
         },{
             "@type":"ListItem",
-            "position":  5 ,
+            "position":  6 ,
             "name": "硬链接和软链接",
             "description": "Linux 的硬链接和软链接\n索引节点 在Linux的文件系统中，保存在磁盘分区中的文件不管是什么类型都给它分配一个编号，称为索引节点号(Inode Index)，可以通过 ls -li 查看每个文件的索引节点：",
             "url": "/posts/2021-1-19-soft-hard-link/"
         },{
             "@type":"ListItem",
-            "position":  6 ,
+            "position":  7 ,
             "name": "关于",
             "description": " 欢迎来到我的小站呀，很高兴遇见你！🤝\n🏠 关于本站 👨‍💻 博主是谁 ⛹ 兴趣爱好 📬 联系我呀 ",
             "url": "/posts/about/"
         },{
             "@type":"ListItem",
-            "position":  7 ,
+            "position":  8 ,
             "name": "Hello Gridea",
             "description": "👏 欢迎使用 Gridea ！\n✍️ Gridea 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意\u0026hellip; \u0026hellip;",
             "url": "/posts/hello-gridea/"
@@ -270,7 +276,7 @@
 
 
 
-<meta property="og:updated_time" content="2023-05-27T11:51:13&#43;08:00" />
+<meta property="og:updated_time" content="2023-06-06T21:12:08&#43;08:00" />
 
 
 
@@ -378,6 +384,48 @@
 
   <div class="bg-secondary-bg rounded px-6">
     <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/2021-4-15-cpp_func_return_reference/" class="no-underline">
+    <h3 class="mt-0">c&#43;&#43;：如何理解函数返回一个引用【未完】</h3>
+  </a>
+  
+    有如下函数，其返回了一个引用：
+int &amp;ret_val(int &amp;a) { return a; } 另一个函数用来接收返回的引用：
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2020-04-15</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>1分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
   
   <div class="py-6">
     <div class="flex flex-col-reverse lg:flex-row justify-between">

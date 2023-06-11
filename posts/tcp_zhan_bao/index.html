@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<title>tcp 粘包/拆包问题 | /dev/null</title>
+<title>TCP 粘包/拆包问题 | /dev/null</title>
 
 <meta name="generator" content="Hugo Eureka 0.9.3" />
 <link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
@@ -185,7 +185,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
 
 <meta name="description"
-  content="简介 tcp 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 tcp 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。">
+  content="简介 TCP 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 TCP 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -197,7 +197,7 @@
       "item":"/posts/"},{
       "@type": "ListItem",
       "position": 2 ,
-      "name":"tcp 粘包/拆包问题",
+      "name":"TCP 粘包/拆包问题",
       "item":"/posts/tcp_zhan_bao/"}]
 }
 </script>
@@ -212,9 +212,9 @@
         "@type": "WebPage",
         "@id": "/posts/tcp_zhan_bao/"
     },
-    "headline": "tcp 粘包\/拆包问题 | \/dev\/null","datePublished": "2022-09-05T00:51:45+00:00",
+    "headline": "TCP 粘包\/拆包问题 | \/dev\/null","datePublished": "2022-09-05T00:51:45+00:00",
     "dateModified": "2022-09-05T00:51:45+00:00",
-    "wordCount":  867 ,
+    "wordCount":  869 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -223,9 +223,9 @@
             "url": "/images/icon.png"
         }
         },
-    "description": "简介 tcp 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 tcp 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。"
+    "description": "简介 TCP 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 TCP 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。"
 }
-</script><meta property="og:title" content="tcp 粘包/拆包问题 | /dev/null" />
+</script><meta property="og:title" content="TCP 粘包/拆包问题 | /dev/null" />
 <meta property="og:type" content="article" />
 
 
@@ -237,7 +237,7 @@
 
 
 
-<meta property="og:description" content="简介 tcp 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 tcp 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。" />
+<meta property="og:description" content="简介 TCP 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 TCP 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。" />
 
 
 
@@ -264,9 +264,15 @@
 <meta property="article:section" content="posts" />
 
 
-<meta property="article:tag" content="tcp" />
+<meta property="article:tag" content="TCP" />
 
 
+
+
+
+<meta property="og:see_also" content="/posts/tcp_yong_se_kong_zhi/" />
+
+<meta property="og:see_also" content="/posts/close_wait-he-fin_wait_2/" />
 
 
 
@@ -369,7 +375,7 @@
       class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
     >
       <article class="prose">
-  <h1 class="mb-4">tcp 粘包/拆包问题</h1>
+  <h1 class="mb-4">TCP 粘包/拆包问题</h1>
 
   <div
   class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
@@ -395,11 +401,11 @@
   
 
   <h1 id="简介">简介</h1>
-<p>tcp 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 tcp 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。</p>
-<p>tcp 的流式传输，简单的说就是没有消息边界记录，比如发送端为了将多个发往接收端的包，更有效的发到对方，使用了优化方法（Nagle算法），将多次间隔较小、数据量小的数据包，合并成一个大的数据包发送(把发送端的缓冲区填满一次性发送。这样接收端收到的整个数据中其实是包含了多个小包，需要将数据拆分，还原成小包，从而才能进行处理，但因为没有消息边界记录，所以如何还原就成了一个问题。</p>
-<p>在上面的例子中，tcp 将多次写入缓冲区的数据包合并为一次发送，就是 <strong>粘包</strong> 问题。</p>
-<p>此外 tcp 还存在 <strong>拆包</strong> 问题，就是发送包的大小超过了缓冲区大小或者 MSS，比如发送端使用 protobuf 编码数据，然后使用 tcp 进行传输，这个编码的数据大小是 10000 byte，超过了 tcp 的发送缓存区大小 5000 byte（随便写的数字），一次性无法全部发送，所以便会发生拆包，分两次发送，接收端这边第一次只收到了 5000 byte 数据，因为数据使用 protobuf 编码的，不同于文本消息，必须要拿到不多不少刚刚好的 10000 byte 大小的数据，才能反序列化出原始的数据，但因为 tcp 不记录消息长度，所以接收端这边无法知道到底要拿多少数据，这也是一个问题。</p>
-<p>可以看到发生粘包和拆包的原因都是因为 tcp 不记录消息边界（也就是消息长度），既然 tcp 自身不记录，那就只能用户自己解决了，比如写一个协议，为消息添加上消息头，在消息头中记录消息的长度，然后将消息头 + 消息本体作为一个整体发送，（这里的消息头是需要定长的，比如固定为 10 byte），接收端这边根据协议定义，去读取这个定长的消息头，从里面获取到消息本体的长度，现在知道了消息的长度就好解决上面的问题了。</p>
+<p>TCP 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 TCP 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。</p>
+<p>TCP 的流式传输，简单的说就是没有消息边界记录，比如发送端为了将多个发往接收端的包，更有效的发到对方，使用了优化方法（Nagle算法），将多次间隔较小、数据量小的数据包，合并成一个大的数据包发送(把发送端的缓冲区填满一次性发送。这样接收端收到的整个数据中其实是包含了多个小包，需要将数据拆分，还原成小包，从而才能进行处理，但因为没有消息边界记录，所以如何还原就成了一个问题。</p>
+<p>在上面的例子中，TCP 将多次写入缓冲区的数据包合并为一次发送，就是 <strong>粘包</strong> 问题。</p>
+<p>此外 TCP 还存在 <strong>拆包</strong> 问题，就是发送包的大小超过了缓冲区大小或者 MSS，比如发送端使用 protobuf 编码数据，然后使用 TCP 进行传输，这个编码的数据大小是 10000 byte，超过了 TCP 的发送缓存区大小 5000 byte（随便写的数字，仅用作举例），一次性无法全部发送，所以便会发生拆包，分两次发送，接收端这边第一次只收到了 5000 byte 数据，因为数据使用 protobuf 编码的，不同于文本消息，必须要拿到不多不少刚刚好的 10000 byte 大小的数据，才能反序列化出原始的数据，但因为 TCP 不记录消息长度，所以接收端这边无法知道到底要拿多少数据，这也是一个问题。</p>
+<p>可以看到发生粘包和拆包的原因都是因为 TCP 不记录消息边界（也就是消息长度），既然 TCP 自身不记录，那就只能用户自己解决了，比如设计一个协议，让报文内容由消息头 + 消息两部分构成，在消息头中记录消息的长度，然后将消息头 + 消息本体作为一个整体发送，（这里的消息头是需要定长的，比如固定为 10 byte），接收端这边根据协议定义，去读取这个定长的消息头，从里面获取到消息本体的长度，知道了消息的长度以后，上面的问题就可以很好的解决了。</p>
 <h1 id="拆包演示程序">拆包演示程序</h1>
 <p>下面先使用一个错误的 protobuf 的示例程序来演示一下拆包问题：</p>
 <h2 id="server-端">server 端</h2>
@@ -715,7 +721,7 @@ total write 188 bytes
       
         <div class="my-4">
     
-    <a href="/tags/tcp/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#tcp</a>
+    <a href="/tags/tcp/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#TCP</a>
     
 </div>
       
@@ -811,6 +817,19 @@ total write 188 bytes
     
 
     
+    
+      <div
+        class=" bg-secondary-bg prose col-span-2 rounded p-6 lg:col-span-6"
+      >
+        <h3>相关</h3>
+        
+          <a href="/posts/tcp_yong_se_kong_zhi/" class="no-underline">TCP 拥塞控制</a>
+          <br />
+        
+          <a href="/posts/close_wait-he-fin_wait_2/" class="no-underline">TCP CLOSE_WAIT 和 FIN_WAIT_2</a>
+          <br />
+        
+      </div>
     
   </div>
 

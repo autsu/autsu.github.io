@@ -185,8 +185,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
 
 <meta name="description"
-  content="引子 （以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看）
-有如下表，结构如下：">
+  content="引子 （以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看 凑合看就完事了）">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -215,7 +214,7 @@
     },
     "headline": "Mysql 最左前缀原则失效 | \/dev\/null","datePublished": "2021-08-07T11:17:51+00:00",
     "dateModified": "2021-08-07T11:17:51+00:00",
-    "wordCount":  875 ,
+    "wordCount":  1345 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -224,7 +223,7 @@
             "url": "/images/icon.png"
         }
         },
-    "description": "引子 （以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看）\n有如下表，结构如下："
+    "description": "引子 （以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看 凑合看就完事了）"
 }
 </script><meta property="og:title" content="Mysql 最左前缀原则失效 | /dev/null" />
 <meta property="og:type" content="article" />
@@ -238,8 +237,7 @@
 
 
 
-<meta property="og:description" content="引子 （以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看）
-有如下表，结构如下：" />
+<meta property="og:description" content="引子 （以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看 凑合看就完事了）" />
 
 
 
@@ -388,7 +386,7 @@
   </div>
   <div class="me-6 my-2">
     <i class="fas fa-clock me-1"></i>
-    <span>5分钟阅读时长</span>
+    <span>7分钟阅读时长</span>
   </div>
 
   
@@ -401,8 +399,8 @@
   
 
   <h1 id="引子">引子</h1>
-<p>（以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看）</p>
-<p>有如下表，结构如下：</p>
+<p>（<del>以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看</del> 凑合看就完事了）</p>
+<p>有如下表，结构如下，注意其还拥有一个名为 idx_name_age 的，内容为 (name, age) 的联合索引。</p>
 <pre><code>+-------+-------------+------+-----+---------+----------------+
 | Field | Type        | Null | Key | Default | Extra          |
 +-------+-------------+------+-----+---------+----------------+
@@ -411,32 +409,59 @@
 | age   | int         | YES  |     | NULL    |                |
 +-------+-------------+------+-----+---------+----------------+
 </code></pre>
-<p>创建一个 (name, age) 联合索引，并执行下面的 SQL 语句：</p>
-<pre><code class="language-sql"> explain select * from stu_join_index where age = '12';
+<blockquote>
+<p>PS: 建表语句如下：</p>
+<pre><code class="language-mysql">CREATE TABLE stu_join_index (
+  id INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(50),
+  age INT,
+  PRIMARY KEY (id),
+  INDEX idx_name_age (name, age)
+);
+</code></pre>
+<p>此外，我们还可以插入一些数据：</p>
+<pre><code class="language-mysql">INSERT INTO stu_join_index (name, age)
+VALUES
+  ('John', 20),
+  ('Alice', 25),
+  ('Bob', 22),
+  ('Emily', 21),
+  ('David', 23),
+  ('Sophia', 24),
+  ('Michael', 26),
+  ('Olivia', 19),
+  ('Emma', 27),
+  ('Daniel', 20);
+</code></pre>
+</blockquote>
+<p>执行下面的 SQL 语句，看看这次查询的索引使用信息：</p>
+<pre><code class="language-sql"> explain select * from stu_join_index where age = '20';
 </code></pre>
 <p>运行后发现 <code>type</code> 为 <code>index</code>，这代表这次查询走了索引。</p>
-<p>（2022.3.20 更新：index 代表的是会对整个索引树进行扫描，其实也等同于全表查询，至于 index 相比 all 效率会不会更高，查阅了一些资料，都说 index 效率要更快一些）</p>
-<pre><code>+----+-------------+----------------+------------+-------+---------------+----------+---------+------+------+----------+--------------------------+
-| id | select_type | table          | partitions | type  | possible_keys | key      | key_len | ref  | rows | filtered | Extra                    |
-+----+-------------+----------------+------------+-------+---------------+----------+---------+------+------+----------+--------------------------+
-|  1 | SIMPLE      | stu_join_index | NULL       | index | name_age      | name_age | 212     | NULL |    5 |    20.00 | Using where; Using index |
-+----+-------------+----------------+------------+-------+---------------+----------+---------+------+------+----------+--------------------------+
+<p>（2022.3.20 更新：index 代表的是会对整个索引树进行扫描，仅比 all（全表扫描）要快一些 <del>其实也等同于全表查询，至于 index 相比 all 效率会不会更高，查阅了一些资料，都说 index 效率要更快一些</del>）</p>
+<pre><code>+----+-------------+----------------+------------+-------+---------------+--------------+---------+------+------+----------+--------------------------+
+| id | select_type | table          | partitions | type  | possible_keys | key          | key_len | ref  | rows | filtered | Extra                    |
++----+-------------+----------------+------------+-------+---------------+--------------+---------+------+------+----------+--------------------------+
+|  1 | SIMPLE      | stu_join_index | NULL       | index | idx_name_age  | idx_name_age | 208     | NULL |   10 |    10.00 | Using where; Using index |
++----+-------------+----------------+------------+-------+---------------+--------------+---------+------+------+----------+--------------------------+
 </code></pre>
-<p>这就奇怪了，按照 Mysql 最左前缀原则，建立的索引是 (name, age) ，应该只有（name），（name，age）会走索引啊？再尝试查询一下（age, name），看会不会走索引：</p>
-<pre><code class="language-sql">explain select * from stu_join_index where age = '12' and name = 'aa';
+<p>这就奇怪了，按照 Mysql 最左前缀原则，建立的索引是 (name, age) ，应该只有 (name)，(name，age) 会走索引啊？再尝试查询一下（age, name），看会不会走索引：</p>
+<pre><code class="language-sql">explain select * from stu_join_index where age = '25' and name = 'Alice';
 </code></pre>
-<pre><code>+----+-------------+----------------+------------+-------+---------------+----------+---------+------+------+----------+--------------------------+
-| id | select_type | table          | partitions | type  | possible_keys | key      | key_len | ref  | rows | filtered | Extra                    |
-+----+-------------+----------------+------------+-------+---------------+----------+---------+------+------+----------+--------------------------+
-|  1 | SIMPLE      | stu_join_index | NULL       | index | name_age      | name_age | 212     | NULL |    5 |    20.00 | Using where; Using index |
-+----+-------------+----------------+------------+-------+---------------+----------+---------+------+------+----------+--------------------------+
+<pre><code>+----+-------------+----------------+------------+------+---------------+--------------+---------+-------------+------+----------+-------------+
+| id | select_type | table          | partitions | type | possible_keys | key          | key_len | ref         | rows | filtered | Extra       |
++----+-------------+----------------+------------+------+---------------+--------------+---------+-------------+------+----------+-------------+
+|  1 | SIMPLE      | stu_join_index | NULL       | ref  | idx_name_age  | idx_name_age | 208     | const,const |    1 |   100.00 | Using index |
++----+-------------+----------------+------------+------+---------------+--------------+---------+-------------+------+----------+-------------+
 </code></pre>
-<p>可以看到这里依然走了索引。</p>
+<p>可以看到这里也同样走了索引，这是为什么呢？</p>
+<blockquote>
 <p>补充：<code>Extra</code> 显示的是 <code>Using where; Using index</code>，其中的 <code>Using index</code> 代表：从表中仅使用索引树中的信息就能获取查询语句的列的信息, 而不必进行其他额外查找（seek）去读取实际的行记录。当查询的列是单个索引的部分的列时, 可以使用此策略。（简单的翻译就是：使用索引来直接获取列的数据，而不需回表，即覆盖索引）。</p>
-<p>后来在网上找到了一个同样问题的文章（https://segmentfault.com/a/1190000022690969），他的情况和我一样，创建了一张表，表中总共有四个字段。 id 为主键，还有一个由 name，age，address 组成的联合索引，当他执行下面的 SQL 时：</p>
+</blockquote>
+<p>后来在网上找到了一个同样问题的 <a href="https://segmentfault.com/a/1190000022690969">文章</a>，他的情况和我一样，创建了一张表，表中总共有四个字段。 id 为主键，还有一个由 name，age，address 组成的联合索引，当他执行下面的 SQL 时：</p>
 <pre><code class="language-sql">EXPLAIN select * from user where address='beijing';
 </code></pre>
-<p>同样发现 <code>type</code> 字段为 <code>index</code>。</p>
+<p>同样发现 <code>type</code> 字段为 <code>index</code>，即走了索引。</p>
 <p>最终在评论区找到了答案：</p>
 <blockquote>
 <p>总结下，不是最左原则失效了。是因为一开始设计的字段只有四个：(id,name,age,address)，此时的联
@@ -446,30 +471,75 @@
 </blockquote>
 <p>于是我进行了进一步测试，为表添加一个字段并插入一条数据：</p>
 <pre><code class="language-sql">alter table stu_join_index add column score int;
-update stu_join_index set score = 90 where name = 'aa';
+update stu_join_index set score = 90 where name = 'Bob';
 </code></pre>
-<p>此时的表信息：</p>
-<pre><code>+----+------+------+-------+
-| id | name | age  | score |
-+----+------+------+-------+
-|  1 | aa   |   12 |    90 |
-|  2 | bb   |   22 |  NULL |
-|  3 | cc   |   66 |  NULL |
-|  4 | dd   |   88 |  NULL |
-|  5 | ee   |   23 |  NULL |
-+----+------+------+-------+
+<p>此时的表信息如下：</p>
+<pre><code class="language-sql">SELECT * from stu_join_index;
+
++----+---------+------+-------+
+| id | name    | age  | score |
++----+---------+------+-------+
+|  1 | John    |   20 |  NULL |
+|  2 | Alice   |   25 |  NULL |
+|  3 | Bob     |   22 |    90 |
+|  4 | Emily   |   21 |  NULL |
+|  5 | David   |   23 |  NULL |
+|  6 | Sophia  |   24 |  NULL |
+|  7 | Michael |   26 |  NULL |
+|  8 | Olivia  |   19 |  NULL |
+|  9 | Emma    |   27 |  NULL |
+| 10 | Daniel  |   20 |  NULL |
++----+---------+------+-------+
 </code></pre>
-<p>此时执行 (score, age)，看看结果如何：</p>
-<pre><code class="language-sql">explain select * from stu_join_index where score = 90 and age = 12;
-</code></pre>
-<pre><code>+----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+<p>此时再使用 (score, age) 条件进行查询，看看结果如何：</p>
+<pre><code class="language-sql">explain select * from stu_join_index where score = 90 and age = 22;
+
++----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
 | id | select_type | table          | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |
 +----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
-|  1 | SIMPLE      | stu_join_index | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    5 |    20.00 | Using where |
+|  1 | SIMPLE      | stu_join_index | NULL       | ALL  | NULL          | NULL | NULL    | NULL |   10 |    10.00 | Using where |
 +----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
 </code></pre>
-<p>此时 <code>type</code> 变为了 <code>ALL</code>，代表要扫描全表。</p>
-<p>因为 (name, age) 相当于创建了 name 单列索引和 (name, age) 联合索引。对于多个字段的联合索引，也同理。如 index(a, b, c) 联合索引，则相当于创建了 a 单列索引，(a, b) 联合索引，和 (a, b, c )联合索引。 (score, age) 既没有联合索引，各自也没有单列索引，所以自然要扫描全表。</p>
+<p>可以看到此时 <code>type</code> 变为了 <code>ALL</code>，代表要扫描全表。</p>
+<p>因为 (name, age) 相当于创建了 name 单列索引和 (name, age) 联合索引。对于多个字段的联合索引，也同理，比如 index(a, b, c) 这个联合索引，相当于创建了 a 单列索引，(a, b) 联合索引，和 (a, b, c )联合索引。上面的查询条件 (score, age) 既没有联合索引，各自也没有单列索引，所以自然要扫描全表。</p>
+<p>测试：</p>
+<p>思考一下，之前的查询语句 <code>explain select * from stu_join_index where age = 20;</code> 还会不会走索引？</p>
+<p>结果：</p>
+<pre><code class="language-sql">explain select * from stu_join_index where age = 20;
++----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+| id | select_type | table          | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |
++----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+|  1 | SIMPLE      | stu_join_index | NULL       | ALL  | NULL          | NULL | NULL    | NULL |   10 |    10.00 | Using where |
++----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+</code></pre>
+<p>可以看到此时的 type 为 ALL，这是为什么呢？</p>
+<p>我的猜测是，因为我们加了一个非索引字段 <code>score</code>，而我们的查询结果又是 *，而查询条件又是 age 这个无索引字段（我们创建的联合索引是 name, age），所以就会走全表扫描，但是 Extra 这里的 <code>Using where</code> 又是什么意思呢？</p>
+<blockquote>
+<p>来自 ChatGPT：</p>
+<p>在 MySQL 的 <code>Extra</code> 列中，<code>Using where</code> 表示查询需要在存储引擎层面使用额外的条件过滤。具体含义如下：</p>
+<ul>
+<li><code>Using where</code> 表示在读取行数据后，MySQL 需要进一步应用 WHERE 条件进行过滤，以满足查询条件。这意味着查询结果中可能包含一些不符合 WHERE 条件的行，需要在 MySQL 层面进行进一步过滤。</li>
+<li>当出现 <code>Using where</code> 时，MySQL 可能会使用索引或者全表扫描来获取满足 WHERE 条件的行数据。如果查询涉及到大量数据，或者没有适用的索引，可能会导致性能下降。</li>
+<li>注意，<code>Using where</code> 并不表示一定会使用索引，它只表示需要在查询结果集上进行进一步的条件过滤。具体是否使用索引还需要考虑索引的定义、查询条件的复杂性以及数据分布等因素。</li>
+</ul>
+<p>总之，<code>Using where</code> 表示查询需要在 MySQL 层面进一步过滤数据以满足 WHERE 条件，但不表示一定会使用索引。需要综合考虑索引的设计和查询条件的优化，以提高查询性能。</p>
+</blockquote>
+<p>如果我们将查询条件修改为 name，或者查询结果由 * 改为 id,name,age，结果又会如何？</p>
+<pre><code class="language-sql">explain select * from stu_join_index where name = 'Bob';
++----+-------------+----------------+------------+------+---------------+--------------+---------+-------+------+----------+-------+
+| id | select_type | table          | partitions | type | possible_keys | key          | key_len | ref   | rows | filtered | Extra |
++----+-------------+----------------+------------+------+---------------+--------------+---------+-------+------+----------+-------+
+|  1 | SIMPLE      | stu_join_index | NULL       | ref  | idx_name_age  | idx_name_age | 203     | const |    1 |   100.00 | NULL  |
++----+-------------+----------------+------------+------+---------------+--------------+---------+-------+------+----------+-------+
+
+explain select id,name,age from stu_join_index where age = 20;
++----+-------------+----------------+------------+-------+---------------+--------------+---------+------+------+----------+--------------------------+
+| id | select_type | table          | partitions | type  | possible_keys | key          | key_len | ref  | rows | filtered | Extra                    |
++----+-------------+----------------+------------+-------+---------------+--------------+---------+------+------+----------+--------------------------+
+|  1 | SIMPLE      | stu_join_index | NULL       | index | idx_name_age  | idx_name_age | 208     | NULL |   10 |    10.00 | Using where; Using index |
++----+-------------+----------------+------------+-------+---------------+--------------+---------+------+------+----------+--------------------------+
+</code></pre>
+<p>可以看到，这两个查询都走了索引</p>
 <h1 id="一些疑问">一些疑问</h1>
 <h2 id="1-where-条件只有-name">1. where 条件只有 name</h2>
 <p>如果 <code>where</code> 条件只有 <code>score</code> ，或者只有 <code>age</code> ，结果会怎样呢？</p>
@@ -483,7 +553,7 @@ explain select * from stu_join_index where score = 90;
 |  1 | SIMPLE      | stu_join_index | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    5 |    20.00 | Using where |
 +----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+
 </code></pre>
-<p>结果会扫描全表。这时因为 <code>socre</code> 和 <code>age</code> 都没有单列索引。</p>
+<p>结果会扫描全表。这是因为 <code>socre</code> 和 <code>age</code> 都没有单列索引。</p>
 <p>但是当 <code>where</code> 条件只有 <code>name</code> 时会怎样呢？</p>
 <pre><code class="language-sql">explain select * from stu_join_index where name = 'aa';
 </code></pre>
@@ -526,27 +596,46 @@ explain select * from stu_join_index where score = 90;
 <li>当我们的字段是字符串类型时，不加引号的查询无法使用索引，加引号的查询才可正常使用索引</li>
 </ol>
 </blockquote>
-<h2 id="3">3.</h2>
+<p>但是还是没给出原因，于是我又问了下 ChatGPT：</p>
+<blockquote>
+<p>Q：为什么 select * from stu_join_index where name = &lsquo;aa&rsquo;; 会走索引，而 select * from stu_join_index where name = 1 不会？</p>
+<p>A：<code>select * from stu_join_index where name = 1;</code> 不会走索引：</p>
+<p>这条查询语句中的条件 <code>name = 1</code> 的值类型为整数，而 <code>name</code> 字段的索引 <code>idx_name_age</code> 是建立在字符串类型上的。索引是按照索引列的数据类型进行排序和比较的，因此，整数值无法直接匹配到字符串类型的索引，所以无法使用该索引进行快速查找。在这种情况下，MySQL可能会选择全表扫描的方式来查找满足条件的行。</p>
+</blockquote>
+<blockquote>
+<p>然后我又突发奇想，问了一下另外一种情况：</p>
+<p>Q：那如果查询条件对应的列是 int 类型，但是我加了引号，比如 age = &lsquo;1&rsquo;，这样会走索引吗</p>
+<p>A：当查询条件对应的列是整数类型（如<code>int</code>），但是你将查询条件的值用引号括起来（如<code>age = '1'</code>），MySQL 会进行类型转换以匹配索引列的数据类型。在这种情况下，MySQL 通常会尝试将字符串类型的查询条件转换为整数类型，并尝试使用索引来进行匹配。</p>
+<p>因此，在你提到的情况下，如果索引 <code>idx_name_age</code> 的列 <code>age</code> 是整数类型，MySQL 会尝试将查询条件中的字符串 <code>'1'</code> 转换为整数，并使用该索引进行匹配。如果转换成功，MySQL 将能够使用索引来加速查询。</p>
+<p>需要注意的是，类型转换可能会带来一些性能开销，并且在某些情况下可能会导致索引失效。所以，最佳实践是确保查询条件的值与索引列的数据类型相匹配，这样可以更好地利用索引的优势。</p>
+</blockquote>
+<h2 id="3-不符合最左匹配原则但还是走了索引">3. 不符合最左匹配原则但还是走了索引</h2>
 <p>再来看一种情况：
 此时执行 (name, score, age)，看看结果如何：</p>
 <pre><code class="language-sql">explain select * from stu_join_index where name = 'aa' and score = 90 and age = 12;
-</code></pre>
-<pre><code>+----+-------------+----------------+------------+------+---------------+----------+---------+-------------+------+----------+-------------+
-| id | select_type | table          | partitions | type | possible_keys | key      | key_len | ref         | rows | filtered | Extra       |
-+----+-------------+----------------+------------+------+---------------+----------+---------+-------------+------+----------+-------------+
-|  1 | SIMPLE      | stu_join_index | NULL       | ref  | name_age      | name_age | 208     | const,const |    1 |    20.00 | Using where |
-+----+-------------+----------------+------------+------+---------------+----------+---------+-------------+------+----------+-------------+
+
++----+-------------+----------------+------------+------+---------------+--------------+---------+-------------+------+----------+-------------+
+| id | select_type | table          | partitions | type | possible_keys | key          | key_len | ref         | rows | filtered | Extra       |
++----+-------------+----------------+------------+------+---------------+--------------+---------+-------------+------+----------+-------------+
+|  1 | SIMPLE      | stu_join_index | NULL       | ref  | idx_name_age  | idx_name_age | 208     | const,const |    1 |    10.00 | Using where |
++----+-------------+----------------+------------+------+---------------+--------------+---------+-------------+------+----------+-------------+
 </code></pre>
 <p>这里明明不符合最左前缀原则，为什么 <code>type</code> 会是  <code>ref</code>？</p>
-<h2 id="4">4.</h2>
+<blockquote>
+<p>来自 ChatGPT：</p>
+<p>在你提供的查询语句 <code>select * from stu_join_index where name = 'aa' and score = 90 and age = 12;</code> 中，尽管不符合最左前缀原则，但是 MySQL 优化器可能会选择使用索引进行查询。</p>
+<p>这是因为索引的选择并不仅仅依赖于最左前缀原则，MySQL 优化器会根据多个因素进行选择，包括索引的选择性、数据分布情况、查询的复杂度等。在某些情况下，MySQL 可能会选择使用较长的索引前缀或者联合索引的一部分来进行查询，而不仅仅局限于最左前缀。</p>
+<p>在你的查询中，如果联合索引 <code>idx_name_age</code> 的前缀列 <code>name</code> 在数据分布上非常选择性高，且其他列的选择性也足够高，MySQL 可能会选择使用该索引进行查询，并且 <code>type</code> 字段显示为 <code>ref</code>。这表示使用了非唯一性索引，并且通过索引进行了范围查找。</p>
+<p>需要注意的是，优化器的行为受多个因素影响，包括数据库的统计信息、查询的复杂度、索引的选择性等等。因此，虽然某些情况下 MySQL 可能会选择使用不符合最左前缀原则的索引，但并不是绝对的，具体的选择还是取决于优化器的判断和算法。</p>
+</blockquote>
+<h2 id="4-index-和-ref-的区别以及二者各自触发的场景">4. index 和 ref 的区别，以及二者各自触发的场景</h2>
 <p>再次执行下面的语句（在文章一开始还没有添加 score 字段时，执行过该语句）：</p>
 <pre><code class="language-sql">explain select * from stu_join_index where age = '12' and name = 'aa';
-</code></pre>
-<pre><code>+----+-------------+----------------+------------+------+---------------+----------+---------+-------------+------+----------+-------+
-| id | select_type | table          | partitions | type | possible_keys | key      | key_len | ref         | rows | filtered | Extra |
-+----+-------------+----------------+------------+------+---------------+----------+---------+-------------+------+----------+-------+
-|  1 | SIMPLE      | stu_join_index | NULL       | ref  | name_age      | name_age | 208     | const,const |    1 |   100.00 | NULL  |
-+----+-------------+----------------+------------+------+---------------+----------+---------+-------------+------+----------+-------+
++----+-------------+----------------+------------+------+---------------+--------------+---------+-------------+------+----------+-------+
+| id | select_type | table          | partitions | type | possible_keys | key          | key_len | ref         | rows | filtered | Extra |
++----+-------------+----------------+------------+------+---------------+--------------+---------+-------------+------+----------+-------+
+|  1 | SIMPLE      | stu_join_index | NULL       | ref  | idx_name_age  | idx_name_age | 208     | const,const |    1 |   100.00 | NULL  |
++----+-------------+----------------+------------+------+---------------+--------------+---------+-------------+------+----------+-------+
 </code></pre>
 <p>为什么加了 <code>score</code> 字段后， <code>type</code> 从 <code>index</code> 变为了 <code>ref</code>？</p>
 
@@ -625,8 +714,8 @@ explain select * from stu_join_index where score = 90;
       <ul>
         <li><a href="#1-where-条件只有-name">1. where 条件只有 name</a></li>
         <li><a href="#2-为什么-name-为非字符串时不走索引">2. 为什么 name 为非字符串时不走索引</a></li>
-        <li><a href="#3">3.</a></li>
-        <li><a href="#4">4.</a></li>
+        <li><a href="#3-不符合最左匹配原则但还是走了索引">3. 不符合最左匹配原则但还是走了索引</a></li>
+        <li><a href="#4-index-和-ref-的区别以及二者各自触发的场景">4. index 和 ref 的区别，以及二者各自触发的场景</a></li>
       </ul>
     </li>
   </ul>

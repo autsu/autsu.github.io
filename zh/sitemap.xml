@@ -5,7 +5,7 @@
     <loc>/authors/void/</loc>
   </url><url>
     <loc>/</loc>
-    <lastmod>2023-05-27T11:51:13+08:00</lastmod>
+    <lastmod>2023-06-06T21:12:08+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
@@ -17,14 +17,8 @@
                 href="/"
                 />
   </url><url>
-    <loc>/tags/istio/</loc>
-    <lastmod>2023-05-27T11:51:13+08:00</lastmod>
-  </url><url>
-    <loc>/posts/istio-bookinfo/</loc>
-    <lastmod>2023-05-27T11:51:13+08:00</lastmod>
-  </url><url>
     <loc>/tags/</loc>
-    <lastmod>2023-05-27T11:51:13+08:00</lastmod>
+    <lastmod>2023-06-06T21:12:08+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
@@ -36,7 +30,19 @@
                 href="/tags/"
                 />
   </url><url>
+    <loc>/tags/tcp/</loc>
+    <lastmod>2023-06-06T21:12:08+08:00</lastmod>
+  </url><url>
+    <loc>/posts/tcp-liu-liang-kong-zhi/</loc>
+    <lastmod>2023-06-06T21:12:08+08:00</lastmod>
+  </url><url>
     <loc>/posts/</loc>
+    <lastmod>2023-06-06T21:12:08+08:00</lastmod>
+  </url><url>
+    <loc>/tags/istio/</loc>
+    <lastmod>2023-05-27T11:51:13+08:00</lastmod>
+  </url><url>
+    <loc>/posts/istio-bookinfo/</loc>
     <lastmod>2023-05-27T11:51:13+08:00</lastmod>
   </url><url>
     <loc>/tags/multipass/</loc>
@@ -125,9 +131,6 @@
   </url><url>
     <loc>/posts/eof_cuo_wu/</loc>
     <lastmod>2022-09-06T02:28:52+00:00</lastmod>
-  </url><url>
-    <loc>/tags/tcp/</loc>
-    <lastmod>2022-09-05T00:51:45+00:00</lastmod>
   </url><url>
     <loc>/posts/tcp_zhan_bao/</loc>
     <lastmod>2022-09-05T00:51:45+00:00</lastmod>

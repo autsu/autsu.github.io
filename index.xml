@@ -8,7 +8,16 @@
     <language>zh</language>
     <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sat, 27 May 2023 11:51:13 +0800</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 06 Jun 2023 21:12:08 +0800</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>TCP 滑动窗口与流量控制</title>
+      <link>/posts/tcp-liu-liang-kong-zhi/</link>
+      <pubDate>Tue, 06 Jun 2023 21:12:08 +0800</pubDate>
+      
+      <guid>/posts/tcp-liu-liang-kong-zhi/</guid>
+      <description>流量控制与滑动窗口图解 ps: 下面的图片皆源自 B 站课程 计算机网络微课堂（有字幕无背景音乐版）</description>
+    </item>
+    
     <item>
       <title>Istio Bookinfo</title>
       <link>/posts/istio-bookinfo/</link>
@@ -186,12 +195,12 @@ Reflector：负责从 api-server list（全量拉取数据） and watch（监听
     </item>
     
     <item>
-      <title>tcp 粘包/拆包问题</title>
+      <title>TCP 粘包/拆包问题</title>
       <link>/posts/tcp_zhan_bao/</link>
       <pubDate>Mon, 05 Sep 2022 00:51:45 +0000</pubDate>
       
       <guid>/posts/tcp_zhan_bao/</guid>
-      <description>简介 tcp 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 tcp 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。</description>
+      <description>简介 TCP 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 TCP 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。</description>
     </item>
     
     <item>
@@ -229,10 +238,10 @@ package main import ( &amp;quot;fmt&amp;quot; &amp;quot;net&amp;quot; ) func mai
       <pubDate>Sat, 27 Aug 2022 23:49:10 +0000</pubDate>
       
       <guid>/posts/huan_cun_yi_zhi_xing/</guid>
-      <description>先更新数据库，再更新缓存 存在的问题：
+      <description>一道高频面试题：如何保证缓存和数据库的一致性
+先更新数据库，再更新缓存 存在的问题：
 更新数据库成功，更新缓存失败
-并发情况下可能会存在问题，如下（纵轴代表时间线）：
-A B 更新 DB x = 1 更新 DB，x = 2 更新缓存，x = 2 更新缓存，x = 1 可以看到因为并发操作导致 A 把 B 的更新缓存结果给覆盖了，最终使得数据库结果（x = 2）和缓存结果（x = 1）不一致</description>
+并发情况下可能会存在问题，如下（纵轴代表时间线）：</description>
     </item>
     
     <item>
@@ -836,8 +845,7 @@ CREATE TABLE `t` ( `id` int(11) NOT NULL, `c` int(11) DEFAULT NULL, `d` int(11) 
       <pubDate>Sat, 07 Aug 2021 11:17:51 +0000</pubDate>
       
       <guid>/posts/mysql-zui-zuo-qian-zhui-yuan-ze-shi-xiao/</guid>
-      <description>引子 （以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看）
-有如下表，结构如下：</description>
+      <description>引子 （以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看 凑合看就完事了）</description>
     </item>
     
     <item>
@@ -965,8 +973,7 @@ k 是一个正整数，它的值小于或等于链表的长度。</description>
       <pubDate>Sun, 25 Jul 2021 10:04:25 +0000</pubDate>
       
       <guid>/posts/mysql-mian-jing/</guid>
-      <description>MySQL 面经汇总，收集于牛客，不断更新中
-1. char 和 varchar 的区别 char 是固定长度，varchar 长度可变，存储时，前者不管实际存储数据的长度，直接规定 char 规定的长度分配存储空间；而后者会根据实际存储的数据分配最终的存储空间。</description>
+      <description>1. char 和 varchar 的区别 char 是固定长度，varchar 长度可变，存储时，前者不管实际存储数据的长度，直接规定 char 规定的长度分配存储空间；而后者会根据实际存储的数据分配最终的存储空间。</description>
     </item>
     
     <item>

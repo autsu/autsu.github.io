@@ -42,8 +42,7 @@
       <pubDate>Sun, 25 Jul 2021 10:04:25 +0000</pubDate>
       
       <guid>/posts/mysql-mian-jing/</guid>
-      <description>MySQL 面经汇总，收集于牛客，不断更新中
-1. char 和 varchar 的区别 char 是固定长度，varchar 长度可变，存储时，前者不管实际存储数据的长度，直接规定 char 规定的长度分配存储空间；而后者会根据实际存储的数据分配最终的存储空间。</description>
+      <description>1. char 和 varchar 的区别 char 是固定长度，varchar 长度可变，存储时，前者不管实际存储数据的长度，直接规定 char 规定的长度分配存储空间；而后者会根据实际存储的数据分配最终的存储空间。</description>
     </item>
     
   </channel>

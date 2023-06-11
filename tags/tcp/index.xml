@@ -1,21 +1,48 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>tcp on /dev/null</title>
+    <title>TCP on /dev/null</title>
     <link>/tags/tcp/</link>
-    <description>Recent content in tcp on /dev/null</description>
+    <description>Recent content in TCP on /dev/null</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <copyright>&amp;copy; 0000 &lt;a&gt;null&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Mon, 05 Sep 2022 00:51:45 +0000</lastBuildDate><atom:link href="/tags/tcp/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 06 Jun 2023 21:12:08 +0800</lastBuildDate><atom:link href="/tags/tcp/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>tcp 粘包/拆包问题</title>
+      <title>TCP 滑动窗口与流量控制</title>
+      <link>/posts/tcp-liu-liang-kong-zhi/</link>
+      <pubDate>Tue, 06 Jun 2023 21:12:08 +0800</pubDate>
+      
+      <guid>/posts/tcp-liu-liang-kong-zhi/</guid>
+      <description>流量控制与滑动窗口图解 ps: 下面的图片皆源自 B 站课程 计算机网络微课堂（有字幕无背景音乐版）</description>
+    </item>
+    
+    <item>
+      <title>TCP 粘包/拆包问题</title>
       <link>/posts/tcp_zhan_bao/</link>
       <pubDate>Mon, 05 Sep 2022 00:51:45 +0000</pubDate>
       
       <guid>/posts/tcp_zhan_bao/</guid>
-      <description>简介 tcp 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 tcp 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。</description>
+      <description>简介 TCP 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 TCP 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。</description>
+    </item>
+    
+    <item>
+      <title>TCP 拥塞控制</title>
+      <link>/posts/tcp_yong_se_kong_zhi/</link>
+      <pubDate>Tue, 02 Aug 2022 19:04:52 +0000</pubDate>
+      
+      <guid>/posts/tcp_yong_se_kong_zhi/</guid>
+      <description>发送方维护一个叫做 拥塞窗口 cwnd 的状态变量，其值 取决于网络的拥塞程度，并且 动态变化。</description>
+    </item>
+    
+    <item>
+      <title>TCP CLOSE_WAIT 和 FIN_WAIT_2</title>
+      <link>/posts/close_wait-he-fin_wait_2/</link>
+      <pubDate>Wed, 02 Feb 2022 02:07:10 +0000</pubDate>
+      
+      <guid>/posts/close_wait-he-fin_wait_2/</guid>
+      <description>问题记录 最近写了一个普通的 tcp demo，发现 server 的状态处于 CLOSE_WAIT，而 client 的状态处于 FIN_WAIT_2，为了排查这个问题，特此写了这篇文章作为记录，这也</description>
     </item>
     
   </channel>

@@ -197,93 +197,93 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
+            "name": "minikube 问题汇总",
+            "description": "设置代理后，minikube kubectl 无响应 在给虚拟机设置了代理后，整个网络体验爽快多了，再也不用担心拉不下来包了。。。\n只需要将虚拟机的网络设置为桥接模式，然后开启 clashx 的 “允许局域网连接”（非常重要的一步，之前就是因为忽略了这一步，导致虚拟机无法使用宿主机代理），然后再点击 clashx 的 “复制终端代理命令”，将里面的 127.",
+            "url": "/posts/minikube_wen_ti_hui_zong/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
             "name": "rabbitmq 学习笔记",
             "description": "本笔记主要记录 go rabbitmq 库的使用示例，同时结合学习 rabbitmq",
             "url": "/posts/go-rabbitmq/"
         },{
             "@type":"ListItem",
-            "position":  2 ,
+            "position":  3 ,
             "name": "TLS 握手流程",
             "description": "注：以下内容引用自 cloudflare 学习中心\nTLS 握手有哪些步骤？ TLS 握手是由客户端和服务器交换的一系列数据报或消息。TLS 握手涉及多个步骤，因为客户端和服务器要交换完成握手和进行进一步对话所需的信息。",
             "url": "/posts/tls_wo_shou/"
         },{
             "@type":"ListItem",
-            "position":  3 ,
+            "position":  4 ,
             "name": "输入 url 到浏览器显示网页，期间发生了什么？（未完）",
             "description": "从请求 URL 中获取请求域名，通过 DNS 获取域名对应的 IP 地址",
             "url": "/posts/url_dao_xian_shi_wang_ye_fa_shen_le_shen_me/"
         },{
             "@type":"ListItem",
-            "position":  4 ,
+            "position":  5 ,
             "name": "go mutex 原理",
             "description": "参考： https://www.bilibili.com/video/BV15V411n7fM?p=2\u0026amp;spm_id_from=pageDriver\u0026amp;vd_source=2ff613424b86c58a71ba91b7304ffe9b\n总览 mutex 的数据结构：",
             "url": "/posts/go-mutex-yuan-ma/"
         },{
             "@type":"ListItem",
-            "position":  5 ,
+            "position":  6 ,
             "name": "go chan 原理（人话版）",
             "description": "chan 原理（人话版） 说明：这里只是用大白话来阐述 chan 的大致原理，不保证严谨性，也不考虑一些繁枝细节（比如 sudog，gopark，goready），仅作为一个简单的参考理解，如果想深入理解 chan 的底层实现，请自行参阅其他博客",
             "url": "/posts/go-chan-yuan-ma/"
         },{
             "@type":"ListItem",
-            "position":  6 ,
+            "position":  7 ,
             "name": "127.0.0.1，localhost，0.0.0.0 的区别（包含虚拟网卡相关操作）",
             "description": "127.0.0.1 127.0.0.1 是 回环地址，当报文的目的地址是回环地址时，依然会走一遍网络协议栈，但是不会经过物理网卡，而是经过一个名为 lo 的虚拟网卡（mac 上交 lo0），具体的流程是：",
             "url": "/posts/127.0.0.1_localhost_0.0.0.0/"
         },{
             "@type":"ListItem",
-            "position":  7 ,
+            "position":  8 ,
             "name": "go 熔断器 gobreaker 源码阅读",
             "description": "该文章仅作为本人笔记，不具备太大的参考价值\n该文章着重记录源码，没有对熔断器这一概念做过多理念上的说明解释\n该文章排版、思路较为混乱，后续可能会进行修改\n示例 官方示例 官方示例有点太简单了，完全无法体会到 熔断 这一概念",
             "url": "/posts/gobreaker/"
         },{
             "@type":"ListItem",
-            "position":  8 ,
+            "position":  9 ,
             "name": "go 文件操作的\"坑\"之 Seek()",
             "description": "引子 最近买了块机械硬盘作为仓库盘，用硬盘盒连接到 mac，但是这块硬盘貌似有休眠机制（不确定），如果一段时间没有读写操作就会停转，等到需要操作时才会唤醒，唤醒会有比较明显的磁盘启动声音，并且需要等待 5s 左右才能使用。",
             "url": "/posts/go_seek/"
         },{
             "@type":"ListItem",
-            "position":  9 ,
+            "position":  10 ,
             "name": "k8s ConfigMap",
             "description": "说明：文章的部分地方会用 cm 来指代 ConfigMap",
             "url": "/posts/k8s-configmap/"
         },{
             "@type":"ListItem",
-            "position":  10 ,
+            "position":  11 ,
             "name": "go gc 白话版",
             "description": "主流的垃圾回收算法 引用计数法 根据对象自身的引用计数来回收，当引用计数归零时进行回收，但是计数频繁更新会带来更多开销，且无法解决循环引用的问题。\n优点：简单直接，回收速度快 缺点：需要额外的空间存放计数，无法处理循环引用的情况； 标记清除法 标记出所有不需要回收的对象，在标记完成后统一回收掉所有未被标记的对象。",
             "url": "/posts/go-gc/"
         },{
             "@type":"ListItem",
-            "position":  11 ,
+            "position":  12 ,
             "name": "k8s namespace",
             "description": "简介 Namespace 是对一组资源和对象的抽象集合，比如可以用来将系统内部的对象划分为不同的项目组或用户组。常见的 pods, services, replication controllers 和 deployments 等都是属于某一个 namespace 的（默认是default），而 node, persistentVolumes 等则不属于任何 namespace。",
             "url": "/posts/k8s-namespace/"
         },{
             "@type":"ListItem",
-            "position":  12 ,
+            "position":  13 ,
             "name": "Go errgroup 使用",
             "description": "简介 errgroup 是 WaitGroup 的强化版，其在 WaitGroup 的基础上添加了错误处理的功能：如果一组 goroutine 中的某一个发生了错误，那么后续的所有 gorouine 都不会被执行。",
             "url": "/posts/errgroup/"
         },{
             "@type":"ListItem",
-            "position":  13 ,
+            "position":  14 ,
             "name": "kqueue",
             "description": "一个 echo server 示例：\npackage main import ( \u0026quot;log\u0026quot; .",
             "url": "/posts/kqueue/"
         },{
             "@type":"ListItem",
-            "position":  14 ,
+            "position":  15 ,
             "name": "k8s 卷",
             "description": "为什么需要卷 pod 类似逻辑主机，在逻辑主机中运行的进程共享诸如 CPU、RAM、网络接口等资源。有时候人们会期望进程也能共享磁盘，但是因为 pod 中运行的是一个个容器，而每个容器都有自己独立的文件系统（因为文件系统来自于容器镜像），所以不能共享磁盘。有时候可能存在这样一种需求：pod 中某个容器存储的数据需要持久化，但是因为容器存在挂掉的可能，如果挂掉后会新创建一个 pod 来顶替，但是因为 pod 因为无法共享磁盘，导致无法继承先前 pod 里存储的数据，先前的那部分数据就永久丢失了。",
             "url": "/posts/k8s-juan/"
-        },{
-            "@type":"ListItem",
-            "position":  15 ,
-            "name": "在 mac 上制作 windows10 启动盘，亲测可用",
-            "description": "来源：https://chinese.freecodecamp.org/news/how-make-a-windows-10-usb-using-your-mac-build-a-bootable-iso-from-your-macs-terminal/\n准备 windows iso 文件 一个大小至少 8G 的 U 盘 mac 上安装好 homebrew 步骤 1 查看 U 盘的名称：",
-            "url": "/posts/mac-shang-zhi-zuo-windows/"
         }
     ]
 }
@@ -318,7 +318,7 @@
 
 
 
-<meta property="og:updated_time" content="2023-05-27T11:51:13&#43;08:00" />
+<meta property="og:updated_time" content="2023-06-06T21:12:08&#43;08:00" />
 
 
 
@@ -426,6 +426,48 @@
 
   <div class="bg-secondary-bg rounded px-6">
     <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/minikube_wen_ti_hui_zong/" class="no-underline">
+    <h3 class="mt-0">minikube 问题汇总</h3>
+  </a>
+  
+    设置代理后，minikube kubectl 无响应 在给虚拟机设置了代理后，整个网络体验爽快多了，再也不用担心拉不下来包了。。。
+只需要将虚拟机的网络设置为桥接模式，然后开启 clashx 的 “允许局域网连接”（非常重要的一步，之前就是因为忽略了这一步，导致虚拟机无法使用宿主机代理），然后再点击 clashx 的 “复制终端代理命令”，将里面的 127.
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2022-07-14</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>4分钟阅读时长</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
   
   <div class="py-6">
     <div class="flex flex-col-reverse lg:flex-row justify-between">
@@ -992,48 +1034,6 @@ package main import ( &#34;log&#34; .
   <div class="me-6 my-2">
     <i class="fas fa-clock me-1"></i>
     <span>5分钟阅读时长</span>
-  </div>
-
-  
-
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/mac-shang-zhi-zuo-windows/" class="no-underline">
-    <h3 class="mt-0">在 mac 上制作 windows10 启动盘，亲测可用</h3>
-  </a>
-  
-    来源：https://chinese.freecodecamp.org/news/how-make-a-windows-10-usb-using-your-mac-build-a-bootable-iso-from-your-macs-terminal/
-准备 windows iso 文件 一个大小至少 8G 的 U 盘 mac 上安装好 homebrew 步骤 1 查看 U 盘的名称：
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2022-05-17</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>2分钟阅读时长</span>
   </div>
 
   

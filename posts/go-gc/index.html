@@ -424,7 +424,7 @@
 <ul>
 <li>优点：简单直接，速度快，适合可回收对象不多的场景</li>
 <li>缺点：会造成不连续的内存空间（内存碎片），导致有大的对象创建的时候，明明内存中总内存是够的，但是空间不是连续的造成对象无法分配，此外还需要 <strong>STW</strong> 来确保标记清除过程不被外部影响（比如 gc 前脚刚把一个对象标记为可达，用户程序后脚就释放了它）；
-<img src="https://autsu.github.io/post-images/1654446334006.jpg" alt="">
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1654446334006.jpg" alt="">
 （内存碎片)</li>
 </ul>
 <blockquote>
@@ -433,14 +433,14 @@
 </blockquote>
 <h2 id="标记整理法">标记整理法</h2>
 <p>这种算法用于解决 <strong>标记清除法</strong> 的内存碎片问题，它的标记阶段与标记清除法相同，但是会在完成标记工作后，移动非垃圾数据，使它们尽可能紧凑的放在内存中。
-<img src="https://autsu.github.io/post-images/1654446315708.jpg" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1654446315708.jpg" alt=""></p>
 <ul>
 <li>优点：解决了内存碎片的问题</li>
 <li>缺点：性能低，因为在移动对象的时候不仅需要移动对象还要维护对象的引用地址，可能需要对内存经过几次扫描才能完成</li>
 </ul>
 <h2 id="复制回收法">复制回收法</h2>
 <p>和 <strong>标记整理法</strong> 一样，这种算法也是为了解决内存碎片问题，也会移动数据，它把堆内存划分为两个相等的空间 From 和 To，程序执行时使用 From 空间，垃圾回收执行时，会扫描 From 空间，把能追踪到的数据复制到 To 空间，当所有有用的数据都复制到 To 空间后，把 From 和 To 空间的角色交换一下，原来的 From 空间可以全部回收作为新的 To 空间；原来的 To 空间因为保存的都是有用的数据，所以可以作为新的 From 空间。
-<img src="https://autsu.github.io/post-images/1654446282139.jpg" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1654446282139.jpg" alt=""></p>
 <ul>
 <li>优点：解决了内存碎片的问题，每次清除针对的都是整块内存，但是因为移动对象需要耗费时间，效率低于标记清除法；</li>
 <li>缺点：只有一半的堆内存可以使用，导致堆内存使用效率低。为了提高内存的使用率，通常会和其他垃圾回收算法搭配使用，只在一部分堆内存中使用复制回收，</li>
@@ -481,7 +481,7 @@
 <p><strong>问题1：多标</strong></p>
 <p>通俗的说，就是一个本该被回收的对象（白色），却被错误的标记成了非白色，导致本轮 gc 没有正确回收，导致产生浮动垃圾。</p>
 <p>比如下面这张图：
-<img src="https://autsu.github.io/post-images/1654445991637.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1654445991637.png" alt=""></p>
 <p>在步骤2中，gc 将 D 标记为了黑色，将 D 的可达对象 E 标记为了灰色，但在执行步骤3前，用户程序断开了 D 到 E 的引用（比如从 D = E 变成 D = null），此时 E 及其引用的 F，G 都会变为垃圾，因为它们都不再可达了，但是因为 D 已经标记成黑色，不会再次对其进行扫描了，这会导致 gc 继续标记，将 E 从灰色变为黑色，E 的引用对象 F 和 G 标记为灰色，最后将 F 和 G 标记为黑色。至此，该轮 gc 结束，E，F，G 都被错误的标记为了黑色而没有被及时回收。</p>
 <blockquote>
 <p>❓写屏障可以解决上面这种情况吗？</p>
@@ -489,10 +489,10 @@
 <p><strong>问题2：漏标</strong></p>
 <p>通俗的说，就是把一个有用的对象给错误的回收掉了，也就是悬挂指针问题。</p>
 <p>比如下面这张图：
-<img src="https://autsu.github.io/post-images/1654446000456.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1654446000456.png" alt=""></p>
 <p>在步骤2中，E 已经变为灰色，但在 gc 进一步标记之前，用户程序断开了 E 到 G 的引用，同时已经标记为黑色的 D 新增了对 G 的引用，之后 gc 标记时发现 E 到 G 已经不可达，便不会将 G 标记为灰色，而因为 D 已经是黑色不会再次扫描，所以也不会对 G 进行标记，最终，G 依然保持着白色，导致最后被 gc 清理。</p>
 <p>现在问题来了，用 STW 会导致 gc 过程中整个程序不可用，不用 STW 又会出现内存错误，有没有什么办法可以尽可能的让用户程序和 gc 交替（并发）执行，减少 STW  造成的影响，同时又不会出现内存错误呢？比如 <strong>增量式回收</strong>，就是<strong>将 gc 过程分多次完成，也就是用户程序与垃圾回收交替执行</strong>，如下图：
-<img src="https://autsu.github.io/post-images/1654446167140.jpg" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1654446167140.jpg" alt=""></p>
 <p>只要满足以下条件，就可以避免之前的内存问题了：</p>
 <h3 id="强三色不变式">强三色不变式</h3>
 <p><strong>黑色对象不会引用白色对象</strong>，称为 <strong>强三色不变式</strong>，比如在 <strong>问题2：漏标</strong> 中，如果避免黑色对象 D 到白色对象 G 的引用，就不会出现错误回收的问题了。</p>
@@ -517,7 +517,7 @@
 <p>如果在扫描到白之前，断开灰到白的连接，此时因为白是整个调用链的最后一个对象，所以将会成为垃圾，但是因为删除写屏障的存在，会将该白色对象变为灰色，导致本轮 GC 未被清理。</p>
 <h3 id="读屏障">读屏障</h3>
 <p><strong>读屏障</strong> 适用于移动式垃圾回收，非移动式垃圾回收天然的不需要读屏障。像复制式回收这样会移动数据来避免碎片化，那么 gc 和用户程序交替执行时，读数据便也不那么安全了，比如下图：
-<img src="https://autsu.github.io/post-images/1654446082893.jpg" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1654446082893.jpg" alt=""></p>
 <p>回收器已经将 A 从 From 复制到 To 空间了，之后交替执行的用户程序却读取了 From 空间中的老对象，并且在对象 B 中引用了这个老对象 A，而后续回收器复制 B 到 To 空间后，B 的新副本持有的依然是 A 的老对象指针，当 From 空间整体被回收时，因为 B 指向的依然是 From 空间的 A，所以访问便会出错。这种情况下，就需要建立读屏障，确保用户程序不会访问到老对象，例如在检测到引用对象已经存在新副本时，转而读取 To 空间的新副本。</p>
 <h1 id="go-gc">Go GC</h1>
 <p>Go 的 GC 结合了插入写屏障和删除写屏障的优点，称之为 <strong>混合写屏障</strong>，它的规则如下：</p>
