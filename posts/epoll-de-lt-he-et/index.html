@@ -185,7 +185,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
 
 <meta name="description"
-  content="Linux epoll 的条件触发( Level Trigger )和边缘触发( Edge Trigger )">
+  content="Linux epoll 的 条件触发( Level Trigger )和 边缘触发 ( Edge Trigger ) 实践">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -214,7 +214,7 @@
     },
     "headline": "epoll 的 LT 和 ET | \/dev\/null","datePublished": "2021-07-23T19:25:45+00:00",
     "dateModified": "2021-07-23T19:25:45+00:00",
-    "wordCount":  832 ,
+    "wordCount":  843 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -223,7 +223,7 @@
             "url": "/images/icon.png"
         }
         },
-    "description": "Linux epoll 的条件触发( Level Trigger )和边缘触发( Edge Trigger )"
+    "description": "Linux epoll 的 条件触发( Level Trigger )和 边缘触发 ( Edge Trigger ) 实践"
 }
 </script><meta property="og:title" content="epoll 的 LT 和 ET | /dev/null" />
 <meta property="og:type" content="article" />
@@ -237,7 +237,7 @@
 
 
 
-<meta property="og:description" content="Linux epoll 的条件触发( Level Trigger )和边缘触发( Edge Trigger )" />
+<meta property="og:description" content="Linux epoll 的 条件触发( Level Trigger )和 边缘触发 ( Edge Trigger ) 实践" />
 
 
 
@@ -400,8 +400,7 @@
   
   
 
-  <p>Linux epoll 的条件触发( Level Trigger )和边缘触发( Edge Trigger )</p>
-<!-- more -->
+  <p>Linux epoll 的 <strong>条件触发</strong>( Level Trigger )和 <strong>边缘触发</strong> ( Edge Trigger ) 实践</p>
 <h1 id="lt-效果演示">LT 效果演示</h1>
 <p>一个简单的小 demo，从标准输入 stdin 读入数据，并输出到标准输出 stdout，这里设置了每次读取的 BUF_SIZE 为 2。</p>
 <pre><code class="language-c">#include &lt;sys/epoll.h&gt;
@@ -435,12 +434,12 @@ int main() {
 }
 </code></pre>
 <p>运行程序，输入一个长度为 6 的字符串，因为设置了每次读 2 字节，所以一次并不能读完：
-<img src="https://zengh1.github.io/post-images/1627049775702.jpg" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1627049775702.jpg" alt=""></p>
 <p>运行结果如下：
-<img src="https://zengh1.github.io/post-images/1627049789070.jpg" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1627049789070.jpg" alt=""></p>
 <p>可以看到，在 LT 模式下，只要缓冲区中还有数据，该事件就依然会触发（这里最后一次触发不是很明白，输出的内容也是空，可能读取的是换行符？）</p>
 <h1 id="et-效果演示">ET 效果演示</h1>
-<p>ET 的代码和 LT 基本一样，只需要在 events 处小小改动 <code>event.events = EPOLLIN | EPOLLET</code></p>
+<p>ET 的代码和 LT 基本一样，只需要在 events 处小小改动，加一个 EPOLLET 条件： <code>event.events = EPOLLIN | EPOLLET</code></p>
 <pre><code class="language-c">#include &lt;sys/epoll.h&gt;
 #include &lt;stdio.h&gt;
 #include &lt;unistd.h&gt;
@@ -472,9 +471,9 @@ int main() {
 }
 </code></pre>
 <p>同样的输入，运行结果如下：
-<img src="https://zengh1.github.io/post-images/1627049988168.jpg" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1627049988168.jpg" alt=""></p>
 <p>在 ET 模式下，整个事件只会触发一次，即便缓冲区中还有残余数据未被处理，要想再次触发，只有在终端中再次输入：
-<img src="https://zengh1.github.io/post-images/1627050340406.jpg" alt=""></p>
+<img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1627050340406.jpg" alt=""></p>
 <p>这里输入了 adaasdad ，使得事件得以再次触发。</p>
 <p>这个 demo 说明了，如果使用 ET 模式，就一定要在一次事件中，一次性把 socket 上的数据收取干净才行，否则可能造成数据的遗漏。</p>
 <h1 id="et-的问题">ET 的问题</h1>
@@ -518,7 +517,10 @@ int main() {
 }
 </code></pre>
 <h1 id="et-需要和-nonblock-搭配使用">ET 需要和 NONBLOCK 搭配使用</h1>
-<p>上面的 demo 只是一个简单的演示，实际中 epoll 更多的应用在网络编程中，这将涉及到多个连接的并发问题，比如有一下一个使用 epoll ET 实现的 echo 服务：</p>
+<p>上面的 demo 只是一个简单的演示，实际中 epoll 更多的应用在网络编程中，这将涉及到多个连接的并发问题，比如有如下一个使用 epoll ET 实现的 echo server：</p>
+<blockquote>
+<p>PS: 这段代码使用了我自己随便瞎写的一个库，也就是引用的  pkg/net/net.h，将 socket 的一些操作简单封装了下</p>
+</blockquote>
 <pre><code class="language-c++">#include &quot;../pkg/net/net.h&quot;
 #include &lt;iostream&gt;
 #include &lt;sys/epoll.h&gt;

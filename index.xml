@@ -982,7 +982,7 @@ k 是一个正整数，它的值小于或等于链表的长度。</description>
       <pubDate>Fri, 23 Jul 2021 19:25:45 +0000</pubDate>
       
       <guid>/posts/epoll-de-lt-he-et/</guid>
-      <description>Linux epoll 的条件触发( Level Trigger )和边缘触发( Edge Trigger )</description>
+      <description>Linux epoll 的 条件触发( Level Trigger )和 边缘触发 ( Edge Trigger ) 实践</description>
     </item>
     
     <item>
