@@ -10,12 +10,12 @@
 </copyright>
     <lastBuildDate>Tue, 06 Sep 2022 22:37:45 +0000</lastBuildDate><atom:link href="/tags/linux/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Linux 虚拟网络设备 veth-pair [未完]</title>
+      <title>Linux 虚拟网络设备 Veth-Pair [未完]</title>
       <link>/posts/linux_veth_pair/</link>
       <pubDate>Tue, 06 Sep 2022 22:37:45 +0000</pubDate>
       
       <guid>/posts/linux_veth_pair/</guid>
-      <description>介绍 veth-pair 是什么 两个 namespace 间通信 直接连接 # 创建 2 个 namespace $ ip netns add ns1 $ ip netns add ns2 # 查看创建的 namespace $ ip netns ns2 ns1 # 创建一对 veth-pair veth0 veth1 $ ip l a veth0 type veth peer name veth1 # 也可以写成： # ip link add veth0 type veth peer name veth1 # 将 veth0 veth1 分别加入两个 ns $ ip l s veth0 netns ns1 $ ip l s veth1 netns ns2 # 给两个 veth0 veth1 配上 IP 并启用 $ ip netns exec ns1 ip a a 10.</description>
+      <description>介绍 Veth-Pair 是什么 顾名思义，Veth-Pair 就是一对的虚拟设备接口，它总是以两张虚拟网卡（Veth Peer）成对出现，每个 Veth 都有两端，其中一端连着网络协议栈，另一端连接另一个 Veth。比如下图所示，该 Veth-Pair 有两张虚拟网卡 veth0 和 veth1，它们彼此相连，此外每个虚拟网卡都还连接着网络协议栈。</description>
     </item>
     
     <item>

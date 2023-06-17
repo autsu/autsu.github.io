@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<title>Linux 虚拟网络设备 veth-pair [未完] | /dev/null</title>
+<title>Linux 虚拟网络设备 Veth-Pair [未完] | /dev/null</title>
 
 <meta name="generator" content="Hugo Eureka 0.9.3" />
 <link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
@@ -185,7 +185,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
 
 <meta name="description"
-  content="介绍 veth-pair 是什么 两个 namespace 间通信 直接连接 # 创建 2 个 namespace $ ip netns add ns1 $ ip netns add ns2 # 查看创建的 namespace $ ip netns ns2 ns1 # 创建一对 veth-pair veth0 veth1 $ ip l a veth0 type veth peer name veth1 # 也可以写成： # ip link add veth0 type veth peer name veth1 # 将 veth0 veth1 分别加入两个 ns $ ip l s veth0 netns ns1 $ ip l s veth1 netns ns2 # 给两个 veth0 veth1 配上 IP 并启用 $ ip netns exec ns1 ip a a 10.">
+  content="介绍 Veth-Pair 是什么 顾名思义，Veth-Pair 就是一对的虚拟设备接口，它总是以两张虚拟网卡（Veth Peer）成对出现，每个 Veth 都有两端，其中一端连着网络协议栈，另一端连接另一个 Veth。比如下图所示，该 Veth-Pair 有两张虚拟网卡 veth0 和 veth1，它们彼此相连，此外每个虚拟网卡都还连接着网络协议栈。">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -197,7 +197,7 @@
       "item":"/posts/"},{
       "@type": "ListItem",
       "position": 2 ,
-      "name":"Linux 虚拟网络设备 veth-pair [未完]",
+      "name":"Linux 虚拟网络设备 Veth-Pair [未完]",
       "item":"/posts/linux_veth_pair/"}]
 }
 </script>
@@ -212,9 +212,9 @@
         "@type": "WebPage",
         "@id": "/posts/linux_veth_pair/"
     },
-    "headline": "Linux 虚拟网络设备 veth-pair [未完] | \/dev\/null","datePublished": "2022-09-06T22:37:45+00:00",
+    "headline": "Linux 虚拟网络设备 Veth-Pair [未完] | \/dev\/null","datePublished": "2022-09-06T22:37:45+00:00",
     "dateModified": "2022-09-06T22:37:45+00:00",
-    "wordCount":  194 ,
+    "wordCount":  1050 ,
     "publisher": {
         "@type": "Person",
         "name": "void",
@@ -223,9 +223,9 @@
             "url": "/images/icon.png"
         }
         },
-    "description": "介绍 veth-pair 是什么 两个 namespace 间通信 直接连接 # 创建 2 个 namespace $ ip netns add ns1 $ ip netns add ns2 # 查看创建的 namespace $ ip netns ns2 ns1 # 创建一对 veth-pair veth0 veth1 $ ip l a veth0 type veth peer name veth1 # 也可以写成： # ip link add veth0 type veth peer name veth1 # 将 veth0 veth1 分别加入两个 ns $ ip l s veth0 netns ns1 $ ip l s veth1 netns ns2 # 给两个 veth0 veth1 配上 IP 并启用 $ ip netns exec ns1 ip a a 10."
+    "description": "介绍 Veth-Pair 是什么 顾名思义，Veth-Pair 就是一对的虚拟设备接口，它总是以两张虚拟网卡（Veth Peer）成对出现，每个 Veth 都有两端，其中一端连着网络协议栈，另一端连接另一个 Veth。比如下图所示，该 Veth-Pair 有两张虚拟网卡 veth0 和 veth1，它们彼此相连，此外每个虚拟网卡都还连接着网络协议栈。"
 }
-</script><meta property="og:title" content="Linux 虚拟网络设备 veth-pair [未完] | /dev/null" />
+</script><meta property="og:title" content="Linux 虚拟网络设备 Veth-Pair [未完] | /dev/null" />
 <meta property="og:type" content="article" />
 
 
@@ -237,7 +237,7 @@
 
 
 
-<meta property="og:description" content="介绍 veth-pair 是什么 两个 namespace 间通信 直接连接 # 创建 2 个 namespace $ ip netns add ns1 $ ip netns add ns2 # 查看创建的 namespace $ ip netns ns2 ns1 # 创建一对 veth-pair veth0 veth1 $ ip l a veth0 type veth peer name veth1 # 也可以写成： # ip link add veth0 type veth peer name veth1 # 将 veth0 veth1 分别加入两个 ns $ ip l s veth0 netns ns1 $ ip l s veth1 netns ns2 # 给两个 veth0 veth1 配上 IP 并启用 $ ip netns exec ns1 ip a a 10." />
+<meta property="og:description" content="介绍 Veth-Pair 是什么 顾名思义，Veth-Pair 就是一对的虚拟设备接口，它总是以两张虚拟网卡（Veth Peer）成对出现，每个 Veth 都有两端，其中一端连着网络协议栈，另一端连接另一个 Veth。比如下图所示，该 Veth-Pair 有两张虚拟网卡 veth0 和 veth1，它们彼此相连，此外每个虚拟网卡都还连接着网络协议栈。" />
 
 
 
@@ -383,7 +383,7 @@
       class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
     >
       <article class="prose">
-  <h1 class="mb-4">Linux 虚拟网络设备 veth-pair [未完]</h1>
+  <h1 class="mb-4">Linux 虚拟网络设备 Veth-Pair [未完]</h1>
 
   <div
   class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
@@ -396,7 +396,7 @@
   </div>
   <div class="me-6 my-2">
     <i class="fas fa-clock me-1"></i>
-    <span>1分钟阅读时长</span>
+    <span>5分钟阅读时长</span>
   </div>
 
   
@@ -409,34 +409,91 @@
   
 
   <h1 id="介绍">介绍</h1>
-<h2 id="veth-pair-是什么">veth-pair 是什么</h2>
-<h1 id="两个-namespace-间通信">两个 namespace 间通信</h1>
-<h2 id="直接连接">直接连接</h2>
+<h2 id="veth-pair-是什么">Veth-Pair 是什么</h2>
+<p>顾名思义，Veth-Pair 就是一对的虚拟设备接口，它总是以两张虚拟网卡（Veth Peer）<strong>成对出现</strong>，每个 Veth 都有两端，其中一端连着网络协议栈，另一端连接另一个 Veth。比如下图所示，该 Veth-Pair 有两张虚拟网卡 <code>veth0</code> 和 <code>veth1</code>，它们彼此相连，此外每个虚拟网卡都还连接着网络协议栈。</p>
+<pre><code>---------------------------------------------
+|                                           |
+|               网络协议栈                    |
+|                                           |
+---------------------------------------------
+    ^             ^               ^
+    |             |               |
+    |             |               |
+    |         ---------       ---------	
+    |         | veth0 |       | veth1 |
+--------      ---------       ---------
+| eth0 |          ^	              ^
+--------          |               |	
+                  |               |
+                   ---------------
+</code></pre>
+<p>搞清楚 Veth-Pair 的大致概念了，接下来需要了解一下 Veth-Pair 的作用，其实从上面的图中已经可以大致猜到了，既然这些东西都连在一起，那么一定和数据传输脱不了关系，实际上确实如此，对于 Veth-Pair 而言，从其中一张虚拟网卡发出的数据包，可以被另一张虚拟网卡接收到，而每张虚拟网卡又都连接到了网络协议栈，也就是说，Veth-Pair 可以充当网络协议栈中某些接口设备传递数据的桥梁。</p>
+<h1 id="使用场景">使用场景</h1>
+<h2 id="两个-namespace-间通信">两个 namespace 间通信</h2>
+<h3 id="直接连接">直接连接</h3>
+<p>首先我们创建两个网络 namespace，然后再创建一对 Veth-Pair，并且给该 Veth-Pair 的两个虚拟网卡分配 IP 地址，最后，将这两个虚拟网卡分配给两个 namespace。</p>
 <pre><code class="language-shell"># 创建 2 个 namespace
-$ ip netns add ns1
-$ ip netns add ns2
+ip netns add ns1
+ip netns add ns2
 
 # 查看创建的 namespace
-$ ip netns
+ip netns
 ns2
 ns1
 
-# 创建一对 veth-pair veth0 veth1
-$ ip l a veth0 type veth peer name veth1
+# 创建一对 veth-pair，分别命名为 veth0 veth1
+ip l a veth0 type veth peer name veth1
 # 也可以写成：
 # ip link add veth0 type veth peer name veth1
 
 # 将 veth0 veth1 分别加入两个 ns
-$ ip l s veth0 netns ns1
-$ ip l s veth1 netns ns2
+ip l s veth0 netns ns1
+ip l s veth1 netns ns2
 
-# 给两个 veth0 veth1 配上 IP 并启用
-$ ip netns exec ns1 ip a a 10.1.1.2/24 dev veth0
-$ ip netns exec ns1 ip l s veth0 up
-$ ip netns exec ns2 ip a a 10.1.1.3/24 dev veth1
-$ ip netns exec ns2 ip l s veth1 up
-
-# 从 veth0 ping veth1
+# 给两个虚拟网卡 veth0 veth1 配上 IP 并启用
+ip netns exec ns1 ip a a 10.1.1.2/24 dev veth0
+ip netns exec ns1 ip l s veth0 up
+ip netns exec ns2 ip a a 10.1.1.3/24 dev veth1
+ip netns exec ns2 ip l s veth1 up
+</code></pre>
+<p>添加完后可以看一下每个 namespace 的网卡设备：</p>
+<pre><code class="language-shell">$ ip netns exec ns1 ip addr
+1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+5: veth0@if4: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether 4a:19:b1:f3:af:22 brd ff:ff:ff:ff:ff:ff link-netns ns2
+    inet 10.1.1.2/24 scope global veth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::4819:b1ff:fef3:af22/64 scope link
+       valid_lft forever preferred_lft forever
+    
+$ ip netns exec ns2 ip addr
+1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+4: veth1@if5: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether be:61:8a:3f:eb:b2 brd ff:ff:ff:ff:ff:ff link-netns ns1
+    inet 10.1.1.3/24 scope global veth1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::bc61:8aff:fe3f:ebb2/64 scope link
+       valid_lft forever preferred_lft forever
+</code></pre>
+<p>可以看到每个 namespace 都有一张以 veth 开头的网卡，这正是我们创建的 Veth-Pair 的两张虚拟网卡 <code>veth0</code> 和 <code>veth1</code>，并且每张网卡拥有一个 IP。 现在，我们创建了类似文章开头介绍中的图片的结构：veth0 和 veth1 相互连接，然后 veth0 又连接着 ns1，veth1 又连接着 ns2：</p>
+<pre><code>              ---------       ---------
+              |  ns1  |       |  ns2  |
+              ---------       ---------    
+                  ^               ^
+                  |               |
+                  |               |
+              ---------       ---------	
+              | veth0 |       | veth1 |
+              ---------       ---------
+                  ^	              ^
+                  |               |	
+                  |               |
+                   ---------------
+</code></pre>
+<p>现在，两个本来相互隔离，各自拥有独立网络协议栈，像孤岛一样的网络命名空间，通过 Veth-Pair 这个“桥梁”，正式建立起了彼此沟通的渠道。让我们尝试一下，用 ns1 去 ping ns2，看看能不能 ping 通：</p>
+<pre><code class="language-shell"># 从 veth0 ping veth1
 $ ip netns exec ns1 ping 10.1.1.3
 PING 10.1.1.3 (10.1.1.3) 56(84) bytes of data.
 64 bytes from 10.1.1.3: icmp_seq=1 ttl=64 time=0.997 ms
@@ -447,7 +504,126 @@ PING 10.1.1.3 (10.1.1.3) 56(84) bytes of data.
 3 packets transmitted, 3 received, 0% packet loss, time 2026ms
 rtt min/avg/max/mdev = 0.063/0.387/0.997/0.431 ms
 </code></pre>
-<h2 id="heading"></h2>
+<p>可以看到 ping 能正常工作，说明二者已经可以通信了。</p>
+<h3 id="通过-bridge-相连">通过 Bridge 相连</h3>
+<p>上面 <strong>直接连接</strong> 的 demo 中，我们通过一对 Veth-Pair 让两个 namespace 之间实现了通信，但是如果我们想让三个，四个，甚至更多的 namespace 之间都能够通信呢？要还是采用直接连接的方式，那可就太复杂了，比如如果有四个 namespace，分别是 ns1，ns2，ns3，ns4，那么 ns1 和 ns2 通信需要一对 Veth-Pair，ns1 和 ns3，ns1 和 ns4，ns2 和 ns3，ns2 和 ns4，ns3 和 ns4 都需要一对 Veth-Pair。。。有什么办法可以解决这个问题呢？</p>
+<p>解决办法就是引入一个新的网络设备：能够起到虚拟交换机作用的 <strong>网桥</strong>，它是一个在 <strong>数据链路层</strong> 工作的设备，主要功能是根据 MAC 地址学习将数据包转发到网桥的不同端口上。</p>
+<blockquote>
+<p>突击测试：什么是 MAC 地址学习？</p>
+</blockquote>
+<p>我们可以通过 Veth-Pair，将各个 namespace 与网桥连接起来，这些 namespace 全部都加入到同一个网桥，相当于都在同一个局域网下，所以彼此之间可以互相通信。</p>
+<blockquote>
+<p>🤔 这些虚拟网卡（连接到 namespace 这一端的，比如下图中的 veth0，veth1，veth2，veth3）的 IP 是否必须要处于同一网段？否则即使都在同一个网桥，也无法进行通信？</p>
+<p>📢 如果两个网卡的IP不在同一个子网，将它们加入到同一个网桥后，它们在网络层（IP层）仍然无法直接通信。这是因为网桥工作在数据链路层，它只负责根据MAC地址转发数据包，并不涉及IP地址的路由。</p>
+<p>待实践</p>
+</blockquote>
+<p>拓扑结构如下：</p>
+<pre><code>              ---------       ---------    ---------    ---------
+              |  ns1  |       |  ns2  |    |  ns3  |    |  ns4  | 
+              ---------       ---------    ---------    ---------   
+                  ^               ^            ^            ^
+                  |               |            |            |
+                  |               |            |            |
+              ---------       ---------	   ---------    ---------
+              | veth0 |       | veth1 |    | veth2 |    | veth3 |
+              ---------       ---------    ---------    ---------
+                  ^	              ^            ^            ^
+                  |               |	           |            |
+                  |               |            |            |
+                  ∨               ∨            ∨            ∨
+              -----------     ------------  ------------  ------------
+              | br-veth0 |    | br-veth1 |  | br-veth2 |  | br-veth3 |
+              -----------     ------------  ------------  ------------
+                  ^	              ^               ^            ^
+                  |               |	              |            |
+                  |               |               |            |
+                  ∨               ∨               ∨            ∨
+              ------------------------------------------------------
+              |                       网桥                          |
+              ------------------------------------------------------
+</code></pre>
+<p>实践：</p>
+<pre><code class="language-shell"># 首先创建 bridge br0
+ip l a br0 type bridge
+ip l s br0 up 
+
+# 可以查看一下创建出来的网桥
+ip link show type bridge
+
+# 然后我们在之前的基础上，再创建两个 namespace
+ip netns add ns3
+ip netns add ns4
+
+# 然后创建 4 对新的 veth-pair
+ip l a veth2 type veth peer name br-veth2
+ip l a veth3 type veth peer name br-veth3
+ip l a veth4 type veth peer name br-veth4
+ip l a veth5 type veth peer name br-veth5
+
+# 将这 4 对 veth-pair 加入到 ns 和 br0
+ip l s veth2 netns ns1
+ip l s br-veth2 master br0
+ip l s br-veth2 up
+
+ip l s veth3 netns ns2
+ip l s br-veth3 master br0
+ip l s br-veth3 up
+
+ip l s veth4 netns ns3
+ip l s br-veth4 master br0
+ip l s br-veth4 up
+
+ip l s veth5 netns ns4
+ip l s br-veth5 master br0
+ip l s br-veth5 up
+
+# 给 veth 配置 IP 并启用
+ip netns exec ns1 ip a a 10.1.2.2/24 dev veth2
+ip netns exec ns1 ip l s veth2 up
+
+ip netns exec ns2 ip a a 10.1.2.3/24 dev veth3
+ip netns exec ns2 ip l s veth3 up
+
+ip netns exec ns3 ip a a 10.1.2.4/24 dev veth4
+ip netns exec ns3 ip l s veth4 up
+
+ip netns exec ns4 ip a a 10.1.2.5/24 dev veth5
+ip netns exec ns4 ip l s veth5 up
+</code></pre>
+<p>同样的，我们也可以看一下各个 namespace 的网卡情况：</p>
+<pre><code class="language-shell">$ ip netns exec ns1 ip addr
+1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+5: veth0@if4: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether 4a:19:b1:f3:af:22 brd ff:ff:ff:ff:ff:ff link-netns ns2
+    inet 10.1.1.2/24 scope global veth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::4819:b1ff:fef3:af22/64 scope link
+       valid_lft forever preferred_lft forever
+12: veth2@if11: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether 0e:24:20:80:09:97 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 10.1.2.2/24 scope global veth2
+       valid_lft forever preferred_lft forever
+    inet6 fe80::c24:20ff:fe80:997/64 scope link
+       valid_lft forever preferred_lft forever
+       
+$ ip netns exec ns3 ip addr
+1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+16: veth4@if15: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether 9e:84:97:27:44:c4 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 10.1.2.4/24 scope global veth4
+       valid_lft forever preferred_lft forever
+    inet6 fe80::9c84:97ff:fe27:44c4/64 scope link
+       valid_lft forever preferred_lft forever
+</code></pre>
+<p>这里为了方便只查看了 ns1 和 ns3 这两个 namespace 的情况，因为 ns1 这个 namespace 是之前创建好的，在其基础上又插入了一个 Veth，所以有 veth0 和 veth2 两张网卡，而 ns3 是新创建的，所以只有 veth4 这一张网卡（lo 代表回环网卡，与本次实验无关，可以忽略）。</p>
+<p>然后我们验证一下这几个 namespace 之间的连通情况：</p>
+<pre><code class="language-shell">ip netns exec ns4 ping 10.1.2.2
+ip netns exec ns4 ping 10.1.2.3
+ip netns exec ns4 ping 10.1.2.4
+# .... 就不全部测试了，测过的都可以 ping 通
+</code></pre>
 <h1 id="参考">参考</h1>
 <p><a href="https://www.cnblogs.com/bakari/p/10613710.html">https://www.cnblogs.com/bakari/p/10613710.html</a></p>
 <p><a href="https://segmentfault.com/a/1190000009251098">https://segmentfault.com/a/1190000009251098</a></p>
@@ -525,13 +701,17 @@ rtt min/avg/max/mdev = 0.063/0.387/0.997/0.431 ms
   <ul>
     <li><a href="#介绍">介绍</a>
       <ul>
-        <li><a href="#veth-pair-是什么">veth-pair 是什么</a></li>
+        <li><a href="#veth-pair-是什么">Veth-Pair 是什么</a></li>
       </ul>
     </li>
-    <li><a href="#两个-namespace-间通信">两个 namespace 间通信</a>
+    <li><a href="#使用场景">使用场景</a>
       <ul>
-        <li><a href="#直接连接">直接连接</a></li>
-        <li><a href="#heading"></a></li>
+        <li><a href="#两个-namespace-间通信">两个 namespace 间通信</a>
+          <ul>
+            <li><a href="#直接连接">直接连接</a></li>
+            <li><a href="#通过-bridge-相连">通过 Bridge 相连</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>

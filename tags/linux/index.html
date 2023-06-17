@@ -212,8 +212,8 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
-            "name": "Linux 虚拟网络设备 veth-pair [未完]",
-            "description": "介绍 veth-pair 是什么 两个 namespace 间通信 直接连接 # 创建 2 个 namespace $ ip netns add ns1 $ ip netns add ns2 # 查看创建的 namespace $ ip netns ns2 ns1 # 创建一对 veth-pair veth0 veth1 $ ip l a veth0 type veth peer name veth1 # 也可以写成： # ip link add veth0 type veth peer name veth1 # 将 veth0 veth1 分别加入两个 ns $ ip l s veth0 netns ns1 $ ip l s veth1 netns ns2 # 给两个 veth0 veth1 配上 IP 并启用 $ ip netns exec ns1 ip a a 10.",
+            "name": "Linux 虚拟网络设备 Veth-Pair [未完]",
+            "description": "介绍 Veth-Pair 是什么 顾名思义，Veth-Pair 就是一对的虚拟设备接口，它总是以两张虚拟网卡（Veth Peer）成对出现，每个 Veth 都有两端，其中一端连着网络协议栈，另一端连接另一个 Veth。比如下图所示，该 Veth-Pair 有两张虚拟网卡 veth0 和 veth1，它们彼此相连，此外每个虚拟网卡都还连接着网络协议栈。",
             "url": "/posts/linux_veth_pair/"
         },{
             "@type":"ListItem",
@@ -391,7 +391,7 @@
     <div class="bg-secondary-bg rounded " style="padding: 3rem!important;margin-top: 30px;">
         <div class="overflow-hidden archive" style="font-size:15px;line-height: 2;padding-bottom: 0.8em"><h3 style="font-size: 1.5em;">2022</h3><article class="archive-item">
                         <a href="/posts/linux_veth_pair/" class="archive-item-link">
-                            >>&nbsp 09-06&nbsp&nbsp&nbspLinux 虚拟网络设备 veth-pair [未完]</a>
+                            >>&nbsp 09-06&nbsp&nbsp&nbspLinux 虚拟网络设备 Veth-Pair [未完]</a>
                         
                     </article><article class="archive-item">
                         <a href="/posts/gu_er_jin_cheng_he_jiang_shi_jin_cheng/" class="archive-item-link">
