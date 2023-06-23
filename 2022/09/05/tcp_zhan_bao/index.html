@@ -1,0 +1,769 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="简介TCP 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 TCP 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。 TCP 的流式传输，简单的说就是没有消息边界记录，比如发送端为了将多个发往接收端的包，更有效的发到对方，使用了优化方法（Nagle算法），将多次间隔较小、数据量小的数据包，合并成一个大的数据包发送(把发送端的缓冲区填满一次性发送。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TCP 粘包&#x2F;拆包问题">
+<meta property="og:url" content="https://autsu.github.io/2022/09/05/tcp_zhan_bao/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="简介TCP 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 TCP 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。 TCP 的流式传输，简单的说就是没有消息边界记录，比如发送端为了将多个发往接收端的包，更有效的发到对方，使用了优化方法（Nagle算法），将多次间隔较小、数据量小的数据包，合并成一个大的数据包发送(把发送端的缓冲区填满一次性发送。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-09-04T16:51:45.000Z">
+<meta property="article:modified_time" content="2023-06-06T13:02:33.006Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="TCP">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>TCP 粘包/拆包问题 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="TCP 粘包/拆包问题"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-09-05 00:51" pubdate>
+          2022年9月5日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          60 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">TCP 粘包/拆包问题</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>TCP 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 TCP 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。</p>
+<p>TCP 的流式传输，简单的说就是没有消息边界记录，比如发送端为了将多个发往接收端的包，更有效的发到对方，使用了优化方法（Nagle算法），将多次间隔较小、数据量小的数据包，合并成一个大的数据包发送(把发送端的缓冲区填满一次性发送。这样接收端收到的整个数据中其实是包含了多个小包，需要将数据拆分，还原成小包，从而才能进行处理，但因为没有消息边界记录，所以如何还原就成了一个问题。</p>
+<p>在上面的例子中，TCP 将多次写入缓冲区的数据包合并为一次发送，就是 <strong>粘包</strong> 问题。</p>
+<p>此外 TCP 还存在 <strong>拆包</strong> 问题，就是发送包的大小超过了缓冲区大小或者 MSS，比如发送端使用 protobuf 编码数据，然后使用 TCP 进行传输，这个编码的数据大小是 10000 byte，超过了 TCP 的发送缓存区大小 5000 byte（随便写的数字，仅用作举例），一次性无法全部发送，所以便会发生拆包，分两次发送，接收端这边第一次只收到了 5000 byte 数据，因为数据使用 protobuf 编码的，不同于文本消息，必须要拿到不多不少刚刚好的 10000 byte 大小的数据，才能反序列化出原始的数据，但因为 TCP 不记录消息长度，所以接收端这边无法知道到底要拿多少数据，这也是一个问题。</p>
+<p>可以看到发生粘包和拆包的原因都是因为 TCP 不记录消息边界（也就是消息长度），既然 TCP 自身不记录，那就只能用户自己解决了，比如设计一个协议，让报文内容由消息头 + 消息两部分构成，在消息头中记录消息的长度，然后将消息头 + 消息本体作为一个整体发送，（这里的消息头是需要定长的，比如固定为 10 byte），接收端这边根据协议定义，去读取这个定长的消息头，从里面获取到消息本体的长度，知道了消息的长度以后，上面的问题就可以很好的解决了。</p>
+<h1 id="拆包演示程序"><a href="#拆包演示程序" class="headerlink" title="拆包演示程序"></a>拆包演示程序</h1><p>下面先使用一个错误的 protobuf 的示例程序来演示一下拆包问题：</p>
+<h2 id="server-端"><a href="#server-端" class="headerlink" title="server 端"></a>server 端</h2><p>server 负责读取报文，然后通过 proto.Unmarshal 还原出原始的数据。其中将缓冲区大小设置为了 client 要发送的大小 279896。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;net&quot;</span><br>	<span class="hljs-string">&quot;protobuftest/pb/pbfile&quot;</span><br><br>	<span class="hljs-string">&quot;google.golang.org/protobuf/proto&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	lis, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;:7788&quot;</span>)<br>	assert(err, <span class="hljs-string">&quot;listen error: %v&quot;</span>)<br><br>	<span class="hljs-keyword">for</span> &#123;<br>		conn, err := lis.Accept()<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			fmt.Println(err)<br>			<span class="hljs-keyword">continue</span><br>		&#125;<br>		<span class="hljs-keyword">for</span> &#123;<br>			<span class="hljs-comment">// b := make([]byte, 1024)	// proto: cannot parse invalid wire-format data</span><br>			b := <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, <span class="hljs-number">279896</span>)<br>			n, err := conn.Read(b)<br>			<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>				fmt.Println(err)<br>				<span class="hljs-keyword">break</span><br>			&#125;<br>			fmt.Printf(<span class="hljs-string">&quot;read %v bytes\n&quot;</span>, n)<br><br>			<span class="hljs-keyword">var</span> m pbfile.Message<br>			<span class="hljs-keyword">if</span> err := proto.Unmarshal(b, &amp;m); err != <span class="hljs-literal">nil</span> &#123;<br>				fmt.Println(err)<br>				<span class="hljs-keyword">break</span><br>			&#125;<br>			fmt.Println(m.Uid)<br>		&#125;<br>	&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">assert</span><span class="hljs-params">(err <span class="hljs-type">error</span>, format <span class="hljs-type">string</span>)</span></span> &#123;<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-built_in">panic</span>(fmt.Sprintf(format, err.Error()))<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="client-端"><a href="#client-端" class="headerlink" title="client 端"></a>client 端</h2><p>client 使用 protobuf 序列化 struct pbfile.Message，然后使用 tcp 发送，这个 struct 中有一个 Data 字段，这里我将一张 140k 的图片读取出来，然后将 Data 字段设置为读取出的 []byte 。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;google.golang.org/protobuf/proto&quot;</span><br>	<span class="hljs-string">&quot;google.golang.org/protobuf/types/known/wrapperspb&quot;</span><br>	<span class="hljs-string">&quot;net&quot;</span><br>	<span class="hljs-string">&quot;os&quot;</span><br>	<span class="hljs-string">&quot;path/filepath&quot;</span><br>	<span class="hljs-string">&quot;protobuftest/pb/pbfile&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	home := os.Getenv(<span class="hljs-string">&quot;HOME&quot;</span>)<br>	fp := filepath.Join(home, <span class="hljs-string">&quot;Downloads/jDKUARa.jpg&quot;</span>)<br><br>	f, err := os.Open(fp)<br>	assert(err, <span class="hljs-string">&quot;open file error: %v&quot;</span>)<br>	<span class="hljs-keyword">defer</span> f.Close()<br><br>	file, err := os.ReadFile(fp)<br>	assert(err, <span class="hljs-string">&quot;read file error: %v&quot;</span>)<br><br>	msg := pbfile.Message&#123;<br>		Uid:         wrapperspb.UInt64(<span class="hljs-number">10086</span>),<br>		Data:        file,<br>		MessageType: wrapperspb.String(<span class="hljs-string">&quot;image&quot;</span>),<br>	&#125;<br><br>	conn, err := net.Dial(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;:7788&quot;</span>)<br>	assert(err, <span class="hljs-string">&quot;dial error: %v&quot;</span>)<br>	<span class="hljs-keyword">defer</span> conn.Close()<br><br>	b, err := proto.Marshal(&amp;msg)<br>	assert(err, <span class="hljs-string">&quot;proto marshal error: %v&quot;</span>)<br>	fmt.Printf(<span class="hljs-string">&quot;proto marshal size: %v\n&quot;</span>, <span class="hljs-built_in">len</span>(b))<br><br>	n, err := conn.Write(b)<br>	assert(err, <span class="hljs-string">&quot;write to conn error: %v&quot;</span>)<br>	fmt.Printf(<span class="hljs-string">&quot;write %v bytes\n&quot;</span>, n)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">assert</span><span class="hljs-params">(err <span class="hljs-type">error</span>, format <span class="hljs-type">string</span>)</span></span> &#123;<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-built_in">panic</span>(fmt.Sprintf(format, err.Error()))<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="proto"><a href="#proto" class="headerlink" title="proto"></a>proto</h2><figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs protobuf">syntax=<span class="hljs-string">&quot;proto3&quot;</span>;<br><span class="hljs-keyword">option</span> go_package = <span class="hljs-string">&quot;/pbfile&quot;</span>;<br><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;google/protobuf/wrappers.proto&quot;</span>;<br><br><span class="hljs-keyword">message </span><span class="hljs-title class_">Message</span> &#123;<br>  google.protobuf.UInt64Value uid = <span class="hljs-number">1</span>;<br>  <span class="hljs-type">bytes</span> data = <span class="hljs-number">2</span>;<br>  google.protobuf.StringValue messageType = <span class="hljs-number">3</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h2><p>分别运行 server 和 client，输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">client</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">./client</span><br>proto marshal size: 279896<br>write 279896 bytes<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">server</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">./server</span>          <br>read 81660 bytes<br>proto: cannot parse invalid wire-format data<br></code></pre></td></tr></table></figure>
+
+<p>可以看到 client 这边发送了 279896 字节的数据，但是 server 这边只读到了 81660 字节，因为 protobuf 使用二进制编码，所以如果数据不完整会无法解析，从而报错：<code>proto: cannot parse invalid wire-format data</code></p>
+<p>部分测试结果可以印证这一点，只要读取的长度不等于 279896 就会解析失败：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">read 97992 bytes<br>proto: cannot parse invalid wire-format data<br>read 81660 bytes<br>proto: cannot parse invalid wire-format data<br>read 130656 bytes<br>proto: cannot parse invalid wire-format data<br></code></pre></td></tr></table></figure>
+
+<p>但是有时候又是正常的：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">client</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">./client</span><br>proto marshal size: 279896<br>write 279896 bytes<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">server</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">read</span> 279896 bytes</span><br>value:10086<br>EOF<br></code></pre></td></tr></table></figure>
+
+
+<blockquote>
+<h2 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h2><p>这里有个疑问，既然 server 的缓冲区已经将长度设置为了 279896，刚好等于 client 要发送的包的大小，但是为什么会出现没有读取满的情况？</p>
+<p>可能是因为：发送方虽然发送了 279896 长度的数据，但是这些数据不会直接通过网络传输，而是先添加到 socket 发送缓冲区，至于什么时候发送，发送多少，都是由系统内核来决定的，所以会出现诸如上面这种没有完全发完的情况，偶尔又会出现全部发送的情况。</p>
+</blockquote>
+<h1 id="粘包演示程序"><a href="#粘包演示程序" class="headerlink" title="粘包演示程序"></a>粘包演示程序</h1><h2 id="server"><a href="#server" class="headerlink" title="server"></a>server</h2><p>服务端试图从收到的包中反序列化出原始数据。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	lis, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;:7788&quot;</span>)<br>	assert(err, <span class="hljs-string">&quot;listen error: %v&quot;</span>)<br><br>	<span class="hljs-keyword">for</span> &#123;<br>		conn, err := lis.Accept()<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			fmt.Println(err)<br>			<span class="hljs-keyword">continue</span><br>		&#125;<br>		<span class="hljs-keyword">for</span> &#123;<br>			b := <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, <span class="hljs-number">1024</span>)<br>			n, err := conn.Read(b)<br>			<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>				fmt.Println(err)<br>				<span class="hljs-keyword">break</span><br>			&#125;<br>			fmt.Printf(<span class="hljs-string">&quot;read %v bytes\n&quot;</span>, n)<br><br>			<span class="hljs-keyword">var</span> m pbfile.Message<br>			<span class="hljs-keyword">if</span> err := proto.Unmarshal(b, &amp;m); err != <span class="hljs-literal">nil</span> &#123;<br>				fmt.Println(err)<br>				<span class="hljs-keyword">break</span><br>			&#125;<br>			fmt.Println(m.Uid)<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="client"><a href="#client" class="headerlink" title="client"></a>client</h2><p>客户端发送 10 条消息，每条消息设置不同的 Uid，且序列化的对象都比较小。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	conn, err := net.Dial(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;:7788&quot;</span>)<br>	assert(err, <span class="hljs-string">&quot;dial error: %v&quot;</span>)<br>	<span class="hljs-keyword">defer</span> conn.Close()<br><br>  <span class="hljs-keyword">var</span> totalN <span class="hljs-type">int</span> <br>	<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10</span>; i++ &#123;<br>		msg := pbfile.Message&#123;<br>			Uid:         wrapperspb.UInt64(<span class="hljs-type">uint64</span>(i)),<br>			Data:        []<span class="hljs-type">byte</span>(<span class="hljs-string">&quot;hello&quot;</span>),<br>			MessageType: wrapperspb.String(<span class="hljs-string">&quot;text&quot;</span>),<br>		&#125;<br><br>		b, err := proto.Marshal(&amp;msg)<br>		assert(err, <span class="hljs-string">&quot;proto marshal error: %v&quot;</span>)<br>		fmt.Printf(<span class="hljs-string">&quot;proto marshal size: %v\n&quot;</span>, <span class="hljs-built_in">len</span>(b))<br><br>		n, err := conn.Write(b)<br>    totalN += n<br>		assert(err, <span class="hljs-string">&quot;write to conn error: %v&quot;</span>)<br>		fmt.Printf(<span class="hljs-string">&quot;write %v bytes\n&quot;</span>, n)<br>	&#125;<br>  fmt.Printf(<span class="hljs-string">&quot;total write %v bytes\n&quot;</span>, totalN)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="运行结果-1"><a href="#运行结果-1" class="headerlink" title="运行结果"></a>运行结果</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">go run server.go</span><br>read 74 bytes<br>proto: cannot parse invalid wire-format data<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">go run client.go</span>                                           <br>proto marshal size: 17<br>write 17 bytes<br>proto marshal size: 19<br>write 19 bytes<br>proto marshal size: 19<br>write 19 bytes<br>proto marshal size: 19<br>write 19 bytes<br>proto marshal size: 19<br>write 19 bytes<br>proto marshal size: 19<br>write 19 bytes<br>proto marshal size: 19<br>write 19 bytes<br>proto marshal size: 19<br>write 19 bytes<br>proto marshal size: 19<br>write 19 bytes<br>proto marshal size: 19<br>write 19 bytes<br>total write 188 bytes<br></code></pre></td></tr></table></figure>
+
+<p>可以看到客户端这边每次发送的报文长度基本都是 19 ，只有第一次是 17，一共发送了 188 bytes 的数据，而服务端这边，第一次从连接中接收到的数据大小是 74 bytes，这显然是有几个包 “粘” 在了一起，最终显然也是无法反序列化成功的。</p>
+<h1 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h1><p>我写了一个简单的 tcp server 库，里面解决了上面的粘包拆包问题，思路是自定义一个协议，协议的头部记录了数据的长度，然后接收端在收到报文后，先解析出头部，获取到数据的长度，在进行下一步读取。为了保证读满，可以使用 io.ReadFull 这个函数，大致的读取逻辑如下：</p>
+<p>首先是读取协议头部的函数：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(t *TCPConn)</span></span> UnpackHeader(d *DataPack) (*Message, <span class="hljs-type">error</span>) &#123;<br>	head := <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, d.HeadSize())<br><br>	_, err := io.ReadFull(t.socketConn, head)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">if</span> err != io.EOF &#123;<br>			log.Println(<span class="hljs-string">&quot;read head error: &quot;</span>, err)<br>		&#125;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br><br>	body, err := d.UnPack(head)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br><br>	<span class="hljs-keyword">return</span> body, <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>然后是读取数据：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(t *TCPConn)</span></span> Receive() (*Message, <span class="hljs-type">error</span>) &#123;<br>	pack := NewDataPack()<br>	header, err := t.UnpackHeader(pack)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>  &#125;<br>  <br>  dataLen := header.dataLen<br>  <br>  <span class="hljs-keyword">var</span> (<br>		tmpBuf = <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, <span class="hljs-number">0</span>, <span class="hljs-number">4096</span>)<br>		needN  = dataLen <span class="hljs-comment">// 还剩多少需要读取</span><br>		readN  <span class="hljs-type">int64</span>     <span class="hljs-comment">// 总共需要读取多少</span><br>	)<br>  <br>  <span class="hljs-keyword">for</span> &#123;<br>		buf := <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, needN)<br>		<span class="hljs-comment">// 必须读满 len(buf)，否则返回一个 err</span><br>		n, err := io.ReadFull(t.socketConn, buf)<br><br>		<span class="hljs-comment">// 没有读满 buf</span><br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-comment">// 虽然没读满，但是返回了 EOF 错误，说明没有数据可读了，可能是对方已经断开了连接，</span><br>			<span class="hljs-comment">// 此时就不需要再尝试读取了</span><br>			<span class="hljs-keyword">if</span> err == io.EOF &#123;<br>				<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>			&#125;<br>			<span class="hljs-comment">// 将当前读的这部分添加到 tmp 中，暂时保存</span><br>			tmpBuf = <span class="hljs-built_in">append</span>(tmpBuf, buf[:n]...)<br>			needN -= <span class="hljs-type">uint64</span>(n) <span class="hljs-comment">// 更新 needN 的值</span><br>			readN += <span class="hljs-type">int64</span>(n)<br>			<span class="hljs-keyword">continue</span><br>		&#125;<br>		<span class="hljs-comment">// 读满了</span><br>		tmpBuf = <span class="hljs-built_in">append</span>(tmpBuf, buf...)<br>		readN += <span class="hljs-type">int64</span>(n)<br><br>		<span class="hljs-keyword">if</span> readN == <span class="hljs-type">int64</span>(dataLen) &#123;<br>			<span class="hljs-keyword">break</span><br>		&#125;<br>	&#125;<br>	m := NewMessage(tmpBuf, msgType)<br>	<span class="hljs-keyword">return</span> m, <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>测试了前面的粘包拆包代码，发现结果都正确，说明可以解决这类问题，但是目前测试的依据较少，也可能不一定准确。</p>
+<p>附：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/autsu/revrespct">项目地址</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/autsu/revrespct/tree/master/testdata">用 protobuf 来进行粘包拆包的测试代码</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/TCP/">#TCP</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>TCP 粘包/拆包问题</div>
+      <div>https://autsu.github.io/2022/09/05/tcp_zhan_bao/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年9月5日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/09/05/go_nil_pointer/" title="一个 go nil pointer 错误记录">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">一个 go nil pointer 错误记录</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/09/02/epoll_zhong_duan/" title="epoll 打断/唤醒">
+                        <span class="hidden-mobile">epoll 打断/唤醒</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

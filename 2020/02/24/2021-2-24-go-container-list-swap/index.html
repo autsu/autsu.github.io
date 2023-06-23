@@ -1,0 +1,775 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="场景在 LeetCode 255.用队列实现栈 这道题里，需要用到两个队列来实现一个栈，并且在算法流程中，需要交换这两个队列的内容，例如：队列 A  &#x3D;&gt; [1, 2, 3]，队列 B &#x3D;&gt; [555]，交换后：A &#x3D;&gt; [555]，B &#x3D;&gt; [1, 2, 3]。 go 标准库中并没有提供队列的实现，但是提供了 container&amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go 交换 container&#x2F;list 的值">
+<meta property="og:url" content="https://autsu.github.io/2020/02/24/2021-2-24-go-container-list-swap/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="场景在 LeetCode 255.用队列实现栈 这道题里，需要用到两个队列来实现一个栈，并且在算法流程中，需要交换这两个队列的内容，例如：队列 A  &#x3D;&gt; [1, 2, 3]，队列 B &#x3D;&gt; [555]，交换后：A &#x3D;&gt; [555]，B &#x3D;&gt; [1, 2, 3]。 go 标准库中并没有提供队列的实现，但是提供了 container&amp;#">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zengh1.github.io/post-images/1618573823911.png">
+<meta property="article:published_time" content="2020-02-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-03-18T13:37:15.132Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="go">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://zengh1.github.io/post-images/1618573823911.png">
+  
+  
+  
+  <title>go 交换 container/list 的值 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="go 交换 container/list 的值"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-02-24 00:00" pubdate>
+          2020年2月24日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          24 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">go 交换 container/list 的值</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>在 <strong>LeetCode 255.用队列实现栈</strong> 这道题里，需要用到两个队列来实现一个栈，并且在算法流程中，需要交换这两个队列的内容，例如：队列 A  &#x3D;&gt; [1, 2, 3]，队列 B &#x3D;&gt; [555]，交换后：A &#x3D;&gt; [555]，B &#x3D;&gt; [1, 2, 3]。</p>
+<p>go 标准库中并没有提供队列的实现，但是提供了 container&#x2F;list 这样一个双向链表，所以可以用 list 来模拟一个队列，定义如下结构体：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> MyStack <span class="hljs-keyword">struct</span> &#123;<br>    Queue1 *list.List	<span class="hljs-comment">// 队列 1</span><br>    Queue2 *list.List	<span class="hljs-comment">// 队列 2</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>在 <code>push</code> 方法中需要交换两个队列的内容：</p>
+<h3 id="写法1"><a href="#写法1" class="headerlink" title="写法1"></a>写法1</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(this *MyStack)</span></span> Push(x <span class="hljs-type">int</span>) &#123;<br>  <span class="hljs-comment">// 省略其他代码</span><br>  <span class="hljs-comment">// 在这里交换值</span><br>  this.Queue1, this.Queue2 = this.Queue2, this.Queue1<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>上面的代码是可以正确运行的，这里的交换语句让 Queue1 重新指向了另一个 list，Queue2 也同样如此，例如：Queue1 &#x3D;&gt; 0x0001，Queue2 &#x3D;&gt; 0x0013，交换后：Queue1 &#x3D;&gt; 0x0013，Queue2 &#x3D;&gt; 0x0001，这里仅仅是改变了结构体成员属性的值（指向），并没有对属性 list 内部进行更改。</p>
+<h3 id="写法2"><a href="#写法2" class="headerlink" title="写法2"></a>写法2</h3><p>为了让代码更简洁一些，我尝试用两个变量保存 this.Queue1和 this.Queue2：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(this *MyStack)</span></span> Push(x <span class="hljs-type">int</span>) &#123;<br>  q1 := this.Queue1<br>  q2 := this.Queue2<br>  <span class="hljs-comment">// 省略其他代码</span><br>  <span class="hljs-comment">// 在这里交换值</span><br>  q1, q2 = q2, q1<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>上面这段代码会出错，因为这里的交换的是仅仅两个变量 q1 和 q2 的值，并没有对结构体中的属性造成影响。</p>
+<h3 id="写法3"><a href="#写法3" class="headerlink" title="写法3"></a>写法3</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(this *MyStack)</span></span> Push(x <span class="hljs-type">int</span>) &#123;<br>  q1 := this.Queue1<br>  q2 := this.Queue2<br>  <span class="hljs-comment">// 省略其他代码</span><br>  <span class="hljs-comment">// 在这里交换值</span><br>  *q1, *q2 = *q2, *q1<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>因为 q1 和 q2 都是指针变量，所以可以通过 *<strong>取内容符</strong> 来交换值，就和交换两个指针参数值一样，看起来也没有任何问题，但是运行结果却诡异的出现了死循环，而且排查了许久都找不到原因。</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p><strong>Struct ll</strong>  定义一个类似的结构体：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> ll <span class="hljs-keyword">struct</span> &#123;<br>	l1 *list.List<br>	l2 *list.List<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<p><strong>swap()</strong> 类似 <strong>方法三</strong> 中的取值交换方式：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">swap</span><span class="hljs-params">(l1, l2 *list.List)</span></span> &#123;<br>	*l1, *l2 = *l2, *l1<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<p><strong>_print</strong> 定义一个输出函数用来友好输出链表，输出值的同时也输出地址值：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> _<span class="hljs-title">print</span><span class="hljs-params">(name <span class="hljs-type">string</span>, l *list.List)</span></span> &#123;<br>	fmt.Print(name + <span class="hljs-string">&quot;: &quot;</span>)<br>	<span class="hljs-keyword">for</span> i := l.Front(); i != <span class="hljs-literal">nil</span>; i = i.Next() &#123;<br>		fmt.Printf(<span class="hljs-string">&quot;%v[%p] -&gt; \t&quot;</span>, i.Value, i)<br>	&#125;<br>	fmt.Println()<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>测试代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs go">	<span class="hljs-comment">// 创建两个 list</span><br>	l1 := list.New()<br>	l2 := list.New()<br>	<br><span class="hljs-comment">// 为两个链表添加值，l1: 1 -&gt; 2 -&gt; 3，l2: 666</span><br>	l1.PushBack(<span class="hljs-number">1</span>)<br>	l1.PushBack(<span class="hljs-number">2</span>)<br>	l1.PushBack(<span class="hljs-number">3</span>)<br>	l2.PushBack(<span class="hljs-number">666</span>)<br><br>	<span class="hljs-comment">// 输出交换前的值</span><br>	fmt.Println(<span class="hljs-string">&quot;before: &quot;</span>)<br>	_print(<span class="hljs-string">&quot;l1&quot;</span>, l1)<br>	_print(<span class="hljs-string">&quot;l2&quot;</span>, l2)<br><br>	<span class="hljs-comment">// 交换函数</span><br>	swap(l1, l2)<br>	<span class="hljs-comment">// 输出交换后的值</span><br>	fmt.Println(<span class="hljs-string">&quot;after: &quot;</span>)<br>	_print(<span class="hljs-string">&quot;l1&quot;</span>, l1)<br>	_print(<span class="hljs-string">&quot;l2&quot;</span>, l2)<br></code></pre></td></tr></table></figure>
+
+
+
+<p>运行结果：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">before</span>: <br><span class="hljs-attribute">l1</span>: <span class="hljs-number">1</span>[<span class="hljs-number">0</span>xc00009cde0] -&gt; 	<span class="hljs-number">2</span>[<span class="hljs-number">0</span>xc00009ce10] -&gt; 	<span class="hljs-number">3</span>[<span class="hljs-number">0</span>xc00009ce40] -&gt; 	<br><span class="hljs-attribute">l2</span>: <span class="hljs-number">666</span>[<span class="hljs-number">0</span>xc00009ce70] -&gt; 	<br><br><span class="hljs-attribute">after</span>: <br><span class="hljs-attribute">l1</span>: <span class="hljs-number">666</span>[<span class="hljs-number">0</span>xc00009ce70] -&gt; 	<br><span class="hljs-attribute">l2</span>: <span class="hljs-number">1</span>[<span class="hljs-number">0</span>xc00009cde0] -&gt; 	<span class="hljs-number">2</span>[<span class="hljs-number">0</span>xc00009ce10] -&gt; 	<span class="hljs-number">3</span>[<span class="hljs-number">0</span>xc00009ce40] -&gt; 	<br></code></pre></td></tr></table></figure>
+
+
+
+<p>两个链表的值确实已经发生了改变，但是为什么在 <strong>方法 3</strong> 中会产生诡异的错误呢？继续尝试追加值：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 交换完之后 pushback</span><br>fmt.Println(<span class="hljs-string">&quot;after swap pushback: &quot;</span>)<br>l2.PushBack(<span class="hljs-number">555</span>)<br>l1.PushBack(<span class="hljs-number">6</span>)<br><span class="hljs-comment">// 输出两个链表</span><br>_print(<span class="hljs-string">&quot;l1&quot;</span>, l1)<br>_print(<span class="hljs-string">&quot;l2&quot;</span>, l2)<br></code></pre></td></tr></table></figure>
+
+
+
+<p>运行结果：</p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs xl">after swap pushback: <br><span class="hljs-function"><span class="hljs-title">l1</span>: 666[0xc000104e70] -&gt;</span> 	<span class="hljs-number">6</span>[<span class="hljs-number">0</span><span class="hljs-function"><span class="hljs-title">xc000104ed0</span>] -&gt;</span> 	<span class="hljs-number">555</span>[<span class="hljs-number">0</span><span class="hljs-function"><span class="hljs-title">xc000104ea0</span>] -&gt;</span> 	&lt;<span class="hljs-function"><span class="hljs-title">nil</span>&gt;[0xc000104db0] -&gt;</span> 	<br><span class="hljs-function"><span class="hljs-title">l2</span>: 1[0xc000104de0] -&gt;</span> 	<span class="hljs-number">2</span>[<span class="hljs-number">0</span><span class="hljs-function"><span class="hljs-title">xc000104e10</span>] -&gt;</span> 	<span class="hljs-number">3</span>[<span class="hljs-number">0</span><span class="hljs-function"><span class="hljs-title">xc000104e40</span>] -&gt;</span> <br></code></pre></td></tr></table></figure>
+
+<p>上面的代码向 l1 尾部添加了 元素 6，向 l2 尾部添加元素 555，正确结果应该是：</p>
+<p>l1:  666 -&gt; 6</p>
+<p>l2:  1 -&gt; 2 -&gt; 3 -&gt; 555</p>
+<p>但运行结果却十分诡异：</p>
+<p>l1:  666 -&gt; 6 -&gt; 555 -&gt; nil</p>
+<p>l2:  1 -&gt; 2 -&gt; 3</p>
+<p>本来应该添加到 l2 的 555 被添加到了 l1，并且 l1 还多了一个 额外的 nil</p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>结合源码进行了分析（不一定正确）</p>
+<p><img src="https://zengh1.github.io/post-images/1618573823911.png" srcset="/img/loading.gif" lazyload></p>
+<p>至于为什么会出现 <strong>测试</strong> 中的诡异情况，发现自己水平有限，画图画的晕头转向，找不出一个合理的原因，只能草草归结于 <strong>list 的环形被破坏，导致产生无法预料的结果</strong>。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>写法1 <code>this.Queue1, this.Queue2 = this.Queue2, this.Queue1</code>  只是交换了结构体属性 q1 和 q2 的指向，没有对 list 内部进行修改，而 写法3 <code>*this.Queue1, *this.Queue2 = *this.Queue2, *this.Queue1</code> 则是直接对 list 内部进行了修改，所以产生了无法预料的后果，这也充分说明了指针的危险性。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/go/">#go</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>go 交换 container/list 的值</div>
+      <div>https://autsu.github.io/2020/02/24/2021-2-24-go-container-list-swap/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年2月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/04/15/2021-4-15-cpp_func_return_reference/" title="c++：如何理解函数返回一个引用【未完】">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">c++：如何理解函数返回一个引用【未完】</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/02/24/2021-2-24-go-container-list-source-code/" title="go container/list 源码分析【未完】">
+                        <span class="hidden-mobile">go container/list 源码分析【未完】</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

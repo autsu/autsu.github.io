@@ -1,0 +1,748 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="最不经常使用（LFU）缓存算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LeetCode 460. LFU 缓存">
+<meta property="og:url" content="https://autsu.github.io/2021/06/16/leetcode-460-lfu-huan-cun/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="最不经常使用（LFU）缓存算法">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zengh1.github.io/post-images/1623900640431.png">
+<meta property="article:published_time" content="2021-06-16T13:52:51.000Z">
+<meta property="article:modified_time" content="2023-03-18T13:37:15.201Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="LFU">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://zengh1.github.io/post-images/1623900640431.png">
+  
+  
+  
+  <title>LeetCode 460. LFU 缓存 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LeetCode 460. LFU 缓存"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-06-16 21:52" pubdate>
+          2021年6月16日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          40 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">LeetCode 460. LFU 缓存</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>最不经常使用（LFU）缓存算法</p>
+<span id="more"></span>
+
+<blockquote>
+<p>请你为 最不经常使用（LFU）缓存算法设计并实现数据结构。</p>
+<p>实现 LFUCache 类：</p>
+<p>LFUCache(int capacity) - 用数据结构的容量 capacity 初始化对象<br>int get(int key) - 如果键存在于缓存中，则获取键的值，否则返回 -1。<br>void put(int key, int value) - 如果键已存在，则变更其值；如果键不存在，请插入键值对。当缓存达到其容量时，则应该在插入新项之前，使最不经常使用的项无效。在此问题中，当存在平局（即两个或更多个键具有相同使用频率）时，应该去除 最近最久未使用 的键。<br>注意「项的使用次数」就是自插入该项以来对其调用 get 和 put 函数的次数之和。使用次数会在对应项被移除后置为 0 。</p>
+<p>为了确定最不常使用的键，可以为缓存中的每个键维护一个 使用计数器 。使用计数最小的键是最久未使用的键。</p>
+<p>当一个键首次插入到缓存中时，它的使用计数器被设置为 1 (由于 put 操作)。对缓存中的键执行 get 或 put 操作，使用计数器的值将会递增。</p>
+<p> </p>
+<p>示例：</p>
+<p>输入：<br>[“LFUCache”, “put”, “put”, “get”, “put”, “get”, “get”, “put”, “get”, “get”, “get”]<br>[[2], [1, 1], [2, 2], [1], [3, 3], [2], [3], [4, 4], [1], [3], [4]]<br>输出：<br>[null, null, null, 1, null, -1, 3, null, -1, 3, 4]</p>
+<p>解释：<br>&#x2F;&#x2F; cnt(x) &#x3D; 键 x 的使用计数<br>&#x2F;&#x2F; cache&#x3D;[] 将显示最后一次使用的顺序（最左边的元素是最近的）<br>LFUCache lFUCache &#x3D; new LFUCache(2);<br>lFUCache.put(1, 1);   &#x2F;&#x2F; cache&#x3D;[1,_], cnt(1)&#x3D;1<br>lFUCache.put(2, 2);   &#x2F;&#x2F; cache&#x3D;[2,1], cnt(2)&#x3D;1, cnt(1)&#x3D;1<br>lFUCache.get(1);       &#x2F;&#x2F; 返回 1<br>                                  &#x2F;&#x2F; cache&#x3D;[1,2], cnt(2)&#x3D;1, cnt(1)&#x3D;2<br>lFUCache.put(3, 3);   &#x2F;&#x2F; 去除键 2 ，因为 cnt(2)&#x3D;1 ，使用计数最小<br>                                  &#x2F;&#x2F; cache&#x3D;[3,1], cnt(3)&#x3D;1, cnt(1)&#x3D;2<br>lFUCache.get(2);       &#x2F;&#x2F; 返回 -1（未找到）<br>lFUCache.get(3);       &#x2F;&#x2F; 返回 3<br>                                  &#x2F;&#x2F; cache&#x3D;[3,1], cnt(3)&#x3D;2, cnt(1)&#x3D;2<br>lFUCache.put(4, 4);   &#x2F;&#x2F; 去除键 1 ，1 和 3 的 cnt 相同，但 1 最久未使用<br>                                  &#x2F;&#x2F; cache&#x3D;[4,3], cnt(4)&#x3D;1, cnt(3)&#x3D;2<br>lFUCache.get(1);      &#x2F;&#x2F; 返回 -1（未找到）<br>lFUCache.get(3);      &#x2F;&#x2F; 返回 3<br>                                 &#x2F;&#x2F; cache&#x3D;[3,4], cnt(4)&#x3D;1, cnt(3)&#x3D;3<br>lFUCache.get(4);      &#x2F;&#x2F; 返回 4<br>                                &#x2F;&#x2F; cache&#x3D;[3,4], cnt(4)&#x3D;2, cnt(3)&#x3D;3</p>
+<p>提示：</p>
+<p>0 &lt;&#x3D; capacity, key, value &lt;&#x3D; 104<br>最多调用 105 次 get 和 put 方法</p>
+<p>进阶：你可以为这两种操作设计时间复杂度为 O(1) 的实现吗？</p>
+</blockquote>
+<h2 id="方法1双哈希表-链表"><a href="#方法1双哈希表-链表" class="headerlink" title="方法1	双哈希表+链表"></a>方法1	双哈希表+链表</h2><p>哈希表1：</p>
+<p>key 记录使用次数</p>
+<p>value 为一条链表</p>
+<p>因为可能有多个键使用次数相同，所以用链表将这些相同频次的键连接起来，此外，该链表也可以记录这些键的使用时间，链表头为最近使用过的，链表尾为<strong>最近最久未使用</strong>的。当需要淘汰键时，移除链表尾即可，当需要插入时，添加到链表头。</p>
+<p>哈希表2：</p>
+<p>key 	与键相同，做快速映射</p>
+<p>value  为链表中的一个节点</p>
+<p>此外，还需要一个 min 值来保存全局最少使用次数，当需要淘汰时便。</p>
+<h3 id="大体思路"><a href="#大体思路" class="headerlink" title="大体思路"></a>大体思路</h3><p>由题可知，当执行 get 和 put 操作时，都会使得键的使用次数增加，而使用次数增加后，就需要从当前链表移动到其他链表中，操作思路为：先获取到当前键的使用次数，通过 <strong>哈希表1</strong> 定位到所在链表，并从中移除，再通过<strong>哈希表1</strong> 获取 使用次数+1 处的链表，并将键添加到链表头，（这两步都需要注意映射的链表是否为 null，否则会导致空指针错误），此外还需要更新该 key 的使用次数。</p>
+<p>get 首先从 <strong>哈希表2</strong> 中查找，如果找到了，则执行上面的移动操作，并返回值，未找到则返回 -1。</p>
+<p>put 首先需要查找是否存在，如果存在则只更新 value，同时执行移动操作，返回。如果不存在，则需要先判断是否需要淘汰，淘汰可以通过全局最少使用次数 min 从 <strong>哈希表1</strong> 中定位到链表，并移除该链表的尾元素，同时也要从 <strong>哈希表2</strong> 中移除。如果不需要淘汰，则直接添加到两个哈希表即可，因为是新值，所以使用次数为 1，要将 min 置为 1。</p>
+<p>这里还有一个问题，如何更新 min 的值呢？当需要移动时，检查一下移动后，该链表长度是否为 0，如果为空则更新 min。例如：</p>
+<p>哈希表1 情况如下：</p>
+<p>1 -&gt; [3, 3]<br>2 -&gt; [1, 1]<br>此时 min &#x3D; 1</p>
+<p>当执行 get 3 操作时：<br>2 -&gt; [3, 3] -&gt; [1, 1]<br>此时应该更新 min &#x3D; 2</p>
+<p>当 [3, 3] 从 1 移动到 2 后，1 对应的链表长度为 0，且 [3, 3] 的使用次数 &#x3D; min &#x3D; 1，所以需要将 min 更新为 2。</p>
+<p><img src="https://zengh1.github.io/post-images/1623900640431.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="代码："><a href="#代码：" class="headerlink" title="代码："></a>代码：</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> lfu<br><br><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;container/list&quot;</span><br><br><span class="hljs-keyword">type</span> LFUCache <span class="hljs-keyword">struct</span> &#123;<br>	<span class="hljs-comment">// 记录出现次数，key 为次数，value 为链表，</span><br>	<span class="hljs-comment">// 因为同一个次数可能有多个值，按照规定，次数相同时按使用时间来比较，</span><br>	<span class="hljs-comment">// 所以用链表来记录顺序，新节点插入到链表头，当需要淘汰时，淘汰链表尾</span><br>	cm <span class="hljs-keyword">map</span>[<span class="hljs-type">int</span>]*list.List<br><br>	<span class="hljs-comment">// 以键值 key 为索引，每个索引存放对应缓存在 cm 中链表里的内存地址</span><br>	m <span class="hljs-keyword">map</span>[<span class="hljs-type">int</span>]*list.Element<br><br>	<span class="hljs-comment">// 最大容量</span><br>	<span class="hljs-built_in">cap</span> <span class="hljs-type">int</span><br><br>	<span class="hljs-comment">// 全局最少使用次数，当需要执行淘汰操作时，通过该变量可以在 O(1) 内定位到 cm 的对应链表</span><br>	min <span class="hljs-type">int</span><br>&#125;<br><br><span class="hljs-comment">// node 链表中存储的值</span><br><span class="hljs-keyword">type</span> node <span class="hljs-keyword">struct</span> &#123;<br>	key <span class="hljs-type">int</span><br>	val <span class="hljs-type">int</span><br>	cnt <span class="hljs-type">int</span> <span class="hljs-comment">// 使用次数</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Constructor</span><span class="hljs-params">(capacity <span class="hljs-type">int</span>)</span></span> LFUCache &#123;<br>	<span class="hljs-keyword">return</span> LFUCache&#123;<br>		cm:  <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">int</span>]*list.List),<br>		m:   <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">int</span>]*list.Element),<br>		<span class="hljs-built_in">cap</span>: capacity,<br>		min: <span class="hljs-number">0</span>,<br>	&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *LFUCache)</span></span> Get(key <span class="hljs-type">int</span>) <span class="hljs-type">int</span> &#123;<br>	<span class="hljs-keyword">if</span> c.<span class="hljs-built_in">cap</span> == <span class="hljs-number">0</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-number">-1</span><br>	&#125;<br>	<span class="hljs-keyword">if</span> e, ok := c.m[key]; ok &#123;<br>		n := e.Value.(*node)<br><br>		<span class="hljs-comment">// 将 n 从旧的链表中移除，因为 get() 后其使用次数增加了</span><br>		<span class="hljs-keyword">if</span> c.cm[n.cnt] != <span class="hljs-literal">nil</span> &#123;<br>			c.cm[n.cnt].Remove(e)<br>		&#125;<br><br>		<span class="hljs-comment">// 如果移除后旧链表为空，则更新全局最小使用次数 min</span><br>		<span class="hljs-keyword">if</span> c.cm[n.cnt] == <span class="hljs-literal">nil</span> || c.cm[n.cnt].Len() == <span class="hljs-number">0</span> &#123;<br>			<span class="hljs-comment">// 链表为空了，cm 保存也就没意义了，可以从 cm 中删除</span><br>			<span class="hljs-built_in">delete</span>(c.cm, n.cnt)<br>			<span class="hljs-keyword">if</span> c.min == n.cnt &#123;<br>				c.min++<br>			&#125;<br>		&#125;<br><br>		<span class="hljs-comment">// 更新 n 的使用次数</span><br>		n.cnt++<br><br>		<span class="hljs-comment">// 获取新的链表，并将 n 添加到头部</span><br>		<span class="hljs-keyword">if</span> c.cm[n.cnt] == <span class="hljs-literal">nil</span> &#123;<br>			c.cm[n.cnt] = list.New()<br>		&#125;<br>		ele := c.cm[n.cnt].PushFront(n)<br>		<span class="hljs-comment">// 更新 m 中的信息</span><br>		c.m[key] = ele<br><br>		<span class="hljs-keyword">return</span> e.Value.(*node).val<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">-1</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *LFUCache)</span></span> Put(key <span class="hljs-type">int</span>, value <span class="hljs-type">int</span>) &#123;<br>	<span class="hljs-comment">// 需要先判断是否存在，再判断容量是否溢出，例如</span><br>	<span class="hljs-comment">// LFU 容量为 2，现有如下数据：</span><br>	<span class="hljs-comment">// 1 -&gt; [1,5] -&gt; [2,6]     // 使用 1 次对应的链表</span><br>	<span class="hljs-comment">// 此时 push [1,2]，如果先判断容量溢出，则会触发移除操作，</span><br>	<span class="hljs-comment">// 将 [2,6] 移除，导致结果为 1 -&gt; [1,2] -&gt; [1,5]，</span><br>	<span class="hljs-comment">// 正确结果应该为：</span><br>	<span class="hljs-comment">// 1 -&gt; [2,6]</span><br>	<span class="hljs-comment">// 2 -&gt; [1,2]</span><br><br>	<span class="hljs-comment">// 如果该 key 已经存在</span><br>	<span class="hljs-keyword">if</span> no, ok := c.m[key]; ok &#123;<br>		n := no.Value.(*node)<br><br>		<span class="hljs-keyword">if</span> c.cm[n.cnt] != <span class="hljs-literal">nil</span> &#123;<br>			c.cm[n.cnt].Remove(no)<br>		&#125;<br><br>		<span class="hljs-keyword">if</span> c.cm[n.cnt] == <span class="hljs-literal">nil</span> || c.cm[n.cnt].Len() == <span class="hljs-number">0</span> &#123;<br>			<span class="hljs-built_in">delete</span>(c.cm, n.cnt)<br>			<span class="hljs-keyword">if</span> c.min == n.cnt &#123;<br>				c.min++<br>			&#125;<br>		&#125;<br><br>		n.cnt++       <span class="hljs-comment">// 使用次数 +1</span><br>		n.val = value <span class="hljs-comment">// 更新 val</span><br><br>		<span class="hljs-keyword">if</span> c.cm[n.cnt] == <span class="hljs-literal">nil</span> &#123;<br>			c.cm[n.cnt] = list.New()<br>		&#125;<br>		ele := c.cm[n.cnt].PushFront(n)<br>		c.m[key] = ele<br>		<span class="hljs-keyword">return</span><br>	&#125;<br><br>	<span class="hljs-comment">// 如果添加该节点后容量溢出，则需要淘汰使用次数最少的节点</span><br>	<span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(c.m) == c.<span class="hljs-built_in">cap</span> &#123;<br>		<span class="hljs-comment">// 根据 min 字段，取出最小使用次数对应的链表</span><br>		l := c.cm[c.min]<br>		<span class="hljs-keyword">if</span> l != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-comment">//fmt.Println(l.Back())</span><br>			<span class="hljs-comment">// 该链表的最后一个即为最长时间未使用的节点，将其移除</span><br>			rm := l.Remove(l.Back())<br>			<span class="hljs-comment">// 同时也从 m 中移除</span><br>			<span class="hljs-built_in">delete</span>(c.m, rm.(*node).key)<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-comment">// key 不存在</span><br>	n := &amp;node&#123;<br>		key: key,<br>		val: value,<br>		cnt: <span class="hljs-number">1</span>,<br>	&#125;<br><br>	<span class="hljs-keyword">if</span> _, ok := c.cm[<span class="hljs-number">1</span>]; !ok &#123;<br>		c.cm[<span class="hljs-number">1</span>] = list.New()<br>	&#125;<br><br>	l := c.cm[<span class="hljs-number">1</span>]<br>	<span class="hljs-comment">// 添加到计数链表中</span><br>	node := l.PushFront(n)<br>	<span class="hljs-comment">// 添加到 m 中</span><br>	c.m[key] = node<br>	<span class="hljs-comment">// 更新全局最小使用次数 min 为 1</span><br>	c.min = <span class="hljs-number">1</span><br>&#125;<br><br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LFU/">#LFU</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LeetCode 460. LFU 缓存</div>
+      <div>https://autsu.github.io/2021/06/16/leetcode-460-lfu-huan-cun/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年6月16日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/06/23/leetcode-43-zi-fu-chuan-xiang-cheng/" title="LeetCode 43. 字符串相乘">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LeetCode 43. 字符串相乘</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/06/15/25-pi-ma-de-jiao-zhu/" title="25匹马的角逐">
+                        <span class="hidden-mobile">25匹马的角逐</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

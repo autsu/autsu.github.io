@@ -1,0 +1,889 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="说明：文章的部分地方会用 cm 来指代 ConfigMap  引子做过开发的同学都遇到过给程序进行配置的场景，比如非常常见的配置文件，将 Mysql 的地址、端口、用户名、密码等信息写到一个配置文件里，然后程序内部通过读取这个配置文件来获取信息，防止了硬编码信息到程序内部，这样如果发生变动只需要修改配置文件即可，无需重新编译整个程序；另一种常见的方式是运行程序时指定参数来进行配置，比如 Go 标">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k8s ConfigMap">
+<meta property="og:url" content="https://autsu.github.io/2022/06/07/k8s-configmap/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="说明：文章的部分地方会用 cm 来指代 ConfigMap  引子做过开发的同学都遇到过给程序进行配置的场景，比如非常常见的配置文件，将 Mysql 的地址、端口、用户名、密码等信息写到一个配置文件里，然后程序内部通过读取这个配置文件来获取信息，防止了硬编码信息到程序内部，这样如果发生变动只需要修改配置文件即可，无需重新编译整个程序；另一种常见的方式是运行程序时指定参数来进行配置，比如 Go 标">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-06-07T11:17:35.000Z">
+<meta property="article:modified_time" content="2023-03-29T14:44:17.437Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="k8s">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>k8s ConfigMap - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="k8s ConfigMap"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-06-07 19:17" pubdate>
+          2022年6月7日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          19k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          157 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">k8s ConfigMap</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>说明：文章的部分地方会用 <code>cm</code> 来指代 <code>ConfigMap</code></p>
+</blockquote>
+<h1 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h1><p>做过开发的同学都遇到过给程序进行配置的场景，比如非常常见的配置文件，将 Mysql 的地址、端口、用户名、密码等信息写到一个配置文件里，然后程序内部通过读取这个配置文件来获取信息，防止了硬编码信息到程序内部，这样如果发生变动只需要修改配置文件即可，无需重新编译整个程序；另一种常见的方式是运行程序时指定参数来进行配置，比如 Go 标准库里的 flag 包就可以方便的进行参数指定，然后运行时只要使用诸如 <code>go run main.go -a 123 -b 456</code> 这样的方式，便可读取到配置信息，比如在这个例子里传递了两个参数：a&#x3D;123，b&#x3D;456</p>
+<p>那么在 k8s 中如何对容器进行配置呢？</p>
+<h2 id="在-docker-中定义命令与参数"><a href="#在-docker-中定义命令与参数" class="headerlink" title="在 docker 中定义命令与参数"></a>在 docker 中定义命令与参数</h2><p>容器中运行的完整指令由两部分组成：命令和参数，比如 <code>./main -a 123</code>，main 就是命令，-a 就是参数，在 Dockerfile 中分别对应的是 ENTRYPOINT（命令）和 CMD（参数）。</p>
+<p>实战：</p>
+<p>这个 image 会调用 fortuneloop.sh：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs dockerfile"><span class="hljs-keyword">FROM</span> ubuntu:latest<br><br><span class="hljs-keyword">RUN</span><span class="language-bash"> apt-get update ; apt-get -y install fortune <span class="hljs-comment"># 安装 fortune</span></span><br><span class="hljs-keyword">ADD</span><span class="language-bash"> fortuneloop.sh /bin/fortuneloop.sh</span><br><br><span class="hljs-keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="hljs-string">&quot;/bin/fortuneloop.sh&quot;</span>]</span><br><span class="hljs-keyword">CMD</span><span class="language-bash"> [<span class="hljs-string">&quot;10&quot;</span>] <span class="hljs-comment"># 每隔 10s 输出一次</span></span><br></code></pre></td></tr></table></figure>
+
+<p>这里指定了 ENTRYPOINT 和 CMD，等同于命令 <code>/bin/fortuneloop.sh 10</code></p>
+<p>附：fortuneloop.sh 文件内容如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br>trap &quot;exit&quot; SIGINT<br><br>INTERVAL=$1 # 读取第一个参数，比如执行 fortuneloop.sh 10，那么 $1=10<br>echo Configured to generate new fortune every $INTERVAL seconds<br><br>mkdir -p /var/htdocs<br><br>while :<br>do<br>  echo $(date) Writing fortune to /var/htdocs/index.html<br>  /usr/games/fortune &gt; /var/htdocs/index.html # 执行 fortune 命令，将输出的内容写入到 index.html<br>  sleep $INTERVAL # 睡眠指定的时间<br>done<br></code></pre></td></tr></table></figure>
+
+<p>接下来构建并运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">构建镜像</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">docker build -t stdoutt/fortune-args-arm64 .</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">运行</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">docker run -it stdoutt/fortune-args-arm6</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">观察效果</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">每隔 10s 就会打印一次</span><br>Configured to generate new fortune every 10 seconds<br>Sun Sep 25 02:23:01 UTC 2022 Writing fortune to /var/htdocs/index.html<br>Sun Sep 25 02:23:11 UTC 2022 Writing fortune to /var/htdocs/index.html<br></code></pre></td></tr></table></figure>
+
+<p>因为在 Dockerfile 的 CMD 中指定值为 10，所以默认会每隔 10 秒打印一次，也可以自己指定值将默认值覆盖掉：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">docker run -it stdoutt/fortune-args-arm6 1</span><br>Configured to generate new fortune every 1 seconds<br>Sun Sep 25 02:24:55 UTC 2022 Writing fortune to /var/htdocs/index.html<br>Sun Sep 25 02:24:56 UTC 2022 Writing fortune to /var/htdocs/index.html<br>Sun Sep 25 02:24:57 UTC 2022 Writing fortune to /var/htdocs/index.html<br></code></pre></td></tr></table></figure>
+
+<p>现在每间隔 1s 就会打印一次</p>
+<h2 id="在-k8s-中定义命令与参数"><a href="#在-k8s-中定义命令与参数" class="headerlink" title="在 k8s 中定义命令与参数"></a>在 k8s 中定义命令与参数</h2><p>在 k8s 中定义容器时，可以覆盖掉镜像的 ENTRYPOINT 和 CMD，通过 command 和 args 来指定，类似一下这种形式：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">kind:</span> <span class="hljs-string">Pod</span> <br><span class="hljs-attr">spec:</span><br>	<span class="hljs-attr">containers:</span><br>		<span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">some/image</span><br>			<span class="hljs-attr">command:</span> [<span class="hljs-string">&quot;/bin/command&quot;</span>]  <span class="hljs-comment"># 等同于 Dockerfile 中的 ENTRYPOINT</span><br>			<span class="hljs-attr">args:</span> [<span class="hljs-string">&quot;argl&quot;</span>, <span class="hljs-string">&quot;arg2&quot;</span>, <span class="hljs-string">&quot;arg3&quot;</span>] <span class="hljs-comment"># 等同于 Dockerfile 中的 CMD</span><br></code></pre></td></tr></table></figure>
+
+<p>其中 command 等同于 Dockerfile 中的 ENTRYPOINT，args 等同于 Dockerfile 中的 CMD</p>
+<h3 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h3><p>yaml 如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">Pod</span><br><span class="hljs-attr">metadata:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">fortune2s</span><br><span class="hljs-attr">spec:</span><br>  <span class="hljs-attr">containers:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">stdoutt/fortune-args-arm64</span> <span class="hljs-comment"># 注意此 image 仅适用于 arm64</span><br>    <span class="hljs-attr">args:</span> [<span class="hljs-string">&quot;2&quot;</span>] <span class="hljs-comment"># 等同于 Dockerfile 中的 CMD</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">html-generator</span><br>    <span class="hljs-attr">volumeMounts:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>      <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/var/htdocs</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">nginx:alpine</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">web-server</span><br>    <span class="hljs-attr">volumeMounts:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>      <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/usr/share/nginx/html</span><br>      <span class="hljs-attr">readOnly:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-attr">ports:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">containerPort:</span> <span class="hljs-number">80</span><br>      <span class="hljs-attr">protocol:</span> <span class="hljs-string">TCP</span><br>  <span class="hljs-attr">volumes:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>    <span class="hljs-attr">emptyDir:</span> &#123;&#125;<br></code></pre></td></tr></table></figure>
+
+<p>测试效果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">创建 pod</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl apply -f fortune-pod-args.yaml</span><br>pod/fortune2s created<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">开启端口转发</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl port-forward fortune2s 8080:80</span><br>Forwarding from 127.0.0.1:8080 -&gt; 80<br>Forwarding from [::1]:8080 -&gt; 80<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">每隔 2s （和 args 中定义的一样）curl 一次，因为 args 也定义为 2s，代表每 2s 写入一次谚语，所以</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">每次 curl 都应该输出不同的内容</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-keyword">while</span> <span class="hljs-literal">true</span>;<span class="hljs-keyword">do</span> curl localhost:8080;<span class="hljs-built_in">sleep</span> 2s;<span class="hljs-keyword">done</span></span><br>Wagner&#x27;s music is better than it sounds.<br>		-- Mark Twain<br>You plan things that you do not even attempt because of your extreme caution.<br>You never hesitate to tackle the most difficult problems.<br>The lovely woman-child Kaa was mercilessly chained to the cruel post of<br>the warrior-chief Beast, with his barbarian tribe now stacking wood at<br>her nubile feet, when the strong clear voice of the poetic and heroic<br>Handsomas roared, &#x27;Flick your Bic, crisp that chick, and you&#x27;ll feel my<br>steel through your last meal!&#x27;<br>		-- Winning sentence, 1984 Bulwer-Lytton bad fiction contest.<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="在容器定义中指定环境变量"><a href="#在容器定义中指定环境变量" class="headerlink" title="在容器定义中指定环境变量"></a>在容器定义中指定环境变量</h2><p><strong>Dockerfile</strong></p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs dockerfile"><span class="hljs-keyword">FROM</span> ubuntu:latest<br><br><span class="hljs-keyword">RUN</span><span class="language-bash"> apt-get update ; apt-get -y install fortune</span><br><span class="hljs-keyword">ADD</span><span class="language-bash"> fortuneloop.sh /bin/fortuneloop.sh</span><br><br><span class="hljs-keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="hljs-string">&quot;/bin/fortuneloop.sh&quot;</span>]</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>fortuneloop.sh</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/bash</span><br>trap &quot;exit&quot; SIGINT<br><br>echo Configured to generate new fortune every $INTERVAL seconds<br><br>mkdir -p /var/htdocs<br><br>while :<br>do<br>  echo $(date) Writing fortune to /var/htdocs/index.html<br>  /usr/games/fortune &gt; /var/htdocs/index.html<br>  sleep $INTERVAL # 读取 INTERVAL 这个环境变量<br>done<br></code></pre></td></tr></table></figure>
+
+<p><strong>fortune-pod-env.yaml</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">Pod</span><br><span class="hljs-attr">metadata:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">fortune-env</span><br><span class="hljs-attr">spec:</span><br>  <span class="hljs-attr">containers:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">stdoutt/fortune-env-arm64</span> <span class="hljs-comment"># 注意此 image 仅适用于 arm64</span><br>    <span class="hljs-attr">env:</span> <span class="hljs-comment"># 在这里设置环境变量，用于 fortuneloop.sh 的读取</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">INTERVAL</span><br>      <span class="hljs-attr">value:</span> <span class="hljs-string">&quot;5&quot;</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">html-generator</span><br>    <span class="hljs-attr">volumeMounts:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>      <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/var/htdocs</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">nginx:alpine</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">web-server</span><br>    <span class="hljs-attr">volumeMounts:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>      <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/usr/share/nginx/html</span><br>      <span class="hljs-attr">readOnly:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-attr">ports:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">containerPort:</span> <span class="hljs-number">80</span><br>      <span class="hljs-attr">protocol:</span> <span class="hljs-string">TCP</span><br>  <span class="hljs-attr">volumes:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>    <span class="hljs-attr">emptyDir:</span> &#123;&#125;<br></code></pre></td></tr></table></figure>
+
+<p>测试效果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl apply -f fortune-env.yaml</span><br>pod/fortune-env created<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get po</span><br>NAME          READY   STATUS    RESTARTS   AGE<br>fortune2s     2/2     Running   0          84m<br>fortune-env   2/2     Running   0          18s<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl port-forward fortune-env 8080:80</span><br>Forwarding from 127.0.0.1:8080 -&gt; 80<br>Forwarding from [::1]:8080 -&gt; 80<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-keyword">while</span> <span class="hljs-literal">true</span>;<span class="hljs-keyword">do</span> curl localhost:8080;<span class="hljs-built_in">sleep</span> 5s;<span class="hljs-keyword">done</span> <span class="hljs-comment"># sleep 同样的时间</span></span><br>It may or may not be worthwhile, but it still has to be done.<br>When I reflect upon the number of disagreeable people who I know who have gone<br>to a better world, I am moved to lead a different life.<br>		-- Mark Twain, &quot;Pudd&#x27;nhead Wilson&#x27;s Calendar&quot;<br><span class="hljs-meta prompt_">	</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">这里额外测试一下，环境变量里设置的值是 5，也就是每 5s 生成一句新谚语并写入 index.html，</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">但是这里每隔 1s 就 curl 一次，会发现前 5 此输出的内容都相同</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-keyword">while</span> <span class="hljs-literal">true</span>;<span class="hljs-keyword">do</span> curl localhost:8080;<span class="hljs-built_in">sleep</span> 1s;<span class="hljs-keyword">done</span></span><br>You will be surrounded by luxury.<br>You will be surrounded by luxury.<br>You will be surrounded by luxury.<br>You will be surrounded by luxury.<br>You will be surrounded by luxury.<br>Q:	What happens when four WASPs find themselves in the same room?<br>A:	A dinner party.<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="ConfigMap"><a href="#ConfigMap" class="headerlink" title="ConfigMap"></a>ConfigMap</h1><p>上面的方式都是直接在 pod 中硬编码的，就像 <code>- name: INTERVAL  value: &quot;5&quot;</code> 这样，如果之后需要更改 value 的值，那么需要修改 pod 的 yaml，然后删除旧的重新创建新的（这里还待验证），比较麻烦。</p>
+<p>ConfigMap 将配置相关的内容抽取出来做成了一个单独的部分，然后 pod 再引用 ConfigMap 即可（又是万能的解决方法：加一层中间层），相比较直接在 pod spec 中的硬编码而言更加灵活。</p>
+<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><p>使用 <code>create</code> 命令而不是 yaml 来创建一个 configmap（之后简称为 cm），通过 <code>--from-literal</code> 来指定键值对（kv），形式为：–from-literal&#x3D;[key]&#x3D;[value]</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl create configmap fortune-config --from-literal=sleep-interval=25</span><br>configmap/fortune-config created<br></code></pre></td></tr></table></figure>
+
+
+
+<p>通过指定多个 <code>--from-literal</code> 来添加多个 kv：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl create configmap myconfigmap --from-literal=foo=bar --from-literal=bar=baz --from-literal=one=two</span><br>configmap/myconfigmap created<br></code></pre></td></tr></table></figure>
+
+
+
+<p>查看 cm 的 yaml：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get cm myconfigmap -o yaml</span><br>apiVersion: v1<br>data:<br>  bar: baz<br>  foo: bar<br>  one: two<br>kind: ConfigMap<br>metadata:<br>  creationTimestamp: &quot;2022-06-07T11:39:32Z&quot;<br>  name: myconfigmap<br>  namespace: default<br>  resourceVersion: &quot;73938&quot;<br>  uid: c9814e7e-f3f9-4149-8530-74ea963420d9<br></code></pre></td></tr></table></figure>
+
+<p>发现其实定义的 kv 都在 <code>data</code> 里，<code>metadata</code> 里唯一需要明确指定的是 <code>name</code>，所以通过 yaml 的形式来创建 cm 也比较简单</p>
+<p>如果添加两个同样的 key 会怎样？</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl create configmap fortune-config1 --from-literal=sleep-interval=25 --from-literal=sleep-interval=30</span><br>error: cannot add key &quot;sleep-interval&quot;, another key by that name already exists in Data for ConfigMap &quot;fortune-config1&quot;<br></code></pre></td></tr></table></figure>
+
+<p>可以看到直接创建失败了</p>
+<p>cm 还可以将某个文件的内容作为 value 值，使用 <code>--from-file</code> 来引用文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl create cm my-config --from-file=conf.conf</span><br>configmap/my-config created<br></code></pre></td></tr></table></figure>
+
+<p><code>conf.conf</code> 内容如下：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-selector-tag">a</span>:<span class="hljs-selector-tag">a</span><br><span class="hljs-selector-tag">a</span>:<span class="hljs-selector-tag">a</span><br><span class="hljs-selector-tag">b</span>:<span class="hljs-selector-tag">b</span><br>c:c<br>d:d<br></code></pre></td></tr></table></figure>
+
+<p>查看该 cm 的 yaml：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get cm my-config -o yaml</span><br>apiVersion: v1<br>data:<br>  conf.conf: |<br>    a:a<br>    b:b<br>    c:c<br>    d:d<br>kind: ConfigMap<br>metadata:<br>  creationTimestamp: &quot;2022-06-07T12:58:09Z&quot;<br>  name: my-config<br>  namespace: default<br>  resourceVersion: &quot;77327&quot;<br>  uid: 2937d396-8692-4c16-8798-236fc4015299<br></code></pre></td></tr></table></figure>
+
+<p>发现这里是用文件名来做 key 的，value 就是文件的内容，只不过不是常规的 key:value 形式，而是在 key: 后多加了一个 |，之后才是 value</p>
+<p>同样也可以通过指定多个 <code>--from-file</code> 来引用多个文件作为 cm 的条目，比如（这里我还专门测试了一下该 flag 是否对文件后缀有要求，我传入了一个 txt，这不是常见的配置文件后缀）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl create cm my-config1 --from-file=conf.conf --from-file conf.txt</span><br>configmap/my-config1 created<br></code></pre></td></tr></table></figure>
+
+<p>查看 yaml：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get cm my-config1 -o yaml</span><br>apiVersion: v1<br>data:<br>  conf.conf: |<br>    a:a<br>    b:b<br>    c:c<br>    d:d<br>  conf.txt: |<br>    大数据断开了撒娇漏打卡所经历的卡所经历的<br>kind: ConfigMap<br>metadata:<br>  creationTimestamp: &quot;2022-06-07T13:13:16Z&quot;<br>  name: my-config1<br>  namespace: default<br>  resourceVersion: &quot;77980&quot;<br>  uid: 3332d608-4184-48bc-8481-bd78ccf8b312<br></code></pre></td></tr></table></figure>
+
+<p>貌似这里是直接简单粗暴的把文件内容作为 value 了，至于文件后缀是什么，cm 不会去考虑，不过想想确实也只能这么做，毕竟配置文件后缀非常多，conf、yaml、toml 等等，可能还有一些冷门的格式，如果要专门维护一个允许的后缀列表显然太麻烦了，也没啥太大必要。</p>
+<p>上面的 key 都是直接使用文件名，如果想自行指定，可以使用类似下面的语句：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl create cm my-config1 --from-file=myconf=conf.conf</span><br></code></pre></td></tr></table></figure>
+
+<p>这里设置 key 为 myconf，也就是说格式是：–from-file&#x3D;[自定义 key 名]&#x3D;[value]</p>
+<h2 id="给容器传递-ConfigMap-作为环境变量"><a href="#给容器传递-ConfigMap-作为环境变量" class="headerlink" title="给容器传递 ConfigMap 作为环境变量"></a>给容器传递 ConfigMap 作为环境变量</h2><p><strong>fortune-pod-env-configmap.yaml</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">Pod</span><br><span class="hljs-attr">metadata:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">fortune-env-from-configmap</span><br><span class="hljs-attr">spec:</span><br>  <span class="hljs-attr">containers:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">stdoutt/fortune-env-arm64</span> <span class="hljs-comment"># 注意该 image 仅适用于 arm64</span><br>    <span class="hljs-attr">env:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">INTERVAL</span><br>      <span class="hljs-attr">valueFrom:</span><br>        <span class="hljs-attr">configMapKeyRef:</span><br>          <span class="hljs-attr">name:</span> <span class="hljs-string">fortune-config</span><br>          <span class="hljs-attr">key:</span> <span class="hljs-string">sleep-interval</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">html-generator</span><br>    <span class="hljs-attr">volumeMounts:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>      <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/var/htdocs</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">nginx:alpine</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">web-server</span><br>    <span class="hljs-attr">volumeMounts:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>      <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/usr/share/nginx/html</span><br>      <span class="hljs-attr">readOnly:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-attr">ports:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">containerPort:</span> <span class="hljs-number">80</span><br>      <span class="hljs-attr">protocol:</span> <span class="hljs-string">TCP</span><br>  <span class="hljs-attr">volumes:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>    <span class="hljs-attr">emptyDir:</span> &#123;&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="如果引用的-ConfigMap-不存在会怎样"><a href="#如果引用的-ConfigMap-不存在会怎样" class="headerlink" title="如果引用的 ConfigMap 不存在会怎样"></a>如果引用的 ConfigMap 不存在会怎样</h3><p>测试：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl apply -f fortune-pod-env-configmap.yaml</span><br>pod/fortune-env-from-configmap created<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get po</span><br>NAME                         READY   STATUS                       RESTARTS   AGE<br>fortune2s                    2/2     Running                      0          117m<br>fortune-env                  2/2     Running                      0          33m<br>fortune-env-from-configmap   1/2     CreateContainerConfigError   0          2m27s<br></code></pre></td></tr></table></figure>
+
+<p>发现当前 pod 的状态是 CreateContainerConfigError，这是肯定的，env 会从名为 keyfortune-config 的 configMap 中读取，但是现在没有创建这个 configMap，所以当然无法正常启动</p>
+<p>查看 describe 也会发现有相应的警告：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-string">Warning</span>  <span class="hljs-string">Failed</span>     <span class="hljs-string">80s</span> <span class="hljs-string">(x7</span> <span class="hljs-string">over</span> <span class="hljs-string">2m28s)</span>  <span class="hljs-attr">kubelet            Error:</span> <span class="hljs-string">configmap</span> <span class="hljs-string">&quot;fortune-config&quot;</span> <span class="hljs-string">not</span> <span class="hljs-string">found</span><br></code></pre></td></tr></table></figure>
+
+<p>需要创建一个 configMap 来解决：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">创建一个 configMap，同时向其中写入 sleep-interval=5</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl create configmap fortune-config --from-literal=sleep-interval=5</span><br>configmap/fortune-config created<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">在创建完 configMap 之后，之前的 pod 立马成功运行了</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get po</span><br>NAME                         READY   STATUS    RESTARTS   AGE<br>fortune2s                    2/2     Running   0          121m<br>fortune-env                  2/2     Running   0          37m<br>fortune-env-from-configmap   2/2     Running   0          7m3s<br></code></pre></td></tr></table></figure>
+
+<p>也就是说如果引用的 ConfigMap 不存在，那么 pod 会创建失败，当所需要的 ConfigMap 被创建后，这个失败的 pod 会自动重启，无须重新创建 pod。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl port-forward fortune-env 8080:80</span><br>Forwarding from 127.0.0.1:8080 -&gt; 80<br>Forwarding from [::1]:8080 -&gt; 80<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-keyword">while</span> <span class="hljs-literal">true</span>;<span class="hljs-keyword">do</span> curl localhost:8080;<span class="hljs-built_in">sleep</span> 5s;<span class="hljs-keyword">done</span></span><br>You&#x27;ll feel much better once you&#x27;ve given up hope.<br>When I reflect upon the number of disagreeable people who I know who have gone<br>to a better world, I am moved to lead a different life.<br>		-- Mark Twain, &quot;Pudd&#x27;nhead Wilson&#x27;s Calendar&quot;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="给容器传递-ConfigMap-作为参数"><a href="#给容器传递-ConfigMap-作为参数" class="headerlink" title="给容器传递 ConfigMap 作为参数"></a>给容器传递 ConfigMap 作为参数</h2><p>pod.spec.containers.args 不能直接引用 ConfigMap 中的条目，但是可以”曲线救国“，将 ConfigMap 中的条目设置为一个环境变量，然后再让 args 来引用这个环境变量，便可达到效果。</p>
+<p><strong>fortune-pod-args-configmap.yaml</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">Pod</span><br><span class="hljs-attr">metadata:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">fortune-args-from-configmap</span><br><span class="hljs-attr">spec:</span><br>  <span class="hljs-attr">containers:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">stdoutt/fortune-args-arm64</span> <span class="hljs-comment"># 注意该 image 仅适用于 arm64</span><br>    <span class="hljs-attr">env:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">INTERVAL</span> <span class="hljs-comment"># 这个环境变量引用了 fortune-config 中的 sleep-interval 条目</span><br>      <span class="hljs-attr">valueFrom:</span> <br>        <span class="hljs-attr">configMapKeyRef:</span><br>          <span class="hljs-attr">name:</span> <span class="hljs-string">fortune-config</span><br>          <span class="hljs-attr">key:</span> <span class="hljs-string">sleep-interval</span><br>    <span class="hljs-attr">args:</span> [<span class="hljs-string">&quot;$(INTERVAL)&quot;</span>] <span class="hljs-comment"># 引用 INTERVAL 这个环境变量</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">html-generator</span><br>    <span class="hljs-attr">volumeMounts:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>      <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/var/htdocs</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">nginx:alpine</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">web-server</span><br>    <span class="hljs-attr">volumeMounts:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>      <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/usr/share/nginx/html</span><br>      <span class="hljs-attr">readOnly:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-attr">ports:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">containerPort:</span> <span class="hljs-number">80</span><br>      <span class="hljs-attr">protocol:</span> <span class="hljs-string">TCP</span><br>  <span class="hljs-attr">volumes:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>    <span class="hljs-attr">emptyDir:</span> &#123;&#125;<br></code></pre></td></tr></table></figure>
+
+<p>测试效果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl apply -f fortune-pod-args-configmap.yaml</span><br>pod/fortune-args-from-configmap created<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get po</span><br>NAME                          READY   STATUS    RESTARTS   AGE<br>fortune2s                     2/2     Running   0          7h13m<br>fortune-env                   2/2     Running   0          5h49m<br>fortune-env-from-configmap    2/2     Running   0          5h18m<br>fortune-args-from-configmap   2/2     Running   0          5s<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl port-forward fortune-env 8080:80</span><br>Forwarding from 127.0.0.1:8080 -&gt; 80<br>Forwarding from [::1]:8080 -&gt; 80<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-keyword">while</span> <span class="hljs-literal">true</span>;<span class="hljs-keyword">do</span> curl localhost:8080;<span class="hljs-built_in">sleep</span> 5s;<span class="hljs-keyword">done</span></span><br>What good is an obscenity trial except to popularize literature?<br>		-- Nero Wolfe, &quot;The League of Frightened Men&quot;<br>They spell it &quot;da Vinci&quot; and pronounce it &quot;da Vinchy&quot;.  Foreigners<br>always spell better than they pronounce.<br>		-- Mark Twain<br>Give your very best today.  Heaven knows it&#x27;s little enough.<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="使用-ConfigMap-卷"><a href="#使用-ConfigMap-卷" class="headerlink" title="使用 ConfigMap 卷"></a>使用 ConfigMap 卷</h2><p><del>前面提到的环境变量或者是参数的方式比较适用于配置数量较少的情况，如果配置数量过多，那么就不太适合了，此外还有一些特殊的配置文件格式，比如 nginx ，也不太适合。</del>（待修改）</p>
+<p>还可以将 ConfigMap <del>挂载（感觉挂载这个词有点不太合适）</del> 做成一个 <strong>卷</strong>，然后pod 中的容器可以将这个卷挂载到自己的某个目录下，来完成配置，比如一个 nginx 容器可以将卷挂载到自己的 &#x2F;etc&#x2F;nginx&#x2F;conf.d 目录下，就可以读取卷中的配置信息。</p>
+<p><strong>configMap卷会将 ConfigMap 中的每个条目均暴露成一个文件</strong>。 运行在容器中的进程可通过读取文件内容获得对应的条目值 。</p>
+<h3 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h3><p>创建一个文件夹 <strong>configmap-files</strong>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">mkdir</span> configmap-files</span><br></code></pre></td></tr></table></figure>
+
+<p>然后向里面写入下面的这两个文件：</p>
+<p><strong>my-nginx-config.conf</strong></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-section">server</span> &#123;<br>    <span class="hljs-attribute">listen</span>              <span class="hljs-number">80</span>;<br>    <span class="hljs-attribute">server_name</span>         www.kubia-example.com;<br><br>    <span class="hljs-attribute">gzip</span> <span class="hljs-literal">on</span>;<br>    <span class="hljs-attribute">gzip_types</span> text/plain application/xml;<br><br>    <span class="hljs-section">location</span> / &#123;<br>        <span class="hljs-attribute">root</span>   /usr/share/nginx/html;<br>        <span class="hljs-attribute">index</span>  index.html index.htm;<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>sleep-interval</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">25<br></code></pre></td></tr></table></figure>
+
+<p>查看文件夹：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">tree</span><br>.<br>├── my-nginx-config.conf<br>└── sleep-interval<br></code></pre></td></tr></table></figure>
+
+<p>创建一个 cm，将这个文件夹作为 value</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl create configmap fortune-config --from-file=configmap-files</span><br>error: failed to create configmap: configmaps &quot;fortune-config&quot; already exists<br></code></pre></td></tr></table></figure>
+
+<p>发现之前以及存在同名的 cm 了，看来重复创建 cm 不能覆盖更新，必须要删除旧的才能创建新的：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get cm</span><br>NAME               DATA   AGE<br>kube-root-ca.crt   1      21h<br>fortune-config     1      6h4m<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl delete cm fortune-config</span><br>configmap &quot;fortune-config&quot; deleted<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl create configmap fortune-config --from-file=configmap-files</span><br>configmap/fortune-config created<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看 cm</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get cm fortune-config -o yaml</span><br>apiVersion: v1<br>data:<br>  my-nginx-config.conf: |<br>    server &#123;<br>        listen              80;<br>        server_name         www.kubia-example.com;<br><br>        gzip on;<br>        gzip_types text/plain application/xml;<br><br>        location / &#123;<br>            root   /usr/share/nginx/html;<br>            index  index.html index.htm;<br>        &#125;<br><br>    &#125;<br>  sleep-interval: |<br>    25<br>kind: ConfigMap<br>metadata:<br>  creationTimestamp: &quot;2022-09-25T11:05:49Z&quot;<br>  name: fortune-config<br>  namespace: default<br>  resourceVersion: &quot;12886&quot;<br>  uid: c9f5ee8a-9078-46cc-955a-3ec72c6ceb62<br></code></pre></td></tr></table></figure>
+
+<p>发现该 cm 有两个条目，条目名就是目标文件夹下的每个文件的文件名，value 就是文件内容</p>
+<p>接下来定义一个 pod，这个 pod 里的 nginx 容器会将 configMap 卷挂载到自己的 &#x2F;etc&#x2F;nginx&#x2F;conf.d 目录下，而 nginx 会自动将该路径下的所有以 conf 为后缀的文件嵌入到默认配置文件中，而 configMap 卷里面刚好有我们定义的开启了 gzip 的配置文件 my-nginx-config.conf，nginx 读取这个文件来开启 gzip，而卷中的另一个文件 sleep-interval 因为不是以 conf 为后缀的，所以 nginx 不会将其内容嵌入到配置文件。</p>
+<p><strong>fortune-configmap-volume</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">Pod</span><br><span class="hljs-attr">metadata:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">fortune-configmap-volume</span><br><span class="hljs-attr">spec:</span><br>  <span class="hljs-attr">containers:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">stdoutt/fortune-env-arm64</span><br>    <span class="hljs-attr">env:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">INTERVAL</span> <span class="hljs-comment"># 从 fortune-config 这个 configmap 中读取 sleep-interval，用其值填充环境变量 INTERVAL</span><br>      <span class="hljs-attr">valueFrom:</span><br>        <span class="hljs-attr">configMapKeyRef:</span><br>          <span class="hljs-attr">name:</span> <span class="hljs-string">fortune-config</span><br>          <span class="hljs-attr">key:</span> <span class="hljs-string">sleep-interval</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">html-generator</span><br>    <span class="hljs-attr">volumeMounts:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>      <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/var/htdocs</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">nginx:alpine</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">web-server</span><br>    <span class="hljs-attr">volumeMounts:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>      <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/usr/share/nginx/html</span><br>      <span class="hljs-attr">readOnly:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">config</span><br>      <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/etc/nginx/conf.d</span> <span class="hljs-comment"># 将 config 卷挂载到该路径下</span><br>      <span class="hljs-attr">readOnly:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">config</span><br>      <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/tmp/whole-fortune-config-volume</span> <span class="hljs-comment"># 将 config 卷挂载到该路径下</span><br>      <span class="hljs-attr">readOnly:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">containerPort:</span> <span class="hljs-number">80</span><br>        <span class="hljs-attr">name:</span> <span class="hljs-string">http</span><br>        <span class="hljs-attr">protocol:</span> <span class="hljs-string">TCP</span><br>  <span class="hljs-attr">volumes:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>    <span class="hljs-attr">emptyDir:</span> &#123;&#125;<br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">config</span> <span class="hljs-comment"># 定义一个名为 config 的卷，卷引用了 fortune-config 这个 cm 里的内容，会将每个条目做成一个文件</span><br>    <span class="hljs-attr">configMap:</span><br>      <span class="hljs-attr">name:</span> <span class="hljs-string">fortune-config</span><br></code></pre></td></tr></table></figure>
+
+<p>测试效果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl apply -f fortune-pod-configmap-volume.yaml</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get po</span><br>NAME                          READY   STATUS    RESTARTS   AGE<br>fortune-configmap-volume      2/2     Running   0          13s<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl port-forward fortune-configmap-volume 8080:80</span><br>Forwarding from 127.0.0.1:8080 -&gt; 80<br>Forwarding from [::1]:8080 -&gt; 80<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">curl -H <span class="hljs-string">&quot;Accept-Encoding: gzip&quot;</span> -I localhost:8080</span><br>HTTP/1.1 200 OK<br>Server: nginx/1.23.1<br>Date: Sun, 25 Sep 2022 11:38:16 GMT<br>Content-Type: text/html<br>Last-Modified: Sun, 25 Sep 2022 11:38:06 GMT<br>Connection: keep-alive<br>ETag: W/&quot;63303d9e-135&quot;<br>Content-Encoding: gzip # 这里说明已经开启了 gzip 压缩，配置文件已经生效<br></code></pre></td></tr></table></figure>
+
+<p>验证挂载：</p>
+<p>前面提到过 ConfigMap 卷会将 config 中的每个条目单独做成一个文件，我们实际验证一下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">进入 web-server 这个容器</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl <span class="hljs-built_in">exec</span> -it fortune-configmap-volume -c web-server -- /bin/sh</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">看一下挂载路径</span><br>/ # ls /tmp/whole-fortune-config-volume/<br>my-nginx-config.conf  sleep-interval<br><br>/ # ls /etc/nginx/conf.d<br>my-nginx-config.conf  sleep-interval<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">发现 configMap 卷全部都被挂载了，且里面有两个文件，每个文件对应 cm 中的一个条目</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">输出一下文件内容</span><br>/ # cat /etc/nginx/conf.d/sleep-interval<br>25<br><br>/ # cat /tmp/whole-fortune-config-volume/my-nginx-config.conf<br>server &#123;<br>    listen              80;<br>    server_name         www.kubia-example.com;<br><br>    gzip on;<br>    gzip_types text/plain application/xml;<br><br>    location / &#123;<br>        root   /usr/share/nginx/html;<br>        index  index.html index.htm;<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="只挂载-ConfigMap-中的部分条目"><a href="#只挂载-ConfigMap-中的部分条目" class="headerlink" title="只挂载 ConfigMap 中的部分条目"></a>只挂载 ConfigMap 中的部分条目</h3><p>上面的例子存在一个问题：sleep-interval 这个配置文件也被挂载到了 nginx 的目录下，但是该配置文件与 nginx 是没任何关系的，为了解决这个问题，可以用指定 items 的方式，如下：</p>
+<p><strong>fortune-pod-configmap-volume-with-items</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">Pod</span><br><span class="hljs-attr">metadata:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">fortune-configmap-volume-with-items</span><br><span class="hljs-attr">spec:</span><br>  <span class="hljs-attr">containers:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">stdoutt/fortune-env-arm64</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">html-generator</span><br>    <span class="hljs-attr">volumeMounts:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>      <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/var/htdocs</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">nginx:alpine</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">web-server</span><br>    <span class="hljs-attr">volumeMounts:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>      <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/usr/share/nginx/html</span><br>      <span class="hljs-attr">readOnly:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">config</span><br>      <span class="hljs-attr">mountPath:</span> <span class="hljs-string">/etc/nginx/conf.d/</span><br>      <span class="hljs-attr">readOnly:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-attr">ports:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">containerPort:</span> <span class="hljs-number">80</span><br>      <span class="hljs-attr">protocol:</span> <span class="hljs-string">TCP</span><br>  <span class="hljs-attr">volumes:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">html</span><br>    <span class="hljs-attr">emptyDir:</span> &#123;&#125;<br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">config</span><br>    <span class="hljs-attr">configMap:</span><br>      <span class="hljs-attr">name:</span> <span class="hljs-string">fortune-config</span><br>      <span class="hljs-attr">items:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">key:</span> <span class="hljs-string">my-nginx-config.conf</span> <span class="hljs-comment"># 引用 cm 中的 my-nginx-config.conf 这条条目</span><br>        <span class="hljs-attr">path:</span> <span class="hljs-string">gzip.conf</span> <span class="hljs-comment"># 将这条条目的内容放到一个名为 gzip.conf 的文件中</span><br></code></pre></td></tr></table></figure>
+
+<p>测试效果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl apply -f fortune-pod-configmap-volume-with-items</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get po</span><br>NAME                                  READY   STATUS    RESTARTS   AGE<br>fortune2s                             2/2     Running   0          10h<br>fortune-env                           2/2     Running   0          8h<br>fortune-env-from-configmap            2/2     Running   0          8h<br>fortune-args-from-configmap           2/2     Running   0          171m<br>fortune-configmap-volume              2/2     Running   0          92m<br>fortune-configmap-volume-with-items   2/2     Running   0          14s<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl <span class="hljs-built_in">exec</span> -it fortune-configmap-volume-with-items -c web-server -- /bin/sh</span><br>/ # ls /etc/nginx/<br>conf.d/         fastcgi_params  modules/        scgi_params<br>fastcgi.conf    mime.types      nginx.conf      uwsgi_params<br>/ # ls /etc/nginx/conf.d<br>gzip.conf<br>/ # cat /etc/nginx/conf.d/gzip.conf<br>server &#123;<br>    listen              80;<br>    server_name         www.kubia-example.com;<br><br>    gzip on;<br>    gzip_types text/plain application/xml;<br><br>    location / &#123;<br>        root   /usr/share/nginx/html;<br>        index  index.html index.htm;<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>可以看到挂载的目录 &#x2F;etc&#x2F;nginx&#x2F;conf.d 下只有 gzip.conf 这一个文件了，之前的 sleep-interval 文件已经没有了，并且 gzip.conf 文件的内容就是 configMap 中 my-nginx-config.conf 这个条目的内容。</p>
+<h3 id="热更新"><a href="#热更新" class="headerlink" title="热更新"></a>热更新</h3><p>使用环境变量或者命令行参数作为配置源的弊端在于无法在进程运行时更新配置，也就是说如果配置信息发生了变化，需要重启应用来重新读取，达到更新的效果。 而将 ConfigMap 暴露为卷可以达到配置热更新的效果，也就是无须重新创建 pod 或者重启容器。</p>
+<p>使用 kubectl edit 修改 ConfigMap：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl edit cm fortune-config</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">Please edit the object below. Lines beginning with a <span class="hljs-string">&#x27;#&#x27;</span> will be ignored,</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">and an empty file will abort the edit. If an error occurs <span class="hljs-keyword">while</span> saving this f</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">reopened with the relevant failures.</span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"></span><br><span class="language-bash">apiVersion: v1</span><br>data:<br>  my-nginx-config.conf: |<br>    server &#123;<br>        listen              80;<br>        server_name         www.kubia-example.com;<br><br>        gzip on;<br>        gzip_types text/plain application/xml;<br><br>        location / &#123;<br>            root   /usr/share/nginx/html;<br>            index  index.html index.htm;<br>        &#125;<br><br>    &#125;<br>  sleep-interval: |<br>    25<br>kind: ConfigMap<br>metadata:<br>  creationTimestamp: &quot;2022-09-25T11:05:49Z&quot;<br>  name: fortune-config<br>  namespace: default<br>  resourceVersion: &quot;12886&quot;<br>  uid: c9f5ee8a-9078-46cc-955a-3ec72c6ceb62<br>~<br>~<br>~<br>- /tmp/kubectl-edit-4270724913.yaml 12/29 41%<br></code></pre></td></tr></table></figure>
+
+<p>和 vim 一样，按下 i，将 <code>gzip on</code> 修改为 <code>gzip off</code>，然后 esc，输入 :wq，退出并保存，输出 <code>configmap/fortune-config edited</code></p>
+<p>查看修改是否生效：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl <span class="hljs-built_in">exec</span> -it fortune-configmap-volume-with-items -c web-server -- <span class="hljs-built_in">cat</span> /etc/nginx/conf.d/gzip.conf</span><br>server &#123;<br>    listen              80;<br>    server_name         www.kubia-example.com;<br><br>    gzip off;<br>    gzip_types text/plain application/xml;<br><br>    location / &#123;<br>        root   /usr/share/nginx/html;<br>        index  index.html index.htm;<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>发现修改已经生效</p>
+<p>配置文件已经修改，继续测试一下 nginx 这边是否生效：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl port-forward fortune-configmap-volume 8080:80</span><br>Forwarding from 127.0.0.1:8080 -&gt; 80<br>Forwarding from [::1]:8080 -&gt; 80<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">curl -H <span class="hljs-string">&quot;Accept-Encoding: gzip&quot;</span> -I localhost:8080</span><br>HTTP/1.1 200 OK<br>Server: nginx/1.23.1<br>Date: Sun, 25 Sep 2022 13:27:14 GMT<br>Content-Type: text/html<br>Last-Modified: Sun, 25 Sep 2022 13:26:55 GMT<br>Connection: keep-alive<br>ETag: W/&quot;6330571f-c6&quot;<br>Content-Encoding: gzip<br></code></pre></td></tr></table></figure>
+
+<p>发现依然输出了 <code>Content-Encoding: gzip</code> ，这是因为虽然修改了配置文件，但是 nginx 并不会监听配置文件并作出响应，所以不会更新 gzip 的状态将其 off，需要手动通知 nginx ，告诉它配置文件发生了变化，需要你重新读取一下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl <span class="hljs-built_in">exec</span> -it fortune-configmap-volume-with-items -c web-server -- nginx -s reload</span><br>2022/09/25 13:30:40 [notice] 39#39: signal process started<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">curl -H <span class="hljs-string">&quot;Accept-Encoding: gzip&quot;</span> -I localhost:8080</span><br>HTTP/1.1 200 OK<br>Server: nginx/1.23.1<br>Date: Sun, 25 Sep 2022 13:32:37 GMT<br>Content-Type: text/html<br>Content-Length: 27<br>Last-Modified: Sun, 25 Sep 2022 13:32:37 GMT<br>Connection: keep-alive<br>ETag: &quot;63305875-1b&quot;<br>Accept-Ranges: bytes<br></code></pre></td></tr></table></figure>
+
+<p>此时发现 <code>Content-Encoding: gzip</code> 已经没有了，表示 nginx 这边也已经生效了</p>
+<p>整个过程都没有重启或者重建过 pod，但是最终也达到了更新配置的效果，所以可以做到热更新。</p>
+<p>但是对 k8s 而言，它只是保证在更新 ConfigMap 后同步修改其对应的 ConfigMap 卷，但是对于引用这个 ConfigMap 的应用，k8s 就管不到了，如果应用不会对配置文件的修改作出响应，或者类似 nginx 提供一个重新载入的命令，那么可能最终还是需要重启或者重建 pod（个人猜测）</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/k8s/">#k8s</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>k8s ConfigMap</div>
+      <div>https://autsu.github.io/2022/06/07/k8s-configmap/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年6月7日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/06/08/go_seek/" title="go 文件操作的&#34;坑&#34;之 Seek()">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">go 文件操作的&#34;坑&#34;之 Seek()</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/06/01/go-gc/" title="go gc 白话版">
+                        <span class="hidden-mobile">go gc 白话版</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

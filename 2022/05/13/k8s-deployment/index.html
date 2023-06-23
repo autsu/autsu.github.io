@@ -1,0 +1,889 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="deplopyment 用于 pod 的更新相关操作。 如何更新 pod更新是一个非常常见的场景，比如：当前 pod 运行的是某个 v1 版本的镜像，一个月后该镜像发布了 v2 版本，此时想将所有的 pod 更新到 v2 版本，该怎么做呢？ 比较容易想到的以下几种方式： 先删除所有旧版本的 pod，再创建新版本的 pod实践如下： 123456789101112131415161718192021">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k8s Deployment">
+<meta property="og:url" content="https://autsu.github.io/2022/05/13/k8s-deployment/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="deplopyment 用于 pod 的更新相关操作。 如何更新 pod更新是一个非常常见的场景，比如：当前 pod 运行的是某个 v1 版本的镜像，一个月后该镜像发布了 v2 版本，此时想将所有的 pod 更新到 v2 版本，该怎么做呢？ 比较容易想到的以下几种方式： 先删除所有旧版本的 pod，再创建新版本的 pod实践如下： 123456789101112131415161718192021">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-05-13T02:53:35.000Z">
+<meta property="article:modified_time" content="2023-03-22T13:06:54.607Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="k8s">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>k8s Deployment - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="k8s Deployment"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-05-13 10:53" pubdate>
+          2022年5月13日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          19k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          157 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">k8s Deployment</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><strong>deplopyment</strong> 用于 pod 的更新相关操作。</p>
+<h1 id="如何更新-pod"><a href="#如何更新-pod" class="headerlink" title="如何更新 pod"></a>如何更新 pod</h1><p>更新是一个非常常见的场景，比如：当前 pod 运行的是某个 v1 版本的镜像，一个月后该镜像发布了 v2 版本，此时想将所有的 pod 更新到 v2 版本，该怎么做呢？</p>
+<p>比较容易想到的以下几种方式：</p>
+<h2 id="先删除所有旧版本的-pod，再创建新版本的-pod"><a href="#先删除所有旧版本的-pod，再创建新版本的-pod" class="headerlink" title="先删除所有旧版本的 pod，再创建新版本的 pod"></a><strong>先删除所有旧版本的 pod，再创建新版本的 pod</strong></h2><p>实践如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">ReplicationController</span><br><span class="hljs-attr">metadata:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">kubia-v1</span><br><span class="hljs-attr">spec:</span><br>  <span class="hljs-attr">replicas:</span> <span class="hljs-number">3</span><br>  <span class="hljs-attr">template:</span><br>    <span class="hljs-attr">metadata:</span><br>      <span class="hljs-attr">name:</span> <span class="hljs-string">kubia</span><br>      <span class="hljs-attr">labels:</span><br>        <span class="hljs-attr">app:</span> <span class="hljs-string">kubia</span><br>    <span class="hljs-attr">spec:</span><br>      <span class="hljs-attr">containers:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">luksa/kubia:v1</span><br>        <span class="hljs-attr">name:</span> <span class="hljs-string">nodejs</span><br><span class="hljs-meta">---</span><br><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">Service</span><br><span class="hljs-attr">metadata:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">kubia</span><br><span class="hljs-attr">spec:</span><br>  <span class="hljs-attr">selector:</span><br>    <span class="hljs-attr">app:</span> <span class="hljs-string">kubia</span><br>  <span class="hljs-attr">ports:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">port:</span> <span class="hljs-number">80</span><br>    <span class="hljs-attr">targetPort:</span> <span class="hljs-number">8080</span><br></code></pre></td></tr></table></figure>
+
+<p>创建一个基于 luksa&#x2F;kubia:v1 的镜像的 pod，同时创建一个 service</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get po</span><br>NAME             READY   STATUS    RESTARTS   AGE<br>kubia-v1-td826   1/1     Running   0          4m16s<br>kubia-v1-k8hz4   1/1     Running   0          4m16s<br>kubia-v1-7kpmg   1/1     Running   0          4m16s<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get rc</span><br>NAME       DESIRED   CURRENT   READY   AGE<br>kubia-v1   3         3         3       5m<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get svc</span><br>NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE<br>kubernetes   ClusterIP   10.43.0.1       &lt;none&gt;        443/TCP   37h<br>kubia        ClusterIP   10.43.191.168   &lt;none&gt;        80/TCP    5m3s<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">curl kubia</span><br>This is v1 running in pod kubia-v1-7kpmg		<br></code></pre></td></tr></table></figure>
+
+<p>测试访问，输出表示当前运行的是 v1 版本</p>
+<p>现在来进行升级操作，将 <code>luksa/kubia:v1</code> 升级为 <code>luksa/kubia:v2</code>。</p>
+<p>修改 yaml：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">spec:</span><br>      <span class="hljs-attr">containers:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">luksa/kubia:v2</span><br>      <br></code></pre></td></tr></table></figure>
+
+<p>执行 yaml：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl apply -f kubia-rc-and-service-v1.yaml</span><br>replicationcontroller/kubia-v1 configured<br>service/kubia unchanged<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">curl 10.43.191.168</span><br>This is v1 running in pod kubia-v1-7kpmg<br></code></pre></td></tr></table></figure>
+
+<p>发现输出的还是 v1，可能是因为 rc 已经有 3 个 pod 了，修改 image 不会令其删除旧的并创建新的，那就只好手动删除旧 pod 了：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl delete po -l app=kubia</span><br>pod &quot;kubia-v1-td826&quot; deleted<br>pod &quot;kubia-v1-k8hz4&quot; deleted<br>pod &quot;kubia-v1-7kpmg&quot; deleted<br></code></pre></td></tr></table></figure>
+
+<p>此时删除了所有 app&#x3D;kubia 的 pod（在我的机器上测试时，这个删除操作阻塞了将近 10s），rc 检测到其管理的 pod 数量不足所需的数量 3，那么就会新创建 3 个 pod，因为之前改掉了创建 template 中的镜像为 v2，所以现在 rc 创建出来的都是新版本的 pod 了：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get po</span><br>NAME             READY   STATUS    RESTARTS   AGE<br>kubia-v1-b5lkr   1/1     Running   0          37s<br>kubia-v1-tq7nh   1/1     Running   0          37s<br>kubia-v1-w6r6t   1/1     Running   0          37s<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">curl 10.43.191.168</span><br>This is v2 running in pod kubia-v1-w6r6t<br></code></pre></td></tr></table></figure>
+
+<p>经过上面的一系列操作，终于完成了 pod 的升级，这种方式有一个问题：删除 pod 后到 rc 创建完成这段时间，是没有 pod 能够提供服务的，这就会导致程序在一段时间内不可用，这对于一些应用是无法接收的。</p>
+<h2 id="先创建新版本的-pod，再删除所有旧版本的-pod"><a href="#先创建新版本的-pod，再删除所有旧版本的-pod" class="headerlink" title="先创建新版本的 pod，再删除所有旧版本的 pod"></a><strong>先创建新版本的 pod，再删除所有旧版本的 pod</strong></h2><p>先将镜像退回至 v1 版本，采用和上面相同的方式，这里就不贴具体操作了。</p>
+<p>复制一份之前的 yaml，在该基础上进行修改：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">cp</span> kubia-rc-and-service-v1.yaml kubia-rc-and-service-v2.yaml</span><br></code></pre></td></tr></table></figure>
+
+<p>修改为：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">ReplicationController</span><br><span class="hljs-attr">metadata:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">kubia-v2</span> <span class="hljs-comment"># 修改</span><br><span class="hljs-attr">spec:</span><br>  <span class="hljs-attr">replicas:</span> <span class="hljs-number">3</span><br>  <span class="hljs-attr">template:</span><br>    <span class="hljs-attr">metadata:</span><br>      <span class="hljs-attr">name:</span> <span class="hljs-string">kubia</span><br>      <span class="hljs-attr">labels:</span><br>        <span class="hljs-attr">app:</span> <span class="hljs-string">kubia-v2</span> <span class="hljs-comment"># 修改</span><br>    <span class="hljs-attr">spec:</span><br>      <span class="hljs-attr">containers:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">luksa/kubia:v2</span> <span class="hljs-comment"># 修改</span><br>        <span class="hljs-attr">name:</span> <span class="hljs-string">nodejs</span><br><span class="hljs-meta">---</span><br><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">Service</span><br><span class="hljs-attr">metadata:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">kubia</span><br><span class="hljs-attr">spec:</span><br>  <span class="hljs-attr">selector:</span><br>    <span class="hljs-attr">app:</span> <span class="hljs-string">kubia-v2</span> <span class="hljs-comment"># 修改</span><br>  <span class="hljs-attr">ports:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">port:</span> <span class="hljs-number">80</span><br>    <span class="hljs-attr">targetPort:</span> <span class="hljs-number">8080</span><br></code></pre></td></tr></table></figure>
+
+<p>修改之处已经标出，注意这里还更新了 service 的选择器，让其为 app&#x3D;kubia-v2 的 pod 提供对外服务。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl apply -f kubia-rc-and-service-v2.yaml</span><br>replicationcontroller/kubia-v2 created<br>service/kubia configured<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get rs</span><br>No resources found in default namespace.<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get rc</span><br>NAME       DESIRED   CURRENT   READY   AGE<br>kubia-v1   3         3         3       68m<br>kubia-v2   3         3         3       18s<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get po</span><br>NAME             READY   STATUS    RESTARTS   AGE<br>kubia-v1-7pxtm   1/1     Running   0          11m<br>kubia-v1-zt5pg   1/1     Running   0          11m<br>kubia-v1-gnssp   1/1     Running   0          11m<br>kubia-v2-46w9g   1/1     Running   0          20s<br>kubia-v2-66wqr   1/1     Running   0          20s<br>kubia-v2-bvjqc   1/1     Running   0          20s<br></code></pre></td></tr></table></figure>
+
+<p>此时访问 service：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">curl 10.43.191.168</span><br>This is v2 running in pod kubia-v2-dj8cf<br></code></pre></td></tr></table></figure>
+
+<p>发现已经切换到了 v2</p>
+<p>后续再删除 v1 的 pod：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get rc</span><br>NAME       DESIRED   CURRENT   READY   AGE<br>kubia-v1   3         3         3       76m<br>kubia-v2   3         3         3       98s<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl delete rc kubia-v1</span><br>replicationcontroller &quot;kubia-v1&quot; deleted<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get po</span><br>NAME             READY   STATUS        RESTARTS   AGE<br>kubia-v2-dj8cf   1/1     Running       0          2m9s<br>kubia-v2-4q5tv   1/1     Running       0          2m9s<br>kubia-v2-rbbfd   1/1     Running       0          2m9s<br>kubia-v1-gnssp   1/1     Terminating   0          19m<br>kubia-v1-7pxtm   1/1     Terminating   0          19m<br>kubia-v1-zt5pg   1/1     Terminating   0          19m<br></code></pre></td></tr></table></figure>
+
+<p>等待一会，这些 Terminating 状态的 pod 就会消失了。</p>
+<p>使用这种方式可以做到不停机更新，但是需要更多的硬件资源，因为在短时间内会同时运行 2 倍的 pod。</p>
+<h2 id="交替执行，删一个旧的，创建一个新的（滚动更新）"><a href="#交替执行，删一个旧的，创建一个新的（滚动更新）" class="headerlink" title="交替执行，删一个旧的，创建一个新的（滚动更新）"></a>交替执行，删一个旧的，创建一个新的（滚动更新）</h2><p>这种方式比较繁琐，就不演示了，大致的思路是：和 <strong>先创建新版本的 pod，再删除所有旧版本的 pod</strong> 中的做法一样，再创建一个用于管理 v2 的 rc（这里称为 rc-v2，之前的称为 rc-v1），但是 replicas 置为 0，此时有两个 rc：rc-v1，replicas 为 3，rc-v2，replicas 为 0，然后开始交替执行，rc-v1 缩容为 2，rc-v2 扩容到 1，v1 缩容到 1，v2 扩容到 2，以此类推，来完成升级。</p>
+<p>这种方式避免了前面两种同时创建、同时删除的缺点， 但是其也有自己的缺点：较为繁琐，且容易出错，一套流程下来要敲非常多的命令。</p>
+<p>好在强大的 k8s 提供了指令来完成 pod 的更新操作：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl rolling-update kubia-v1 kubia-v2 --image=luksa/kubia:v2</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>⚠️ 该命令已经被删除 ：error: unknown command “rolling-update” for “kubectl”</p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/65303683/why-kubectl-removed-command-rolling-update">https://stackoverflow.com/questions/65303683/why-kubectl-removed-command-rolling-update</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubectl/commit/d3af7e08624bfa7c2f52714b47cfe96a52d15fc0">https://github.com/kubernetes/kubectl/commit/d3af7e08624bfa7c2f52714b47cfe96a52d15fc0</a></p>
+<p>大致原因是：该命令是在客户端执行的，而不是在 k8s 内部执行，相比之下客户端更容易遇到一些网络中断、终端异常退出等错误，这会导致 pod 和 rc 处于中间状态</p>
+</blockquote>
+<h1 id="使用-deployment-进行更新"><a href="#使用-deployment-进行更新" class="headerlink" title="使用 deployment 进行更新"></a>使用 deployment 进行更新</h1><p>使用如下 yaml：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">apps/v1</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">Deployment</span><br><span class="hljs-attr">metadata:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">kubia</span><br><span class="hljs-attr">spec:</span><br>  <span class="hljs-attr">replicas:</span> <span class="hljs-number">3</span><br>  <span class="hljs-attr">selector:</span><br>    <span class="hljs-attr">matchLabels:</span><br>      <span class="hljs-attr">app:</span> <span class="hljs-string">kubia</span><br>  <span class="hljs-attr">template:</span><br>    <span class="hljs-attr">metadata:</span><br>      <span class="hljs-attr">name:</span> <span class="hljs-string">kubia</span><br>      <span class="hljs-attr">labels:</span><br>        <span class="hljs-attr">app:</span> <span class="hljs-string">kubia</span><br>    <span class="hljs-attr">spec:</span><br>      <span class="hljs-attr">containers:</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">luksa/kubia:v1</span><br>          <span class="hljs-attr">name:</span> <span class="hljs-string">nodejs</span><br><br></code></pre></td></tr></table></figure>
+
+<p>创建：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl apply -f deployment.yaml --record</span><br>Flag --record has been deprecated, --record will be removed in the future<br>deployment.apps/kubia created<br></code></pre></td></tr></table></figure>
+
+<p>书上着重强调了：<code>确保在创建时使用了 --record 选项。 这个选项会记录历史版本号， 在之后的操作中非常有用</code>。然而这里直接提示该选项已被废弃，难道已经默认记录版本号了吗？</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get po</span><br>NAME                     READY   STATUS    RESTARTS   AGE<br>kubia-5f6cdb7bf7-4pn9b   1/1     Running   0          7m26s<br>kubia-5f6cdb7bf7-kt8gp   1/1     Running   0          7m26s<br>kubia-5f6cdb7bf7-f6w5g   1/1     Running   0          7m26s<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get svc</span><br>NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE<br>kubernetes   ClusterIP   10.43.0.1       &lt;none&gt;        443/TCP   2d<br>kubia        ClusterIP   10.43.191.168   &lt;none&gt;        80/TCP    11h<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">curl 10.43.191.168</span><br>This is v1 running in pod kubia-5f6cdb7bf7-f6w5g<br></code></pre></td></tr></table></figure>
+
+<p>开始执行滚动升级：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl patch deployment kubia -p <span class="hljs-string">&#x27;&#123;&quot;spec&quot;: &#123;&quot;minReadySeconds&quot;: 10&#125;&#125;&#x27;</span></span><br>deployment.apps/kubia patched<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl <span class="hljs-built_in">set</span> image deployment kubia nodejs=luksa/kubia:v2 <span class="hljs-comment"># 更新镜像</span></span><br></code></pre></td></tr></table></figure>
+
+<p>这里通过 patch 为 这个 deployment 添加了一条 minReadySeconds: 10 的属性，这个属性的作用是：指定新创建的 pod 至少要成功运行多久之后，才能将其视为可用，在后面会详细说明这个属性。</p>
+<p>使用 set image 命令来进行更新，其中 nodejs 是 template.sepc.containers.name 指定的。之后更新就开始了，可以开一个新的 shell 观察升级过程：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-keyword">while</span> <span class="hljs-literal">true</span>;<span class="hljs-keyword">do</span> curl 10.43.191.168; <span class="hljs-built_in">sleep</span> 0.5s;<span class="hljs-keyword">done</span></span><br>This is v1 running in pod kubia-5f6cdb7bf7-f6w5g<br>This is v2 running in pod kubia-88894bbd4-pbr5n<br>This is v2 running in pod kubia-88894bbd4-h8mck<br>This is v1 running in pod kubia-5f6cdb7bf7-f6w5g<br>This is v1 running in pod kubia-5f6cdb7bf7-f6w5g<br>This is v2 running in pod kubia-88894bbd4-w74nb<br>This is v2 running in pod kubia-88894bbd4-pbr5n<br>This is v1 running in pod kubia-5f6cdb7bf7-f6w5g<br>This is v2 running in pod kubia-88894bbd4-h8mck<br>This is v2 running in pod kubia-88894bbd4-h8mck<br>This is v2 running in pod kubia-88894bbd4-w74nb<br>This is v2 running in pod kubia-88894bbd4-h8mck<br>This is v2 running in pod kubia-88894bbd4-h8mck<br>This is v2 running in pod kubia-88894bbd4-w74nb<br>This is v2 running in pod kubia-88894bbd4-pbr5n<br></code></pre></td></tr></table></figure>
+
+<p>可以看到，刚开始请求会打到 v1 或者 v2，到后面就全部是 v2 了，说明升级已经完成，同时也说明该命令使用的是 <strong>滚动更新</strong> 的方式，其实具体使用哪种方式是可以配置的，字段是 .spec.strategy.type，默认为 RollingUpdate，也就是滚动更新，还有一种 Recreate，采用的是先删除所有旧的，再创建新 pod 的方式。</p>
+<h1 id="使用-deployment-进行回滚"><a href="#使用-deployment-进行回滚" class="headerlink" title="使用 deployment 进行回滚"></a>使用 deployment 进行回滚</h1><h2 id="为什么需要回滚"><a href="#为什么需要回滚" class="headerlink" title="为什么需要回滚"></a>为什么需要回滚</h2><p>可能发布的新版本存在一些 bug，但是在更新之前没有发现，等发现以后整个系统已经更新成新版本了，此时就需要进行回滚操作了。</p>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><p>接着上面的操作，此时查看 rs，会发现之前的老 rs 没有被删除：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get rs</span><br>NAME               DESIRED   CURRENT   READY   AGE<br>kubia-88894bbd4    3         3         3       29m<br>kubia-5f6cdb7bf7   0         0         0       87m<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl describe kubia-5f6</span><br>...<br>Pod Template:<br>  Labels:  app=kubia<br>           pod-template-hash=5f6cdb7bf7<br>  Containers:<br>   nodejs:<br>    Image:        luksa/kubia:v1<br>...<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl describe rs kubia-888</span><br>...<br>Pod Template:<br>  Labels:  app=kubia<br>           pod-template-hash=88894bbd4<br>  Containers:<br>   nodejs:<br>    Image:        luksa/kubia:v2<br>...<br></code></pre></td></tr></table></figure>
+
+<p>为什么要保留旧的 rs 呢？<del>这里先卖个关子</del> 为的是能够完成回滚操作</p>
+<p>开始升级，这里会更新到 v3 ，这是一个带有错误的版本，访问从 5 次开始就会返回一个 500 错误：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl <span class="hljs-built_in">set</span> image deployment kubia nodejs=luksa/kubia:v3 <span class="hljs-comment"># 更新到 v3</span></span><br>deployment.apps/kubia image updated<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl rollout status deployment kubia <span class="hljs-comment"># 查看更新状态</span></span><br>Waiting for deployment &quot;kubia&quot; rollout to finish: 1 out of 3 new replicas have been updated...<br>Waiting for deployment &quot;kubia&quot; rollout to finish: 1 out of 3 new replicas have been updated...<br>Waiting for deployment &quot;kubia&quot; rollout to finish: 1 out of 3 new replicas have been updated...<br>Waiting for deployment &quot;kubia&quot; rollout to finish: 1 out of 3 new replicas have been updated...<br>Waiting for deployment &quot;kubia&quot; rollout to finish: 2 out of 3 new replicas have been updated...<br>Waiting for deployment &quot;kubia&quot; rollout to finish: 2 out of 3 new replicas have been updated...<br>Waiting for deployment &quot;kubia&quot; rollout to finish: 2 out of 3 new replicas have been updated...<br>Waiting for deployment &quot;kubia&quot; rollout to finish: 2 out of 3 new replicas have been updated...<br>Waiting for deployment &quot;kubia&quot; rollout to finish: 1 old replicas are pending termination...<br>Waiting for deployment &quot;kubia&quot; rollout to finish: 1 old replicas are pending termination...<br>Waiting for deployment &quot;kubia&quot; rollout to finish: 1 old replicas are pending termination...<br>deployment &quot;kubia&quot; successfully rolled out<br></code></pre></td></tr></table></figure>
+
+<p>在另一个终端查看访问 service 的结果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-keyword">while</span> <span class="hljs-literal">true</span>;<span class="hljs-keyword">do</span> curl 10.43.191.168; <span class="hljs-built_in">sleep</span> 0.5s;<span class="hljs-keyword">done</span></span><br>This is v3 running in pod kubia-56ff78687-kc77b<br>Some internal error has occurred! This is pod kubia-56ff78687-2b7tz<br>This is v3 running in pod kubia-56ff78687-kc77b<br>Some internal error has occurred! This is pod kubia-56ff78687-2b7tz<br>This is v2 running in pod kubia-88894bbd4-h8mck<br>Some internal error has occurred! This is pod kubia-56ff78687-2b7tz<br>This is v3 running in pod kubia-56ff78687-mbqdw<br>This is v3 running in pod kubia-56ff78687-mbqdw<br>Some internal error has occurred! This is pod kubia-56ff78687-mbqdw<br>This is v3 running in pod kubia-56ff78687-kc77b<br>This is v2 running in pod kubia-88894bbd4-h8mck<br></code></pre></td></tr></table></figure>
+
+<p>可以看到有一些报错了：Some internal error has occurred! This is pod kubia-56ff78687-mbqdw</p>
+<p>对外提供一个有 bug 的 pod 显然是不行的，此时就需要执行回滚操作了：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl rollout undo deployment kubia</span><br>deployment.apps/kubia rolled back<br></code></pre></td></tr></table></figure>
+
+<p>在另一个终端查看访问 service 的结果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-keyword">while</span> <span class="hljs-literal">true</span>;<span class="hljs-keyword">do</span> curl 10.43.191.168; <span class="hljs-built_in">sleep</span> 0.5s;<span class="hljs-keyword">done</span></span><br>This is v2 running in pod kubia-88894bbd4-rvzvb<br>This is v2 running in pod kubia-88894bbd4-rvzvb<br>This is v2 running in pod kubia-88894bbd4-pxxwt<br>This is v2 running in pod kubia-88894bbd4-pxxwt<br>This is v2 running in pod kubia-88894bbd4-4wknk<br>This is v2 running in pod kubia-88894bbd4-4wknk<br></code></pre></td></tr></table></figure>
+
+<p>发现已经回滚到 v2 版本了。</p>
+<p>查看更新记录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl rollout <span class="hljs-built_in">history</span> deployment kubia</span><br>deployment.apps/kubia<br>REVISION  CHANGE-CAUSE<br>1         kubectl apply --filename=deployment.yaml --record=true<br>3         kubectl apply --filename=deployment.yaml --record=true<br>4         kubectl apply --filename=deployment.yaml --record=true<br></code></pre></td></tr></table></figure>
+
+<p>这里显示的和书中的有所不同，书中显示的是：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl rollout <span class="hljs-built_in">history</span> deployment kubia</span><br>deployments &quot;kubia&quot;:<br>REVISION CHANGE-CAUSE<br>2 kubectl set image deployment kubia nodejs=luksa/kubia:v2 <br>3 kubectl set image deployment kubia nodejs=luksa/kubia:v3<br></code></pre></td></tr></table></figure>
+
+<p>感觉书上这种显示的友好一些，而且我执行的明明是 kubectl set image deployment kubia nodejs&#x3D;xxx ，为什么这里记录的是 kubectl apply –filename&#x3D;deployment.yaml –record&#x3D;true ？</p>
+<p>前面提到过，–record 已经被废弃，难道新版本对 CHANGE-CAUSE 进行了一些变更吗？暂时还不知道啥情况</p>
+<p>可以通过指定版本来查看详细信息，这样就可以解决上面的问题了：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl rollout <span class="hljs-built_in">history</span> deployment/kubia --revision=1</span><br>deployment.apps/kubia with revision #1<br>Pod Template:<br>  Labels:	app=kubia<br>	pod-template-hash=5f6cdb7bf7<br>  Annotations:	kubernetes.io/change-cause: kubectl apply --filename=deployment.yaml --record=true<br>  Containers:<br>   nodejs:<br>    Image:	luksa/kubia:v1<br>    Port:	&lt;none&gt;<br>    Host Port:	&lt;none&gt;<br>    Environment:	&lt;none&gt;<br>    Mounts:	&lt;none&gt;<br>  Volumes:	&lt;none&gt;<br></code></pre></td></tr></table></figure>
+
+<p>此时就可以看到该版本对应的镜像了。</p>
+<p>至此已经经历了 v1 - v3 一共 3 个版本的迭代，有更新操作也有回滚操作，此时查看 rs：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get rs</span><br>NAME               DESIRED   CURRENT   READY   AGE<br>kubia-5f6cdb7bf7   0         0         0       17h<br>kubia-88894bbd4    3         3         3       16h<br>kubia-56ff78687    0         0         0       15h<br></code></pre></td></tr></table></figure>
+
+<p>会发现每个版本的 rs 依然存在，为的就是能执行回滚操作，顺带一提，回滚不仅仅是上个版本，还可以是任意一个版本，使用 <code>kubectl rollout undo deployment kubia --to-revision=l</code> 即可。在使用了 deployment 后，系统中的 rs 就不用我们去管理了，所以我们也不需要自己去手动修改、删除 rs 了。</p>
+<h1 id="控制滚动升级速率"><a href="#控制滚动升级速率" class="headerlink" title="控制滚动升级速率"></a>控制滚动升级速率</h1><p>有两个属性可以用来控制升级速率：</p>
+<ul>
+<li>maxSurge：升级过程中最多允许超出 replicas 的 pod 数量，值可以是一个百分比或者一个数字</li>
+<li>maxUnavailable：升级过程中最多允许的不可用 pod 数量，值可以是一个百分比或者一个数字</li>
+</ul>
+<p>这两个值定义在 .spec.strategy.rollingUpdate 中，下面对这两个属性进行展开说明。</p>
+<p>前面提到过滚动升级的流程，大致是使用两个 rs，一个管理旧版本 pod，一个管理新版本 pod，管理旧版本的 rs 不断缩容，管理新版本的 rs 不断扩容，最终完成更新。通过上面的两个属性就可以对整个流程的速率进行控制，举个例子：现在一共有 3 个 pod 需要升级，此时将 maxUnavailable 设置为 2，代表最多允许有 2 个 pod 不可用，那么此时缩容 rs 就可以缩到 1。引用官方的说明：</p>
+<blockquote>
+<p><strong>最大不可用</strong></p>
+<p><code>.spec.strategy.rollingUpdate.maxUnavailable</code> 是一个可选字段，用来指定 更新过程中不可用的 Pod 的个数上限。该值可以是绝对数字（例如，5），也可以是所需 Pods 的百分比（例如，10%）。百分比值会转换成绝对数并去除小数部分。 如果 <code>.spec.strategy.rollingUpdate.maxSurge</code> 为 0，则此值不能为 0。 默认值为 25%。</p>
+<p>例如，当此值设置为 30% 时，滚动更新开始时会立即将旧 ReplicaSet 缩容到期望 Pod 个数的70%。 新 Pod 准备就绪后，可以继续缩容旧有的 ReplicaSet，然后对新的 ReplicaSet 扩容， 确保在更新期间可用的 Pods 总数在任何时候都至少为所需的 Pod 个数的 70%。</p>
+<p><strong>最大峰值</strong></p>
+<p><code>.spec.strategy.rollingUpdate.maxSurge</code> 是一个可选字段，用来指定可以创建的超出期望 Pod 个数的 Pod 数量。此值可以是绝对数（例如，5）或所需 Pods 的百分比（例如，10%）。 如果 <code>MaxUnavailable</code> 为 0，则此值不能为 0。百分比值会通过向上取整转换为绝对数。 此字段的默认值为 25%。</p>
+<p>例如，当此值为 30% 时，启动滚动更新后，会立即对新的 ReplicaSet 扩容，同时保证新旧 Pod 的总数不超过所需 Pod 总数的 130%。一旦旧 Pods 被杀死，新的 ReplicaSet 可以进一步扩容， 同时确保更新期间的任何时候运行中的 Pods 总数最多为所需 Pods 总数的 130%。</p>
+</blockquote>
+<p>对于书上的表 9.2 我有点疑问，对这两个属性的描述都是：<code>当把百分数转换成绝对值时，会将数字四舍五入</code>，但是后面又举了个例子：</p>
+<blockquote>
+<p>由于在之前场景中，设置的期望副本数为 3，上述的两个属性都设置为 25%, maxSurge 允许最多 pod数量达到 4， 同时 maxUnavailable 不允许出现任何不可用的pod (也就是说三个pod&amp;、须一直处于可运行状态)</p>
+</blockquote>
+<p>副本数为 3，maxUnavailable 设置为 25%，3*25% &#x3D; 0.75，四舍五入等于 1，那么应该允许有 1 个 pod 不可用，为什么书上说的是不允许任何 pod 不可用？</p>
+<p>在看官方的文档：maxUnavailable 说的是：百分比值会转换成绝对数并去除小数部分</p>
+<p>maxSurge 说的是：百分比值会通过向上取整转换为绝对数</p>
+<p>这显然和书上说的四舍五入有出入，那么到底实际情况如何呢？只有源码能揭晓答案了。</p>
+<p>对应的函数在 kubernetes&#x2F;pkg&#x2F;controller&#x2F;deployment&#x2F;util&#x2F;deployment_util.go 下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// desired 代表副本数量</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">ResolveFenceposts</span><span class="hljs-params">(maxSurge, maxUnavailable *intstrutil.IntOrString, desired <span class="hljs-type">int32</span>)</span></span> (<span class="hljs-type">int32</span>, <span class="hljs-type">int32</span>, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-comment">// maxSurge 没有设置，则使用默认值 0</span><br>	<span class="hljs-comment">// roundUp 设置为 true，代表向上取整</span><br>	surge, err := intstrutil.GetScaledValueFromIntOrPercent(intstrutil.ValueOrDefault(maxSurge, intstrutil.FromInt(<span class="hljs-number">0</span>)), <span class="hljs-type">int</span>(desired), <span class="hljs-literal">true</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, err<br>	&#125;<br>	<span class="hljs-comment">// maxUnavailable 没有设置，则使用默认值 0</span><br>	<span class="hljs-comment">// roundUp 设置为 false，代表向下取整</span><br>	unavailable, err := intstrutil.GetScaledValueFromIntOrPercent(intstrutil.ValueOrDefault(maxUnavailable, intstrutil.FromInt(<span class="hljs-number">0</span>)), <span class="hljs-type">int</span>(desired), <span class="hljs-literal">false</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, err<br>	&#125;<br>	<span class="hljs-comment">// 所以 surge 和 unavailable 采用的策略是不同的</span><br>	<span class="hljs-comment">// 比如 replicas 为 3，maxSurge 和 maxUnavailable 都设置为 25%，</span><br>	<span class="hljs-comment">// 3 * 25 / 100 = 0.75，surge 采用向上取整，所以为 1，而 unavailable</span><br>	<span class="hljs-comment">// 采用向下取整, 所以为 0</span><br><br>	<span class="hljs-keyword">if</span> surge == <span class="hljs-number">0</span> &amp;&amp; unavailable == <span class="hljs-number">0</span> &#123;<br>		<span class="hljs-comment">// Validation should never allow the user to explicitly use zero values for both maxSurge</span><br>		<span class="hljs-comment">// maxUnavailable. Due to rounding down maxUnavailable though, it may resolve to zero.</span><br>		<span class="hljs-comment">// If both fenceposts resolve to zero, then we should set maxUnavailable to 1 on the</span><br>		<span class="hljs-comment">// theory that surge might not work due to quota.</span><br>		unavailable = <span class="hljs-number">1</span><br>	&#125;<br><br>	<span class="hljs-keyword">return</span> <span class="hljs-type">int32</span>(surge), <span class="hljs-type">int32</span>(unavailable), <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>调用的 GetScaledValueFromIntOrPercent 函数：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// intOrPercent 代表一个整数或者百分比字符串，total 代表总数量，roundUp 代表向上取整还是向下取整，</span><br><span class="hljs-comment">// 如果 intOrPercent 是 int，那么直接返回，如果是百分比，则返回 total*百分比后的值（还需要进行取整处理）</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">GetScaledValueFromIntOrPercent</span><span class="hljs-params">(intOrPercent *IntOrString, total <span class="hljs-type">int</span>, roundUp <span class="hljs-type">bool</span>)</span></span> (<span class="hljs-type">int</span>, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-keyword">if</span> intOrPercent == <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>, errors.New(<span class="hljs-string">&quot;nil value for IntOrString&quot;</span>)<br>	&#125;<br>	<span class="hljs-comment">// 获取 intOrPercent 的值，该值可能是一个数字或者百分比</span><br>	value, isPercent, err := getIntOrPercentValueSafely(intOrPercent)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>, fmt.Errorf(<span class="hljs-string">&quot;invalid value for IntOrString: %v&quot;</span>, err)<br>	&#125;<br>	<span class="hljs-comment">// 如果该值是百分比</span><br>	<span class="hljs-keyword">if</span> isPercent &#123;<br>		<span class="hljs-comment">// 如果设置了 roundUp（不知道咋翻译），则向上取整，比如 1.2 =&gt; 2（不是四舍五入）</span><br>		<span class="hljs-keyword">if</span> roundUp &#123;<br>			value = <span class="hljs-type">int</span>(math.Ceil(<span class="hljs-type">float64</span>(value) * (<span class="hljs-type">float64</span>(total)) / <span class="hljs-number">100</span>))<br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>			<span class="hljs-comment">// 否则向下取整，比如 1.5 =&gt; 1</span><br>			value = <span class="hljs-type">int</span>(math.Floor(<span class="hljs-type">float64</span>(value) * (<span class="hljs-type">float64</span>(total)) / <span class="hljs-number">100</span>))<br>		&#125;<br>	&#125;<br>	<span class="hljs-keyword">return</span> value, <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>测试一下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">TestResolveFenceposts1</span><span class="hljs-params">(t *testing.T)</span></span> &#123;<br>	maxSurge := intstr.FromString(<span class="hljs-string">&quot;25%&quot;</span>)<br>	maxUnavailable := intstr.FromString(<span class="hljs-string">&quot;25%&quot;</span>)<br>	<span class="hljs-keyword">var</span> replicas <span class="hljs-type">int32</span> = <span class="hljs-number">3</span><br>	s, u, err := ResolveFenceposts(&amp;maxSurge, &amp;maxUnavailable, replicas)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		t.Error(err)<br>	&#125;<br>	t.Log(s, u)<br>&#125;<br><br><span class="hljs-comment">// Output:</span><br><span class="hljs-comment">// 1 0 </span><br><span class="hljs-comment">// 代表两个值都设置为 25% 的情况下，允许多出 1 个 pod，允许有 0 个 pod 不可用</span><br></code></pre></td></tr></table></figure>
+
+<p>所以书上说的四舍五入并不准确，官方文档才是正确的，不过最靠谱的还是看源码 （狗头）。</p>
+<h2 id="实践-1"><a href="#实践-1" class="headerlink" title="实践"></a>实践</h2><p>该 yaml 用来创建一个 replicas 为 3 的 deployment：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">apps/v1</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">Deployment</span><br><span class="hljs-attr">metadata:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">nginx-deployment</span><br>  <span class="hljs-attr">labels:</span><br>    <span class="hljs-attr">app:</span> <span class="hljs-string">nginx</span><br><span class="hljs-attr">spec:</span><br>  <span class="hljs-attr">replicas:</span> <span class="hljs-number">3</span><br>  <span class="hljs-attr">selector:</span><br>    <span class="hljs-attr">matchLabels:</span><br>      <span class="hljs-attr">app:</span> <span class="hljs-string">nginx</span><br>  <span class="hljs-attr">template:</span><br>    <span class="hljs-attr">metadata:</span><br>      <span class="hljs-attr">labels:</span><br>        <span class="hljs-attr">app:</span> <span class="hljs-string">nginx</span><br>    <span class="hljs-attr">spec:</span><br>      <span class="hljs-attr">containers:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">nginx</span><br>        <span class="hljs-attr">image:</span> <span class="hljs-string">nginx</span><br>        <span class="hljs-attr">ports:</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-attr">containerPort:</span> <span class="hljs-number">80</span><br></code></pre></td></tr></table></figure>
+
+<p>运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl apply -f nginx-deployment.yaml --record</span><br>deployment.apps/nginx-deployment created<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get rs</span>                                    <br>NAME                          DESIRED   CURRENT   READY   AGE<br>nginx-deployment-7848d4b86f   3         3         3       6m57s<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">更新 deployment 的镜像版本，1.91 是一个不存在的版本</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl <span class="hljs-built_in">set</span> image deployment/nginx-deployment nginx=nginx:1.91</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看该 deployment 管理的 rs，发现多出来了一个 rs，其期望的 pod 数量为 1，</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">但是因为 1.91 版本不存在，所以 READY 为 0，这个多出来的 rs 就是用来做滚动更新的</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get rs</span>                                                <br>NAME                          DESIRED   CURRENT   READY   AGE<br>nginx-deployment-7848d4b86f   3         3         3       6h54m<br>nginx-deployment-b475d749b    1         1         0       7m8s<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看更新后的 deployment</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get deploy</span>                                            <br>NAME               READY   UP-TO-DATE   AVAILABLE   AGE<br>nginx-deployment   3/3     1            3           6h59m<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看 deployment 的详细信息，发现滚动策略为 25% max unavailable, 25% max surge，也就是允许多出 1 个 pod，允许</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">有 0 个 pod 不可用，所以会创建一个新的 pod，所以那个新创建出来的 rs 的 replicas 为 1</span> <br><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl describe deploy nginx-deployment</span>        <br>Name:                   nginx-deployment<br>Namespace:              default<br>CreationTimestamp:      Tue, 11 Oct 2022 17:21:35 +0800<br>Labels:                 app=nginx<br>Annotations:            deployment.kubernetes.io/revision: 4<br>                        kubernetes.io/change-cause: kubectl apply --filename=nginx-deployment.yaml --record=true<br>Selector:               app=nginx<br>Replicas:               3 desired | 1 updated | 4 total | 3 available | 1 unavailable<br>StrategyType:           RollingUpdate<br>MinReadySeconds:        0<br>RollingUpdateStrategy:  25% max unavailable, 25% max surge<br>Pod Template:<br>  Labels:  app=nginx<br>  Containers:<br>   nginx:<br>    Image:        nginx:1.91<br>    Port:         80/TCP<br>    Host Port:    0/TCP<br>    Environment:  &lt;none&gt;<br>    Mounts:       &lt;none&gt;<br>  Volumes:        &lt;none&gt;<br>Conditions:<br>  Type           Status  Reason<br>  ----           ------  ------<br>  Available      True    MinimumReplicasAvailable<br>  Progressing    True    ReplicaSetUpdated<br>OldReplicaSets:  nginx-deployment-7848d4b86f (3/3 replicas created)<br>NewReplicaSet:   nginx-deployment-b475d749b (1/1 replicas created)<br>Events:<br>  Type    Reason             Age                 From                   Message<br>  ----    ------             ----                ----                   -------<br>  Normal  ScalingReplicaSet  9m9s                deployment-controller  Scaled down replica set nginx-deployment-b475d749b to 0<br>  Normal  ScalingReplicaSet  6m9s (x2 over 13m)  deployment-controller  Scaled up replica set nginx-deployment-b475d749b to 1<br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="升级过程中检测新版本是否可用"><a href="#升级过程中检测新版本是否可用" class="headerlink" title="升级过程中检测新版本是否可用"></a>升级过程中检测新版本是否可用</h1><p>在回滚一节中说过，更新的新版本可能是一个无法工作的版本，此时需要回滚操作，那么有没有一种方法可以边更新边检测，发现不可用就停止更新呢？当然可以，使用一个额外的 minReadySeconds 属性 + 就绪探针就可以实现。</p>
+<p>minReadySeconds 属性指定新创建的 pod 至少要成功运行多久之后，才能将其视为可用。在 pod 可用之前，滚动升级的过程不会继续。当所有容器的就绪探针返回成功时，pod 就被标记为就绪状态。</p>
+<p>如果一个新的 pod 运行出错，就绪探针返回失败，或者在 minReadySeconds 时间内它的就绪探针出现了失败， 那么新版本的滚动升级将被阻止。</p>
+<p>之前的笔记有写过存活探针，这里的是就绪探针，二者有所区别，但区别不是特别大，这里简单摘要一下官方的文档：</p>
+<blockquote>
+<p>livenessProbe（存活探针）</p>
+<p>指示容器是否正在运行。如果存活态探测失败，则 kubelet 会杀死容器， 并且容器将根据其<a target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy">重启策略</a>决定未来。如果容器不提供存活探针， 则默认状态为 <code>Success</code>。</p>
+<p>readinessProbe（就绪探针）</p>
+<p>指示容器是否准备好为请求提供服务。如果就绪态探测失败， 端点控制器将从与 Pod 匹配的所有服务的端点列表中删除该 Pod 的 IP 地址。 初始延迟之前的就绪态的状态值默认为 <code>Failure</code>。 如果容器不提供就绪态探针，则默认状态为 <code>Success</code>。</p>
+<p>startupProbe（启动探针）</p>
+<p>指示容器中的应用是否已经启动。如果提供了启动探针，则所有其他探针都会被 禁用，直到此探针成功为止。如果启动探测失败，<code>kubelet</code> 将杀死容器，而容器依其 <a target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy">重启策略</a>进行重启。 如果容器没有提供启动探测，则默认状态为 <code>Success</code>。</p>
+</blockquote>
+<h2 id="实践-2"><a href="#实践-2" class="headerlink" title="实践"></a>实践</h2><p>yaml 如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">apps/v1</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">Deployment</span><br><span class="hljs-attr">metadata:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">kubia</span><br><span class="hljs-attr">spec:</span><br>  <span class="hljs-attr">replicas:</span> <span class="hljs-number">3</span><br>  <span class="hljs-attr">minReadySeconds:</span> <span class="hljs-number">10</span> <span class="hljs-comment"># pod 就绪后继续等待 10 秒</span><br>  <span class="hljs-attr">strategy:</span><br>    <span class="hljs-attr">rollingUpdate:</span><br>      <span class="hljs-attr">maxSurge:</span> <span class="hljs-number">1</span><br>      <span class="hljs-attr">maxUnavailable:</span> <span class="hljs-number">0</span> <span class="hljs-comment"># 确保升级过程中 pod 被挨个替换</span><br>    <span class="hljs-attr">type:</span> <span class="hljs-string">RollingUpdate</span><br>  <span class="hljs-attr">template:</span><br>    <span class="hljs-attr">metadata:</span><br>      <span class="hljs-attr">name:</span> <span class="hljs-string">kubia</span><br>      <span class="hljs-attr">labels:</span><br>        <span class="hljs-attr">app:</span> <span class="hljs-string">kubia</span><br>    <span class="hljs-attr">spec:</span><br>      <span class="hljs-attr">containers:</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-attr">image:</span> <span class="hljs-string">luksa/kubia:v3</span><br>          <span class="hljs-attr">name:</span> <span class="hljs-string">nodejs</span><br>          <span class="hljs-attr">readinessProbe:</span> <span class="hljs-comment"># 就绪探针</span><br>            <span class="hljs-attr">periodSeconds:</span> <span class="hljs-number">1</span> <span class="hljs-comment"># 探针每隔 1 秒执行一次</span><br>            <span class="hljs-attr">httpGet:</span><br>              <span class="hljs-attr">path:</span> <span class="hljs-string">/</span><br>              <span class="hljs-attr">port:</span> <span class="hljs-number">8080</span><br>  <span class="hljs-attr">selector:</span><br>    <span class="hljs-attr">matchLabels:</span><br>      <span class="hljs-attr">app:</span> <span class="hljs-string">kubia</span><br><br></code></pre></td></tr></table></figure>
+
+<p>这是一个“坏掉”的镜像：就绪探针检测不会成功，下面来执行 yaml：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl apply -f kubia-deployment-v3-with-readinesscheck.yaml</span><br>deployment.apps/kubia configured<br></code></pre></td></tr></table></figure>
+
+<p>apply 命令可以用 YAML 文件中声明的字段来更新 Deployment。不仅更新镜像，而且还添加了就绪探针，以及在 YAML 中添加或修改的其他声明。 如果新的 YAML 也包含 replicas 字段，当它与现有 Deployment 中的数量不一 致时，那么 apply 操作也会对 Dpeloymnet 进行扩容。</p>
+<p>此时查看升级过程：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl rollout status deployment kubia</span><br>Waiting for deployment &quot;kubia&quot; rollout to finish: 1 out of 3 new replicas have been updated...<br><span class="hljs-meta prompt_"># </span><span class="language-bash">很久以后...</span><br>error: deployment &quot;kubia&quot; exceeded its progress deadline<br></code></pre></td></tr></table></figure>
+
+<p>整个流程卡在了更新第一个 pod，说明更新失败了，使用 curl 请求 service 看看：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-keyword">while</span> <span class="hljs-literal">true</span>;<span class="hljs-keyword">do</span> curl 10.43.191.168; <span class="hljs-built_in">sleep</span> 0.5s;<span class="hljs-keyword">done</span></span><br>This is v2 running in pod kubia-88894bbd4-4wknk<br>This is v2 running in pod kubia-88894bbd4-pxxwt<br>This is v2 running in pod kubia-88894bbd4-rvzvb<br>This is v2 running in pod kubia-88894bbd4-4wknk<br>This is v2 running in pod kubia-88894bbd4-pxxwt<br>This is v2 running in pod kubia-88894bbd4-pxxwt<br>This is v2 running in pod kubia-88894bbd4-pxxwt<br></code></pre></td></tr></table></figure>
+
+<p>发现请求全部打在了 v2 pod 上，没有 v3 版本，这是符合需求的，请求不应该落到一个有问题的 pod 上</p>
+<p>查看 pod：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get po</span><br>NAME                     READY   STATUS    RESTARTS   AGE<br>kubia-88894bbd4-rvzvb    1/1     Running   0          23h<br>kubia-88894bbd4-4wknk    1/1     Running   0          23h<br>kubia-88894bbd4-pxxwt    1/1     Running   0          23h<br>kubia-74c44776ff-rm4xw   0/1     Running   0          98s<br></code></pre></td></tr></table></figure>
+
+<p>发现有一个 pod 没有处于 READY 状态，因为我们设置了 maxSurge 为 1，所以一共有 replicas + 1 个 pod，多出来就是这个没有 READY 的 v3 pod，因为它的探针检测失败了。通过 <code>kubectl describe po kubia-74c44776ff-rm4xw</code> 也可以看到，最后一行的事件显示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">Warning  Unhealthy  2m25s (x22 over 2m45s)  kubelet            Readiness probe failed: HTTP probe failed with statuscode: 500<br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/k8s/">#k8s</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>k8s Deployment</div>
+      <div>https://autsu.github.io/2022/05/13/k8s-deployment/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年5月13日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/05/13/block-code/" title="一段莫名阻塞的 reflect 代码">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">一段莫名阻塞的 reflect 代码</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/05/11/ssh-shu-ru-qia-dun/" title="ssh 输入卡顿">
+                        <span class="hidden-mobile">ssh 输入卡顿</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

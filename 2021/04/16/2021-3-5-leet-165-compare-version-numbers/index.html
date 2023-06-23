@@ -1,0 +1,752 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="题目描述 给你两个版本号 version1 和 version2 ，请你比较它们。 版本号由一个或多个修订号组成，各修订号由一个 ‘.’ 连接。每个修订号由 多位数字 组成，可能包含 前导零 。每个版本号至少包含一个字符。修订号从左到右编号，下标从 0 开始，最左边的修订号下标为 0 ，下一个修订号下标为 1 ，以此类推。例如，2.5.33 和 0.1 都是有效的版本号。 比较版本号时，请按从左到">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LeetCode165.比较版本号">
+<meta property="og:url" content="https://autsu.github.io/2021/04/16/2021-3-5-leet-165-compare-version-numbers/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="题目描述 给你两个版本号 version1 和 version2 ，请你比较它们。 版本号由一个或多个修订号组成，各修订号由一个 ‘.’ 连接。每个修订号由 多位数字 组成，可能包含 前导零 。每个版本号至少包含一个字符。修订号从左到右编号，下标从 0 开始，最左边的修订号下标为 0 ，下一个修订号下标为 1 ，以此类推。例如，2.5.33 和 0.1 都是有效的版本号。 比较版本号时，请按从左到">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zengh1.github.io/post-images/1618572799885.png">
+<meta property="og:image" content="https://zengh1.github.io/post-images/1618572818859.png">
+<meta property="article:published_time" content="2021-04-16T11:32:54.000Z">
+<meta property="article:modified_time" content="2023-03-18T13:37:15.142Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="字符串">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://zengh1.github.io/post-images/1618572799885.png">
+  
+  
+  
+  <title>LeetCode165.比较版本号 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LeetCode165.比较版本号"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-04-16 19:32" pubdate>
+          2021年4月16日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          34 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">LeetCode165.比较版本号</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><blockquote>
+<p>给你两个版本号 version1 和 version2 ，请你比较它们。</p>
+<p>版本号由一个或多个修订号组成，各修订号由一个 ‘.’ 连接。每个修订号由 多位数字 组成，可能包含 前导零 。每个版本号至少包含一个字符。修订号从左到右编号，下标从 0 开始，最左边的修订号下标为 0 ，下一个修订号下标为 1 ，以此类推。例如，2.5.33 和 0.1 都是有效的版本号。</p>
+<p>比较版本号时，请按从左到右的顺序依次比较它们的修订号。比较修订号时，只需比较 忽略任何前导零后的整数值 。也就是说，修订号 1 和修订号 001 相等 。如果版本号没有指定某个下标处的修订号，则该修订号视为 0 。例如，版本 1.0 小于版本 1.1 ，因为它们下标为 0 的修订号相同，而下标为 1 的修订号分别为 0 和 1 ，0 &lt; 1 。</p>
+<p>返回规则如下：</p>
+<p>如果 version1 &gt; version2 返回 1，<br>如果 version1 &lt; version2 返回 -1，<br>除此之外返回 0。</p>
+<p>示例 1：</p>
+<p>输入：version1 &#x3D; “1.01”, version2 &#x3D; “1.001”<br>输出：0<br>解释：忽略前导零，”01” 和 “001” 都表示相同的整数 “1”<br>示例 2：</p>
+<p>输入：version1 &#x3D; “1.0”, version2 &#x3D; “1.0.0”<br>输出：0<br>解释：version1 没有指定下标为 2 的修订号，即视为 “0”<br>示例 3：</p>
+<p>输入：version1 &#x3D; “0.1”, version2 &#x3D; “1.1”<br>输出：-1<br>解释：version1 中下标为 0 的修订号是 “0”，version2 中下标为 0 的修订号是 “1” 。0 &lt; 1，所以 version1 &lt; version2<br>示例 4：</p>
+<p>输入：version1 &#x3D; “1.0.1”, version2 &#x3D; “1”<br>输出：1<br>示例 5：</p>
+<p>输入：version1 &#x3D; “7.5.2.4”, version2 &#x3D; “7.5.3”<br>输出：-1</p>
+<p>提示：</p>
+<p>1 &lt;&#x3D; version1.length, version2.length &lt;&#x3D; 500<br>version1 和 version2 仅包含数字和 ‘.’<br>version1 和 version2 都是 有效版本号<br>version1 和 version2 的所有修订号都可以存储在 32 位整数 中</p>
+</blockquote>
+<h2 id="算法设计"><a href="#算法设计" class="headerlink" title="算法设计"></a>算法设计</h2><h3 id="1-切割比较"><a href="#1-切割比较" class="headerlink" title="1.切割比较"></a>1.切割比较</h3><p>思路：使用 strings.split() 函数，按 <code>.</code> 切割，再使用 atoi() 将切割好的字符转换为整形，并一一比较。</p>
+<p>上面的问题：如果两个版本号长度不同，例如 1.0 和 1.0.0，切割出的数组分别为 [1, 0] 和 [1, 0, 0]，按下标逐一比较，会有一个出现越界异常</p>
+<p>解决方法：对较短的数组进行扩充，使二者长度相同，扩充元素为 0，因为 0 不会对结果产生影响，例如上面的例子，可以将 1 扩充为 [1, 0, 0]，这样就可以安全比较了。</p>
+<p><img src="https://zengh1.github.io/post-images/1618572799885.png" srcset="/img/loading.gif" lazyload></p>
+<p>代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">compareVersion</span><span class="hljs-params">(version1 <span class="hljs-type">string</span>, version2 <span class="hljs-type">string</span>)</span></span> <span class="hljs-type">int</span> &#123;<br>    v1arr := strings.Split(version1, <span class="hljs-string">&quot;.&quot;</span>)<br>    v2arr := strings.Split(version2, <span class="hljs-string">&quot;.&quot;</span>)<br>    <br>  	<span class="hljs-comment">// 为较短数组填充 0，使两个数组的长度相同</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(v1arr) &gt; <span class="hljs-built_in">len</span>(v2arr) &#123;<br>        sub := <span class="hljs-built_in">len</span>(v1arr) - <span class="hljs-built_in">len</span>(v2arr)<br>        <span class="hljs-keyword">for</span> sub &gt; <span class="hljs-number">0</span> &#123;<br>            v2arr = <span class="hljs-built_in">append</span>(v2arr, <span class="hljs-string">&quot;0&quot;</span>)<br>            sub--<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(v1arr) &lt; <span class="hljs-built_in">len</span>(v2arr) &#123;<br>        sub := <span class="hljs-built_in">len</span>(v2arr) - <span class="hljs-built_in">len</span>(v1arr)<br>        <span class="hljs-keyword">for</span> sub &gt; <span class="hljs-number">0</span> &#123;<br>            v1arr = <span class="hljs-built_in">append</span>(v1arr, <span class="hljs-string">&quot;0&quot;</span>)<br>            sub--<br>        &#125;<br>    &#125;<br>    <br>    <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-built_in">len</span>(v1arr); i++ &#123;<br>        <span class="hljs-comment">// 转换为整形比较，无需担心 001 这样的字符串，atoi() 会智能的将其转换为 1</span><br>        v1i, _ := strconv.Atoi(v1arr[i])<br>        v2i, _ := strconv.Atoi(v2arr[i])<br>        <span class="hljs-keyword">if</span> v1i &gt; v2i &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> v1i &lt; v2i &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span><br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">continue</span><br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-双指针"><a href="#2-双指针" class="headerlink" title="2.双指针"></a>2.双指针</h3><p>第一种方法比较直观易懂，但是需要额外的空间，还需要多次遍历，效率不是很高，而双指针法可以解决上述的问题。</p>
+<p>思路：准备两个指针，分别置于两个版本号的开头，之后不断移动两个指针，直到都到达末尾。在移动的过程中，初始化两个变量 v1，v2 用于保存当前小版本号的值，如何获取小版本号的值呢？只需要使用 while 循环不断移动指针，当指针值为 <code>.</code> 时停止，每次循环都将 v1 &#x3D; v1 + 指针值 - ‘0’，</p>
+<p><img src="https://zengh1.github.io/post-images/1618572818859.png" srcset="/img/loading.gif" lazyload></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">compareVersion</span><span class="hljs-params">(version1 <span class="hljs-type">string</span>, version2 <span class="hljs-type">string</span>)</span></span> <span class="hljs-type">int</span> &#123;<br>    l1, l2 := <span class="hljs-built_in">len</span>(version1), <span class="hljs-built_in">len</span>(version2)<br>    p1, p2 := <span class="hljs-number">0</span>, <span class="hljs-number">0</span><br><br>  	<span class="hljs-comment">// 获取最大值 </span><br>    <span class="hljs-keyword">var</span> maxFunc = <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(x, y <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">int</span> &#123;<br>        <span class="hljs-keyword">if</span> x &gt; y &#123;<br>            <span class="hljs-keyword">return</span> x<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">return</span> y<br>        &#125;<br>    &#125;<br><br>    max := maxFunc(l1, l2)<br>    <span class="hljs-keyword">for</span> p1 &lt; max || p2 &lt; max &#123;<br>        <span class="hljs-keyword">var</span> v1, v2 <span class="hljs-type">int</span><br>      	<span class="hljs-comment">// 使用 while 来循环读取一个小版本号（例如 1.111 中的 1 和 111 就是小版本号），</span><br> 		<span class="hljs-comment">// 遇到 . 停止，此时 vv1, vv2 的值即是小版本号，vv1 和 vv2 定义在外层 for 内，</span><br>        <span class="hljs-comment">// 每次比较后都会清零</span><br>        <span class="hljs-keyword">for</span> p1 &lt; l1 &amp;&amp; version1[p1] != <span class="hljs-string">&#x27;.&#x27;</span> &#123;<br>            v1 = v1*<span class="hljs-number">10</span> + <span class="hljs-type">int</span>(version1[p1]) - <span class="hljs-string">&#x27;0&#x27;</span><br>            p1++<br>        &#125;<br><br>        <span class="hljs-keyword">for</span> p2 &lt; l2 &amp;&amp; version2[p2] != <span class="hljs-string">&#x27;.&#x27;</span> &#123;<br>            v2 = v2*<span class="hljs-number">10</span> + <span class="hljs-type">int</span>(version2[p2]) - <span class="hljs-string">&#x27;0&#x27;</span><br>            p2++<br>        &#125;<br><br>        <span class="hljs-keyword">if</span> v1 &gt; v2 &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> v1 &lt; v2 &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span><br>        &#125;<br>        p1++<br>        p2++<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="错误记录"><a href="#错误记录" class="headerlink" title="错误记录"></a>错误记录</h2><h3 id="1-超出时间限制"><a href="#1-超出时间限制" class="headerlink" title="1. 超出时间限制"></a>1. 超出时间限制</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs go">    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">compareVersion</span><span class="hljs-params">(version1 <span class="hljs-type">string</span>, version2 <span class="hljs-type">string</span>)</span></span> <span class="hljs-type">int</span> &#123;<br>    p1, p2 := <span class="hljs-number">0</span>, <span class="hljs-number">0</span><br><br>    <span class="hljs-keyword">for</span> p1 &lt; <span class="hljs-built_in">len</span>(version1) || p2 &lt; <span class="hljs-built_in">len</span>(version2) &#123;<br>        v1, v2 := <span class="hljs-number">0</span>, <span class="hljs-number">0</span><br>        <span class="hljs-keyword">for</span> p1 &lt; <span class="hljs-built_in">len</span>(version1) &amp;&amp; version1[p1] != <span class="hljs-string">&#x27;.&#x27;</span> &#123;<br>            v, _ := strconv.Atoi(<span class="hljs-type">string</span>(version1[p1]))<br>            v1 += v<br>            p1++<br>        &#125;<br>        <span class="hljs-keyword">for</span> p2 &lt; <span class="hljs-built_in">len</span>(version2) &amp;&amp; version1[p2] != <span class="hljs-string">&#x27;.&#x27;</span> &#123;<br>            v, _ := strconv.Atoi(<span class="hljs-type">string</span>(version1[p2]))<br>            v2 += v<br>            p2++<br>        &#125;<br>        <br>        <span class="hljs-keyword">if</span> v1 &gt; v2 &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> v1 &lt; v2 &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span><br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这里超时的原因是末尾没有 p1++ 和 p2++，当 p1 和 p2 都为 ‘.’ 时，p1 和 p2 将不会有任何改变，这会导致 while 条件一直满足，从而陷入死循环。</p>
+<p>所以末尾的 p1++ 和 p2++ 就是用来保证当 p1，p2 都为 ‘.’ 时仍然会移动，防止死循环的发生。</p>
+<h3 id="2-解答错误"><a href="#2-解答错误" class="headerlink" title="2. 解答错误"></a>2. 解答错误</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs go">    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">compareVersion</span><span class="hljs-params">(version1 <span class="hljs-type">string</span>, version2 <span class="hljs-type">string</span>)</span></span> <span class="hljs-type">int</span> &#123;<br>    p1, p2 := <span class="hljs-number">0</span>, <span class="hljs-number">0</span><br><br>    <span class="hljs-keyword">for</span> p1 &lt; <span class="hljs-built_in">len</span>(version1) || p2 &lt; <span class="hljs-built_in">len</span>(version2) &#123;<br>        v1, v2 := <span class="hljs-number">0</span>, <span class="hljs-number">0</span><br>        <span class="hljs-keyword">for</span> p1 &lt; <span class="hljs-built_in">len</span>(version1) &amp;&amp; version1[p1] != <span class="hljs-string">&#x27;.&#x27;</span> &#123;<br>            v, _ := strconv.Atoi(<span class="hljs-type">string</span>(version1[p1]))<br>            v1 += v<br>            p1++<br>        &#125;<br>        <span class="hljs-keyword">for</span> p2 &lt; <span class="hljs-built_in">len</span>(version2) &amp;&amp; version2[p2] != <span class="hljs-string">&#x27;.&#x27;</span> &#123;<br>            v, _ := strconv.Atoi(<span class="hljs-type">string</span>(version2[p2]))<br>            v2 += v<br>            p2++<br>        &#125;<br>        <br>        <span class="hljs-keyword">if</span> v1 &gt; v2 &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> v1 &lt; v2 &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span><br>        &#125;<br>        p1++<br>        p2++<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>测试用例：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs 1c"><span class="hljs-string">&quot;1.1&quot;</span><br><span class="hljs-string">&quot;1.10&quot;</span><br></code></pre></td></tr></table></figure>
+<p>这里错误的原因是因为对于小版本号只是单纯的相加操作，对于 1.10 的第二个小版本而言，结果为 1 + 0 &#x3D; 1，从而导致错误结果 1.1 &#x3D; 1.10，解决方法是将对应小版本号从 string 转为 int，具体方法是 v &#x3D; v*10 + s[i] - ‘0’。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/">#字符串</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LeetCode165.比较版本号</div>
+      <div>https://autsu.github.io/2021/04/16/2021-3-5-leet-165-compare-version-numbers/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年4月16日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/04/16/2021-3-27-find-binaryTree-root-to-node-path/" title="求二叉树根节点到指定节点的路径">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">求二叉树根节点到指定节点的路径</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/04/16/2021-3-6-offer-11-retate-array-min-num/" title="剑指 Offer 11. 旋转数组的最小数字">
+                        <span class="hidden-mobile">剑指 Offer 11. 旋转数组的最小数字</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

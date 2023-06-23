@@ -1,0 +1,769 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Goroutine 阻塞的话，是不是对应的 M 也会阻塞如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GMP 面试题">
+<meta property="og:url" content="https://autsu.github.io/2022/01/26/gmp-mian-shi-ti/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Goroutine 阻塞的话，是不是对应的 M 也会阻塞如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-01-26T03:42:52.000Z">
+<meta property="article:modified_time" content="2023-03-18T13:37:15.156Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="面经">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>GMP 面试题 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="GMP 面试题"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-01-26 11:42" pubdate>
+          2022年1月26日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          36 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">GMP 面试题</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Goroutine-阻塞的话，是不是对应的-M-也会阻塞"><a href="#Goroutine-阻塞的话，是不是对应的-M-也会阻塞" class="headerlink" title="Goroutine 阻塞的话，是不是对应的 M 也会阻塞"></a>Goroutine 阻塞的话，是不是对应的 M 也会阻塞</h1><p>如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么这个 G 会被标记为 <code>runnable</code> 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。</p>
+<h1 id="GMP-当一个-G-阻塞时，G、M、P-会发生什么"><a href="#GMP-当一个-G-阻塞时，G、M、P-会发生什么" class="headerlink" title="GMP 当一个 G 阻塞时，G、M、P 会发生什么"></a>GMP 当一个 G 阻塞时，G、M、P 会发生什么</h1><p><strong>用户态阻塞</strong></p>
+<p>当 goroutine 因为 channel 操作或者 network I&#x2F;O 而阻塞时（实际上 golang 已经用 netpoller 实现了goroutine网络 I&#x2F;O 阻塞不会导致 M 被阻塞，仅阻塞 G ），对应的 G 会被放置到某个 wait 队列(如 channel 的 waitq )，该 G 的状态由 _Gruning 变为 _Gwaitting，而 M 会跳过该 G 尝试获取并执行下一个 G，如果此时没有 runnable 的G 供 M 运行，那么 M 将解绑 P，并进入 sleep 状态；当阻塞的 G 被另一端的 G2 唤醒时（比如 channel 的可读&#x2F;写通知），G 被标记为 runnable，尝试加入 G2 所在 P 的 runnext，然后再是 P 的 Local 队列和 Global  队列。</p>
+<p><strong>系统调用阻塞</strong></p>
+<p>当 G 被阻塞在某个系统调用上时，此时 G 会阻塞在 _Gsyscall 状态，M 也处于 block on syscall 状态，此时的 M可被抢占调度：执行该 G 的 M 会与 P 解绑，而 P 则尝试与其它 idle 的 M 绑定，继续执行其它 G。如果没有其它idle 的 M，但 P 的 Local 队列中仍然有 G 需要执行，则创建一个新的 M；当系统调用完成后，G 会重新尝试获取一个 idle 的 P 进入它的 Local 队列恢复执行，如果没有 idle 的 P，G 会被标记为 runnable 加入到 Global 队列。</p>
+<h1 id="P-和-M-数量可以无限扩增的吗？"><a href="#P-和-M-数量可以无限扩增的吗？" class="headerlink" title="P 和 M 数量可以无限扩增的吗？"></a>P 和 M 数量可以无限扩增的吗？</h1><p>不是无线扩增的。</p>
+<p>P 的数量：由启动时环境变量 <code>$GOMAXPROCS</code> 或者是由 <code>runtime</code> 的方法 <code>GOMAXPROCS()</code> 决定。</p>
+<p>M的数量：goroutine 程序启动时，会设置 M 的最大数量，默认10000。但是内核很难创建出如此多的线程，因此默认情况下 M 的最大数量取决于内核。也可以调用 runtime&#x2F;debug 中的 SetMaxThreads 函数，手动设置 M 的最大数量。</p>
+<h1 id="P-的调度逻辑"><a href="#P-的调度逻辑" class="headerlink" title="P 的调度逻辑"></a>P 的调度逻辑</h1><p>先从本地 runq 获取待执行的 G，如果没有，再从全局 runq 获取待执行的 G，还没有的话，就从别的 P 中拿（偷）走一半的 G</p>
+<h1 id="如果一个-G-运行时间过长，导致队列中后续-G-都无法运行呢？"><a href="#如果一个-G-运行时间过长，导致队列中后续-G-都无法运行呢？" class="headerlink" title="如果一个 G 运行时间过长，导致队列中后续 G 都无法运行呢？"></a>如果一个 G 运行时间过长，导致队列中后续 G 都无法运行呢？</h1><p>内容来自：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1zT4y1F7XF?spm_id_from=333.999.0.0%EF%BC%8C%E9%87%8C%E9%9D%A2%E6%9C%89%E9%9D%9E%E5%B8%B8%E8%AF%A6%E7%BB%86%E7%9A%84%E4%BB%8B%E7%BB%8D">https://www.bilibili.com/video/BV1zT4y1F7XF?spm_id_from=333.999.0.0，里面有非常详细的介绍</a></p>
+<p>这涉及到 GMP 的抢占，在 main goroutine 启动时，会创建一个 <strong>sysmon goroutine</strong>，这是一个特殊的协程，其不依赖 P，也不由 GMP 调度，他会本着公平调度的原则，对运行时间过长的 P，实行抢占操作，就是告诉那些运行时间超过阈值的 P 该让出了，那么怎么知道运行时间过长了呢？P 里面有一个 <code>schedtick</code> 字段，每当调度执行一个新的 G，并且不继承上个 G 的时间片时（这里不懂），就会把它自增 1，还有一个 <code>sysmontick.schedwhen</code> 记录的是上次调度的时间，监测协程如果检测到 <code>sysmontick.schedtick</code> 不等于 <code>p.schedtick</code>，说明这个 P 又发生了新的调度，就会同步 <code>schedwhen</code> 和 <code>schedtick</code>，但如果相等，则说明子 <code>schedwhen</code> 这个时间点之后，这个 P 并未发生了新的调度，或者沿用了之前 G 的时间片，所以可以通过当前时间与 <code>schedwhen</code> 的差值，(sysmontick.schedwhen + forcePreemptNS &lt; now)，来判断当前 P 上的 G 是否运行时间过长了，如果运行时间过长，那么就要通知该 P 让出了。</p>
+<p>如何通知 P 呢？使用的是 <strong>栈增长</strong> 的方式。除了对协程栈没什么消耗的函数调用，Go 语言编译器都会在函数头部插入栈增长检测相关代码，会根据栈帧大小来插入不同的代码，<code>SP</code> 表示当前的栈使用到了哪个位置，<code>stackguard0</code> 表示协程栈的空间下界，当栈的消耗达到或超过 <code>stackguard0</code> 时，就需要进行栈增长，会根据超出大小的多少来使用不同的增长代码（这个具体看视频里的说明，一共 3 种策略），如果调度器希望当前 P 让出，那么就会将 <code>stackguard0</code> 设置为 <code>stackPreempt</code>，这是一个非常大的值，真正的栈指针不可能指向这个位置，所以可以安全的用作特殊标识，此外因为该值足够大，那么 3 种策略都会满足条件，从而 goto 到 <code>morestack</code> 处，<code>morestack</code> 会调用 <code>runtime.newstack</code> 函数，负责栈增长工作，但是在增长前，会先判断 <code>stackguard0</code> 是否等于 <code>stackPreempt</code>，如果等于就不进行栈增长了，而是执行一次协程调度，从而达到抢占的目的。</p>
+<p>不过这种抢占方式的缺陷就是过于依赖栈增长代码，如果来个 for{}，因为不涉及到函数调用，所以与栈增长无关，也就无法通过上面的方式来实现抢占，这一问题在 go1.14 中得到了解决，因为它实现了异步抢占，是通过信号（signal）实现的，当要抢占时，会向协程关联的 M 发送一个 <code>sigPreempt</code> 信号（好像底层是 SIGURG），目标线程（M）收到信号后会被中断，转去执行 <code>sigHandler</code>，该函数检测到信号为 <code>sigPreempt</code> 后，会调用 <code>runtime.doSigPreempt</code> 函数，它会向当前被打断的协程上下文中，注入一个异步抢占函数调用，之后返回，被打断的协程恢复，立刻执行被注入的异步抢占函数，该函数最终会调用 runtime 中的调度逻辑，从而实现让出。</p>
+<h1 id="G-陷入系统调用会发生什么"><a href="#G-陷入系统调用会发生什么" class="headerlink" title="G 陷入系统调用会发生什么"></a>G 陷入系统调用会发生什么</h1><p>一个协程要执行系统调用，就要切换到 g0 栈（为什么要切换到 g0 栈），在系统调用过程中，G 和 M 会一直绑定在一起，不能被分开，也就用不到 P 了，所以在陷入系统调用前，当前 M 会让出 P，解除 m.P 与当前 P 的强关联，并且记录到 m.oldp 中。但是这个 P 如果放着不管就有点浪费了，还是需要将其关联到其他 M，继续执行工作，当之前的 M 结束系统调用后，会先检查之前的 P（m.oldp）是否被占用，没有的话就继续使用，否则就重新申请一个，没申请到的话（什么情况下会申请不到？），就把当前 G 放到全局 runq 中，然后 M 就进入睡眠。</p>
+<h1 id="如果当前-M-没有绑定-P，那么如何获取-G"><a href="#如果当前-M-没有绑定-P，那么如何获取-G" class="headerlink" title="如果当前 M 没有绑定 P，那么如何获取 G"></a>如果当前 M 没有绑定 P，那么如何获取 G</h1><h1 id="GMP-的几个队列"><a href="#GMP-的几个队列" class="headerlink" title="GMP 的几个队列"></a>GMP 的几个队列</h1><p>貌似 GMP 里的全局队列有两种，一种就是单纯保存用作记录的，还有一种是调度器的全局队列，里面保存的是空闲状态的</p>
+<p><strong>调度器的可运行 G 队列</strong></p>
+<p>存放等待执行的 g，新创建的 g 会先尝试保存到当前 g （这个 g 就是新创建 g 的父 goroutine）对应的 p 的本地队列，如果本地队列已满（256个），就会把 g 放到全局队列中。</p>
+<ul>
+<li><p>该队列有容量限制吗？</p>
+</li>
+<li><p>该队列里的 g 什么时候被消费？</p>
+</li>
+</ul>
+<p>如果某个 p 的本地 g 队列为空，则会从全局队列里获取</p>
+<p><strong>全局 M 队列</strong></p>
+<ul>
+<li>作用：</li>
+</ul>
+<ol>
+<li>获取所有 M 的信息 	</li>
+<li>防止 M 被当作垃圾回收掉</li>
+</ol>
+<p><strong>调度器的空闲 M 队列</strong></p>
+<p>运行时系统在停止 M 时，会把它放入调度器的空闲 M 队列</p>
+<ul>
+<li>什么时候被消费</li>
+</ul>
+<p>当 G 陷入系统调用时，与其关联的 M 也会被阻塞，而与之关联的 P 会被分离，使得这个 P 中剩余的 G 可以被执行，此时 P 就会去全局 M 队列里查找，如果有的话</p>
+<p><strong>全局 P 队列</strong></p>
+<p>保存了当前 runtime 创建的所有 P，runtime 会把这些 p 中的可运行 g 全部取出，并放入调度器的可运行 g 队列中，被转移的这些 g，会在以后经由调度再次放入某个 p 的可运行 g 队列</p>
+<p><strong>调度器的空闲 P 队列</strong></p>
+<p>当一个 p 不与任何 m 关联时，runtime 就会把它放入该列表，当 runtime 需要一个空闲的 p 来关联某个 m 时，就会从该队列获取。此外，p 进入空闲队列的一个重要条件是，本地队列里没有可运行的 g</p>
+<p><strong>P 的 G 队列</strong></p>
+<p>保存的是可运行的 g，新创建的 g 会先尝试放到这里，最大容量为 256。</p>
+<p><strong>P 的自由 G 队列，调度器的自由 G 列表</strong></p>
+<p>自由 g 表示的是已经运行完成的 g，主要是为了提高复用率，避免频繁创建 g，因为 g 本质也是一个对象。</p>
+<p>运行完成的 g 会先放到对应的 p 的自由 g 队列里，如果太多了，就会转移一部分到调度器的自由 g 列表</p>
+<p>当创建一个 goroutine 时，会先尝试从 p 的自由 g 队列中获取一个现成的 g，如果没有或者太少，会从调度器的自由 g 队列中拿一部分，如果调度器中也没有，才会新创建一个 g</p>
+<h1 id="g0，m0-是什么"><a href="#g0，m0-是什么" class="headerlink" title="g0，m0 是什么"></a>g0，m0 是什么</h1><h1 id="程序题"><a href="#程序题" class="headerlink" title="程序题"></a>程序题</h1><p>以下程序的运行结果是什么？</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>        <span class="hljs-string">&quot;fmt&quot;</span><br>        <span class="hljs-string">&quot;sync&quot;</span><br>        <span class="hljs-string">&quot;runtime&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>        runtime.GOMAXPROCS(<span class="hljs-number">1</span>)<br><br>        <span class="hljs-keyword">var</span> wg sync.WaitGroup<br>        wg.Add(<span class="hljs-number">3</span>)<br><br>  			<span class="hljs-comment">// goroutine1</span><br>        <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(n <span class="hljs-type">int</span>)</span></span> &#123;<br>                fmt.Println(n)<br>                wg.Done()<br>        &#125;(<span class="hljs-number">1</span>)<br><br>  			<span class="hljs-comment">// goroutine2</span><br>        <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(n <span class="hljs-type">int</span>)</span></span> &#123;<br>                fmt.Println(n)<br>                wg.Done()<br>        &#125;(<span class="hljs-number">2</span>)<br><br>  			<span class="hljs-comment">// goroutine3</span><br>        <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(n <span class="hljs-type">int</span>)</span></span> &#123;<br>                fmt.Println(n)<br>                wg.Done()<br>        &#125;(<span class="hljs-number">3</span>)<br><br>        wg.Wait()<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>结果：3 1 2</p>
+<p>P 有一个 runnext 字段，保存的是下一个要运行的 g，当创建一个新的 g 时，会调用 runqput 将其添加到 P 的 runq 中，如果当前 P 的 runq 中已经有 g 了，则会将其挤走，被挤走的那个进入 P 的本地 runq。runnext 的优先度比 runq 高，会先执行 runnext 的 g，再按顺序执行 runq 中的 g。</p>
+<p>在上面的程序中，因为设置了 runtime.GOMAXPROCS(1)，所以整个 runtime 中只有 1 个 P，也就是说上面的 3 个goroutine 都共用这一个 P，首先，goroutine1（简称 g1） 先放到 runnext，之后 g2 进来把 g1 挤走，g1 放到 runq，再之后，g3 把 g2 挤走，g2 放到 runq，此时 runnext 保存的是 g3，runq 中是 g1，g2，所以输出结果是 3，1，2</p>
+<h1 id="goroutine-的调度时机有哪些"><a href="#goroutine-的调度时机有哪些" class="headerlink" title="goroutine 的调度时机有哪些"></a>goroutine 的调度时机有哪些</h1>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/go/">#go</a>
+      
+        <a href="/tags/%E9%9D%A2%E7%BB%8F/">#面经</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>GMP 面试题</div>
+      <div>https://autsu.github.io/2022/01/26/gmp-mian-shi-ti/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年1月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/01/28/ji-suan-ji-wang-luo-mian-shi-ti/" title="计算机网络面试题">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">计算机网络面试题</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/01/17/mac-huan-jing-xia-vmware-fusion-xia-de-xu-ni-ji-centos-7de-nat-wang-luo-pei-zhi/" title="Mac环境下， VMware Fusion下的虚拟机（ CentOS 7/Ubuntu20）的 NAT网络配置">
+                        <span class="hidden-mobile">Mac环境下， VMware Fusion下的虚拟机（ CentOS 7/Ubuntu20）的 NAT网络配置</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,767 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="首先先来看一下这两个问题： 347. 前 K 个高频元素 给你一个整数数组 nums 和一个整数 k ，请你返回其中出现频率前 k 高的元素。你可以按 任意顺序 返回答案。 示例 1: 输入: nums &#x3D; [1,1,1,2,2,3], k &#x3D; 2输出: [1,2] 示例 2: 输入: nums &#x3D; [1], k &#x3D; 1输出: [1] 提示： 1 &lt;&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="两个类似的堆问题：leetcode 347 前 K 个高频元素 和 692. 前 K 个高频单词 ">
+<meta property="og:url" content="https://autsu.github.io/2022/08/17/leetcode_347_and_692/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="首先先来看一下这两个问题： 347. 前 K 个高频元素 给你一个整数数组 nums 和一个整数 k ，请你返回其中出现频率前 k 高的元素。你可以按 任意顺序 返回答案。 示例 1: 输入: nums &#x3D; [1,1,1,2,2,3], k &#x3D; 2输出: [1,2] 示例 2: 输入: nums &#x3D; [1], k &#x3D; 1输出: [1] 提示： 1 &lt;&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-17T15:02:26.000Z">
+<meta property="article:modified_time" content="2023-03-18T13:37:15.204Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="堆">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>两个类似的堆问题：leetcode 347 前 K 个高频元素 和 692. 前 K 个高频单词  - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="两个类似的堆问题：leetcode 347 前 K 个高频元素 和 692. 前 K 个高频单词 "></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-08-17 23:02" pubdate>
+          2022年8月17日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          61 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">两个类似的堆问题：leetcode 347 前 K 个高频元素 和 692. 前 K 个高频单词 </h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>首先先来看一下这两个问题：</p>
+<h1 id="347-前-K-个高频元素"><a href="#347-前-K-个高频元素" class="headerlink" title="347. 前 K 个高频元素"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/top-k-frequent-elements/">347. 前 K 个高频元素</a></h1><blockquote>
+<p>给你一个整数数组 nums 和一个整数 k ，请你返回其中出现频率前 k 高的元素。你可以按 任意顺序 返回答案。</p>
+<p>示例 1:</p>
+<p>输入: nums &#x3D; [1,1,1,2,2,3], k &#x3D; 2<br>输出: [1,2]</p>
+<p>示例 2:</p>
+<p>输入: nums &#x3D; [1], k &#x3D; 1<br>输出: [1]</p>
+<p>提示：</p>
+<p>1 &lt;&#x3D; nums.length &lt;&#x3D; 105<br>k 的取值范围是 [1, 数组中不相同的元素的个数]<br>题目数据保证答案唯一，换句话说，数组中前 k 个高频元素的集合是唯一的</p>
+<p>进阶：你所设计算法的时间复杂度 必须 优于 O(n log n) ，其中 n 是数组大小。</p>
+</blockquote>
+<h1 id="692-前-K-个高频单词"><a href="#692-前-K-个高频单词" class="headerlink" title="692. 前 K 个高频单词"></a><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/top-k-frequent-words/">692. 前 K 个高频单词</a></h1><blockquote>
+<p>给定一个单词列表 words 和一个整数 k ，返回前 k 个出现次数最多的单词。</p>
+<p>返回的答案应该按单词出现频率由高到低排序。如果不同的单词有相同出现频率， 按字典顺序 排序。</p>
+<p>示例 1：</p>
+<p>输入: words &#x3D; [“i”, “love”, “leetcode”, “i”, “love”, “coding”], k &#x3D; 2<br>输出: [“i”, “love”]<br>解析: “i” 和 “love” 为出现次数最多的两个单词，均为2次。<br>    注意，按字母顺序 “i” 在 “love” 之前。</p>
+<p>示例 2：</p>
+<p>输入: [“the”, “day”, “is”, “sunny”, “the”, “the”, “the”, “sunny”, “is”, “is”], k &#x3D; 4<br>输出: [“the”, “is”, “sunny”, “day”]<br>解析: “the”, “is”, “sunny” 和 “day” 是出现次数最多的四个单词，<br>    出现次数依次为 4, 3, 2 和 1 次。</p>
+<p>注意：</p>
+<p>1 &lt;&#x3D; words.length &lt;&#x3D; 500<br>1 &lt;&#x3D; words[i] &lt;&#x3D; 10<br>words[i] 由小写英文字母组成。<br>k 的取值范围是 [1, 不同 words[i] 的数量]</p>
+<p>进阶：尝试以 O(n log k) 时间复杂度和 O(n) 空间复杂度解决。</p>
+</blockquote>
+<p>发现这两个问题有点类似（从名字都能看出来），只不过一个是从 int 数组里找，且结果对顺序没有要求（也就是说如果有两个元素出现的次数相同，那么不需要考虑它们的顺序问题，谁前谁后都可以）；另一个是从 string 数组里找，如果两个单词出现次数相同，那么需要按字典序进行排序，比如 a 和 b 都出现了 10 次，那么 a 要排在前面。</p>
+<p>像这种 topk 问题，貌似都可以使用 <strong>堆</strong> 来解决，大致逻辑是：用最小堆来解决，建一个大小为 K 的堆，然后遍历数组，如果当前堆的元素不到 K 个，则直接将元素添加到堆中，如果堆的元素 &gt;&#x3D; K，此时堆顶保存的是整个堆中最小的元素，那么就比较当前元素是否小于堆顶，如果比堆顶还小，那么直接跳过，如果大于堆顶，那么可以将堆顶这个最小的元素 pop 掉，然后把 push 当前元素，因为堆会自动调整结构，所以 push 后堆顶依然是整个堆中最小的元素。当数组遍历完后，整个堆中保存的就是最大的 K 个元素。</p>
+<p>以上只是大致的逻辑，但是相对来说还是比较通用的，只是比较的规则需要调整一下，按照上面的逻辑写一下这两道题。</p>
+<h1 id="347-代码"><a href="#347-代码" class="headerlink" title="347 代码"></a>347 代码</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> myheap <span class="hljs-keyword">struct</span> &#123;<br>    s []<span class="hljs-type">int</span><br>    mp <span class="hljs-keyword">map</span>[<span class="hljs-type">int</span>]<span class="hljs-type">int</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m myheap)</span></span> Swap(i, j <span class="hljs-type">int</span>) &#123;<br>    m.s[i], m.s[j] = m.s[j], m.s[i]<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m myheap)</span></span> Len() <span class="hljs-type">int</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(m.s)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m myheap)</span></span> Less(i, j <span class="hljs-type">int</span>) <span class="hljs-type">bool</span> &#123;<br>    <span class="hljs-keyword">return</span> m.mp[m.s[i]] &lt; m.mp[m.s[j]]<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *myheap)</span></span> Push(x <span class="hljs-keyword">interface</span>&#123;&#125;) &#123;<br>    m.s = <span class="hljs-built_in">append</span>(m.s, x.(<span class="hljs-type">int</span>))<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *myheap)</span></span> Pop() <span class="hljs-keyword">interface</span>&#123;&#125; &#123;<br>    p := m.s[<span class="hljs-built_in">len</span>(m.s)<span class="hljs-number">-1</span>]<br>    m.s = m.s[:<span class="hljs-built_in">len</span>(m.s)<span class="hljs-number">-1</span>]<br>    <span class="hljs-keyword">return</span> p<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">topKFrequent</span><span class="hljs-params">(nums []<span class="hljs-type">int</span>, k <span class="hljs-type">int</span>)</span></span> (res []<span class="hljs-type">int</span>) &#123;<br>    h := &amp;myheap&#123;mp : <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">int</span>]<span class="hljs-type">int</span>)&#125;<br><br>    <span class="hljs-keyword">for</span> _, v := <span class="hljs-keyword">range</span> nums &#123;<br>        h.mp[v]++<br>    &#125;<br><br>    <span class="hljs-keyword">for</span> v := <span class="hljs-keyword">range</span> h.mp &#123;<br>        <span class="hljs-keyword">if</span> h.Len() &lt; k &#123;<br>            heap.Push(h, v)<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">if</span> h.mp[h.s[<span class="hljs-number">0</span>]] &lt; h.mp[v] &#123;<br>                heap.Pop(h)<br>                heap.Push(h, v)<br>            &#125; <br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> h.s<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>（不得不吐槽一下 go 的容器库，实在太蛋疼了，没有泛型就算了，只提供一个最基本的 heap，需要自己实现  2 个接口 5 个方法，写起来实在繁琐，不像其他语言的优先队列用起来那么方便 ）</p>
+<p>因为题目要求的是出现次数，所以需要用一个 map 来保存所有元素的出现次数，然后基于这个 map 来进行比较，这里需要注意的是 Less() 这个方法，它的实现逻辑是 <code>return m.mp[m.s[i]] &lt; m.mp[m.s[j]]</code>，也就是基于元素的出现次数来作为堆的比较依据；还有当前元素和堆顶的比较逻辑 <code>h.mp[h.s[0]] &lt; h.mp[v]</code> 也是基于元素的出现次数进行比较。除了这两点以外，基本和之前的通用逻辑相似。</p>
+<h1 id="692-代码"><a href="#692-代码" class="headerlink" title="692 代码"></a>692 代码</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> myheap <span class="hljs-keyword">struct</span> &#123;<br>    s []<span class="hljs-type">string</span><br>    mp <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">int</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m myheap)</span></span> Swap(i, j <span class="hljs-type">int</span>) &#123;<br>    m.s[i], m.s[j] = m.s[j], m.s[i]<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m myheap)</span></span> Len() <span class="hljs-type">int</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(m.s)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m myheap)</span></span> Less(i, j <span class="hljs-type">int</span>) (res <span class="hljs-type">bool</span>) &#123;<br>    o1 := m.s[i]<br>    o2 := m.s[j]<br>    m1 := m.mp[o1]<br>    m2 := m.mp[o2]<br>    <span class="hljs-keyword">if</span> m1 == m2 &#123;<br>        <span class="hljs-keyword">return</span> o1 &gt; o2 <span class="hljs-comment">// 如果出现频率相同，按字典序排列</span><br>    &#125;<br>    <span class="hljs-keyword">return</span> m1 &lt; m2<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *myheap)</span></span> Push(x <span class="hljs-keyword">interface</span>&#123;&#125;) &#123;<br>    m.s = <span class="hljs-built_in">append</span>(m.s, x.(<span class="hljs-type">string</span>))<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *myheap)</span></span> Pop() <span class="hljs-keyword">interface</span>&#123;&#125; &#123;<br>    p := m.s[<span class="hljs-built_in">len</span>(m.s)<span class="hljs-number">-1</span>]<br>    m.s = m.s[:<span class="hljs-built_in">len</span>(m.s)<span class="hljs-number">-1</span>]<br>    <span class="hljs-keyword">return</span> p<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">topKFrequent</span><span class="hljs-params">(words []<span class="hljs-type">string</span>, k <span class="hljs-type">int</span>)</span></span> (res []<span class="hljs-type">string</span>) &#123;<br>    m := &amp;myheap&#123;<br>        mp: <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">int</span>),<br>    &#125;<br>    <br>    <span class="hljs-keyword">for</span> _, v := <span class="hljs-keyword">range</span> words &#123;<br>        m.mp[v]++<br>    &#125; <br><br>    <span class="hljs-keyword">for</span> v := <span class="hljs-keyword">range</span> m.mp &#123;<br>        <span class="hljs-keyword">if</span> m.Len() &lt; k &#123;<br>            heap.Push(m, v)<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">if</span> (m.mp[v] == m.mp[m.s[<span class="hljs-number">0</span>]] &amp;&amp; v &lt; m.s[<span class="hljs-number">0</span>]) ||<br>                    m.mp[v] &gt; m.mp[m.s[<span class="hljs-number">0</span>]] &#123;<br>                heap.Pop(m)<br>                heap.Push(m, v)<br>            &#125;<br>        &#125;<br>    &#125;<br><br>  	res = <span class="hljs-built_in">make</span>([]<span class="hljs-type">string</span>, m.Len())<br>    <span class="hljs-keyword">for</span> i := k; i &gt; <span class="hljs-number">0</span>; i-- &#123;<br>        res[i<span class="hljs-number">-1</span>] = heap.Pop(m).(<span class="hljs-type">string</span>)<br>    &#125;<br>    <span class="hljs-comment">//for i := 0; i &lt; k; i++ &#123;</span><br>    <span class="hljs-comment">//    res = append(res, heap.Pop(m).(string))</span><br>    <span class="hljs-comment">//&#125;</span><br><br>    <span class="hljs-comment">// 因为是小顶堆，堆顶为出现次数最小的，而题目要求次数多的排在前面，所以需要反转结果</span><br>    <span class="hljs-comment">//for i, j := 0, len(res)-1; i &lt; j; i++ &#123;</span><br>    <span class="hljs-comment">//    res[i], res[j] = res[j], res[i]</span><br>    <span class="hljs-comment">//    j--</span><br>    <span class="hljs-comment">//&#125;</span><br>    <span class="hljs-keyword">return</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这道题相比 347 要麻烦一些，当时写的时候有一个比较迷的地方，就是 Less() 里的判断逻辑：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs go">o1 := m.s[i]<br>o2 := m.s[j]<br>m1 := m.mp[o1]<br>m2 := m.mp[o2]<br><br><span class="hljs-keyword">if</span> m1 == m2 &#123;<br>   <span class="hljs-keyword">return</span> o1 &gt; o2 <span class="hljs-comment">// 如果出现频率相同，按字典序排列</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>当时没搞懂为什么是 o1 &gt; o2，其实这里需要理解 go heap 的底层实现，Less() 是用来判断是否需要交换元素的，如果 Less 返回 true 才需要交换，也就是说如果 o1 &gt; o2（这是两个 string，且 o1 对应下标 i，o2 对应下标 j，这里假设 i 在前，j 在后），那么按照字典序排列，应该是小在前大在后（也就是 i 对应的元素要小于 j 对应的元素），所以需要进行交换，把小的 o2 换到前面，大的 o1 换到后面。</p>
+<p>此外还有和堆顶比较的逻辑：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">if</span> (m.mp[v] == m.mp[m.s[<span class="hljs-number">0</span>]] &amp;&amp; v &lt; m.s[<span class="hljs-number">0</span>]) ||<br>                    m.mp[v] &gt; m.mp[m.s[<span class="hljs-number">0</span>]]<br></code></pre></td></tr></table></figure>
+
+<p>这里为什么又是 <code>v &lt; m.s[0])</code> 呢？还是因为字典序。比如 [“i”,”love”,”leetcode”,”i”,”love”,”coding”]，k&#x3D;3 这个测试用例，最终的结果是[“i”,”love”,”coding”]，leetcode 和 coding 都出现了 1 次，所以要比较它们的字典序，而 coding &lt; leetcode，所以选择 coding 这个较小的。对应到堆，如果此时堆顶为 leetcode，现在要添加 coding 到堆中，需要判断逻辑为：在出现次数相同的情况下，如果当前元素的字典序小于堆顶，则 pop 堆顶，并 push 当前元素，这样才能让这个较小的元素入堆。</p>
+<p>此外，因为题目要求返回的答案按单词出现频率由高到低排序，所以也不能像 347 那样，直接把堆中的元素返回，因为堆是不保证整体有序的，它只保证两个子节点都小于（大于）父节点，那如何让其有序呢？只需要不断 pop 即可，这里 go heap 的 pop 接口实现看起来有点诡异：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *myheap)</span></span> Pop() <span class="hljs-keyword">interface</span>&#123;&#125; &#123;<br>    p := m.s[<span class="hljs-built_in">len</span>(m.s)<span class="hljs-number">-1</span>]<br>    m.s = m.s[:<span class="hljs-built_in">len</span>(m.s)<span class="hljs-number">-1</span>]<br>    <span class="hljs-keyword">return</span> p<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>看到这里难免会有点纳闷，我明明是要 pop 堆顶元素，不应该是移除 m.s[0] 才对吗？为什么这里要移除最后一个元素？这里又得看源码了：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Pop</span><span class="hljs-params">(h Interface)</span></span> any &#123;<br>	n := h.Len() - <span class="hljs-number">1</span><br>	h.Swap(<span class="hljs-number">0</span>, n)<br>	down(h, <span class="hljs-number">0</span>, n)<br>	<span class="hljs-keyword">return</span> h.Pop()<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这下明白了，原来底层实现会将堆顶换到堆尾，所以才需要移除最后一个元素。同时也知道了，在交换堆顶到堆尾后，会从堆顶开始，执行 down 操作，调整整体的堆，让堆顶继续是整个堆中最小的元素（会忽略末尾元素，也就是刚刚被换到末尾的那个最小的元素），所以每次 pop 都是当前堆中最小的那个元素，进而保证有序。</p>
+<p>代码里将 pop 的元素保存到一个 slice 里面，因为是小顶堆，所以 pop 的元素是由小到大的，<del>而这不满足题目 “由大到小” 的要求，需要将 slice 翻转，变成降序排列。其实这里用一个链表保存更合理，每次 pop 往链表头部添加即可，如果是 slice 的话，每次都往头部添加会导致开销特别大（频繁的分配拷贝，效率还不如整体翻转），但是题目给的定义是返回一个 slice，也只能这么做了（java 版本的题目定义返回的就是一个 linkedlist）。</del>  而题目要求的是由大到小，只需要先预分配 slice 的空间为堆的长度，然后从尾部向头部添加就可以了。</p>
+<h1 id="另一种模板"><a href="#另一种模板" class="headerlink" title="另一种模板"></a>另一种模板</h1><p>看了一些题解，发现他们的写法略有不同，主要是在添加到堆的逻辑这里，不需要和堆顶元素进行比较，而是先 push 进去，如果发现长度大于 K 了，则执行 pop，感觉这种写法的代码会比较简洁明了容易理解，但是可能效率会低一些，像之前的逻辑会和堆顶进行比较，如果不满足某些条件会直接跳过，不执行任何操作，而这里的逻辑是遍历的每个元素都先无脑 push 进去，push 还需要执行堆的调整操作，所以相比叫而言会多做一些无用功。</p>
+<h2 id="692"><a href="#692" class="headerlink" title="692"></a>692</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> myheap <span class="hljs-keyword">struct</span> &#123;<br>    s []<span class="hljs-type">string</span><br>    mp <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">int</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m myheap)</span></span> Swap(i, j <span class="hljs-type">int</span>) &#123;<br>    m.s[i], m.s[j] = m.s[j], m.s[i]<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m myheap)</span></span> Len() <span class="hljs-type">int</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(m.s)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m myheap)</span></span> Less(i, j <span class="hljs-type">int</span>) <span class="hljs-type">bool</span> &#123;<br>    o1 := m.s[i]<br>    o2 := m.s[j]<br>    m1 := m.mp[o1]<br>    m2 := m.mp[o2]<br>    <span class="hljs-keyword">if</span> m1 == m2 &#123;<br>        <span class="hljs-keyword">return</span> o1 &gt; o2 <span class="hljs-comment">// 如果出现频率相同，按字典序排列</span><br>    &#125;<br>    <span class="hljs-keyword">return</span> m1 &lt; m2<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *myheap)</span></span> Push(x <span class="hljs-keyword">interface</span>&#123;&#125;) &#123;<br>    m.s = <span class="hljs-built_in">append</span>(m.s, x.(<span class="hljs-type">string</span>))<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *myheap)</span></span> Pop() <span class="hljs-keyword">interface</span>&#123;&#125; &#123;<br>    p := m.s[<span class="hljs-built_in">len</span>(m.s)<span class="hljs-number">-1</span>]<br>    m.s = m.s[:<span class="hljs-built_in">len</span>(m.s)<span class="hljs-number">-1</span>]<br>    <span class="hljs-keyword">return</span> p<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">topKFrequent</span><span class="hljs-params">(words []<span class="hljs-type">string</span>, k <span class="hljs-type">int</span>)</span></span> (res []<span class="hljs-type">string</span>) &#123;<br>    m := &amp;myheap&#123;<br>        mp: <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">int</span>),<br>    &#125;<br>    <br>    <span class="hljs-keyword">for</span> _, v := <span class="hljs-keyword">range</span> words &#123;<br>        m.mp[v]++<br>    &#125; <br><br>    <span class="hljs-keyword">for</span> v := <span class="hljs-keyword">range</span> m.mp &#123;<br>        heap.Push(m, v)<br>        <span class="hljs-keyword">if</span> m.Len() &gt; k &#123;<br>            heap.Pop(m)<br>        &#125;<br>    &#125;<br>  <br>  	res = <span class="hljs-built_in">make</span>([]<span class="hljs-type">string</span>, m.Len())<br>    <span class="hljs-keyword">for</span> i := k; i &gt; <span class="hljs-number">0</span>; i-- &#123;<br>        res[i<span class="hljs-number">-1</span>] = heap.Pop(m).(<span class="hljs-type">string</span>)<br>    &#125;<br>    <span class="hljs-keyword">return</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>不得不说确实简洁很多，主要是 range m.mp 这里的逻辑，对比一下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 第一种写法</span><br>    <span class="hljs-keyword">for</span> v := <span class="hljs-keyword">range</span> m.mp &#123;<br>        <span class="hljs-keyword">if</span> m.Len() &lt; k &#123;<br>            heap.Push(m, v)<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">if</span> (m.mp[v] == m.mp[m.s[<span class="hljs-number">0</span>]] &amp;&amp; v &lt; m.s[<span class="hljs-number">0</span>]) ||<br>                    m.mp[v] &gt; m.mp[m.s[<span class="hljs-number">0</span>]] &#123;<br>                heap.Pop(m)<br>                heap.Push(m, v)<br>            &#125;<br>        &#125;<br>    &#125;<br><br><span class="hljs-comment">// 第二种写法    </span><br>		<span class="hljs-keyword">for</span> v := <span class="hljs-keyword">range</span> m.mp &#123;<br>        heap.Push(m, v)<br>        <span class="hljs-keyword">if</span> m.Len() &gt; k &#123;<br>            heap.Pop(m)<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="347"><a href="#347" class="headerlink" title="347"></a>347</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> myheap <span class="hljs-keyword">struct</span> &#123;<br>    s []<span class="hljs-type">int</span><br>    mp <span class="hljs-keyword">map</span>[<span class="hljs-type">int</span>]<span class="hljs-type">int</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m myheap)</span></span> Swap(i, j <span class="hljs-type">int</span>) &#123;<br>    m.s[i], m.s[j] = m.s[j], m.s[i]<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m myheap)</span></span> Len() <span class="hljs-type">int</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(m.s)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m myheap)</span></span> Less(i, j <span class="hljs-type">int</span>) <span class="hljs-type">bool</span> &#123;<br>    <span class="hljs-keyword">return</span> m.mp[m.s[i]] &lt; m.mp[m.s[j]]<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *myheap)</span></span> Push(x <span class="hljs-keyword">interface</span>&#123;&#125;) &#123;<br>    m.s = <span class="hljs-built_in">append</span>(m.s, x.(<span class="hljs-type">int</span>))<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *myheap)</span></span> Pop() <span class="hljs-keyword">interface</span>&#123;&#125; &#123;<br>    p := m.s[<span class="hljs-built_in">len</span>(m.s)<span class="hljs-number">-1</span>]<br>    m.s = m.s[:<span class="hljs-built_in">len</span>(m.s)<span class="hljs-number">-1</span>]<br>    <span class="hljs-keyword">return</span> p<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">topKFrequent</span><span class="hljs-params">(nums []<span class="hljs-type">int</span>, k <span class="hljs-type">int</span>)</span></span> (res []<span class="hljs-type">int</span>) &#123;<br>    h := &amp;myheap&#123;mp : <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">int</span>]<span class="hljs-type">int</span>)&#125;<br><br>    <span class="hljs-keyword">for</span> _, v := <span class="hljs-keyword">range</span> nums &#123;<br>        h.mp[v]++<br>    &#125;<br><br>    <span class="hljs-keyword">for</span> v := <span class="hljs-keyword">range</span> h.mp &#123;<br>        heap.Push(h, v)<br>        <span class="hljs-keyword">if</span> h.Len() &gt; k &#123;<br>            heap.Pop(h)<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> h.s<br>&#125;<br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%A0%86/">#堆</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>两个类似的堆问题：leetcode 347 前 K 个高频元素 和 692. 前 K 个高频单词 </div>
+      <div>https://autsu.github.io/2022/08/17/leetcode_347_and_692/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年8月17日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/08/18/mian_shi_ti_shou_ji1/" title="面试题收集 1">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">面试题收集 1</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/08/08/go_binary/" title="go binary 使用指南 ">
+                        <span class="hidden-mobile">go binary 使用指南 </span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

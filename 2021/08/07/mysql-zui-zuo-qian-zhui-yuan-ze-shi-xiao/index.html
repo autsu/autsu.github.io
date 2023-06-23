@@ -1,0 +1,839 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="引子（以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看 凑合看就完事了） 有如下表，结构如下，注意其还拥有一个名为 idx_name_age 的，内容为 (name, age) 的联合索引。 1234567+-------+-------------+------+-----+---------+----------------+| Field | Type        | Null">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql 最左前缀原则失效">
+<meta property="og:url" content="https://autsu.github.io/2021/08/07/mysql-zui-zuo-qian-zhui-yuan-ze-shi-xiao/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="引子（以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看 凑合看就完事了） 有如下表，结构如下，注意其还拥有一个名为 idx_name_age 的，内容为 (name, age) 的联合索引。 1234567+-------+-------------+------+-----+---------+----------------+| Field | Type        | Null">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-08-07T03:17:51.000Z">
+<meta property="article:modified_time" content="2023-06-11T16:19:18.379Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Mysql 最左前缀原则失效 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Mysql 最左前缀原则失效"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-08-07 11:17" pubdate>
+          2021年8月7日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          104 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Mysql 最左前缀原则失效</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h1><p>（<del>以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看</del> 凑合看就完事了）</p>
+<p>有如下表，结构如下，注意其还拥有一个名为 idx_name_age 的，内容为 (name, age) 的联合索引。</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs gherkin">+-------+-------------+------+-----+---------+----------------+<br>|<span class="hljs-string"> Field </span>|<span class="hljs-string"> Type        </span>|<span class="hljs-string"> Null </span>|<span class="hljs-string"> Key </span>|<span class="hljs-string"> Default </span>|<span class="hljs-string"> Extra          </span>|<br>+-------+-------------+------+-----+---------+----------------+<br>|<span class="hljs-string"> id    </span>|<span class="hljs-string"> int         </span>|<span class="hljs-string"> NO   </span>|<span class="hljs-string"> PRI </span>|<span class="hljs-string"> NULL    </span>|<span class="hljs-string"> auto_increment </span>|<br>|<span class="hljs-string"> name  </span>|<span class="hljs-string"> varchar(50) </span>|<span class="hljs-string"> YES  </span>|<span class="hljs-string"> MUL </span>|<span class="hljs-string"> NULL    </span>|<span class="hljs-string">                </span>|<br>|<span class="hljs-string"> age   </span>|<span class="hljs-string"> int         </span>|<span class="hljs-string"> YES  </span>|<span class="hljs-string">     </span>|<span class="hljs-string"> NULL    </span>|<span class="hljs-string">                </span>|<br>+-------+-------------+------+-----+---------+----------------+<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>PS: 建表语句如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs mysql">CREATE TABLE stu_join_index (<br>  id INT NOT NULL AUTO_INCREMENT,<br>  name VARCHAR(50),<br>  age INT,<br>  PRIMARY KEY (id),<br>  INDEX idx_name_age (name, age)<br>);<br></code></pre></td></tr></table></figure>
+
+<p>此外，我们还可以插入一些数据：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs mysql">INSERT INTO stu_join_index (name, age)<br>VALUES<br>  (&#x27;John&#x27;, 20),<br>  (&#x27;Alice&#x27;, 25),<br>  (&#x27;Bob&#x27;, 22),<br>  (&#x27;Emily&#x27;, 21),<br>  (&#x27;David&#x27;, 23),<br>  (&#x27;Sophia&#x27;, 24),<br>  (&#x27;Michael&#x27;, 26),<br>  (&#x27;Olivia&#x27;, 19),<br>  (&#x27;Emma&#x27;, 27),<br>  (&#x27;Daniel&#x27;, 20);<br></code></pre></td></tr></table></figure>
+
+
+</blockquote>
+<p>执行下面的 SQL 语句，看看这次查询的索引使用信息：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">explain <span class="hljs-keyword">select</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">from</span> stu_join_index <span class="hljs-keyword">where</span> age <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;20&#x27;</span>;<br></code></pre></td></tr></table></figure>
+
+<p>运行后发现 <code>type</code> 为 <code>index</code>，这代表这次查询走了索引。</p>
+<p>（2022.3.20 更新：index 代表的是会对整个索引树进行扫描，仅比 all（全表扫描）要快一些 <del>其实也等同于全表查询，至于 index 相比 all 效率会不会更高，查阅了一些资料，都说 index 效率要更快一些</del>）</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli">+<span class="hljs-params">----</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">----------------</span>+<span class="hljs-params">------------</span>+<span class="hljs-params">-------</span>+<span class="hljs-params">---------------</span>+<span class="hljs-params">--------------</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">--------------------------</span>+<br>| id | select_type | table          | partitions | type  | possible_keys | key          | key_len | ref  | rows | filtered | Extra                    |<br>+<span class="hljs-params">----</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">----------------</span>+<span class="hljs-params">------------</span>+<span class="hljs-params">-------</span>+<span class="hljs-params">---------------</span>+<span class="hljs-params">--------------</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">--------------------------</span>+<br>|  1 | SIMPLE      | stu_join_index | NULL       | index | idx_name_age  | idx_name_age | 208     | NULL |   10 |    10.00 | Using where; Using index |<br>+<span class="hljs-params">----</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">----------------</span>+<span class="hljs-params">------------</span>+<span class="hljs-params">-------</span>+<span class="hljs-params">---------------</span>+<span class="hljs-params">--------------</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">--------------------------</span>+<br></code></pre></td></tr></table></figure>
+
+<p>这就奇怪了，按照 Mysql 最左前缀原则，建立的索引是 (name, age) ，应该只有 (name)，(name，age) 会走索引啊？再尝试查询一下（age, name），看会不会走索引：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">explain <span class="hljs-keyword">select</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">from</span> stu_join_index <span class="hljs-keyword">where</span> age <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;25&#x27;</span> <span class="hljs-keyword">and</span> name <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;Alice&#x27;</span>;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli">+<span class="hljs-params">----</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">----------------</span>+<span class="hljs-params">------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------------</span>+<span class="hljs-params">--------------</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">-------------</span>+<br>| id | select_type | table          | partitions | type | possible_keys | key          | key_len | ref         | rows | filtered | Extra       |<br>+<span class="hljs-params">----</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">----------------</span>+<span class="hljs-params">------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------------</span>+<span class="hljs-params">--------------</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">-------------</span>+<br>|  1 | SIMPLE      | stu_join_index | NULL       | ref  | idx_name_age  | idx_name_age | 208     | const,const |    1 |   100.00 | Using index |<br>+<span class="hljs-params">----</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">----------------</span>+<span class="hljs-params">------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------------</span>+<span class="hljs-params">--------------</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">-------------</span>+<br></code></pre></td></tr></table></figure>
+<p>可以看到这里也同样走了索引，这是为什么呢？</p>
+<blockquote>
+<p>补充：<code>Extra</code> 显示的是 <code>Using where; Using index</code>，其中的 <code>Using index</code> 代表：从表中仅使用索引树中的信息就能获取查询语句的列的信息, 而不必进行其他额外查找（seek）去读取实际的行记录。当查询的列是单个索引的部分的列时, 可以使用此策略。（简单的翻译就是：使用索引来直接获取列的数据，而不需回表，即覆盖索引）。</p>
+</blockquote>
+<p>后来在网上找到了一个同样问题的 <a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000022690969">文章</a>，他的情况和我一样，创建了一张表，表中总共有四个字段。 id 为主键，还有一个由 name，age，address 组成的联合索引，当他执行下面的 SQL 时：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">EXPLAIN <span class="hljs-keyword">select</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">from</span> <span class="hljs-keyword">user</span> <span class="hljs-keyword">where</span> address<span class="hljs-operator">=</span><span class="hljs-string">&#x27;beijing&#x27;</span>;<br></code></pre></td></tr></table></figure>
+<p>同样发现 <code>type</code> 字段为 <code>index</code>，即走了索引。</p>
+<p>最终在评论区找到了答案：</p>
+<blockquote>
+<p>总结下，不是最左原则失效了。是因为一开始设计的字段只有四个：(id,name,age,address)，此时的联<br>合索引是（name, age, address），id 自带一个主键索引。相当于，四个字段都有索引。因为覆盖索引<br>的缘故，怎么查都会走索引。当增加一个字段（use）后，该字段没有索引，因此 select * 的时候不会<br>触发覆盖索引，因此不会走索引。但是如果只查询 select name,age,address,id 的话依然会走索引</p>
+</blockquote>
+<p>于是我进行了进一步测试，为表添加一个字段并插入一条数据：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">alter</span> <span class="hljs-keyword">table</span> stu_join_index <span class="hljs-keyword">add</span> <span class="hljs-keyword">column</span> score <span class="hljs-type">int</span>;<br><span class="hljs-keyword">update</span> stu_join_index <span class="hljs-keyword">set</span> score <span class="hljs-operator">=</span> <span class="hljs-number">90</span> <span class="hljs-keyword">where</span> name <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;Bob&#x27;</span>;<br></code></pre></td></tr></table></figure>
+
+<p>此时的表信息如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">from</span> stu_join_index;<br><br><span class="hljs-operator">+</span><span class="hljs-comment">----+---------+------+-------+</span><br><span class="hljs-operator">|</span> id <span class="hljs-operator">|</span> name    <span class="hljs-operator">|</span> age  <span class="hljs-operator">|</span> score <span class="hljs-operator">|</span><br><span class="hljs-operator">+</span><span class="hljs-comment">----+---------+------+-------+</span><br><span class="hljs-operator">|</span>  <span class="hljs-number">1</span> <span class="hljs-operator">|</span> John    <span class="hljs-operator">|</span>   <span class="hljs-number">20</span> <span class="hljs-operator">|</span>  <span class="hljs-keyword">NULL</span> <span class="hljs-operator">|</span><br><span class="hljs-operator">|</span>  <span class="hljs-number">2</span> <span class="hljs-operator">|</span> Alice   <span class="hljs-operator">|</span>   <span class="hljs-number">25</span> <span class="hljs-operator">|</span>  <span class="hljs-keyword">NULL</span> <span class="hljs-operator">|</span><br><span class="hljs-operator">|</span>  <span class="hljs-number">3</span> <span class="hljs-operator">|</span> Bob     <span class="hljs-operator">|</span>   <span class="hljs-number">22</span> <span class="hljs-operator">|</span>    <span class="hljs-number">90</span> <span class="hljs-operator">|</span><br><span class="hljs-operator">|</span>  <span class="hljs-number">4</span> <span class="hljs-operator">|</span> Emily   <span class="hljs-operator">|</span>   <span class="hljs-number">21</span> <span class="hljs-operator">|</span>  <span class="hljs-keyword">NULL</span> <span class="hljs-operator">|</span><br><span class="hljs-operator">|</span>  <span class="hljs-number">5</span> <span class="hljs-operator">|</span> David   <span class="hljs-operator">|</span>   <span class="hljs-number">23</span> <span class="hljs-operator">|</span>  <span class="hljs-keyword">NULL</span> <span class="hljs-operator">|</span><br><span class="hljs-operator">|</span>  <span class="hljs-number">6</span> <span class="hljs-operator">|</span> Sophia  <span class="hljs-operator">|</span>   <span class="hljs-number">24</span> <span class="hljs-operator">|</span>  <span class="hljs-keyword">NULL</span> <span class="hljs-operator">|</span><br><span class="hljs-operator">|</span>  <span class="hljs-number">7</span> <span class="hljs-operator">|</span> Michael <span class="hljs-operator">|</span>   <span class="hljs-number">26</span> <span class="hljs-operator">|</span>  <span class="hljs-keyword">NULL</span> <span class="hljs-operator">|</span><br><span class="hljs-operator">|</span>  <span class="hljs-number">8</span> <span class="hljs-operator">|</span> Olivia  <span class="hljs-operator">|</span>   <span class="hljs-number">19</span> <span class="hljs-operator">|</span>  <span class="hljs-keyword">NULL</span> <span class="hljs-operator">|</span><br><span class="hljs-operator">|</span>  <span class="hljs-number">9</span> <span class="hljs-operator">|</span> Emma    <span class="hljs-operator">|</span>   <span class="hljs-number">27</span> <span class="hljs-operator">|</span>  <span class="hljs-keyword">NULL</span> <span class="hljs-operator">|</span><br><span class="hljs-operator">|</span> <span class="hljs-number">10</span> <span class="hljs-operator">|</span> Daniel  <span class="hljs-operator">|</span>   <span class="hljs-number">20</span> <span class="hljs-operator">|</span>  <span class="hljs-keyword">NULL</span> <span class="hljs-operator">|</span><br><span class="hljs-operator">+</span><span class="hljs-comment">----+---------+------+-------+</span><br></code></pre></td></tr></table></figure>
+
+<p>此时再使用 (score, age) 条件进行查询，看看结果如何：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sql">explain <span class="hljs-keyword">select</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">from</span> stu_join_index <span class="hljs-keyword">where</span> score <span class="hljs-operator">=</span> <span class="hljs-number">90</span> <span class="hljs-keyword">and</span> age <span class="hljs-operator">=</span> <span class="hljs-number">22</span>;<br><br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br><span class="hljs-operator">|</span> id <span class="hljs-operator">|</span> select_type <span class="hljs-operator">|</span> <span class="hljs-keyword">table</span>          <span class="hljs-operator">|</span> partitions <span class="hljs-operator">|</span> type <span class="hljs-operator">|</span> possible_keys <span class="hljs-operator">|</span> key  <span class="hljs-operator">|</span> key_len <span class="hljs-operator">|</span> <span class="hljs-keyword">ref</span>  <span class="hljs-operator">|</span> <span class="hljs-keyword">rows</span> <span class="hljs-operator">|</span> filtered <span class="hljs-operator">|</span> Extra       <span class="hljs-operator">|</span><br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br><span class="hljs-operator">|</span>  <span class="hljs-number">1</span> <span class="hljs-operator">|</span> SIMPLE      <span class="hljs-operator">|</span> stu_join_index <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span>       <span class="hljs-operator">|</span> <span class="hljs-keyword">ALL</span>  <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span>          <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span> <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span>    <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span> <span class="hljs-operator">|</span>   <span class="hljs-number">10</span> <span class="hljs-operator">|</span>    <span class="hljs-number">10.00</span> <span class="hljs-operator">|</span> <span class="hljs-keyword">Using</span> <span class="hljs-keyword">where</span> <span class="hljs-operator">|</span><br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br></code></pre></td></tr></table></figure>
+<p>可以看到此时 <code>type</code> 变为了 <code>ALL</code>，代表要扫描全表。</p>
+<p>因为 (name, age) 相当于创建了 name 单列索引和 (name, age) 联合索引。对于多个字段的联合索引，也同理，比如 index(a, b, c) 这个联合索引，相当于创建了 a 单列索引，(a, b) 联合索引，和 (a, b, c )联合索引。上面的查询条件 (score, age) 既没有联合索引，各自也没有单列索引，所以自然要扫描全表。</p>
+<p>测试：</p>
+<p>思考一下，之前的查询语句 <code>explain select * from stu_join_index where age = 20;</code> 还会不会走索引？</p>
+<p>结果：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sql">explain <span class="hljs-keyword">select</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">from</span> stu_join_index <span class="hljs-keyword">where</span> age <span class="hljs-operator">=</span> <span class="hljs-number">20</span>;<br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br><span class="hljs-operator">|</span> id <span class="hljs-operator">|</span> select_type <span class="hljs-operator">|</span> <span class="hljs-keyword">table</span>          <span class="hljs-operator">|</span> partitions <span class="hljs-operator">|</span> type <span class="hljs-operator">|</span> possible_keys <span class="hljs-operator">|</span> key  <span class="hljs-operator">|</span> key_len <span class="hljs-operator">|</span> <span class="hljs-keyword">ref</span>  <span class="hljs-operator">|</span> <span class="hljs-keyword">rows</span> <span class="hljs-operator">|</span> filtered <span class="hljs-operator">|</span> Extra       <span class="hljs-operator">|</span><br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br><span class="hljs-operator">|</span>  <span class="hljs-number">1</span> <span class="hljs-operator">|</span> SIMPLE      <span class="hljs-operator">|</span> stu_join_index <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span>       <span class="hljs-operator">|</span> <span class="hljs-keyword">ALL</span>  <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span>          <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span> <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span>    <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span> <span class="hljs-operator">|</span>   <span class="hljs-number">10</span> <span class="hljs-operator">|</span>    <span class="hljs-number">10.00</span> <span class="hljs-operator">|</span> <span class="hljs-keyword">Using</span> <span class="hljs-keyword">where</span> <span class="hljs-operator">|</span><br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br></code></pre></td></tr></table></figure>
+
+<p>可以看到此时的 type 为 ALL，这是为什么呢？</p>
+<p>我的猜测是，因为我们加了一个非索引字段 <code>score</code>，而我们的查询结果又是 *，而查询条件又是 age 这个无索引字段（我们创建的联合索引是 name, age），所以就会走全表扫描，但是 Extra 这里的 <code>Using where</code> 又是什么意思呢？</p>
+<blockquote>
+<p>来自 ChatGPT：</p>
+<p>在 MySQL 的 <code>Extra</code> 列中，<code>Using where</code> 表示查询需要在存储引擎层面使用额外的条件过滤。具体含义如下：</p>
+<ul>
+<li><code>Using where</code> 表示在读取行数据后，MySQL 需要进一步应用 WHERE 条件进行过滤，以满足查询条件。这意味着查询结果中可能包含一些不符合 WHERE 条件的行，需要在 MySQL 层面进行进一步过滤。</li>
+<li>当出现 <code>Using where</code> 时，MySQL 可能会使用索引或者全表扫描来获取满足 WHERE 条件的行数据。如果查询涉及到大量数据，或者没有适用的索引，可能会导致性能下降。</li>
+<li>注意，<code>Using where</code> 并不表示一定会使用索引，它只表示需要在查询结果集上进行进一步的条件过滤。具体是否使用索引还需要考虑索引的定义、查询条件的复杂性以及数据分布等因素。</li>
+</ul>
+<p>总之，<code>Using where</code> 表示查询需要在 MySQL 层面进一步过滤数据以满足 WHERE 条件，但不表示一定会使用索引。需要综合考虑索引的设计和查询条件的优化，以提高查询性能。</p>
+</blockquote>
+<p>如果我们将查询条件修改为 name，或者查询结果由 * 改为 id,name,age，结果又会如何？</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs sql">explain <span class="hljs-keyword">select</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">from</span> stu_join_index <span class="hljs-keyword">where</span> name <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;Bob&#x27;</span>;<br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+------+---------------+--------------+---------+-------+------+----------+-------+</span><br><span class="hljs-operator">|</span> id <span class="hljs-operator">|</span> select_type <span class="hljs-operator">|</span> <span class="hljs-keyword">table</span>          <span class="hljs-operator">|</span> partitions <span class="hljs-operator">|</span> type <span class="hljs-operator">|</span> possible_keys <span class="hljs-operator">|</span> key          <span class="hljs-operator">|</span> key_len <span class="hljs-operator">|</span> <span class="hljs-keyword">ref</span>   <span class="hljs-operator">|</span> <span class="hljs-keyword">rows</span> <span class="hljs-operator">|</span> filtered <span class="hljs-operator">|</span> Extra <span class="hljs-operator">|</span><br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+------+---------------+--------------+---------+-------+------+----------+-------+</span><br><span class="hljs-operator">|</span>  <span class="hljs-number">1</span> <span class="hljs-operator">|</span> SIMPLE      <span class="hljs-operator">|</span> stu_join_index <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span>       <span class="hljs-operator">|</span> <span class="hljs-keyword">ref</span>  <span class="hljs-operator">|</span> idx_name_age  <span class="hljs-operator">|</span> idx_name_age <span class="hljs-operator">|</span> <span class="hljs-number">203</span>     <span class="hljs-operator">|</span> const <span class="hljs-operator">|</span>    <span class="hljs-number">1</span> <span class="hljs-operator">|</span>   <span class="hljs-number">100.00</span> <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span>  <span class="hljs-operator">|</span><br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+------+---------------+--------------+---------+-------+------+----------+-------+</span><br><br>explain <span class="hljs-keyword">select</span> id,name,age <span class="hljs-keyword">from</span> stu_join_index <span class="hljs-keyword">where</span> age <span class="hljs-operator">=</span> <span class="hljs-number">20</span>;<br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+-------+---------------+--------------+---------+------+------+----------+--------------------------+</span><br><span class="hljs-operator">|</span> id <span class="hljs-operator">|</span> select_type <span class="hljs-operator">|</span> <span class="hljs-keyword">table</span>          <span class="hljs-operator">|</span> partitions <span class="hljs-operator">|</span> type  <span class="hljs-operator">|</span> possible_keys <span class="hljs-operator">|</span> key          <span class="hljs-operator">|</span> key_len <span class="hljs-operator">|</span> <span class="hljs-keyword">ref</span>  <span class="hljs-operator">|</span> <span class="hljs-keyword">rows</span> <span class="hljs-operator">|</span> filtered <span class="hljs-operator">|</span> Extra                    <span class="hljs-operator">|</span><br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+-------+---------------+--------------+---------+------+------+----------+--------------------------+</span><br><span class="hljs-operator">|</span>  <span class="hljs-number">1</span> <span class="hljs-operator">|</span> SIMPLE      <span class="hljs-operator">|</span> stu_join_index <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span>       <span class="hljs-operator">|</span> index <span class="hljs-operator">|</span> idx_name_age  <span class="hljs-operator">|</span> idx_name_age <span class="hljs-operator">|</span> <span class="hljs-number">208</span>     <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span> <span class="hljs-operator">|</span>   <span class="hljs-number">10</span> <span class="hljs-operator">|</span>    <span class="hljs-number">10.00</span> <span class="hljs-operator">|</span> <span class="hljs-keyword">Using</span> <span class="hljs-keyword">where</span>; <span class="hljs-keyword">Using</span> index <span class="hljs-operator">|</span><br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+-------+---------------+--------------+---------+------+------+----------+--------------------------+</span><br></code></pre></td></tr></table></figure>
+
+<p>可以看到，这两个查询都走了索引</p>
+<h1 id="一些疑问"><a href="#一些疑问" class="headerlink" title="一些疑问"></a>一些疑问</h1><h2 id="1-where-条件只有-name"><a href="#1-where-条件只有-name" class="headerlink" title="1. where 条件只有 name"></a>1. where 条件只有 name</h2><p>如果 <code>where</code> 条件只有 <code>score</code> ，或者只有 <code>age</code> ，结果会怎样呢？</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sql">explain <span class="hljs-keyword">select</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">from</span> stu_join_index <span class="hljs-keyword">where</span> age <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;12&#x27;</span>;<br>explain <span class="hljs-keyword">select</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">from</span> stu_join_index <span class="hljs-keyword">where</span> score <span class="hljs-operator">=</span> <span class="hljs-number">90</span>;<br></code></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli">+<span class="hljs-params">----</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">----------------</span>+<span class="hljs-params">------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">-------------</span>+<br>| id | select_type | table          | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |<br>+<span class="hljs-params">----</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">----------------</span>+<span class="hljs-params">------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">-------------</span>+<br>|  1 | SIMPLE      | stu_join_index | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    5 |    20.00 | Using where |<br>+<span class="hljs-params">----</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">----------------</span>+<span class="hljs-params">------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">-------------</span>+<br></code></pre></td></tr></table></figure>
+
+<p>结果会扫描全表。这是因为 <code>socre</code> 和 <code>age</code> 都没有单列索引。</p>
+<p>但是当 <code>where</code> 条件只有 <code>name</code> 时会怎样呢？</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">explain <span class="hljs-keyword">select</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">from</span> stu_join_index <span class="hljs-keyword">where</span> name <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;aa&#x27;</span>;<br></code></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli">+<span class="hljs-params">----</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">----------------</span>+<span class="hljs-params">------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">-------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">-------</span>+<br>| id | select_type | table          | partitions | type | possible_keys | key      | key_len | ref   | rows | filtered | Extra |<br>+<span class="hljs-params">----</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">----------------</span>+<span class="hljs-params">------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">-------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">-------</span>+<br>|  1 | SIMPLE      | stu_join_index | NULL       | ref  | name_age      | name_age | 203     | const |    1 |   100.00 | NULL  |<br>+<span class="hljs-params">----</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">----------------</span>+<span class="hljs-params">------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">-------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">-------</span>+<br></code></pre></td></tr></table></figure>
+
+<p>此时 <code>type</code> 为 <code>ref</code>，在上面已经说过，(name, age) 联合索引会同时创建一个 <code>name</code> 单列索引。但是这里为什么是 <code>ref</code> 而不是 <code>index</code> 呢？</p>
+<blockquote>
+<p><code>ref</code> 使用非唯一索引扫描或唯一索引的前缀扫描，返回匹配某个单独值的记录行。</p>
+<p>出现该连接类型的条件是： 查找条件列使用了索引而且不为主键和unique。其实，意思就是虽然使用了索引，但该索引列的值并不唯一，有重复。这样即使使用索引快速查找到了第一条数据，仍然不能停止，要进行目标值附近的小范围扫描。但它的好处是它并不需要扫全表，因为索引是有序的，即便有重复值，也是在一个非常小的范围内扫描。</p>
+</blockquote>
+<p>我的猜测：</p>
+<p><del>在没有添加 <code>score</code> 字段前，联合索引 (name, age) 是覆盖索引，但是添加了 <code>score</code> 后便不再是覆盖索引了</del></p>
+<p>覆盖索引依然是 <code>ref</code></p>
+<h2 id="2-为什么-name-为非字符串时不走索引"><a href="#2-为什么-name-为非字符串时不走索引" class="headerlink" title="2. 为什么 name 为非字符串时不走索引"></a>2. 为什么 name 为非字符串时不走索引</h2><p>在 1 中提到，</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">explain <span class="hljs-keyword">select</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">from</span> stu_join_index <span class="hljs-keyword">where</span> name <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;aa&#x27;</span>;<br></code></pre></td></tr></table></figure>
+<p>的 <code>type</code> 为 <code>ref</code>，那么如果把查询条件改为非字符串会怎样呢？（name 为 varchar 类型）</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">explain <span class="hljs-keyword">select</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">from</span> stu_join_index <span class="hljs-keyword">where</span> name <span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br></code></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli">+<span class="hljs-params">----</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">----------------</span>+<span class="hljs-params">------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">-------------</span>+<br>| id | select_type | table          | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |<br>+<span class="hljs-params">----</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">----------------</span>+<span class="hljs-params">------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">-------------</span>+<br>|  1 | SIMPLE      | stu_join_index | NULL       | ALL  | name_age      | NULL | NULL    | NULL |    5 |    20.00 | Using where |<br>+<span class="hljs-params">----</span>+<span class="hljs-params">-------------</span>+<span class="hljs-params">----------------</span>+<span class="hljs-params">------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">---------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">------</span>+<span class="hljs-params">----------</span>+<span class="hljs-params">-------------</span>+<br></code></pre></td></tr></table></figure>
+<p>结果变为了 <code>ALL</code>，为什么不是字符串就会索引失效呢？</p>
+<p><strong>回答</strong></p>
+<p>在博客 <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_28194001/article/details/90488782">https://blog.csdn.net/qq_28194001/article/details/90488782</a> 中得出结论：</p>
+<blockquote>
+<ol>
+<li>当我们使用的字段是数值类型时，加引号或者不加引号（sql中单引号和双引号实现相同效果）都不影响<br>索引的使用</li>
+<li>当我们的字段是字符串类型时，不加引号的查询无法使用索引，加引号的查询才可正常使用索引</li>
+</ol>
+</blockquote>
+<p>但是还是没给出原因，于是我又问了下 ChatGPT：</p>
+<blockquote>
+<p>Q：为什么 select * from stu_join_index where name &#x3D; ‘aa’; 会走索引，而 select * from stu_join_index where name &#x3D; 1 不会？</p>
+<p>A：<code>select * from stu_join_index where name = 1;</code> 不会走索引：</p>
+<p>这条查询语句中的条件 <code>name = 1</code> 的值类型为整数，而 <code>name</code> 字段的索引 <code>idx_name_age</code> 是建立在字符串类型上的。索引是按照索引列的数据类型进行排序和比较的，因此，整数值无法直接匹配到字符串类型的索引，所以无法使用该索引进行快速查找。在这种情况下，MySQL可能会选择全表扫描的方式来查找满足条件的行。</p>
+</blockquote>
+<blockquote>
+<p>然后我又突发奇想，问了一下另外一种情况：</p>
+<p>Q：那如果查询条件对应的列是 int 类型，但是我加了引号，比如 age &#x3D; ‘1’，这样会走索引吗</p>
+<p>A：当查询条件对应的列是整数类型（如<code>int</code>），但是你将查询条件的值用引号括起来（如<code>age = &#39;1&#39;</code>），MySQL 会进行类型转换以匹配索引列的数据类型。在这种情况下，MySQL 通常会尝试将字符串类型的查询条件转换为整数类型，并尝试使用索引来进行匹配。</p>
+<p>因此，在你提到的情况下，如果索引 <code>idx_name_age</code> 的列 <code>age</code> 是整数类型，MySQL 会尝试将查询条件中的字符串 <code>&#39;1&#39;</code> 转换为整数，并使用该索引进行匹配。如果转换成功，MySQL 将能够使用索引来加速查询。</p>
+<p>需要注意的是，类型转换可能会带来一些性能开销，并且在某些情况下可能会导致索引失效。所以，最佳实践是确保查询条件的值与索引列的数据类型相匹配，这样可以更好地利用索引的优势。</p>
+</blockquote>
+<h2 id="3-不符合最左匹配原则但还是走了索引"><a href="#3-不符合最左匹配原则但还是走了索引" class="headerlink" title="3. 不符合最左匹配原则但还是走了索引"></a>3. 不符合最左匹配原则但还是走了索引</h2><p>再来看一种情况：<br>此时执行 (name, score, age)，看看结果如何：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sql">explain <span class="hljs-keyword">select</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">from</span> stu_join_index <span class="hljs-keyword">where</span> name <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;aa&#x27;</span> <span class="hljs-keyword">and</span> score <span class="hljs-operator">=</span> <span class="hljs-number">90</span> <span class="hljs-keyword">and</span> age <span class="hljs-operator">=</span> <span class="hljs-number">12</span>;<br><br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+------+---------------+--------------+---------+-------------+------+----------+-------------+</span><br><span class="hljs-operator">|</span> id <span class="hljs-operator">|</span> select_type <span class="hljs-operator">|</span> <span class="hljs-keyword">table</span>          <span class="hljs-operator">|</span> partitions <span class="hljs-operator">|</span> type <span class="hljs-operator">|</span> possible_keys <span class="hljs-operator">|</span> key          <span class="hljs-operator">|</span> key_len <span class="hljs-operator">|</span> <span class="hljs-keyword">ref</span>         <span class="hljs-operator">|</span> <span class="hljs-keyword">rows</span> <span class="hljs-operator">|</span> filtered <span class="hljs-operator">|</span> Extra       <span class="hljs-operator">|</span><br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+------+---------------+--------------+---------+-------------+------+----------+-------------+</span><br><span class="hljs-operator">|</span>  <span class="hljs-number">1</span> <span class="hljs-operator">|</span> SIMPLE      <span class="hljs-operator">|</span> stu_join_index <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span>       <span class="hljs-operator">|</span> <span class="hljs-keyword">ref</span>  <span class="hljs-operator">|</span> idx_name_age  <span class="hljs-operator">|</span> idx_name_age <span class="hljs-operator">|</span> <span class="hljs-number">208</span>     <span class="hljs-operator">|</span> const,const <span class="hljs-operator">|</span>    <span class="hljs-number">1</span> <span class="hljs-operator">|</span>    <span class="hljs-number">10.00</span> <span class="hljs-operator">|</span> <span class="hljs-keyword">Using</span> <span class="hljs-keyword">where</span> <span class="hljs-operator">|</span><br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+------+---------------+--------------+---------+-------------+------+----------+-------------+</span><br></code></pre></td></tr></table></figure>
+<p>这里明明不符合最左前缀原则，为什么 <code>type</code> 会是  <code>ref</code>？</p>
+<blockquote>
+<p>来自 ChatGPT：</p>
+<p>在你提供的查询语句 <code>select * from stu_join_index where name = &#39;aa&#39; and score = 90 and age = 12;</code> 中，尽管不符合最左前缀原则，但是 MySQL 优化器可能会选择使用索引进行查询。</p>
+<p>这是因为索引的选择并不仅仅依赖于最左前缀原则，MySQL 优化器会根据多个因素进行选择，包括索引的选择性、数据分布情况、查询的复杂度等。在某些情况下，MySQL 可能会选择使用较长的索引前缀或者联合索引的一部分来进行查询，而不仅仅局限于最左前缀。</p>
+<p>在你的查询中，如果联合索引 <code>idx_name_age</code> 的前缀列 <code>name</code> 在数据分布上非常选择性高，且其他列的选择性也足够高，MySQL 可能会选择使用该索引进行查询，并且 <code>type</code> 字段显示为 <code>ref</code>。这表示使用了非唯一性索引，并且通过索引进行了范围查找。</p>
+<p>需要注意的是，优化器的行为受多个因素影响，包括数据库的统计信息、查询的复杂度、索引的选择性等等。因此，虽然某些情况下 MySQL 可能会选择使用不符合最左前缀原则的索引，但并不是绝对的，具体的选择还是取决于优化器的判断和算法。</p>
+</blockquote>
+<h2 id="4-index-和-ref-的区别，以及二者各自触发的场景"><a href="#4-index-和-ref-的区别，以及二者各自触发的场景" class="headerlink" title="4. index 和 ref 的区别，以及二者各自触发的场景"></a>4. index 和 ref 的区别，以及二者各自触发的场景</h2><p>再次执行下面的语句（在文章一开始还没有添加 score 字段时，执行过该语句）：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sql">explain <span class="hljs-keyword">select</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">from</span> stu_join_index <span class="hljs-keyword">where</span> age <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;12&#x27;</span> <span class="hljs-keyword">and</span> name <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;aa&#x27;</span>;<br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+------+---------------+--------------+---------+-------------+------+----------+-------+</span><br><span class="hljs-operator">|</span> id <span class="hljs-operator">|</span> select_type <span class="hljs-operator">|</span> <span class="hljs-keyword">table</span>          <span class="hljs-operator">|</span> partitions <span class="hljs-operator">|</span> type <span class="hljs-operator">|</span> possible_keys <span class="hljs-operator">|</span> key          <span class="hljs-operator">|</span> key_len <span class="hljs-operator">|</span> <span class="hljs-keyword">ref</span>         <span class="hljs-operator">|</span> <span class="hljs-keyword">rows</span> <span class="hljs-operator">|</span> filtered <span class="hljs-operator">|</span> Extra <span class="hljs-operator">|</span><br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+------+---------------+--------------+---------+-------------+------+----------+-------+</span><br><span class="hljs-operator">|</span>  <span class="hljs-number">1</span> <span class="hljs-operator">|</span> SIMPLE      <span class="hljs-operator">|</span> stu_join_index <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span>       <span class="hljs-operator">|</span> <span class="hljs-keyword">ref</span>  <span class="hljs-operator">|</span> idx_name_age  <span class="hljs-operator">|</span> idx_name_age <span class="hljs-operator">|</span> <span class="hljs-number">208</span>     <span class="hljs-operator">|</span> const,const <span class="hljs-operator">|</span>    <span class="hljs-number">1</span> <span class="hljs-operator">|</span>   <span class="hljs-number">100.00</span> <span class="hljs-operator">|</span> <span class="hljs-keyword">NULL</span>  <span class="hljs-operator">|</span><br><span class="hljs-operator">+</span><span class="hljs-comment">----+-------------+----------------+------------+------+---------------+--------------+---------+-------------+------+----------+-------+</span><br></code></pre></td></tr></table></figure>
+
+<p>为什么加了 <code>score</code> 字段后， <code>type</code> 从 <code>index</code> 变为了 <code>ref</code>？</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/mysql/">#mysql</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Mysql 最左前缀原则失效</div>
+      <div>https://autsu.github.io/2021/08/07/mysql-zui-zuo-qian-zhui-yuan-ze-shi-xiao/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年8月7日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/08/08/liang-ge-main-goroutine-cao-zuo-yi-ge-channel-hui-zen-yang/" title="两个 main goroutine 操作一个 channel 会怎样">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">两个 main goroutine 操作一个 channel 会怎样</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/08/06/jin-cheng-jian-tong-xin-de-fang-shi/" title="进程间通信的方式">
+                        <span class="hidden-mobile">进程间通信的方式</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,756 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="RDBRDB 可以将某个时间点上的数据库状态保存到一个 RDB 文件中（该文件的文件名可以在 redis.conf 中的 dbfilename 进行配置，默认为 dump.rdb），该文件是一个经过压缩的二进制文件，里面保存了数据库中的键值对，通过该文件可以还原生成 RDB 文件的数据库状态。  如何使用使用 SAVE 或者 BGSAVE 来生成 RDB 文件，二者的区别是 SAVE 会阻塞进程直">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis 持久化之 AOF 与 RDB">
+<meta property="og:url" content="https://autsu.github.io/2021/08/02/redis-chi-jiu-hua-zhi-aof-yu-rdb/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="RDBRDB 可以将某个时间点上的数据库状态保存到一个 RDB 文件中（该文件的文件名可以在 redis.conf 中的 dbfilename 进行配置，默认为 dump.rdb），该文件是一个经过压缩的二进制文件，里面保存了数据库中的键值对，通过该文件可以还原生成 RDB 文件的数据库状态。  如何使用使用 SAVE 或者 BGSAVE 来生成 RDB 文件，二者的区别是 SAVE 会阻塞进程直">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-08-02T04:03:42.000Z">
+<meta property="article:modified_time" content="2023-03-18T13:37:15.216Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Redis 持久化之 AOF 与 RDB - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Redis 持久化之 AOF 与 RDB"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-08-02 12:03" pubdate>
+          2021年8月2日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          27 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Redis 持久化之 AOF 与 RDB</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h1><p><code>RDB</code> 可以将某个时间点上的数据库状态保存到一个 <code>RDB</code> 文件中（该文件的文件名可以在 redis.conf 中的 <code>dbfilename</code> 进行配置，默认为 <code>dump.rdb</code>），该文件是一个经过压缩的二进制文件，里面保存了数据库中的键值对，通过该文件可以还原生成 <code>RDB</code> 文件的数据库状态。 </p>
+<h2 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h2><p>使用 <code>SAVE</code> 或者 <code>BGSAVE</code> 来生成 RDB 文件，二者的区别是 <code>SAVE</code> 会阻塞进程直到 <code>RDB</code> 文件创建完毕为止，阻塞期间不能处理任何请求，而 <code>BGSAVE</code> 会 <code>fork</code> 一个子进程取创建 <code>RDB</code>，不会阻塞主进程。</p>
+<h2 id="RDB-的坑"><a href="#RDB-的坑" class="headerlink" title="RDB 的坑"></a>RDB 的坑</h2><h3 id="1-生成的-dump-rdb-所在位置"><a href="#1-生成的-dump-rdb-所在位置" class="headerlink" title="1. 生成的 dump.rdb 所在位置"></a>1. 生成的 dump.rdb 所在位置</h3><blockquote>
+<p>在 <code>redis.conf</code> 中指明：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">The working directory.</span><br><span class="hljs-meta prompt_">&gt;</span><span class="language-bash"><span class="hljs-comment">#</span></span><br><span class="hljs-meta prompt_">&gt;</span><span class="language-bash"><span class="hljs-comment"># The DB will be written inside this directory, with the filename specified</span></span><br><span class="hljs-meta prompt_">&gt;</span><span class="language-bash"><span class="hljs-comment"># above using the &#x27;dbfilename&#x27; configuration directive.</span></span><br><span class="hljs-meta prompt_">&gt;</span><span class="language-bash"><span class="hljs-comment">#</span></span><br><span class="hljs-meta prompt_">&gt;</span><span class="language-bash"><span class="hljs-comment"># The Append Only File will also be created inside this directory.</span></span><br><span class="hljs-meta prompt_">&gt;</span><span class="language-bash"><span class="hljs-comment">#</span></span><br><span class="hljs-meta prompt_">&gt;</span><span class="language-bash"><span class="hljs-comment"># Note that you must specify a directory here, not a file name.</span></span><br><span class="hljs-meta prompt_">&gt;</span><span class="language-bash"><span class="hljs-built_in">dir</span> /usr/local/var/db/redis/</span><br></code></pre></td></tr></table></figure>
+<p>一些博客中说的是在 <code>redis-cli</code> 中使用 <code>config get dir</code> 查看，但是</p>
+</blockquote>
+<h3 id="2-客户端执行-shutdown-或者-直接-ctrl-c-退出服务端，会自动-save"><a href="#2-客户端执行-shutdown-或者-直接-ctrl-c-退出服务端，会自动-save" class="headerlink" title="2. 客户端执行 shutdown 或者 直接 ctrl+c 退出服务端，会自动 save"></a>2. 客户端执行 shutdown 或者 直接 ctrl+c 退出服务端，会自动 save</h3><p>当时我想做一个测试：先 <code>set</code> 几条数据，然后执行 <code>save</code> 对这几条将数据持久化，再执行 <code>flushdb</code> 清空数据库，当再次启动 <code>redis-server</code> 时，会读取 <code>dump.rdb</code> ，将 <code>set</code> 的那几条数据恢复过来。</p>
+<blockquote>
+<p>tips: <code>flushdb</code> 清空数据库后不会执行 save，而 <code>flushall</code> 清空后会执行 save </p>
+</blockquote>
+<p>然而当我实践时却事与愿违，<code>redis-server</code> 的启动日志上显示了读取 <code>rdb</code>，但使用 <code>keys *</code> 却显示 empty，起初以为是自己对 <code>rdb</code> 工作机制不够了解，找了半天资料，最后才发现是因为退出会自动执行 <code>save</code>，当退出时，<code>redis-server</code> 输出如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">56163:M 02 Aug 2021 16:20:34.361 # User requested shutdown...<br>56163:M 02 Aug 2021 16:20:34.361 * Saving the final RDB snapshot before exiting.<br>56163:M 02 Aug 2021 16:20:34.362 * DB saved on disk<br>56163:M 02 Aug 2021 16:20:34.362 # Redis is now ready to exit, bye bye...<br></code></pre></td></tr></table></figure>
+<p>所以出现上面情况的原因在于，<code>redis-server</code> 退出时自动执行 save，将当前执行过 <code>flushdb</code> 命令的数据库又持久化了一份，并覆盖掉了之前的 RDB 文件。</p>
+<p>解决方法：让 <code>redis-server</code> 非正常退出即可，比如使用 <code>kill -9</code> （ <code>kill</code> 是无效的）。</p>
+<h1 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h1><p>与 <code>RDB</code> 持久化通过保存数据库中的键值对来记录数据库状态不同，<code>AOF</code> 持久化是通过保存 <code>Redis</code> 服务器所执行的<strong>写命令</strong>来记录数据库状态的。</p>
+<p><code>AOF</code> 默认关闭，要想开启需要修改 <code>redis.conf</code> 中的 <code>appendonly</code> 为 <code>yes</code>。和 <code>RDB</code> 一样，当 Redis 退出时，会自动进行持久化：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">56925:M 02 Aug 2021 17:21:03.892 # User requested shutdown...<br>56925:M 02 Aug 2021 17:21:03.892 * Calling fsync() on the AOF file.<br>56925:M 02 Aug 2021 17:21:03.892 * Saving the final RDB snapshot before exiting.<br>56925:M 02 Aug 2021 17:21:03.892 * DB saved on disk<br>56925:M 02 Aug 2021 17:21:03.892 * Removing the pid file.<br>56925:M 02 Aug 2021 17:21:03.893 # Redis is now ready to exit, bye bye...<br></code></pre></td></tr></table></figure>
+<p><code>AOF</code> 生成的默认文件名为 <code>appendonly.aof</code>，其中保存的是协议化后的写命令，是文本文件，所以可以使用 <code>cat</code> 打印查看，该 <code>db</code> 存储了两个<code>key</code>：a:b 和 b:b，其对应的 AOF 文件如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs shell">*2<br><span class="hljs-meta prompt_">$</span><span class="language-bash">6</span><br>SELECT<br><span class="hljs-meta prompt_">$</span><span class="language-bash">1</span><br>0<br>*3<br><span class="hljs-meta prompt_">$</span><span class="language-bash">3</span><br>set<br><span class="hljs-meta prompt_">$</span><span class="language-bash">1</span><br>a<br><span class="hljs-meta prompt_">$</span><span class="language-bash">1</span><br>a<br>*3<br><span class="hljs-meta prompt_">$</span><span class="language-bash">3</span><br>set<br><span class="hljs-meta prompt_">$</span><span class="language-bash">1</span><br>b<br><span class="hljs-meta prompt_">$</span><span class="language-bash">1</span><br>b<br></code></pre></td></tr></table></figure>
+<h2 id="如何使用-1"><a href="#如何使用-1" class="headerlink" title="如何使用"></a>如何使用</h2><p>通过 <code>BGREWRITEAOF </code> 命令进行持久化。</p>
+<h2 id="AOF-持久化的实现"><a href="#AOF-持久化的实现" class="headerlink" title="AOF 持久化的实现"></a>AOF 持久化的实现</h2><p><code>AOF</code> 持久化功能的实现可以分为 <strong>命令追加（append）</strong>、<strong>文件写入</strong>，<strong>文件同步（sync）</strong> 三个步骤。</p>
+<ol>
+<li>命令追加：服务器在执行完一个写命令后，会以协议格式追加到 <code>aof_buf</code> 缓冲区的末尾。</li>
+<li>文件写入：此时不会把数据直接写入到 <code>AOF</code> 文件，而是先将 <code>aof_buf</code> 中的数据保存到一个内存缓冲区。</li>
+<li>文件同步：将内存缓冲区的数据写入到 <code>AOF</code> 文件中。</li>
+</ol>
+<p>这里要注意写入和同步的区别</p>
+<h3 id="写入和同步的区别"><a href="#写入和同步的区别" class="headerlink" title="写入和同步的区别"></a>写入和同步的区别</h3><p>在现代 OS 中，为了提高文件的写入操作，当用户调用到 <code>write</code> 函数将数据写入文件时，<code>os</code> 先将数据写入到一个内存缓冲区里，正常是等到缓冲区满了或是规定时间到了，才真正地将缓冲区里的数据写入磁盘，这时才是持久化完成。</p>
+<p>类似你用记事本写东西一样，写完之后你会 Ctrl+v（保存），但是在没执行 Ctrl+v 的时候你也能看到自己写的，这时因为保存在内存缓冲区里了，然后你保存了，这才保存到磁盘了，所以我们可以把你写东西当做是对 <code>aof</code> 文件的写入，你执行 Ctrl+v 才是同步到磁盘操作。</p>
+<p>这样虽然大大提高了效率，但是很不安全，在你写了好多字时，卡，忽然电脑停机了，写的东西全没了，就问你气不气？</p>
+<p>所以 <code>appendfsync</code> 的选项值中的 <code>always</code>、<code>everysec</code> 都可以强制让 OS 立即将缓冲区里的数据写入硬盘。<code>always</code> 是写到缓冲区了立马就同步到磁盘，<code>everysec</code> 是写到缓冲区的数据每秒就同步一次，丢失了也就丢失了上一秒内的数据，也不是很气。</p>
+<p>写入同步的策略取决于配置文件中的 <code>appendfsync</code> 选项，在 <strong>Redis 设计与实现</strong> 中有详细说明，这里就不介绍了。</p>
+<h2 id="AOF-重写"><a href="#AOF-重写" class="headerlink" title="AOF 重写"></a>AOF 重写</h2><p>TODO</p>
+<h3 id="一个问题：子进程在重写过程中，父进程依然可以写入新的-kv，此时会怎么处理？"><a href="#一个问题：子进程在重写过程中，父进程依然可以写入新的-kv，此时会怎么处理？" class="headerlink" title="一个问题：子进程在重写过程中，父进程依然可以写入新的 kv，此时会怎么处理？"></a>一个问题：子进程在重写过程中，父进程依然可以写入新的 kv，此时会怎么处理？</h3><p><strong>重写过程中，主进程依然可以正常处理命令</strong>，那问题来了，重写 AOF 日志过程中，如果主进程修改了已经存在 key-value，那么会发生写时复制，此时这个 key-value 数据在子进程的内存数据就跟主进程的内存数据不一致了，这时要怎么办呢？</p>
+<p>为了解决这种数据不一致问题，Redis 设置了一个 <strong>AOF 重写缓冲区</strong>，这个缓冲区在创建 bgrewriteaof 子进程之后开始使用。</p>
+<p>在重写 AOF 期间，当 Redis 执行完一个写命令之后，它会<strong>同时将这个写命令写入到 「AOF 缓冲区」和 「AOF 重写缓冲区」</strong>。</p>
+<p>当子进程完成 AOF 重写工作（<em>扫描数据库中所有数据，逐一把内存数据的键值对转换成一条命令，再将命令记录到重写日志</em>）后，会向主进程发送一条信号，信号是进程间通讯的一种方式，且是异步的。</p>
+<p>主进程收到该信号后，会调用一个信号处理函数，该函数主要做以下工作：</p>
+<ul>
+<li>将 AOF 重写缓冲区中的所有内容追加到新的 AOF 的文件中，使得新旧两个 AOF 文件所保存的数据库状态一致；</li>
+<li>新的 AOF 的文件进行改名，覆盖现有的 AOF 文件。</li>
+</ul>
+<p>信号函数执行完后，主进程就可以继续像往常一样处理命令了。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Redis/">#Redis</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Redis 持久化之 AOF 与 RDB</div>
+      <div>https://autsu.github.io/2021/08/02/redis-chi-jiu-hua-zhi-aof-yu-rdb/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年8月2日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/08/03/teng-xun-2020-bi-shi-ti-ya-suo-suan-fa/" title="[牛客][腾讯2020笔试题] 第一题. 压缩算法">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[牛客][腾讯2020笔试题] 第一题. 压缩算法</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/07/30/ke-kao-chuan-shu-de-shi-xian-ji-zhi-ting-zhi-deng-dai-xie-yi-swstop-and-wait/" title="可靠传输的实现机制 —— 停止-等待协议SW（Stop-and-Wait）">
+                        <span class="hidden-mobile">可靠传输的实现机制 —— 停止-等待协议SW（Stop-and-Wait）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

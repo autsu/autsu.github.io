@@ -1,0 +1,781 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="select 错误使用记录，加深对 select 的理解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux select 的错误使用案例">
+<meta property="og:url" content="https://autsu.github.io/2021/07/18/linux-select-de-cuo-wu-shi-yong-an-li/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="select 错误使用记录，加深对 select 的理解">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-07-18T09:54:27.000Z">
+<meta property="article:modified_time" content="2023-03-18T13:37:15.206Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="多路复用">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>linux select 的错误使用案例 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="linux select 的错误使用案例"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-07-18 17:54" pubdate>
+          2021年7月18日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          40 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">linux select 的错误使用案例</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>select 错误使用记录，加深对 select 的理解</p>
+<span id="more"></span>
+
+<h1 id="错误的代码"><a href="#错误的代码" class="headerlink" title="错误的代码"></a>错误的代码</h1><p>有如下一个使用多路复用 select 实现的 echo（回响）服务器：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-type">char</span> buf[BUF_SIZE];<br>  	<span class="hljs-comment">// 简单封装了一下 socket 的创建流程</span><br>    Server <span class="hljs-title function_">s</span><span class="hljs-params">(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;0.0.0.0&quot;</span>, <span class="hljs-string">&quot;8080&quot;</span>)</span>;<br>    s.Listen(<span class="hljs-number">1024</span>);<br><br>    fd_set readfds;<br>    <span class="hljs-comment">// 监听服务端socket，当有客户连接时会触发事件</span><br>    FD_ZERO(&amp;readfds);<br>    FD_SET(s.Sockfd(), &amp;readfds);<br><br>    <span class="hljs-type">int</span> maxfd = s.Sockfd();<br><br>    <span class="hljs-keyword">for</span> (; ;) &#123;<br>        <span class="hljs-type">int</span> okcnt = select(maxfd+<span class="hljs-number">1</span>, &amp;readfds, nullptr, nullptr, nullptr);<br>        <span class="hljs-keyword">if</span> (okcnt == <span class="hljs-number">-1</span>) &#123;<br>            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;select error\n&quot;</span>);<br>            <span class="hljs-keyword">break</span>;<br>        &#125;<br>        <span class="hljs-keyword">if</span> (okcnt == <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-keyword">continue</span>;<br>        &#125;<br><br>        <span class="hljs-comment">// 遍历 select 数组</span><br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; maxfd+<span class="hljs-number">1</span>; ++i) &#123;<br>            <span class="hljs-comment">// 找到所有值为 1 的 fd，这表示该 fd 已经准备就绪了</span><br>            <span class="hljs-keyword">if</span> (FD_ISSET(i, &amp;readfds)) &#123;<br>                <span class="hljs-comment">// 如果就绪的 fd 为 server,说明有新的连接请求</span><br>                <span class="hljs-keyword">if</span> (i == s.Sockfd()) &#123;<br>                    <span class="hljs-comment">// 调用 accept 接收客户端的连接请求</span><br>                    <span class="hljs-keyword">auto</span> conn = s.Accept();<br>                    <span class="hljs-type">int</span> connfd = conn-&gt;Connfd();<br>                    <span class="hljs-comment">// 更新 maxfd</span><br>                    <span class="hljs-keyword">if</span> (connfd &gt; maxfd) &#123;<br>                        maxfd = connfd;<br>                    &#125;<br>                    <span class="hljs-comment">// 将 conn 的 fd 添加到 select 监听集合中</span><br>                    FD_SET(connfd, &amp;readfds);<br>                    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;connected client: %d\n&quot;</span>, conn-&gt;Connfd());<br>                    <span class="hljs-comment">// 如果就绪的 fd 不是 server fd，则是 conn fd</span><br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;conn %d is already\n&quot;</span>, i);<br>                    <span class="hljs-comment">// 可以对这些准备就绪的 conn 进行 echo 处理了</span><br>                    <span class="hljs-type">int</span> n = read(i, buf, BUF_SIZE);<br>                    <span class="hljs-keyword">if</span> (n == <span class="hljs-number">0</span>) &#123;   <span class="hljs-comment">// EOF</span><br>                        <span class="hljs-comment">//</span><br>                        FD_CLR(i, &amp;readfds);<br>                        close(i);<br>                        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;close conn: %d\n&quot;</span>, i);<br>                    &#125; <span class="hljs-keyword">else</span> &#123;<br>                        write(i, buf, n);<br>                    &#125;<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    s.Close();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h2><p>编译并运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">g++ -o echo_server_wrong_example echo_server_wrong_example.cc<br>./echo_server_wrong_example<br></code></pre></td></tr></table></figure>
+
+
+
+<p>新建一个终端并开启第一个客户端：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">nc localhost 8080<br></code></pre></td></tr></table></figure>
+
+<p>此时只连接到服务端，不发送任何数据，服务端的日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">connected client: 4<br>conn 4 is already<br></code></pre></td></tr></table></figure>
+
+
+
+<p>随后再新建一个终端并开启第二个客户端，并尝试发送数据：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">nc localhost 8080<br><br>1<br></code></pre></td></tr></table></figure>
+
+<p>但是没有任何回应，查看服务端日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">connected client: 4<br>conn 4 is already<br></code></pre></td></tr></table></figure>
+
+<p>根本没有接收第二个服务端的连接！说明编写的这个程序是没有并发能力的，一定是某个地方写错了</p>
+<p>再返回去看第一个客户端是否能正常收到响应：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">nc localhost 8080<br><br>1 // 发送的<br>1	// 响应的<br></code></pre></td></tr></table></figure>
+
+<p>第一个客户端是可以正常工作的</p>
+<p>再将第一个服务端结束，服务端日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">close conn: 4<br></code></pre></td></tr></table></figure>
+
+<p>此时切换到第二个客户端，发现原来阻塞的请求得到了响应：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">nc localhost 8080<br><br>1<br>l<br></code></pre></td></tr></table></figure>
+
+<p>服务端日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell">// 之前的<br>connected client: 4<br>conn 4 is already<br>close conn: 4<br><br>// 新的 <br>connected client: 4<br>conn 4 is already<br></code></pre></td></tr></table></figure>
+
+
+
+<p>并且之后的所有请求都能够得到响应</p>
+<p>此时再启动第一个客户端：</p>
+<p>服务端日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">connected client: 5<br>conn 5 is already<br></code></pre></td></tr></table></figure>
+
+<p>尝试发送数据：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">kk<br>kk<br>adasd<br>adasd<br></code></pre></td></tr></table></figure>
+
+<p>全部能够得到响应</p>
+<p>再切到第二个客户端，并发送数据，结果发现阻塞了，服务端日志没有任何变化</p>
+<h1 id="正确的代码"><a href="#正确的代码" class="headerlink" title="正确的代码"></a>正确的代码</h1><p>修改为正确的程序：</p>
+<figure class="highlight cc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><code class="hljs cc"><span class="hljs-comment">//</span><br><span class="hljs-comment">// Created by root on 7/17/21.</span><br><span class="hljs-comment">//</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;../pkg/net/net.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/select.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> BUF_SIZE 100</span><br><br><span class="hljs-comment">// g++ -o echo_server echo_server.cc ../pkg/net/net.cpp</span><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-type">char</span> buf[BUF_SIZE];<br>    <span class="hljs-function">Server <span class="hljs-title">s</span><span class="hljs-params">(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;0.0.0.0&quot;</span>, <span class="hljs-string">&quot;8080&quot;</span>)</span></span>;<br>    s.<span class="hljs-built_in">Listen</span>(<span class="hljs-number">1024</span>);<br><br>    fd_set readfds;<br>    <span class="hljs-built_in">FD_ZERO</span>(&amp;readfds);<br>    <span class="hljs-comment">// 监听服务端socket，当有客户连接时会触发事件</span><br>    <span class="hljs-built_in">FD_SET</span>(s.<span class="hljs-built_in">Sockfd</span>(), &amp;readfds);<br><br>    <span class="hljs-type">int</span> maxfd = s.<span class="hljs-built_in">Sockfd</span>();<br><br>    <span class="hljs-keyword">for</span> (; ;) &#123;<br>        <span class="hljs-comment">// 这句话非常重要，否则会出现多条连接只有一条能正常工作，其他全部阻塞的 bug</span><br>        <span class="hljs-comment">// readfds 保存的是要监听的 fd 集合，但是每次调用 select 后，会将这些监</span><br>        <span class="hljs-comment">// 听 fd 中已经准备好的置 1，未准备好的置 0，如果使用这个已被更改的 fdset，</span><br>        <span class="hljs-comment">// 可能会导致一些异常情况发生，所以这里将 fdset 拷贝一份，调用 select 时传</span><br>        <span class="hljs-comment">// 入拷贝值，这样 select 的更改就不会影响到原 fdset</span><br>        fd_set cpyset = readfds;<br><br>        <span class="hljs-comment">// okcnt：准备就绪的 fd 数量</span><br>        <span class="hljs-type">int</span> okcnt = <span class="hljs-built_in">select</span>(maxfd+<span class="hljs-number">1</span>, &amp;cpyset, <span class="hljs-literal">nullptr</span>, <span class="hljs-literal">nullptr</span>, <span class="hljs-literal">nullptr</span>);<br>        <span class="hljs-keyword">if</span> (okcnt == <span class="hljs-number">-1</span>) &#123;<br>            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;select error\n&quot;</span>);<br>            <span class="hljs-keyword">break</span>;<br>        &#125;<br>        <span class="hljs-keyword">if</span> (okcnt == <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-keyword">continue</span>;<br>        &#125;<br><br>        <span class="hljs-comment">// 遍历 select 数组</span><br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; maxfd+<span class="hljs-number">1</span>; ++i) &#123;<br>            <span class="hljs-comment">// 找到所有值为 1 的 fd，这表示该 fd 已经准备就绪了</span><br>            <span class="hljs-keyword">if</span> (<span class="hljs-built_in">FD_ISSET</span>(i, &amp;cpyset)) &#123;<br>                <span class="hljs-comment">// 如果就绪的 fd 为 server,说明有新的连接请求</span><br>                <span class="hljs-keyword">if</span> (i == s.<span class="hljs-built_in">Sockfd</span>()) &#123;<br>                    <span class="hljs-comment">// 调用 accept 接收客户端的连接请求</span><br>                    <span class="hljs-keyword">auto</span> conn = s.<span class="hljs-built_in">Accept</span>();<br>                    <span class="hljs-type">int</span> connfd = conn-&gt;<span class="hljs-built_in">Connfd</span>();<br>                    <span class="hljs-comment">// 更新 maxfd</span><br>                    <span class="hljs-keyword">if</span> (connfd &gt; maxfd) &#123;<br>                        maxfd = connfd;<br>                    &#125;<br>                    <span class="hljs-comment">// 将 conn 的 fd 添加到 select 监听集合中</span><br>                    <span class="hljs-built_in">FD_SET</span>(connfd, &amp;readfds);<br>                    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;connected client: %d\n&quot;</span>, conn-&gt;<span class="hljs-built_in">Connfd</span>());<br>                <span class="hljs-comment">// 如果就绪的 fd 不是 server fd，则是 conn fd</span><br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;conn %d is already\n&quot;</span>, i);<br>                    <span class="hljs-comment">// 可以对这些准备就绪的 conn 进行 echo 处理了</span><br>                    <span class="hljs-type">int</span> n = <span class="hljs-built_in">read</span>(i, buf, BUF_SIZE);<br>                    <span class="hljs-keyword">if</span> (n == <span class="hljs-number">0</span>) &#123;   <span class="hljs-comment">// EOF</span><br>                        <span class="hljs-comment">//</span><br>                        <span class="hljs-built_in">FD_CLR</span>(i, &amp;readfds);<br>                        <span class="hljs-built_in">close</span>(i);<br>                        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;close conn: %d\n&quot;</span>, i);<br>                    &#125; <span class="hljs-keyword">else</span> &#123;<br>                        <span class="hljs-built_in">write</span>(i, buf, n);<br>                    &#125;<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    s.<span class="hljs-built_in">Close</span>();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><br><br></code></pre></td></tr></table></figure>
+
+
+
+<p>这段代码只更改了几个地方：</p>
+<p>29 行的 <code>fd_set cpyset = readfds</code></p>
+<p>32 行的 <code>select(maxfd+1, &amp;cpyset, nullptr, nullptr, nullptr)</code>，将第二个参数由 <code>readfds</code> 更改为 <code>cpyset</code></p>
+<p>44 行的 <code>if (FD_ISSET(i, &amp;cpyset))</code>，之前为 <code>if (FD_ISSET(i, &amp;readfds))</code></p>
+<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>简单说明下程序的流程：</p>
+<p>先将服务端 socket 加入到 select 的监听集合，之后调用 select <code>int okcnt = select(maxfd+1, &amp;readfds, nullptr, nullptr, nullptr);</code> 这里会阻塞，直到有 fd 准备好。</p>
+<p>当服务端 socket 准备好了以后，select 返回 1（因为只监听了一个 fd），继续向下执行 <code>for (int i = 0; i &lt; maxfd+1; ++i)</code>，继续执行 <code>if (FD_ISSET(i, &amp;readfds))</code>，这样会遍历 fdset 并找到准备就绪的 fd，此时只有服务端的 fd 准备好了，所以必然进入下面的语句<code>if (i == s.Sockfd())</code>，之后 <code>FD_SET(connfd, &amp;readfds)</code>并且更新 maxfd。</p>
+<p><strong>问题来了</strong>，<code>FD_SET(connfd, &amp;readfds)</code>是希望将 connfd 添加到监听集合中，但是程序会错误的继续执行 <code>for (int i = 0; i &lt; maxfd+1; ++i)</code>，并找到 connfd，因为刚刚的 FD_SET 操作把其置于 1，导致程序错误的认为该 fd 已经准备就绪，又因为不满足 <code>if (i == s.Sockfd())</code>，所以进入 else 分支，进入 <code>read(i, buf, BUF_SIZE)</code> 操作，但是因为该 fd 根本没有准备好，所以整个程序会进入阻塞。</p>
+<p>造成该问题的根本原因是 select 的机制问题：传入要监听的 fd 到 fdset 中，当其返回时，会将监听中已就绪的置1，未就绪的置 0，fdset 即充当了记录被监听 fd 的角色，又充当了记录已就绪 fd 的角色，这样会导致混乱的结果，在错误的程序中就是这样，<code>readfds</code> 充当了两个角色，导致了程序的不正确。</p>
+<p>解决方法就是额外创建一个 fdset，一个用来记录要监听的 fd，一个记录已就绪 fd，在正确的代码中， <code>readfds</code>就是用来<strong>记录要监听的 fd</strong>，<code>cpyset</code> 是用来记录<strong>已就绪 fd</strong>。</p>
+<p>每次 for 循环，<code>cpyset</code> 都会拷贝 <code>readfds</code>获得要监听的所有 fd，并传入 select，得到已就绪的 fd，之后的 FD_ISSET 也是基于cpyset，当要新记录 fd 时，执行语句<code>FD_SET(connfd, &amp;readfds)</code>，将 fd 添加到 readfds 中，删除 fd 时也是 <code>FD_CLR(i, &amp;readfds)</code>，这样二者各司其职，就可以保证程序的正常工作了。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/">#多路复用</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>linux select 的错误使用案例</div>
+      <div>https://autsu.github.io/2021/07/18/linux-select-de-cuo-wu-shi-yong-an-li/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年7月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/07/20/leetcode-92-fan-zhuan-lian-biao-ii/" title="LeetCode 92. 反转链表 II">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LeetCode 92. 反转链表 II</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/07/01/leetcode-516-zui-chang-hui-wen-zi-xu-lie/" title="LeetCode 516. 最长回文子序列">
+                        <span class="hidden-mobile">LeetCode 516. 最长回文子序列</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,847 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="什么是控制节点高可用控制节点，也可以叫做 k8s master 节点，负责管理和控制整个集群的运行。控制节点上运行着 k8s 控制平面组件，其中包括了负责集群内外通信的超核心的组件  —— api-server，这代表着如果控制节点挂掉了，那么整个集群都会因为 ”群龙无首“ 而不可用，所以在实际的生产环境中，k8s 集群一定会部署多个控制节点，这样可以保证某个节点挂掉后，其他节点还能继续提供服务，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="K8s 控制节点高可用实践 [draft]">
+<meta property="og:url" content="https://autsu.github.io/2023/06/18/k8s-master-ha/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="什么是控制节点高可用控制节点，也可以叫做 k8s master 节点，负责管理和控制整个集群的运行。控制节点上运行着 k8s 控制平面组件，其中包括了负责集群内外通信的超核心的组件  —— api-server，这代表着如果控制节点挂掉了，那么整个集群都会因为 ”群龙无首“ 而不可用，所以在实际的生产环境中，k8s 集群一定会部署多个控制节点，这样可以保证某个节点挂掉后，其他节点还能继续提供服务，">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-18T06:03:23.000Z">
+<meta property="article:modified_time" content="2023-06-23T17:46:35.037Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="k8s">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>K8s 控制节点高可用实践 [draft] - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="K8s 控制节点高可用实践 [draft]"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-18 14:03" pubdate>
+          2023年6月18日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          96 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">K8s 控制节点高可用实践 [draft]</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="什么是控制节点高可用"><a href="#什么是控制节点高可用" class="headerlink" title="什么是控制节点高可用"></a>什么是控制节点高可用</h1><p>控制节点，也可以叫做 k8s master 节点，负责管理和控制整个集群的运行。控制节点上运行着 k8s 控制平面组件，其中包括了负责集群内外通信的超核心的组件  —— api-server，这代表着如果控制节点挂掉了，那么整个集群都会因为 ”群龙无首“ 而不可用，所以在实际的生产环境中，k8s 集群一定会部署多个控制节点，这样可以保证某个节点挂掉后，其他节点还能继续提供服务，即 ”高可用“。</p>
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>在本文中，为了实现高可用，使用了 <code>HAproxy</code> 和 <code>Keepalived</code> 这两个组件，其中：</p>
+<ul>
+<li><code>HAproxy</code> 负责反向代理和负载均衡，有点类似 <code>Nginx</code>，其代理实际的 k8s master 节点地址，当用户访问 HAproxy 时，HAproxy 会通过负载均衡的方式，将用户的请求转发给 k8s master 节点。</li>
+<li>Keepalived 为 <code>HAproxy</code> 提供高可用。HAproxy 提供了反向代理服务，如果 HAproxy 挂掉了，那么用户的请求就到不了 master 节点，一样会导致服务不可用，所以同样也需要为 HAproxy 提供高可用保证。Keepalived 会先创建一个固定的 VIP（VIP，即虚拟 IP），并将其绑定到某个运行了 HAproxy 的节点（也可以称之为 LB 节点）的某张网卡上，用户只需要访问这个 VIP，即可访问到这个 VIP 绑定的节点的 HAproxy，如果这个节点的 HAproxy 挂掉了，或者干脆这个节点都挂掉了，那么 Keepalived 检测到后，会进行 VIP 漂移的操作，将这个 VIP 绑定到另一个 LB 节点的某个网卡上，用户依然访问这个 VIP 即可，完全不受任何影响。</li>
+</ul>
+<h1 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h1><h2 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h2><p>在本次实践中，我们使用的是外部负载均衡器的方式，即 HAproxy 单独部署在非 k8s 集群的机器上。</p>
+<ul>
+<li>两台主机，用来作为负载均衡服务器，其中一台为 master（主），另一台 backup（备），正常情况下会由 master 提供负载均衡服务，如果 master 挂掉了，则转而由 backup 提供。</li>
+</ul>
+<h2 id="安装-haproxy-和-keepalived"><a href="#安装-haproxy-和-keepalived" class="headerlink" title="安装 haproxy 和 keepalived"></a>安装 haproxy 和 keepalived</h2><p>分别在两台负载均衡主机上安装 haproxy 和 keepalived：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">apt install haproxy keepalived -y<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="配置-Keepalived"><a href="#配置-Keepalived" class="headerlink" title="配置 Keepalived"></a>配置 Keepalived</h2><p>然后，分别给两台主机配置 keepalived 配置文件，该配置文件位于 <code>/etc/keepalived/keepalived.conf</code>，下面是模版：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs awk">! <span class="hljs-regexp">/etc/</span>keepalived/keepalived.conf<br>! Configuration File <span class="hljs-keyword">for</span> keepalived<br>global_defs &#123;<br>    router_id LVS_DEVEL<br>    script_user root	<br>    enable_script_security<br>&#125;<br><br>vrrp_script chk_haproxy &#123;<br>    script  <span class="hljs-string">&quot;killall -0 haproxy&quot;</span><br>    interval  <span class="hljs-number">2</span><br>    weight  <span class="hljs-number">2</span><br>&#125;<br><br>vrrp_instance VI_1 &#123;<br>    state  <span class="hljs-variable">$&#123;STATE&#125;</span> <br>    interface <span class="hljs-variable">$&#123;INTERFACE&#125;</span><br>    virtual_router_id  <span class="hljs-variable">$&#123;ROUTER_ID&#125;</span><br>    priority <span class="hljs-variable">$&#123;PRIORITY&#125;</span><br>    authentication &#123;<br>        auth_type PASS<br>        auth_pass <span class="hljs-variable">$&#123;AUTH_PASS&#125;</span><br>    &#125;<br>    virtual_ipaddress &#123;<br>        <span class="hljs-variable">$&#123;APISERVER_VIP&#125;</span><br>    &#125;<br>    track_script &#123;<br>        chk_haproxy<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>上面的模板文件中有部分内容（用 ${} 包裹的一些变量）需要替换为自己相应的内容，详细如下：</p>
+<table>
+<thead>
+<tr>
+<th>需要替换的变量</th>
+<th align="left">替换内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>${STATE}</td>
+<td align="left">如果是主节点 则为 MASTER 其他则为 BACKUP。我这里选择 lb1 这台主机 为 MASTER；lb2 为 BACKUP</td>
+</tr>
+<tr>
+<td>${INTERFACE}</td>
+<td align="left">网络接口，即服务器网卡，我的服务器均为 eth1；</td>
+</tr>
+<tr>
+<td>${ROUTER_ID}</td>
+<td align="left">这个值只要在 keepalived 集群中保持一致即可，我使用的是默认值 51；</td>
+</tr>
+<tr>
+<td>${PRIORITY}</td>
+<td align="left">优先级，优先级高的会拿到 VIP。这里需要保证 master 节点的高于 backup 节点。</td>
+</tr>
+<tr>
+<td>${AUTH_PASS}</td>
+<td align="left">这个值只要在 keepalived 集群中保持一致即可；</td>
+</tr>
+<tr>
+<td>${APISERVER_VIP}</td>
+<td align="left">就是 VIP 的地址，我的为 192.168.31.110</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>简单说明一下这段配置文件：</p>
+<p>global_defs 块中的  <code>script_user root</code> 和 <code>enable_script_security</code> 用于解决 Keepalived 执行脚本时报错 <code>scripts are being executed but script_security not enabled.</code> 的问题，不用过多关注。</p>
+<p>vrrp_script chk_haproxy 块有一个 script 字段，可以指定为一个 shell 文件所在路径，或者一条命令。这个块还拥有一个 weight 字段，表示脚本执行结果对当前节点优先级的影响。具体来说，Keepalived 会 <strong>定期执行这个脚本</strong>，如果脚本执行成功了，那么当前节点的优先级会增加 weight 对应的值，如果执行失败了，则会减掉相应的值，而每个节点的优先级又决定了 VIP 会绑定到谁（VIP 会绑定到优先级最高的那个节点），所以可以说，<strong>这个块可以用来作为 Keepalived 判断是否需要进行 VIP 漂移的依据</strong>。</p>
+<p>vrrp_instance 块则代表 Keepalived 中一个具体实例，主要用来定义实例相关的配置，包括该实例是主还是备、对应网络接口、优先级、认证方式和 VIP 等信息，这个块里面还有一个 track_script 块，其指定的正是上面我们定义的 vrrp_script 的名字。</p>
+</blockquote>
+<div class="note note-warning">
+            <p>注意，master 和 backup 的配置文件会有所不同，不能直接把 master 节点的 keepalived 配置文件拷贝给 backup 节点。</p>
+          </div>
+
+<div class="note note-warning">
+            <p>${PRIORITY} 这个值的设置有点名堂，不是简单的 master 大于 backup 即可，否则可能会出现 VIP 无法正确漂移的情况。简单的说，你需要确保 master 大于 backup，且二者的差值小于 vrrp_script 中的 weight。比如如果 weight 为 2，那么你需要分别设置 master 和 backup 的 priority 为 50 和 49（其他数字也行，只要二者差值小于 2 即可）。你可以阅读文章中 <strong>验证 VIP 漂移&#x2F;验证不通过</strong> 开始的章节来了解原因。</p>
+          </div>
+
+<p><del>此外，上面的配置文件中还有一个需要注意的地方，即 vrrp_script check_apiserver 块的 script 字段，需要指定健康检查脚本的所在路径，监控检查脚本的内容如下：</del></p>
+<p><del>保存在 <code>/etc/keepalived/check_apiserver.sh</code></del></p>
+<p><del>#bin&#x2F;sh</del></p>
+<p><del>errorExit() {</del><br>    <del>echo “*** $*” 1&gt;&amp;2</del><br>    <del>exit 1</del><br><del>}</del></p>
+<p><del>APISERVER_VIP&#x3D;192.168.31.110</del><br><del>APISERVER_DEST_PORT&#x3D;6443</del></p>
+<p><del>curl –silent –max-time 2 –insecure <a href="https://localhost:${APISERVER_DEST_PORT}/">https://localhost:${APISERVER_DEST_PORT}/</a> -o &#x2F;dev&#x2F;null || errorExit “Error GET <a href="https://localhost:${APISERVER_DEST_PORT}/">https://localhost:${APISERVER_DEST_PORT}/</a>“</del><br><del>if ip addr | grep -q ${APISERVER_VIP}; then</del><br>    <del>curl –silent –max-time 2 –insecure https:&#x2F;&#x2F;${APISERVER_VIP}:${APISERVER_DEST_PORT}&#x2F; -o &#x2F;dev&#x2F;null || errorExit “Error GET https:&#x2F;&#x2F;${APISERVER_VIP}:${APISERVER_DEST_PORT}&#x2F;“</del><br><del>fi</del></p>
+<table>
+<thead>
+<tr>
+<th><del>需要替换的变量</del></th>
+<th><del>替换内容</del></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><del>${APISERVER_VIP}</del></td>
+<td><del>VIP 的地址</del></td>
+</tr>
+<tr>
+<td><del>${APISERVER_DEST_PORT}</del></td>
+<td><del>定义 API Server 交互的负载均衡端口，其实就是 HAProxy 绑定前端负载均衡的端口号</del></td>
+</tr>
+</tbody></table>
+<p>下面是我配置好的 master 和 backup 的配置文件，可以参考一下：</p>
+<p><strong>master</strong></p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs angelscript"><span class="hljs-string">&quot;keepalived.conf&quot;</span> <span class="hljs-number">27</span>L, <span class="hljs-number">485</span>B                                                  <span class="hljs-number">22</span>,<span class="hljs-number">24</span>         All<br>! /etc/keepalived/keepalived.conf<br>! Configuration File <span class="hljs-keyword">for</span> keepalived<br>global_defs &#123;<br>    router_id LVS_DEVEL<br>    script_user root	<br>    enable_script_security<br>&#125;<br>vrrp_script chk_haproxy &#123;<br>    script  <span class="hljs-string">&quot;killall -0 haproxy&quot;</span><br>    <span class="hljs-built_in">int</span>erval  <span class="hljs-number">2</span><br>    weight  <span class="hljs-number">2</span><br>&#125;<br><br>vrrp_instance VI_1 &#123;<br>    state MASTER<br>    <span class="hljs-keyword">interface</span> <span class="hljs-symbol">eth1</span><br>    <span class="hljs-symbol">virtual_router_id</span> <span class="hljs-symbol">51</span><br>    <span class="hljs-symbol">priority</span> <span class="hljs-symbol">50</span><br>    <span class="hljs-symbol">authentication</span> &#123;<br>        auth_type PASS<br>        auth_pass pwd12345<br>    &#125;<br>    virtual_ipaddress &#123;<br>       <span class="hljs-number">192.168</span><span class="hljs-number">.31</span><span class="hljs-number">.110</span>/<span class="hljs-number">24</span><br>    &#125;<br>    track_script &#123;<br>        chk_haproxy<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>backup</strong></p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">! /etc/keepalived/keepalived.conf<br>! Configuration File <span class="hljs-keyword">for</span> keepalived<br>global_defs &#123;<br>    router_id LVS_DEVEL<br>    script_user root	<br>    enable_script_security<br>&#125;<br>vrrp_script chk_haproxy &#123;<br>    script  <span class="hljs-string">&quot;killall -0 haproxy&quot;</span><br>    <span class="hljs-built_in">int</span>erval  <span class="hljs-number">2</span><br>    weight  <span class="hljs-number">2</span><br>&#125;<br><br>vrrp_instance VI_1 &#123;<br>    state BACKUP<br>    <span class="hljs-keyword">interface</span> <span class="hljs-symbol">eth1</span><br>    <span class="hljs-symbol">virtual_router_id</span> <span class="hljs-symbol">51</span><br>    <span class="hljs-symbol">priority</span> <span class="hljs-symbol">49</span><br>    <span class="hljs-symbol">authentication</span> &#123;<br>        auth_type PASS<br>        auth_pass pwd12345<br>    &#125;<br>    virtual_ipaddress &#123;<br>       <span class="hljs-number">192.168</span><span class="hljs-number">.31</span><span class="hljs-number">.110</span>/<span class="hljs-number">24</span><br>    &#125;<br>    track_script &#123;<br>        chk_haproxy<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="配置-HAproxy"><a href="#配置-HAproxy" class="headerlink" title="配置 HAproxy"></a>配置 HAproxy</h2><p>接下来继续配置 HAproxy：</p>
+<p>该文件位于 <code>/etc/haproxy/haproxy.cfg</code></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-comment">#---------------------------------------------------------------------</span><br><span class="hljs-comment"># Example configuration for a possible web application.  See the</span><br><span class="hljs-comment"># full configuration options online.</span><br><span class="hljs-comment">#</span><br><span class="hljs-comment">#   http://haproxy.1wt.eu/download/1.4/doc/configuration.txt</span><br><span class="hljs-comment">#</span><br><span class="hljs-comment">#---------------------------------------------------------------------</span><br><br><span class="hljs-comment">#---------------------------------------------------------------------</span><br><span class="hljs-comment"># Global settings</span><br><span class="hljs-comment">#---------------------------------------------------------------------</span><br><span class="hljs-attribute">global</span><br>    <span class="hljs-comment"># to have these messages end up in /var/log/haproxy.log you will</span><br>    <span class="hljs-comment"># need to:</span><br>    <span class="hljs-comment">#</span><br>    <span class="hljs-comment"># 1) configure syslog to accept network log events.  This is done</span><br>    <span class="hljs-comment">#    by adding the &#x27;-r&#x27; option to the SYSLOGD_OPTIONS in</span><br>    <span class="hljs-comment">#    /etc/sysconfig/syslog</span><br>    <span class="hljs-comment">#</span><br>    <span class="hljs-comment"># 2) configure local2 events to go to the /var/log/haproxy.log</span><br>    <span class="hljs-comment">#   file. A line like the following can be added to</span><br>    <span class="hljs-comment">#   /etc/sysconfig/syslog</span><br>    <span class="hljs-comment">#</span><br>    <span class="hljs-comment">#    local2.*                       /var/log/haproxy.log</span><br>    <span class="hljs-comment">#</span><br>    <span class="hljs-attribute">log</span>         <span class="hljs-number">127.0.0.1</span> local2<br><br>    <span class="hljs-attribute">chroot</span>      /var/lib/haproxy<br>    <span class="hljs-attribute">pidfile</span>     /var/run/haproxy.pid<br>    <span class="hljs-attribute">maxconn</span>     <span class="hljs-number">4000</span><br>    <span class="hljs-attribute">user</span>        haproxy<br>    <span class="hljs-attribute">group</span>       haproxy<br>    <span class="hljs-attribute">daemon</span><br><br>    <span class="hljs-comment"># turn on stats unix socket</span><br>    <span class="hljs-attribute">stats</span> socket /var/lib/haproxy/stats<br><br><span class="hljs-comment">#---------------------------------------------------------------------</span><br><span class="hljs-comment"># common defaults that all the &#x27;listen&#x27; and &#x27;backend&#x27; sections will</span><br><span class="hljs-comment"># use if not designated in their block</span><br><span class="hljs-comment">#---------------------------------------------------------------------</span><br><span class="hljs-attribute">defaults</span><br>    <span class="hljs-attribute">mode</span>                    http<br>    <span class="hljs-attribute">log</span>                     global<br>    <span class="hljs-attribute">option</span>                  httplog<br>    <span class="hljs-attribute">option</span>                  dontlognull<br>    <span class="hljs-attribute">option</span> http-server-close<br>    <span class="hljs-attribute">option</span> forwardfor       except <span class="hljs-number">127.0.0.0</span>/<span class="hljs-number">8</span><br>    <span class="hljs-attribute">option</span>                  redispatch<br>    <span class="hljs-attribute">retries</span>                 <span class="hljs-number">3</span><br>    <span class="hljs-attribute">timeout</span> http-request    <span class="hljs-number">10</span>s<br>    <span class="hljs-attribute">timeout</span> queue           <span class="hljs-number">1</span>m<br>    <span class="hljs-attribute">timeout</span> connect         <span class="hljs-number">10</span>s<br>    <span class="hljs-attribute">timeout</span> client          <span class="hljs-number">1</span>m<br>    <span class="hljs-attribute">timeout</span> server          <span class="hljs-number">1</span>m<br>    <span class="hljs-attribute">timeout</span> http-keep-alive <span class="hljs-number">10</span>s<br>    <span class="hljs-attribute">timeout</span> check           <span class="hljs-number">10</span>s<br>    <span class="hljs-attribute">maxconn</span>                 <span class="hljs-number">3000</span><br><br><span class="hljs-comment">#---------------------------------------------------------------------</span><br><span class="hljs-comment"># apiserver frontend which proxys to the masters</span><br><span class="hljs-comment">#---------------------------------------------------------------------</span><br><span class="hljs-attribute">frontend</span> apiserver<br>    <span class="hljs-attribute">bind</span> *:<span class="hljs-number">6443</span>   ## 注意这里的端口，其实就是 haproxy 的端口，后面加入集群的时候需要用到<br>    <span class="hljs-attribute">mode</span> tcp<br>    <span class="hljs-attribute">option</span> tcplog<br>    <span class="hljs-attribute">default_backend</span> apiserver<br><br><span class="hljs-comment">#---------------------------------------------------------------------</span><br><span class="hljs-comment"># round robin balancing for apiserver</span><br><span class="hljs-comment">#---------------------------------------------------------------------</span><br><span class="hljs-attribute">backend</span> apiserver<br>    <span class="hljs-attribute">option</span> httpchk GET /healthz<br>    <span class="hljs-attribute">http</span>-check expect status <span class="hljs-number">200</span><br>    <span class="hljs-attribute">mode</span> tcp<br>    <span class="hljs-attribute">option</span> ssl-hello-chk<br>    <span class="hljs-attribute">balance</span>     roundrobin<br>        <span class="hljs-attribute">server</span> k8s-master1 <span class="hljs-number">192.168.31.86:6443</span> check<br>        <span class="hljs-attribute">server</span> k8s-master2 <span class="hljs-number">192.168.31.82:6443</span> check<br>        <span class="hljs-attribute">server</span> k8s-master3 <span class="hljs-number">192.168.31.83:6443</span> check<br></code></pre></td></tr></table></figure>
+
+<p>这里主要关注两个地方，一个是 frontend apiserver 下的 bind，该字段用于定义 HAproxy 监听的地址；另一个是 backend apiserver 下的 balance     roundrobin 字段，这里指定为你的 k8s master 节点的 IP 地址。</p>
+<p>HAproxy 的配置文件是通用的，所以可以直接拷贝到另一台 LB 主机（当然手动复制粘贴问题也不大，毕竟只有 2 个节点）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">scp /etc/haproxy/haproxy.cfg  root@192.168.31.91:/etc/haproxy<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="启动服务并配置开机自启"><a href="#启动服务并配置开机自启" class="headerlink" title="启动服务并配置开机自启"></a>启动服务并配置开机自启</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">systemctl enable haproxy --now<br>systemctl enable keepalived --now<br></code></pre></td></tr></table></figure>
+
+<div class="note note-info">
+            <p>我在执行这一步时，遇到了 haproxy 进程已经启动（ps -rf | grep haproxy），但却没有监听对应端口的情况（lsof -i :6443），最终通过 <code>systemctl restart haproxy</code> 重启 HAproxy 解决了。</p>
+          </div>
+
+
+
+<h2 id="验证-VIP-漂移"><a href="#验证-VIP-漂移" class="headerlink" title="验证 VIP 漂移"></a>验证 VIP 漂移</h2><p>看一下这两台主机的网卡情况，首先看一下 lb1 这台作为 master 节点的主机：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs shell">ip addr<br>// .... 省略其他网卡，我在配置文件里指定的是 eth1 这种网卡<br>3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc mq state UP group default qlen 1000<br>    link/ether 52:54:00:47:ec:3f brd ff:ff:ff:ff:ff:ff<br>    inet 192.168.31.90/24 brd 192.168.31.255 scope global eth1<br>       valid_lft forever preferred_lft forever<br>    inet 192.168.31.110/32 scope global eth1<br>       valid_lft forever preferred_lft forever<br>    inet6 fe80::5054:ff:fe47:ec3f/64 scope link<br>       valid_lft forever preferred_lft forever<br></code></pre></td></tr></table></figure>
+
+<p>可以看到这张网卡有两个 IPv4 地址，其中 192.168.31.110&#x2F;32 就是我们定义的 keepalived VIP。</p>
+<p>再看一下作为备节点的这台主机的网卡情况：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell">ip addr<br>// .... 省略其他网卡<br>3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc mq state UP group default qlen 1000<br>    link/ether 52:54:00:56:20:5e brd ff:ff:ff:ff:ff:ff<br>    inet 192.168.31.91/24 brd 192.168.31.255 scope global eth1<br>       valid_lft forever preferred_lft forever<br>    inet6 fe80::5054:ff:fe56:205e/64 scope link<br>       valid_lft forever preferred_lft forever<br></code></pre></td></tr></table></figure>
+
+<p>这台主机的 eth1 网卡并没有绑定 VIP</p>
+<p>然后我停掉 master 节点的 HAproxy 进程，看看 VIP 会不会漂移到 backup 节点。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">在 master 节点上执行，停止这台机器上的 haproxy 进程</span><br>systemctl stop haproxy<br><span class="hljs-meta prompt_"># </span><span class="language-bash">检查一下</span><br>ps -ef | grep haproxy<br>root       12382   11336  0 22:34 pts/1    00:00:00 grep --color=auto haproxy # 这个进程是 grep 的，与 haproxy 本身无关<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">然后看一下 IP：</span><br>ip addr<br>3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc mq state UP group default qlen 1000<br>    link/ether 52:54:00:47:ec:3f brd ff:ff:ff:ff:ff:ff<br>    inet 192.168.31.90/24 brd 192.168.31.255 scope global eth1<br>       valid_lft forever preferred_lft forever<br>    inet 192.168.31.110/24 scope global secondary eth1<br>       valid_lft forever preferred_lft forever<br>    inet6 fe80::5054:ff:fe47:ec3f/64 scope link<br>       valid_lft forever preferred_lft forever<br></code></pre></td></tr></table></figure>
+
+<h3 id="验证不通过"><a href="#验证不通过" class="headerlink" title="验证不通过"></a>验证不通过</h3><p>发现 VIP 并没有漂移！并且我已经检查过，backup 节点的 HAproxy 是正常运行的，然后我又试了下 stop master 节点的 keepalived 进程，发现此时 VIP 会漂移到 backup 节点，但是一旦重新启动 master 节点上的 keepalived，那么 VIP 又会重新漂移到 master 节点，这显然不符预期啊？我们期望的是用 keepalived 对 HAproxy 做高可用，如果某个节点上的 HAproxy 都已经挂掉了，VIP 却还停留在该节点上，那到时候 k8s 还是会请求到这个节点，但是又无法转发给实际的 k8s 控制节点，导致无法工作。不知道为啥会出现这种情况</p>
+<p>我在 <a target="_blank" rel="noopener" href="https://serverfault.com/questions/764557/keepalived-registers-failure-but-wont-failover">serverfault </a>上找到了一个情况相同的问题，但是并没有人给出靠谱的解决方法</p>
+<h3 id="终于解决了"><a href="#终于解决了" class="headerlink" title="终于解决了"></a>终于解决了</h3><p>我尝试使用英文，在谷歌上搜索 <a target="_blank" rel="noopener" href="https://serverfault.com/questions/718132/keepalived-vrrp-script-not-failing-over">keepalived VRRP_script not failing over</a>，最终找到了这个靠谱的回答。</p>
+<p>原因出在 keepalived 配置中的 priority，即优先级，貌似 keepalived 是严格按照 priority 来决定谁拥有 VIP 的，也就是说，只有在 <strong>另一台主机的 priority 高于当前拥有 VIP 的主机的 priority 的情况下，VIP 才会进行漂移</strong>。在上面的配置中，我们给 master 节点的 priority 设置成了 100，而 backup 节点的 priority 设置为了 50，两者相差 50！而我们在 <code>vrrp_script chk_haproxy</code> 中定义的 <code>weight</code> 值为 2，也就是当前节点如果成功执行脚本且没有返回错误，则给当前节点的 priority + 2（这里貌似是只有第一次执行成功会 +2，之后再执行成功就不会 +2 了？不太确定），然后现在的情况是：master 执行失败，priority 保持原样 &#x3D; 100，backup 执行成功，priority + 2 &#x3D; 52，backup 的 priority 依然远小于 master，所以 VIP 依然保持在 master 节点，不会漂移到  backup 节点。</p>
+<p><strong>解决这个问题的方法也很简单，我修改了一下 master 节点的 priority，将其改为 50，而 backup 的 priority 我改成了 49，这样二者只相差 1</strong>，如果 backup 执行脚本成功，则其 priority 变为 51，master 执行失败，则依然为 50，这样就可以保证 backup 的优先级大于 master，从而实现 VIP 的漂移。而如果 master 上的 haproxy 恢复正常了，则脚本执行成功， priority 又会变成 50 + 2 &#x3D; 52，大于 backup 的 priority，所以 VIP 的掌控权又会回到 master 手中，符合我们的需求。</p>
+<div class="note note-success">
+            <p>经过我的测试，发现 priority 的增减逻辑是这样的：</p><ul><li><p>如果 <code>vrrp_script</code> 执行成功，且是第一次执行成功，则 priority + 2</p></li><li><p>如果 <code>vrrp_script</code> 执行失败，且是第一次执行失败，则 priority - 2</p><p>可以通过日志佐证这一点，这是 master 节点的日志，可以通过 <code>journalctl -u keepalived.service</code> 查看：</p><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">Jun</span> <span class="hljs-number">23</span> <span class="hljs-number">23</span>:<span class="hljs-number">56</span>:<span class="hljs-number">55</span> lb1 Keepalived_vrrp[<span class="hljs-number">1905</span>]: Script `chk_haproxy` now returning <span class="hljs-number">0</span><br><span class="hljs-attribute">Jun</span> <span class="hljs-number">23</span> <span class="hljs-number">23</span>:<span class="hljs-number">56</span>:<span class="hljs-number">55</span> lb1 Keepalived_vrrp[<span class="hljs-number">1905</span>]: VRRP_Script(chk_haproxy) succeeded<br><span class="hljs-attribute">Jun</span> <span class="hljs-number">23</span> <span class="hljs-number">23</span>:<span class="hljs-number">56</span>:<span class="hljs-number">55</span> lb1 Keepalived_vrrp[<span class="hljs-number">1905</span>]: (VI_1) Changing effective priority from <span class="hljs-number">50</span> to <span class="hljs-number">52</span><br><span class="hljs-attribute">Jun</span> <span class="hljs-number">23</span> <span class="hljs-number">23</span>:<span class="hljs-number">56</span>:<span class="hljs-number">55</span> lb1 Keepalived_vrrp[<span class="hljs-number">1905</span>]: (VI_1) received lower priority (<span class="hljs-number">51</span>) advert from <span class="hljs-number">19</span>&gt;<br><span class="hljs-attribute">Jun</span> <span class="hljs-number">23</span> <span class="hljs-number">23</span>:<span class="hljs-number">56</span>:<span class="hljs-number">56</span> lb1 Keepalived_vrrp[<span class="hljs-number">1905</span>]: (VI_1) received lower priority (<span class="hljs-number">51</span>) advert from <span class="hljs-number">19</span>&gt;<br><span class="hljs-attribute">Jun</span> <span class="hljs-number">23</span> <span class="hljs-number">23</span>:<span class="hljs-number">56</span>:<span class="hljs-number">57</span> lb1 Keepalived_vrrp[<span class="hljs-number">1905</span>]: (VI_1) received lower priority (<span class="hljs-number">51</span>) advert from <span class="hljs-number">19</span>&gt;<br><span class="hljs-attribute">Jun</span> <span class="hljs-number">23</span> <span class="hljs-number">23</span>:<span class="hljs-number">56</span>:<span class="hljs-number">58</span> lb1 Keepalived_vrrp[<span class="hljs-number">1905</span>]: (VI_1) Entering MASTER STATE<br><span class="hljs-attribute">Jun</span> <span class="hljs-number">24</span> <span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">33</span> lb1 Keepalived_vrrp[<span class="hljs-number">1905</span>]: Script `chk_haproxy` now returning <span class="hljs-number">1</span><br><span class="hljs-attribute">Jun</span> <span class="hljs-number">24</span> <span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">33</span> lb1 Keepalived_vrrp[<span class="hljs-number">1905</span>]: VRRP_Script(chk_haproxy) failed (exited with statu&gt;<br><span class="hljs-attribute">Jun</span> <span class="hljs-number">24</span> <span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">33</span> lb1 Keepalived_vrrp[<span class="hljs-number">1905</span>]: (VI_1) Changing effective priority from <span class="hljs-number">52</span> to <span class="hljs-number">50</span><br><span class="hljs-attribute">Jun</span> <span class="hljs-number">24</span> <span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">36</span> lb1 Keepalived_vrrp[<span class="hljs-number">1905</span>]: (VI_1) Master received advert from <span class="hljs-number">192.168.31.91</span> w&gt;<br><span class="hljs-attribute">Jun</span> <span class="hljs-number">24</span> <span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">36</span> lb1 Keepalived_vrrp[<span class="hljs-number">1905</span>]: (VI_1) Entering BACKUP STATE<br></code></pre></td></tr></table></figure><p>23:56:57 时，我重启了 master 节点的 haproxy ，所以脚本执行成功，日志输出 <code>VRRP_Script(chk_haproxy) succeeded</code> ，对应的会 <code>Changing effective priority from 52 to 50</code>，并且只 + 2 了一次，之后都没有变化了，这代表只有第一次成功时会增加。在 00:00:33 的时候，我 stop 了 master 节点的 haproxy，导致脚本执行失败，日志输出 <code>VRRP_Script(chk_haproxy) failed (exited with statu&gt;</code>，然后 <code>(VI_1) Changing effective priority from 52 to 50</code>。</p></li></ul>
+          </div>
+
+<p>除此之外，好像也可以修改 <code>vrrp_script</code> 的 weight 为负数，这样执行失败就会扣除对应节点的优先级？这种方法我这里就先不尝试了。</p>
+<div class="note note-success">
+            <p>Tips：<br>可以使用 <code>kill -HUP $(cat /var/run/keepalived.pid)</code> 命令，让 keepalived 重载配置文件。<br>使用 <code>journalctl -u keepalived.service</code> 查看 keepalived 的日志。</p>
+          </div>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/k8s/">#k8s</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>K8s 控制节点高可用实践 [draft]</div>
+      <div>https://autsu.github.io/2023/06/18/k8s-master-ha/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/06/06/tcp-liu-liang-kong-zhi/" title="TCP 滑动窗口与流量控制">
+                        <span class="hidden-mobile">TCP 滑动窗口与流量控制</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

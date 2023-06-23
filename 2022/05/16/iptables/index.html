@@ -1,0 +1,826 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="文档状态：Draft   链，表和规则规则顾名思义，规则就是针对网络包的不同 行为，做出对应的 处理操作，比如如果我收到的网络包的 IP 是 xx.xx.xx.xx，那么我就将其丢弃；如果我收到的包的端口是 8080，我就将其转发给 XXX 之类的，也可以说，规则就是匹配条件 + 处理操作。 匹配条件 示例  阻止特定的 ip 地址 在我们继续进行其他示例之前，如果您想阻止特定的 ip 地址，您">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux iptables">
+<meta property="og:url" content="https://autsu.github.io/2022/05/16/iptables/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="文档状态：Draft   链，表和规则规则顾名思义，规则就是针对网络包的不同 行为，做出对应的 处理操作，比如如果我收到的网络包的 IP 是 xx.xx.xx.xx，那么我就将其丢弃；如果我收到的包的端口是 8080，我就将其转发给 XXX 之类的，也可以说，规则就是匹配条件 + 处理操作。 匹配条件 示例  阻止特定的 ip 地址 在我们继续进行其他示例之前，如果您想阻止特定的 ip 地址，您">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-05-16T02:53:35.000Z">
+<meta property="article:modified_time" content="2023-05-19T14:29:02.068Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>linux iptables - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="linux iptables"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-05-16 10:53" pubdate>
+          2022年5月16日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          50 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">linux iptables</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>文档状态：Draft</p>
+</blockquote>
+<hr>
+<h1 id="链，表和规则"><a href="#链，表和规则" class="headerlink" title="链，表和规则"></a>链，表和规则</h1><h2 id="规则"><a href="#规则" class="headerlink" title="规则"></a>规则</h2><p>顾名思义，规则就是针对网络包的不同 <strong>行为</strong>，做出对应的 <strong>处理操作</strong>，比如如果我收到的网络包的 IP 是 xx.xx.xx.xx，那么我就将其丢弃；如果我收到的包的端口是 8080，我就将其转发给 XXX 之类的，也可以说，<strong>规则就是匹配条件 + 处理操作</strong>。</p>
+<p><strong>匹配条件</strong></p>
+<p><strong>示例</strong></p>
+<ul>
+<li><p>阻止特定的 ip 地址</p>
+<p>在我们继续进行其他示例之前，如果您想阻止特定的 ip 地址，您应该首先执行如下所示的操作。将下面示例中的“xxxx”更改为您要阻止的特定IP地址。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">BLOCK_THIS_IP=&quot;xxxx&quot;<br>iptables -A INPUT -s &quot;$BLOCK_THIS_IP&quot; -j DROP<br></code></pre></td></tr></table></figure></li>
+</ul>
+<p>相互之间的关系如下：</p>
+<p>一条链上可以有多条规则。</p>
+<p>一张表里可以存多条相同种类的规则</p>
+<h1 id="规则相关命令"><a href="#规则相关命令" class="headerlink" title="规则相关命令"></a>规则相关命令</h1><h2 id="查看规则"><a href="#查看规则" class="headerlink" title="查看规则"></a>查看规则</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">查看 filter 表的所有规则，-t 后面跟表名</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t filter -L</span> <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看 raw 表的所有规则</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t raw -L</span>    <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看 filter 表（-t 缺省时，默认为 filter 表）的 INPUT 链上的所有规则</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -L INPUT</span>     <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">加 -v 可以输出更详细的信息</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -vL INPUT</span>    <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">加 -n 会直接输出 IP 地址，不加的话会继续转换，比如 0.0.0.0 会转换为 anywhere</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -nL INPUT</span>    <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">为输出的规则列表添加序号</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables --line -L INPUT</span> <br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="操作规则"><a href="#操作规则" class="headerlink" title="操作规则"></a>操作规则</h2><h3 id="清空规则"><a href="#清空规则" class="headerlink" title="清空规则"></a>清空规则</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">清空 filter 表 INPUT 链中的规则</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -F INPUT</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="添加规则"><a href="#添加规则" class="headerlink" title="添加规则"></a>添加规则</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t filter -I INPUT -s 192.168.64.1 -j DROP</span><br></code></pre></td></tr></table></figure>
+
+<p>上面的命令表示：在 filter 表的 INPUT 链中添加一条规则：丢弃（DROP）源地址为 192.168.64.1 的报文</p>
+<p>每个参数的意思：</p>
+<p>-t：指定要操作的表，此处指定了操作 filter 表，不使用 -t 选项指定表时，默认为操作 filter 表</p>
+<p>-I：指明将 ”规则” 插入至哪个链中，即添加规则</p>
+<p>-s：指明“匹配条件”中的”源地址”，如果报文的源地址属于-s对应的地址，那么报文则满足匹配条件</p>
+<p>-j：指明当”匹配条件”被满足时，所对应的动作</p>
+<p>测试：</p>
+<p>上面添加的 192.168.64.1是我的宿主机 ip，现在用宿主机来访问一下这台设置了规则的虚拟机：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">ping 192.168.64.5 <span class="hljs-comment"># ping 虚拟机</span></span><br>PING 192.168.64.5 (192.168.64.5): 56 data bytes<br>Request timeout for icmp_seq 0<br>Request timeout for icmp_seq 1<br>Request timeout for icmp_seq 2<br></code></pre></td></tr></table></figure>
+
+<p>发现已经无法访问了。（之后发现 ssh 给断了，虚拟机也进不去了，用的是 multipass😅）</p>
+<p>添加规则的同时可以指定其插入的位置，不同的位置会影响规则的执行。具体的例子可以参考 <a target="_blank" rel="noopener" href="https://www.zsythink.net/archives/1517%EF%BC%8C%E5%A4%A7%E8%87%B4%E6%B5%81%E7%A8%8B%E6%98%AF%EF%BC%9A%E5%B7%B2%E7%BB%8F%E8%AE%BE%E7%BD%AE%E4%BA%86%E4%B8%80%E6%9D%A1">https://www.zsythink.net/archives/1517，大致流程是：已经设置了一条</a> drop 规则，如果追加一条相同 ip，但是 accept 的规则，发现依然无法 ping 通，因为 drop 在前 accept 在后；但是如果将 accept 插入到头部，那么 INPUT 链会先执行 accept 规则，数据包就会被放行，因为报文已经被放行了，所以，即使第二条 drop 规则能够匹配到刚才”放行”的报文，也没有机会再对刚才的报文进行丢弃操作了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">-A 追加一条规则（append），也就是添加到末尾</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -A INPUT -s 192.168.64.1 -j ACCEPT</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">-I 添加到头部</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -I INPUT -s 192.168.64.1 -j ACCEPT</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">插入到规则的下标 2 处</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -I INPUT 2 -s 192.168.64.1 -j ACCEPT</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="删除规则"><a href="#删除规则" class="headerlink" title="删除规则"></a>删除规则</h3><p><strong>根据规则编号删除</strong>（指定 –line ）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t filter -D INPUT 3</span><br></code></pre></td></tr></table></figure>
+
+<p>上面的命令会删除 filter 表的 INPUT 链的第 3 条规则</p>
+<p><strong>根据匹配条件删除</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -D INPUT -s 192.168.64.1 -j ACCEPT</span><br></code></pre></td></tr></table></figure>
+
+<p>上述命令表示删除 INPUT 链中源地址为 192.168.64.1，动作为 ACCEPT 的规则</p>
+<p><strong>清空链上的规则</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">清空 filter 表 INPUT 链中的规则</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -F INPUT</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>清空表的所有规则</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">不指定链名</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -F</span><br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="自定义链"><a href="#自定义链" class="headerlink" title="自定义链"></a>自定义链</h1><p>自定义链用于对规则的管理，这里我有一个疑问，iptables 的 <strong>表</strong> 已经是对规则的一种分类管理了，为什么还需要自定义链呢？我暂时的理解是，虽然表已经进行了分类，但是粒度还是比较粗，比如 filter 表只是负责过滤功能，但是过滤功能可能还需要进行进一步分类，比如有针对 HTTP 的过滤规则，有针对 SSH 的过滤规则，</p>
+<h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><p>实验的两台机器 IP 为：192.168.1.110 和 192.168.1.103，在 110 上设置一条自定义链，规则是阻止 103 这台机器来访问 8080 端口，8080 运行了一个 web 程序，访问会返回 “Hello”</p>
+<p>首先创建一条名为 IN_WEB 的自定义链</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t filter -N IN_WEB</span><br></code></pre></td></tr></table></figure>
+
+<p>为该链设置规则，对 <strong>源地址</strong> 为  192.168.1.103 的连接进行 <strong>REJECT</strong> （拒绝）处理</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t filter -I IN_WEB -s 192.168.1.103 -j REJECT</span><br></code></pre></td></tr></table></figure>
+
+<p>查看 filter 中的规则，使用 IN_WEB 进行过滤</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t filter --line -nvL IN_WEB</span><br>Chain IN_WEB (0 references)<br>num   pkts bytes target     prot opt in     out     source               destination<br>1        0     0 REJECT     all  --  *      *       192.168.1.103        0.0.0.0/0            reject-with icmp-port-unreachable<br></code></pre></td></tr></table></figure>
+
+<p>自定义链不能直接使用，需要将其添加到一条 <strong>默认链</strong> 中， 将该链添加到 INPUT 链中，这代表该条链用于接收到数据时</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -I INPUT -p tcp --dport 8080 -j IN_WEB</span><br></code></pre></td></tr></table></figure>
+
+<p>查看</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t filter --line -nvL IN_WEB</span><br>Chain IN_WEB (1 references)<br> pkts bytes target     prot opt in     out     source               destination<br>    0     0 REJECT     all  --  *      *       192.168.1.103        0.0.0.0/0            reject-with icmp-port-unreachable<br></code></pre></td></tr></table></figure>
+
+<p>此时使用 103 的机器访问 110 的 8080 端口：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">curl 192.168.1.110:8080</span><br>curl: (7) Failed to connect to 192.168.1.110 port 8080 after 37 ms: Connection refused<br></code></pre></td></tr></table></figure>
+
+<p>报错 “Connection refused”（连接被拒绝），这个错误见得也比较多了，当访问的端口没有被程序监听时，也会报这个错误。此时说明拦截规则已经成功。</p>
+<p>110 的 9090 端口上也运行了一个 web 程序，访问一下看看是不是只拦截了 8080 端口：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">curl 192.168.1.110:9090</span><br><span class="hljs-meta prompt_">Hello%</span><br></code></pre></td></tr></table></figure>
+
+<p>9090 可以正常访问，说明拦截规则成功。</p>
+<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><p>删除自定义链需要满足两个条件</p>
+<p>1、自定义链没有被引用</p>
+<p>2、自定义链中没有任何规则</p>
+<p>自定义链被放置在 INPUT 上，首先查看 INPUT 的所有规则，并删除属于自定义链的规则</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -nvL INPUT <span class="hljs-comment"># 查看 INPUT 链上的所有规则</span></span><br>Chain INPUT (policy ACCEPT 4397 packets, 972K bytes)<br> pkts bytes target     prot opt in     out     source               destination<br>    0     0 IN_WEB     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:80<br> 7753 1508K KUBE-ROUTER-INPUT  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kube-router netpol - 4IA2OSFRMVNDXBVV */<br>    0     0 IN_WEB     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:80<br>    1    64 IN_WEB     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:5555<br>    <br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -D INPUT 7 <span class="hljs-comment"># 删除规则，数字是上面列表的序号，根据自己的实际情况来指定</span></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables --line-number -vL INPUT <span class="hljs-comment"># 使用 --line-numbers 可以显示规则的编号，这样删除起来更方便</span></span><br>Chain INPUT (policy ACCEPT 2702 packets, 895K bytes)<br>num   pkts bytes target     prot opt in     out     source               destination<br>1     5865 1470K KUBE-ROUTER-INPUT  all  --  any    any     anywhere             anywhere             /* kube-router netpol - 4IA2OSFRMVNDXBVV */<br>2     2702  895K KUBE-FIREWALL  all  --  any    any     anywhere             anywhere<br>3     2702  895K KUBE-NODEPORTS  all  --  any    any     anywhere             anywhere             /* kubernetes health check service ports */<br>4        0     0 KUBE-EXTERNAL-SERVICES  all  --  any    any     anywhere             anywhere             ctstate NEW /* kubernetes externally-visible service portals */<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -F IN_WEB <span class="hljs-comment"># 清空 filter 表上的 IN_WEB 链上的所有规则（不指定 -t 时默认为 filter 表）</span></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -X IN_WEB <span class="hljs-comment"># 删除链</span></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t filter --line -nvL IN_WEB <span class="hljs-comment"># 再次查看该链，发现已经无法输出信息了，说明删除成功</span></span><br>iptables v1.8.7 (nf_tables): chain `IN_WEB&#x27; in table `filter&#x27; is incompatible, use &#x27;nft&#x27; tool.<br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h1><p><a target="_blank" rel="noopener" href="https://vflong.github.io/sre/network/2020/02/23/turning-iptables-into-a-tcp-load-balancer.html">https://vflong.github.io/sre/network/2020/02/23/turning-iptables-into-a-tcp-load-balancer.html</a></p>
+<h1 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h1><h2 id="DNT-转发"><a href="#DNT-转发" class="headerlink" title="DNT 转发"></a>DNT 转发</h2><p>流程：有两台机器 192.168.64.4 （简称 4）和 192.168.64.1（简称 1），4 上的 8080 和 9090 端口运行了两个 tcp 程序，连接到 8080 时会返回消息： ”8080“，连接到 9090 时会返回消息 ”9090“，这里通过 iptables 设置 nat 转发，将访问 8080 的连接转发到 9090，也就是 DNAT（D 代表 dst，目标），修改报文的目标地址。</p>
+<p>添加规则：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t nat -A PREROUTING -p tcp -d 192.168.64.4 --dport 8080 -j DNAT --to 192.168.64.4:9090</span><br></code></pre></td></tr></table></figure>
+
+<p>在 nat 表的 PREROUTING 链中添加一条规则，将目标地址为 192.168.64.4，协议为 tcp 的请求转发（DNAT）到 192.168.64.4 （本机）的 9090 端口</p>
+<p>查看规则：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t nat -nL PREROUTING</span><br>DNAT       tcp  --  0.0.0.0/0            192.168.64.4         tcp dpt:8080 to:192.168.64.4:9090<br></code></pre></td></tr></table></figure>
+
+<p>在 1 上执行 nc：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">nc 192.168.64.4 8080</span><br>9090<br></code></pre></td></tr></table></figure>
+
+<p>访问的是 8080 端口，返回的消息是 9090，说明转发成功。</p>
+<p>这两个程序还会记录访问的 IP 地址，查看日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">cat</span> 8080</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">cat</span> 9090</span><br>2022/05/19 15:41:44 192.168.64.1:63310<br></code></pre></td></tr></table></figure>
+
+<p>8080 的日志为空，说明该请求被 iptables <strong>拦截</strong> 后转发给了 9090</p>
+<p>附代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>        <span class="hljs-string">&quot;net&quot;</span><br>        <span class="hljs-string">&quot;log&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>        l, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;:8080&quot;</span>)<br>        assert(err)<br><br>        <span class="hljs-keyword">for</span> &#123;<br>                conn, err := l.Accept()<br>                assert(err)<br>                log.Println(conn.RemoteAddr())<br>                conn.Write([]<span class="hljs-type">byte</span>(<span class="hljs-string">&quot;8080&quot;</span>))<br>        &#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">assert</span><span class="hljs-params">(err <span class="hljs-type">error</span>)</span></span> &#123;<br>        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>                <span class="hljs-built_in">panic</span>(err)<br>        &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>        <span class="hljs-string">&quot;net&quot;</span><br>        <span class="hljs-string">&quot;log&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>        l, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;:9090&quot;</span>)<br>        assert(err)<br><br>        <span class="hljs-keyword">for</span> &#123;<br>                conn, err := l.Accept()<br>                assert(err)<br>                log.Println(conn.RemoteAddr())<br>                conn.Write([]<span class="hljs-type">byte</span>(<span class="hljs-string">&quot;9090&quot;</span>))<br>        &#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">assert</span><span class="hljs-params">(err <span class="hljs-type">error</span>)</span></span> &#123;<br>        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>                <span class="hljs-built_in">panic</span>(err)<br>        &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>使用 nohup 部署：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">go build tcp_8080.go</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">go build tcp_9090.go</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">nohup</span> ./tcp_8080 &gt; 8080 &amp;</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">nohup</span> ./tcp_9090 &gt; 9090 &amp;</span><br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2">https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/linux/">#linux</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>linux iptables</div>
+      <div>https://autsu.github.io/2022/05/16/iptables/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年5月16日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/05/17/mac-shang-zhi-zuo-windows/" title="在 mac 上制作 windows10 启动盘，亲测可用">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">在 mac 上制作 windows10 启动盘，亲测可用</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/05/13/block-code/" title="一段莫名阻塞的 reflect 代码">
+                        <span class="hidden-mobile">一段莫名阻塞的 reflect 代码</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,749 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="heap（堆），是一个用数组表示的完全二叉树，常用于构建优先队列，排序和快速找出一个集合中的最小值（或者最大值）。在 go 标准库下的 container 包中提供了这种数据结构。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go container&#x2F;heap 源码阅读">
+<meta property="og:url" content="https://autsu.github.io/2021/07/22/go-containerheap-yuan-ma-yue-du/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="heap（堆），是一个用数组表示的完全二叉树，常用于构建优先队列，排序和快速找出一个集合中的最小值（或者最大值）。在 go 标准库下的 container 包中提供了这种数据结构。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://autsu.github.io/post-images/1626964254407.png">
+<meta property="og:image" content="https://github.com/autsu/diagrams/blob/master/img/%E5%A0%86%E7%9A%84pop%E6%93%8D%E4%BD%9C.png?raw=true">
+<meta property="article:published_time" content="2021-07-22T06:16:49.000Z">
+<meta property="article:modified_time" content="2023-03-18T13:37:15.157Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="源码">
+<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="堆">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://autsu.github.io/post-images/1626964254407.png">
+  
+  
+  
+  <title>go container/heap 源码阅读 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="go container/heap 源码阅读"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-07-22 14:16" pubdate>
+          2021年7月22日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          25 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">go container/heap 源码阅读</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>heap（堆），是一个用数组表示的完全二叉树，常用于构建优先队列，排序和快速找出一个集合中的最小值（或者最大值）。在 go 标准库下的 container 包中提供了这种数据结构。</p>
+<span id="more"></span>
+
+
+<h1 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h1><h2 id="interface"><a href="#interface" class="headerlink" title="interface"></a>interface</h2><p>要想使用堆，需要实现 <code>Interface</code> 接口，这个接口中内嵌了一个 <code>sort.Interface</code> 接口，所以一共需要包含 5 个方法：Len() 用于返回长度，Swap() 用于交换两个值，Less() 用于定义比较两个值的规则，Push() 和 Pop() 分别代表添加到末尾和弹出末尾元素。通过 Less() 可以自定义堆为最大堆还是最小堆。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Interface <span class="hljs-keyword">interface</span> &#123;<br>	sort.Interface<br>	Push(x <span class="hljs-keyword">interface</span>&#123;&#125;) <span class="hljs-comment">// 添加 x 到末尾</span><br>	Pop() <span class="hljs-keyword">interface</span>&#123;&#125;   <span class="hljs-comment">// 弹出末尾元素并返回</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>一开始我不是很明白为什么要实现 Push 和 Pop 两个方法，因为这两个方法的定义已经很明确了，后来看了 heap 包下的 example_pq_test.go 才明白了原因，主要在于一些操作还需要做一些额外的工作，比如优先级队列的实现，其实现的 Pop() 如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(pq *PriorityQueue)</span></span> Pop() <span class="hljs-keyword">interface</span>&#123;&#125; &#123;<br>	old := *pq<br>	n := <span class="hljs-built_in">len</span>(old)<br>	item := old[n<span class="hljs-number">-1</span>]<br>	old[n<span class="hljs-number">-1</span>] = <span class="hljs-literal">nil</span>  <span class="hljs-comment">// avoid memory leak</span><br>    <span class="hljs-comment">// 将 index 置为 -1 是为了标识该数据已经出了优先级队列了</span><br>	item.index = <span class="hljs-number">-1</span> <br>	*pq = old[<span class="hljs-number">0</span> : n<span class="hljs-number">-1</span>]<br>	<span class="hljs-keyword">return</span> item<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="Push"><a href="#Push" class="headerlink" title="Push"></a>Push</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Push</span><span class="hljs-params">(h Interface, x <span class="hljs-keyword">interface</span>&#123;&#125;)</span></span> &#123;<br>	h.Push(x)<br>	<span class="hljs-comment">// 从下到上堆化</span><br>	up(h, h.Len()<span class="hljs-number">-1</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>Push 会先执行自己实现的 h.Push 方法，将 x 添加到末尾，之后再执行 up 进行堆化。</p>
+<h2 id="up"><a href="#up" class="headerlink" title="up"></a>up</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// up 代表上浮，从下到上堆化</span><br><span class="hljs-comment">// j 代表需要堆化的元素 index，up 会从该元素开始，不断向上调整堆</span><br><span class="hljs-comment">// 在 Push 中会调用 up</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">up</span><span class="hljs-params">(h Interface, j <span class="hljs-type">int</span>)</span></span> &#123;<br>	<span class="hljs-keyword">for</span> &#123;<br>		<span class="hljs-comment">// j 的父节点</span><br>		i := (j - <span class="hljs-number">1</span>) / <span class="hljs-number">2</span> <span class="hljs-comment">// parent</span><br><br>		<span class="hljs-comment">// i == j ：此时 i 是最后一个元素</span><br>		<span class="hljs-comment">//</span><br>		<span class="hljs-comment">// 在解释 !h.Less(j, i) 之前，先来看看 Less(i, j int) 接口的定义：</span><br>		<span class="hljs-comment">//</span><br>		<span class="hljs-comment">// 		func (m myheap) Less(i, j int) bool &#123;</span><br>		<span class="hljs-comment">//			return m[i] &lt; m[j]	// 这代表实现的堆为最小堆</span><br>		<span class="hljs-comment">// 		&#125;</span><br>		<span class="hljs-comment">//</span><br>		<span class="hljs-comment">// 		func (m myheap) Less(i, j int) bool &#123;</span><br>		<span class="hljs-comment">//			return m[i] &gt; m[j]	// 这代表实现的堆为最大堆</span><br>		<span class="hljs-comment">// 		&#125;</span><br>		<span class="hljs-comment">//</span><br>		<span class="hljs-comment">//</span><br>		<span class="hljs-comment">// 1. 最小堆，如果 j（子节点）大于 i（父节点），情况如下图：</span><br>		<span class="hljs-comment">//</span><br>		<span class="hljs-comment">//						3	i</span><br>		<span class="hljs-comment">//						  \</span><br>		<span class="hljs-comment">//						   5  j</span><br>		<span class="hljs-comment">//</span><br>		<span class="hljs-comment">// 此时便不需要交换 i 和 j，!h.Less(j, i) 对应 !m[j] &lt; m[i]，即 m[j] &gt; m[i]</span><br>		<span class="hljs-comment">//</span><br>		<span class="hljs-comment">// 最大堆同理</span><br>		<span class="hljs-keyword">if</span> i == j || !h.Less(j, i) &#123;<br>			<span class="hljs-keyword">break</span><br>		&#125;<br>		<span class="hljs-comment">// 否则需要进行交换，还是以最小堆为例：</span><br>		<span class="hljs-comment">//</span><br>		<span class="hljs-comment">//						5	i</span><br>		<span class="hljs-comment">//						  \</span><br>		<span class="hljs-comment">//						   3  j</span><br>		<span class="hljs-comment">//</span><br>		<span class="hljs-comment">// 此时不满足 !h.Less(j, i)，此时 i（父节点）大于 j（子节点），</span><br>		<span class="hljs-comment">// 不满足最小堆的定义，所以需要进行交换</span><br>		h.Swap(i, j)<br><br>		<span class="hljs-comment">// up 代表上浮，所以更新 j 为其父节点 i</span><br>		j = i<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="Push-的流程图示"><a href="#Push-的流程图示" class="headerlink" title="Push 的流程图示"></a>Push 的流程图示</h2><p>执行以下代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> myheap []<span class="hljs-type">int</span>   <span class="hljs-comment">// myheap 是一个最小堆</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">TestHeapPushPop</span><span class="hljs-params">(t *testing.T)</span></span> &#123;<br>	h := <span class="hljs-built_in">new</span>(myheap)<br>	heap.Push(h, <span class="hljs-number">5</span>)<br>	heap.Push(h, <span class="hljs-number">10</span>)<br>	heap.Push(h, <span class="hljs-number">2</span>)<br>	heap.Push(h, <span class="hljs-number">99</span>)<br>	heap.Push(h, <span class="hljs-number">3</span>)<br>	heap.Push(h, <span class="hljs-number">233</span>)<br>	heap.Push(h, <span class="hljs-number">1</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://autsu.github.io/post-images/1626964254407.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="Pop"><a href="#Pop" class="headerlink" title="Pop"></a>Pop</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Pop</span><span class="hljs-params">(h Interface)</span></span> <span class="hljs-keyword">interface</span>&#123;&#125; &#123;<br>	n := h.Len() - <span class="hljs-number">1</span><br>	<span class="hljs-comment">// 堆顶是最小（或最大）元素，将其交换到末尾，pop 会移除该元素</span><br>	h.Swap(<span class="hljs-number">0</span>, n)<br>	<span class="hljs-comment">// FIXME down 的作用不确定，以下为猜测</span><br>	<span class="hljs-comment">// down 会将第二小（或大）的元素移动到堆顶，便于下次操作</span><br>	down(h, <span class="hljs-number">0</span>, n)<br>	<span class="hljs-keyword">return</span> h.Pop()<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="down"><a href="#down" class="headerlink" title="down"></a>down</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">down</span><span class="hljs-params">(h Interface, i0, n <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">bool</span> &#123;<br>	i := i0<br>	<span class="hljs-keyword">for</span> &#123;<br>		j1 := <span class="hljs-number">2</span>*i + <span class="hljs-number">1</span>          <span class="hljs-comment">// j1 是 i 的左子节点</span><br>		<span class="hljs-comment">// j1 &gt; n 代表子节点不存在</span><br>		<span class="hljs-comment">// j1 == n 代表子节点是堆中最后一个节点，down 操作会忽略最后一个元素</span><br>		<span class="hljs-keyword">if</span> j1 &gt;= n || j1 &lt; <span class="hljs-number">0</span> &#123; <span class="hljs-comment">// j1 &lt; 0 after int overflow</span><br>			<span class="hljs-keyword">break</span><br>		&#125;<br>		<span class="hljs-comment">// j 用来保存子节点中较小（大）的那个，默认为左子节点</span><br>		j := j1 <span class="hljs-comment">// left child</span><br><br>		<span class="hljs-comment">// j2 := j1 + 1，这表示 j2 是 i 的右子节点</span><br>		<span class="hljs-comment">// 这里是 j2 &lt; n 而不是 j2 &lt;= n，因为 down 操作会忽略最后一个元素</span><br>		<span class="hljs-comment">// 如果是最小堆，则选出 j1（左子节点）和 j2（右子节点）中较小的那个</span><br>		<span class="hljs-comment">// 如果是最大堆，则选出 j1（左子节点）和 j2（右子节点）中较大的那个</span><br>		<span class="hljs-keyword">if</span> j2 := j1 + <span class="hljs-number">1</span>; j2 &lt; n &amp;&amp; h.Less(j2, j1) &#123;<br>			<span class="hljs-comment">// 满足条件，则更新 j 为右子节点</span><br>			j = j2 <span class="hljs-comment">// = 2*i + 2  // right child</span><br>		&#125;<br><br>		<span class="hljs-comment">// 判断 j（子节点） 和 i（父节点）的关系</span><br>		<span class="hljs-comment">// 如果是最小堆，!h.Less(j, i) 代表 j &gt; i，即父节点小于较小的子节点，</span><br>		<span class="hljs-comment">// 此时已经满足最小堆的特性了，直接 break</span><br>		<span class="hljs-comment">// 如果是最大堆，!h.Less(j, i) 代表 j &lt; i，与上面同理</span><br>		<span class="hljs-keyword">if</span> !h.Less(j, i) &#123;<br>			<span class="hljs-keyword">break</span><br>		&#125;<br><br>		<span class="hljs-comment">// 到这里说明 j（子节点） 和 i（父节点）不满足堆的特性，</span><br>		<span class="hljs-comment">// 如果是最小堆，说明此时 i &gt; j，需要交换</span><br>		<span class="hljs-comment">// 如果是最大堆，说明此时 i &lt; j，需要交换</span><br>		h.Swap(i, j)<br><br>		<span class="hljs-comment">// down 代表下沉，更新 i 为其子节点 j，进行下一轮循环</span><br>		i = j<br>	&#125;<br><br>	<span class="hljs-comment">// 如果没有执行过 i = j，则不满足 i &gt; i0 条件，</span><br>	<span class="hljs-comment">// 这代表没有进行 down 操作</span><br>	<span class="hljs-keyword">return</span> i &gt; i0<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="Pop-的流程如下图："><a href="#Pop-的流程如下图：" class="headerlink" title="Pop 的流程如下图："></a>Pop 的流程如下图：</h2><p><img src="https://github.com/autsu/diagrams/blob/master/img/%E5%A0%86%E7%9A%84pop%E6%93%8D%E4%BD%9C.png?raw=true" srcset="/img/loading.gif" lazyload> </p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>上面只对 <code>heap</code> 包中的核心函数进行了分析，剩余还有 <code>Init</code>，<code>Remove</code>，<code>Fix()</code> 函数，但是其内部也是调用了 <code>up</code> 和 <code>down</code> 这两个函数，所以就不一一分析了。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/go/">#go</a>
+      
+        <a href="/tags/%E6%BA%90%E7%A0%81/">#源码</a>
+      
+        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">#数据结构</a>
+      
+        <a href="/tags/%E5%A0%86/">#堆</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>go container/heap 源码阅读</div>
+      <div>https://autsu.github.io/2021/07/22/go-containerheap-yuan-ma-yue-du/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年7月22日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/07/23/epoll-de-lt-he-et/" title="epoll 的 LT 和 ET">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">epoll 的 LT 和 ET</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/07/21/jian-zhi-offer-40-zui-xiao-de-k-ge-shu/" title="剑指 Offer 40. 最小的 k 个数">
+                        <span class="hidden-mobile">剑指 Offer 40. 最小的 k 个数</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

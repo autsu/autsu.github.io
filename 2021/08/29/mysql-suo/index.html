@@ -1,0 +1,812 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="表锁语法：  加锁：   加读锁  LOCK TABLES [tablename] READ;     加写锁  LOCK TABLES [tablename] WRITE;    释放锁：UNLOCK TABLES;   加锁后会阻塞其他线程的部分操作，同时也会对加锁线程进行一些限制，直到加锁的线程释放锁。 读锁和写锁的区别：当加 读锁 后，其他线程的 SELECT 语句不会被阻塞，但是 INS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL 锁">
+<meta property="og:url" content="https://autsu.github.io/2021/08/29/mysql-suo/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="表锁语法：  加锁：   加读锁  LOCK TABLES [tablename] READ;     加写锁  LOCK TABLES [tablename] WRITE;    释放锁：UNLOCK TABLES;   加锁后会阻塞其他线程的部分操作，同时也会对加锁线程进行一些限制，直到加锁的线程释放锁。 读锁和写锁的区别：当加 读锁 后，其他线程的 SELECT 语句不会被阻塞，但是 INS">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://youseebiggirl.github.io/post-images/1630250653743.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1648548013859.webp">
+<meta property="article:published_time" content="2021-08-29T02:55:13.000Z">
+<meta property="article:modified_time" content="2023-06-05T11:57:02.252Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://youseebiggirl.github.io/post-images/1630250653743.webp">
+  
+  
+  
+  <title>MySQL 锁 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="MySQL 锁"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-08-29 10:55" pubdate>
+          2021年8月29日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          31 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">MySQL 锁</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="表锁"><a href="#表锁" class="headerlink" title="表锁"></a>表锁</h1><p>语法：</p>
+<ul>
+<li><p>加锁：</p>
+<p>  加读锁<br>  <code>LOCK TABLES [tablename] READ;</code>  </p>
+<p>  加写锁<br>  <code>LOCK TABLES [tablename] WRITE;</code>  </p>
+</li>
+<li><p>释放锁：<br><code>UNLOCK TABLES;</code></p>
+</li>
+</ul>
+<p>加锁后会阻塞其他线程的部分操作，同时也会对加锁线程进行一些限制，直到加锁的线程释放锁。</p>
+<p>读锁和写锁的区别：<br>当加 <strong>读锁</strong> 后，其他线程的 <code>SELECT</code> 语句不会被阻塞，但是 <code>INSERT</code>、<code>UPDATE</code>、<code>DELETE</code> 这些写语句都会被阻塞。此外，加锁线程只能执行读语句，不能执行写语句， 否则会产生错误 <code>Table &#39;sort_demo&#39; was locked with a READ lock and can&#39;t be updated</code>。</p>
+<p>当加 <strong>写锁</strong> 后，其他线程的读写语句都会被阻塞，但是加锁线程的读写语句都可以正常执行。</p>
+<p>可以用 <code>unlock tables</code> 主动释放锁，也可以在客户端断开的时候自动释放。</p>
+<p>在还没有出现更细粒度的锁的时候，表锁是最常用的处理并发的方式。而对于 <strong>InnoDB</strong> 这种支持行锁的引擎，一般不使用 <code>lock tables</code> 命令来控制并发，毕竟锁住整个表的影响面还是太大。</p>
+<h1 id="MDL-锁（元数据锁）"><a href="#MDL-锁（元数据锁）" class="headerlink" title="MDL 锁（元数据锁）"></a>MDL 锁（元数据锁）</h1><p><code>MDL</code> 不需要显式使用，在访问一个表的时候会被自动加上。<code>MDL</code> 的作用是，保证读写的正确性。你可以想象一下，如果一个查询正在遍历一个表中的数据，而执行期间另一个线程对这个表结构做变更，删了一列，那么查询线程拿到的结果跟表结构对不上，肯定是不行的。</p>
+<p>因此，在 MySQL 5.5 版本中引入了 <code>MDL</code>，当对一个表做增删改查操作的时候，加 <code>MDL</code> 读锁；当要对表做结构变更操作的时候，加 <code>MDL</code> 写锁。</p>
+<ul>
+<li><p>读锁之间不互斥，因此你可以有多个线程同时对一张表增删改查。</p>
+</li>
+<li><p>读写锁之间、写锁之间是互斥的，用来保证变更表结构操作的安全性。因此，如果有两个线程要同时给一个表加字段，其中一个要等另一个执行完才能开始执行。</p>
+</li>
+</ul>
+<p>虽然 <code>MDL</code> 锁是系统默认会加的，但却是你不能忽略的一个机制。比如下面这个例子，我经常看到有人掉到这个坑里：给一个小表加个字段，导致整个库挂了。<br><img src="https://youseebiggirl.github.io/post-images/1630250653743.webp" srcset="/img/loading.gif" lazyload></p>
+<p>我们可以看到 <code>session A</code> 先启动，这时候会对表 t 加一个 MDL 读锁。由于 <code>session B </code>需要的也是MDL 读锁，因此可以正常执行。</p>
+<p>之后 <code>session C</code> 会被blocked，是因为 <code>session A</code> 的 MDL 读锁还没有释放，而 <code>session C</code> 需要MDL 写锁，因此只能被阻塞。</p>
+<p>如果只有 <code>session C</code> 自己被阻塞还没什么关系，但是之后<strong>所有要在表t上新申请MDL读锁的请求</strong>也会被 <code>session C</code> <strong>阻塞</strong>。前面我们说了，所有对表的增删改查操作都需要先申请 MDL 读锁，就都被锁住，等于这个表现在完全不可读写了。</p>
+<p>如果某个表上的查询语句频繁，而且客户端有重试机制，也就是说超时后会再起一个新 session 再请求的话，这个库的线程很快就会爆满。</p>
+<p>你现在应该知道了，事务中的 MDL 锁，在语句执行开始时申请，但是语句结束后并不会马上释放，而会等到<strong>整个事务提交后再释放</strong>。</p>
+<blockquote>
+<p>划重点：一旦出现写锁等待，不但当前操作会被阻塞，同时还会阻塞后续该表的所有操作。事务一旦申请<br>到 MDL 锁后，直到事务执行完才会将锁释放。</p>
+</blockquote>
+<p>基于上面的分析，我们来讨论一个问题，如何安全地给小表加字段？</p>
+<p>首先我们要解决长事务，事务不提交，就会一直占着 <code>MDL</code> 锁。在 <code>MySQL</code> 的 <code>information_schema </code>库的 <code>innodb_trx</code> 表中，你可以查到当前执行中的事务。如果你要做 DDL 变更的表刚好有长事务在执行，要考虑先暂停 <code>DDL</code>，或者 <code>kill</code> 掉这个长事务。</p>
+<p>但考虑一下这个场景。如果你要变更的表是一个热点表，虽然数据量不大，但是上面的请求很频繁，而你不得不加个字段，你该怎么做呢？</p>
+<p>这时候 <code>kill</code> 可能未必管用，因为新的请求马上就来了。比较理想的机制是，在 <code>alter table</code> 语句里面<strong>设定等待时间</strong>，如果在这个指定的等待时间里面能够拿到 <code>MDL写锁</code> 最好，<strong>拿不到也不要阻塞后面的业务语句</strong>，先放弃。之后开发人员或者 DBA 再通过重试命令重复这个过程。</p>
+<p><code>MariaDB</code> 已经合并了 <code>AliSQL</code> 的这个功能，所以这两个开源分支目前都支持 <code>DDL NOWAIT/WAIT n</code> 这个语法。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">ALTER</span> <span class="hljs-keyword">TABLE</span> tbl_name NOWAIT <span class="hljs-keyword">add</span> <span class="hljs-keyword">column</span> ...<br><span class="hljs-keyword">ALTER</span> <span class="hljs-keyword">TABLE</span> tbl_name WAIT N <span class="hljs-keyword">add</span> <span class="hljs-keyword">column</span> ... <br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="2-全局锁"><a href="#2-全局锁" class="headerlink" title="2. 全局锁"></a>2. 全局锁</h1><p>顾名思义，全局锁就是对整个数据库实例加锁。<code>MySQL</code> 提供了一个加全局读锁的方法，命令是 <code>Flush tables with read lock (FTWRL)</code>。当你需要让整个库处于只读状态的时候，可以使用这个命令，之后其他线程的以下语句会被阻塞：<strong>数据更新语句（数据的增删改）</strong>、<strong>数据定义语句（包括建表、修改表结构等）</strong> 和<strong>更新类事务的提交语句</strong>。</p>
+<p><strong>全局锁的典型使用场景是，做全库逻辑备份</strong>，也就是把整库每个表都 <code>select</code> 出来存成文本。</p>
+<h1 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h1><h1 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h1><p>用数据版本（Version）记录机制实现，这是乐观锁最常用的一种实现方式。何谓数据版本？即为数据增加一个版本标识，一般是通过为数据库表增加一个数字类型的 “version” 字段来实现。当读取数据时，将version 字段的值一同读出，数据每更新一次，对此version值加 1。当我们提交更新的时候，判断数据库表对应记录的当前版本信息与第一次取出来的version值进行比对，如果数据库表当前版本号与第一次取出来的version值相等，则予以更新，否则认为是过期数据。</p>
+<p>举例</p>
+<p>1、数据库表设计</p>
+<p>三个字段，分别是id, value, version</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">select</span> id,<span class="hljs-keyword">value</span>,version <span class="hljs-keyword">from</span> <span class="hljs-keyword">TABLE</span> <span class="hljs-keyword">where</span> id<span class="hljs-operator">=</span>#&#123;id&#125;<br></code></pre></td></tr></table></figure>
+
+<p>2、每次更新表中的value字段时，为了防止发生冲突，需要这样操作</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">update</span> <span class="hljs-keyword">TABLE</span><br><span class="hljs-keyword">set</span> <span class="hljs-keyword">value</span><span class="hljs-operator">=</span><span class="hljs-number">2</span>,version<span class="hljs-operator">=</span>version<span class="hljs-operator">+</span><span class="hljs-number">1</span><br><span class="hljs-keyword">where</span> id<span class="hljs-operator">=</span>#&#123;id&#125; <span class="hljs-keyword">and</span> version<span class="hljs-operator">=</span>#&#123;version&#125;;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>举个例子，比如有下面两个事务：</p>
+<table>
+<thead>
+<tr>
+<th>A</th>
+<th>B</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>select id,value,version from TABLE where id&#x3D;1，结果：version &#x3D; 1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>select id,value,version from TABLE where id&#x3D;1，结果：version&#x3D;1</td>
+</tr>
+<tr>
+<td>拿上面查询出来的 version 进行更新，update set version&#x3D;version+1 where version&#x3D;1，结果：version &#x3D; 2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>update set version&#x3D;version+1 where version&#x3D;1，此时version已经被 A 更新成了 2，所以这条 sql 语句不会执行成功，从而避免旧数据覆盖新数据</td>
+</tr>
+</tbody></table>
+<h1 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h1><p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1648548013859.webp" srcset="/img/loading.gif" lazyload><br>这时候，事务A在等待事务B释放id&#x3D;2的行锁，而事务B在等待事务A释放id&#x3D;1的行锁。 事务A和事务B在互相等待对方的资源释放，就是进入了死锁状态。</p>
+<h1 id="for-update-加行锁还是表锁？"><a href="#for-update-加行锁还是表锁？" class="headerlink" title="for update 加行锁还是表锁？"></a>for update 加行锁还是表锁？</h1><p>实验：<br>有如下表：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">create</span> for_update_is_lock_row_or_lock_table(<br>    id <span class="hljs-type">int</span> <span class="hljs-keyword">primary</span> key auto_increment,<br>    d <span class="hljs-type">int</span>,<br>    c <span class="hljs-type">int</span>,<br>    key(c)c<br>);<br><br><span class="hljs-keyword">insert</span> <span class="hljs-keyword">into</span> for_update_is_lock_row_or_lock_table(d, c) <span class="hljs-keyword">values</span>(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>)<br><span class="hljs-keyword">insert</span> <span class="hljs-keyword">into</span> for_update_is_lock_row_or_lock_table(d, c) <span class="hljs-keyword">values</span>(<span class="hljs-number">2</span>, <span class="hljs-number">2</span>)<br><span class="hljs-keyword">insert</span> <span class="hljs-keyword">into</span> for_update_is_lock_row_or_lock_table(d, c) <span class="hljs-keyword">values</span>(<span class="hljs-number">3</span>, <span class="hljs-number">3</span>)<br></code></pre></td></tr></table></figure>
+<h2 id="实验-1-使用索引列作为条件查询"><a href="#实验-1-使用索引列作为条件查询" class="headerlink" title="实验 1 使用索引列作为条件查询"></a>实验 1 使用索引列作为条件查询</h2><p>事务1：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">update</span> for_update_is_lock_row_or_lock_table <span class="hljs-keyword">set</span> d<span class="hljs-operator">=</span><span class="hljs-number">11</span> <span class="hljs-keyword">where</span> c<span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br></code></pre></td></tr></table></figure>
+
+<p>事务2：<br>更新同一列数据</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">update</span> for_update_is_lock_row_or_lock_table <span class="hljs-keyword">set</span> d<span class="hljs-operator">=</span><span class="hljs-number">1</span> <span class="hljs-keyword">where</span> c<span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br></code></pre></td></tr></table></figure>
+<p>上面的语句被被阻塞</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">update</span> for_update_is_lock_row_or_lock_table <span class="hljs-keyword">set</span> d<span class="hljs-operator">=</span><span class="hljs-number">22</span> <span class="hljs-keyword">where</span> c<span class="hljs-operator">=</span> <span class="hljs-number">2</span>;<br></code></pre></td></tr></table></figure>
+<p>但是这条语句不会被阻塞，说明此时加的是行锁</p>
+<h2 id="实验2-使用非索引列作为条件查询"><a href="#实验2-使用非索引列作为条件查询" class="headerlink" title="实验2 使用非索引列作为条件查询"></a>实验2 使用非索引列作为条件查询</h2><p>事务1：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">update</span> for_update_is_lock_row_or_lock_table <span class="hljs-keyword">set</span> c<span class="hljs-operator">=</span><span class="hljs-number">11</span> <span class="hljs-keyword">where</span> d<span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br></code></pre></td></tr></table></figure>
+
+<p>事务2:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">update</span> for_update_is_lock_row_or_lock_table <span class="hljs-keyword">set</span> c<span class="hljs-operator">=</span><span class="hljs-number">22</span> <span class="hljs-keyword">where</span> d<span class="hljs-operator">=</span><span class="hljs-number">2</span>;<br></code></pre></td></tr></table></figure>
+<p>被阻塞，此时不是同一行但却被阻塞，说明此时加的是表锁</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>如果查询条件用了索引&#x2F;主键，那么select ….. for update就会进行行锁。</p>
+<p>如果是普通字段(没有索引&#x2F;主键)，那么select ….. for update就会进行锁表。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/mysql/">#mysql</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>MySQL 锁</div>
+      <div>https://autsu.github.io/2021/08/29/mysql-suo/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年8月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/08/31/mac-xia-gou-jian-ji-yu-c-de-grpc/" title="Mac 下构建基于 C++ 的 gRPC">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Mac 下构建基于 C++ 的 gRPC</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/08/27/mysql-de-shi-wu-ge-chi-ji-bie/" title="MySQL 的事务隔离级别">
+                        <span class="hidden-mobile">MySQL 的事务隔离级别</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

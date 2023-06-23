@@ -1,0 +1,825 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="架构 Informers 由几个核心的组件构成：  Reflector：负责从 api-server list（全量拉取数据） and watch（监听数据变更） DeltaFIFO：一个存储事件的队列，里面记录了事件的类型 Indexer：存储数据，数据来源是从 DeltaFIFO 中 pop 出来的，然后会根据事件类型进行对应的操作 sharedProcessor：用于运行用户设置的事件回调函">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k8s client-go 源码阅读">
+<meta property="og:url" content="https://autsu.github.io/2022/10/07/client-go-yuan-ma/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="架构 Informers 由几个核心的组件构成：  Reflector：负责从 api-server list（全量拉取数据） and watch（监听数据变更） DeltaFIFO：一个存储事件的队列，里面记录了事件的类型 Indexer：存储数据，数据来源是从 DeltaFIFO 中 pop 出来的，然后会根据事件类型进行对应的操作 sharedProcessor：用于运行用户设置的事件回调函">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/ebb2c434fe2fdcb013512d0e6f62e9d8722bc2e3/img/K8s-informer.png">
+<meta property="article:published_time" content="2022-10-07T04:57:11.000Z">
+<meta property="article:modified_time" content="2023-06-23T05:39:29.412Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="k8s">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/autsu/diagrams/ebb2c434fe2fdcb013512d0e6f62e9d8722bc2e3/img/K8s-informer.png">
+  
+  
+  
+  <title>k8s client-go 源码阅读 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="k8s client-go 源码阅读"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-10-07 12:57" pubdate>
+          2022年10月7日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          30k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          248 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">k8s client-go 源码阅读</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h1><p><img src="https://raw.githubusercontent.com/autsu/diagrams/ebb2c434fe2fdcb013512d0e6f62e9d8722bc2e3/img/K8s-informer.png" srcset="/img/loading.gif" lazyload></p>
+<p>Informers 由几个核心的组件构成：</p>
+<ul>
+<li>Reflector：负责从 api-server list（全量拉取数据） and watch（监听数据变更）</li>
+<li>DeltaFIFO：一个存储事件的队列，里面记录了事件的类型</li>
+<li>Indexer：存储数据，数据来源是从 DeltaFIFO 中 pop 出来的，然后会根据事件类型进行对应的操作</li>
+<li>sharedProcessor：用于运行用户设置的事件回调函数，里面用 map 存储了所有的 listener，每次调用 AddEventHandler 都会创建一个 listener，同时这个函数可以调用多次，也就是创建多个 listener，当发送事件时，会调用所有的 listener 的对应回调函数</li>
+<li>controller：上面提到的 Reflector、DeltaFIFO、Indexer 各自有各自的作用，但是它们彼此之间还没有关联起来，而 controller 就是负责这件事的，它是这 3 个组件的 master，让它们可以协同运作，大致流程是：当 Reflector watch 到事件时会将其保存到 DeltaFIFO 中，controller 这边会持续从 DeltaFIFO 中 pop 元素，然后根据事件类型对 indexer 进行相应操作（add、update、delete），使得 indexer 中的数据和 api-server 中的一致，同时还会调用 sharedProcessor 的对应回调，来完成用户设置的对应事件操作。</li>
+</ul>
+<h1 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h1><h2 id="Reflector"><a href="#Reflector" class="headerlink" title="Reflector"></a>Reflector</h2><p>Reflector struct 有非常多的字段，这里对其进行了截取，只保留了部分与本文相关的关键字段。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Reflector <span class="hljs-keyword">struct</span> &#123;<br>  <span class="hljs-comment">// The destination to sync up with the watch source</span><br>	store Store<br>	<span class="hljs-comment">// listerWatcher is used to perform lists and watches.</span><br>	listerWatcher ListerWatcher<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h1 id="informers-x2F-factory-go"><a href="#informers-x2F-factory-go" class="headerlink" title="informers&#x2F;factory.go"></a>informers&#x2F;factory.go</h1><h2 id="types"><a href="#types" class="headerlink" title="types"></a>types</h2><h3 id="sharedInformerFactory"><a href="#sharedInformerFactory" class="headerlink" title="sharedInformerFactory"></a>sharedInformerFactory</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> sharedInformerFactory <span class="hljs-keyword">struct</span> &#123;<br>   client           kubernetes.Interface<br>   namespace        <span class="hljs-type">string</span><br>   tweakListOptions internalinterfaces.TweakListOptionsFunc<br>   lock             sync.Mutex<br>   defaultResync    time.Duration<br>   customResync     <span class="hljs-keyword">map</span>[reflect.Type]time.Duration<br><br>   informers <span class="hljs-keyword">map</span>[reflect.Type]cache.SharedIndexInformer<br>   <span class="hljs-comment">// startedInformers is used for tracking which informers have been started.</span><br>   <span class="hljs-comment">// This allows Start() to be called multiple times safely.</span><br>   startedInformers <span class="hljs-keyword">map</span>[reflect.Type]<span class="hljs-type">bool</span><br>   <span class="hljs-comment">// wg tracks how many goroutines were started.</span><br>   wg sync.WaitGroup<br>   <span class="hljs-comment">// shuttingDown is true when Shutdown has been called. It may still be running</span><br>   <span class="hljs-comment">// because it needs to wait for goroutines.</span><br>   shuttingDown <span class="hljs-type">bool</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="Start"><a href="#Start" class="headerlink" title="Start()"></a>Start()</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs GO"><span class="hljs-comment">// Start initializes all requested informers.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(f *sharedInformerFactory)</span></span> Start(stopCh &lt;-<span class="hljs-keyword">chan</span> <span class="hljs-keyword">struct</span>&#123;&#125;) &#123;<br>	f.lock.Lock()<br>	<span class="hljs-keyword">defer</span> f.lock.Unlock()<br><br>  <span class="hljs-comment">// 遍历 factory 中已注册的 informer，如果该 informer 还未运行过，则运行它</span><br>	<span class="hljs-keyword">for</span> informerType, informer := <span class="hljs-keyword">range</span> f.informers &#123;<br>		<span class="hljs-keyword">if</span> !f.startedInformers[informerType] &#123;	<span class="hljs-comment">// 还未运行过</span><br>			<span class="hljs-keyword">go</span> informer.Run(stopCh)	<span class="hljs-comment">// 运行该 informer</span><br>			f.startedInformers[informerType] = <span class="hljs-literal">true</span>	<span class="hljs-comment">// 标记为已运行</span><br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="InformerFor"><a href="#InformerFor" class="headerlink" title="InformerFor()"></a>InformerFor()</h4><p>InformerFor 填充 sharedInformerFactory 的 informers 字段</p>
+<p>会检查该 type 是否已经注册，如果没注册则会调用传递进来的 newFunc 回调函数进行创建，并注册到 informers 中</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// InternalInformerFor returns the SharedIndexInformer for obj using an internal</span><br><span class="hljs-comment">// client.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(f *sharedInformerFactory)</span></span> InformerFor(obj runtime.Object, newFunc internalinterfaces.NewInformerFunc) cache.SharedIndexInformer &#123;<br>   f.lock.Lock()<br>   <span class="hljs-keyword">defer</span> f.lock.Unlock()<br><br>   <span class="hljs-comment">// 使用反射获取 obj 的类型</span><br>   informerType := reflect.TypeOf(obj)<br>   <span class="hljs-comment">// 查看是否已注册过该 informerType，如果注册过则直接返回，符合了 shared 的定义 </span><br>   informer, exists := f.informers[informerType]<br>   <span class="hljs-keyword">if</span> exists &#123;<br>      <span class="hljs-keyword">return</span> informer<br>   &#125;<br><br>   resyncPeriod, exists := f.customResync[informerType]<br>   <span class="hljs-keyword">if</span> !exists &#123;<br>      resyncPeriod = f.defaultResync<br>   &#125;<br>		<br>  <span class="hljs-comment">// 走到这里说明 informerType 还未注册过，那么就创建一个 informer 并注册</span><br>   informer = newFunc(f.client, resyncPeriod)<br>   f.informers[informerType] = informer<br><br>   <span class="hljs-keyword">return</span> informer<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h5 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h5><p>比如有一个 podInformer，它有一个 Informer 方法，该方法会调用 InformerFor</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(f *podInformer)</span></span> Informer() cache.SharedIndexInformer &#123;<br>	<span class="hljs-keyword">return</span> f.factory.InformerFor(&amp;corev1.Pod&#123;&#125;, f.defaultInformer)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>它传递的回调函数是 f.defaultInformer，该函数定义如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(f *podInformer)</span></span> defaultInformer(client kubernetes.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer &#123;<br>	<span class="hljs-keyword">return</span> NewFilteredPodInformer(client, f.namespace, resyncPeriod, cache.Indexers&#123;cache.NamespaceIndex: cache.MetaNamespaceIndexFunc&#125;, f.tweakListOptions)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>该函数又调用了 NewFilteredPodInformer：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// NewFilteredPodInformer constructs a new informer for Pod type.</span><br><span class="hljs-comment">// Always prefer using an informer factory to get a shared informer instead of getting an independent</span><br><span class="hljs-comment">// one. This reduces memory footprint and number of connections to the server.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewFilteredPodInformer</span><span class="hljs-params">(client kubernetes.Interface, namespace <span class="hljs-type">string</span>, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc)</span></span> cache.SharedIndexInformer &#123;<br>	<span class="hljs-keyword">return</span> cache.NewSharedIndexInformer(<br>		&amp;cache.ListWatch&#123;<br>			ListFunc: <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(options metav1.ListOptions)</span></span> (runtime.Object, <span class="hljs-type">error</span>) &#123;<br>				<span class="hljs-keyword">if</span> tweakListOptions != <span class="hljs-literal">nil</span> &#123;<br>					tweakListOptions(&amp;options)<br>				&#125;<br>				<span class="hljs-keyword">return</span> client.CoreV1().Pods(namespace).List(context.TODO(), options)<br>			&#125;,<br>			WatchFunc: <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(options metav1.ListOptions)</span></span> (watch.Interface, <span class="hljs-type">error</span>) &#123;<br>				<span class="hljs-keyword">if</span> tweakListOptions != <span class="hljs-literal">nil</span> &#123;<br>					tweakListOptions(&amp;options)<br>				&#125;<br>				<span class="hljs-keyword">return</span> client.CoreV1().Pods(namespace).Watch(context.TODO(), options)<br>			&#125;,<br>		&#125;,<br>		&amp;corev1.Pod&#123;&#125;,<br>		resyncPeriod,<br>		indexers,<br>	)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这个函数又调用了 NewSharedIndexInformer ，最终会创建出一个 SharedIndexInformer，该函数定义在 tools&#x2F;cache&#x2F;shared_informer.go</p>
+<h2 id="functions"><a href="#functions" class="headerlink" title="functions"></a>functions</h2><h3 id="NewSharedInformerFactory"><a href="#NewSharedInformerFactory" class="headerlink" title="NewSharedInformerFactory"></a>NewSharedInformerFactory</h3><p>实际调用的是 NewSharedInformerFactoryWithOptions</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// NewSharedInformerFactory constructs a new instance of sharedInformerFactory for all namespaces.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewSharedInformerFactory</span><span class="hljs-params">(client kubernetes.Interface, defaultResync time.Duration)</span></span> SharedInformerFactory &#123;<br>   <span class="hljs-keyword">return</span> NewSharedInformerFactoryWithOptions(client, defaultResync)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="NewSharedInformerFactoryWithOptions"><a href="#NewSharedInformerFactoryWithOptions" class="headerlink" title="NewSharedInformerFactoryWithOptions"></a>NewSharedInformerFactoryWithOptions</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// NewSharedInformerFactoryWithOptions constructs a new instance of a SharedInformerFactory with additional options.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewSharedInformerFactoryWithOptions</span><span class="hljs-params">(client kubernetes.Interface, defaultResync time.Duration, options ...SharedInformerOption)</span></span> SharedInformerFactory &#123;<br>   factory := &amp;sharedInformerFactory&#123;<br>      client:           client,<br>      namespace:        v1.NamespaceAll,<br>      defaultResync:    defaultResync,<br>      informers:        <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[reflect.Type]cache.SharedIndexInformer),<br>      startedInformers: <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[reflect.Type]<span class="hljs-type">bool</span>),<br>      customResync:     <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[reflect.Type]time.Duration),<br>   &#125;<br><br>   <span class="hljs-comment">// Apply all options</span><br>   <span class="hljs-keyword">for</span> _, opt := <span class="hljs-keyword">range</span> options &#123;<br>      factory = opt(factory)<br>   &#125;<br><br>   <span class="hljs-keyword">return</span> factory<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+
+<h1 id="tools-x2F-cache-x2F-shared-informer-go"><a href="#tools-x2F-cache-x2F-shared-informer-go" class="headerlink" title="tools&#x2F;cache&#x2F;shared_informer.go"></a>tools&#x2F;cache&#x2F;shared_informer.go</h1><h2 id="types-1"><a href="#types-1" class="headerlink" title="types"></a>types</h2><h3 id="sharedIndexInformer"><a href="#sharedIndexInformer" class="headerlink" title="sharedIndexInformer"></a>sharedIndexInformer</h3><p>sharedIndexInformer 结构体，里面的几个核心属性是用来 list-watch 的 <code>listerWatcher</code>，负责存储的 <code>indexer</code>，负责执行整套流程的的 controller（从 reflector 中 list-watch，从 DefltaFIFO 中 pop 并更新 indexer），负责执行用户设置的 eventHandle 的 processor</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// `*sharedIndexInformer` implements SharedIndexInformer and has three</span><br><span class="hljs-comment">// main components.  One is an indexed local cache, `indexer Indexer`.</span><br><span class="hljs-comment">// The second main component is a Controller that pulls</span><br><span class="hljs-comment">// objects/notifications using the ListerWatcher and pushes them into</span><br><span class="hljs-comment">// a DeltaFIFO --- whose knownObjects is the informer&#x27;s local cache</span><br><span class="hljs-comment">// --- while concurrently Popping Deltas values from that fifo and</span><br><span class="hljs-comment">// processing them with `sharedIndexInformer::HandleDeltas`.  Each</span><br><span class="hljs-comment">// invocation of HandleDeltas, which is done with the fifo&#x27;s lock</span><br><span class="hljs-comment">// held, processes each Delta in turn.  For each Delta this both</span><br><span class="hljs-comment">// updates the local cache and stuffs the relevant notification into</span><br><span class="hljs-comment">// the sharedProcessor.  The third main component is that</span><br><span class="hljs-comment">// sharedProcessor, which is responsible for relaying those</span><br><span class="hljs-comment">// notifications to each of the informer&#x27;s clients.</span><br><span class="hljs-keyword">type</span> sharedIndexInformer <span class="hljs-keyword">struct</span> &#123;<br>   indexer    Indexer<br>   controller Controller<br><br>   processor             *sharedProcessor<br>   cacheMutationDetector MutationDetector<br><br>   listerWatcher ListerWatcher<br><br>   <span class="hljs-comment">// objectType is an example object of the type this informer is</span><br>   <span class="hljs-comment">// expected to handle.  Only the type needs to be right, except</span><br>   <span class="hljs-comment">// that when that is `unstructured.Unstructured` the object&#x27;s</span><br>   <span class="hljs-comment">// `&quot;apiVersion&quot;` and `&quot;kind&quot;` must also be right.</span><br>   objectType runtime.Object<br><br>   <span class="hljs-comment">// resyncCheckPeriod is how often we want the reflector&#x27;s resync timer to fire so it can call</span><br>   <span class="hljs-comment">// shouldResync to check if any of our listeners need a resync.</span><br>   resyncCheckPeriod time.Duration<br>   <span class="hljs-comment">// defaultEventHandlerResyncPeriod is the default resync period for any handlers added via</span><br>   <span class="hljs-comment">// AddEventHandler (i.e. they don&#x27;t specify one and just want to use the shared informer&#x27;s default</span><br>   <span class="hljs-comment">// value).</span><br>   defaultEventHandlerResyncPeriod time.Duration<br>   <span class="hljs-comment">// clock allows for testability</span><br>   clock clock.Clock<br><br>   started, stopped <span class="hljs-type">bool</span><br>   startedLock      sync.Mutex<br><br>   <span class="hljs-comment">// blockDeltas gives a way to stop all event distribution so that a late event handler</span><br>   <span class="hljs-comment">// can safely join the shared informer.</span><br>   blockDeltas sync.Mutex<br><br>   <span class="hljs-comment">// Called whenever the ListAndWatch drops the connection with an error.</span><br>   watchErrorHandler WatchErrorHandler<br><br>   transform TransformFunc<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="Run"><a href="#Run" class="headerlink" title="Run()"></a>Run()</h4><p>Run 会调用 s.controller.Run</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *sharedIndexInformer)</span></span> Run(stopCh &lt;-<span class="hljs-keyword">chan</span> <span class="hljs-keyword">struct</span>&#123;&#125;) &#123;<br>   <span class="hljs-keyword">defer</span> utilruntime.HandleCrash()<br><br>   <span class="hljs-keyword">if</span> s.HasStarted() &#123;<br>      klog.Warningf(<span class="hljs-string">&quot;The sharedIndexInformer has started, run more than once is not allowed&quot;</span>)<br>      <span class="hljs-keyword">return</span><br>   &#125;<br>   <span class="hljs-comment">// 创建一个 DeltaFIFO</span><br>   fifo := NewDeltaFIFOWithOptions(DeltaFIFOOptions&#123;<br>      KnownObjects:          s.indexer,<br>      EmitDeltaTypeReplaced: <span class="hljs-literal">true</span>,<br>   &#125;)<br><br>  <span class="hljs-comment">// 配置用来创建 controller 的 Config</span><br>   cfg := &amp;Config&#123;<br>      Queue:            fifo, <span class="hljs-comment">// 设置为 DeltaFIFO</span><br>      ListerWatcher:    s.listerWatcher,<br>      ObjectType:       s.objectType,<br>      FullResyncPeriod: s.resyncCheckPeriod,<br>      RetryOnError:     <span class="hljs-literal">false</span>,<br>      ShouldResync:     s.processor.shouldResync,<br><br>      Process:           s.HandleDeltas,<br>      WatchErrorHandler: s.watchErrorHandler,<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>      s.startedLock.Lock()<br>      <span class="hljs-keyword">defer</span> s.startedLock.Unlock()<br><br>     	<span class="hljs-comment">// 创建 controller</span><br>      s.controller = New(cfg)<br>      s.controller.(*controller).clock = s.clock<br>      s.started = <span class="hljs-literal">true</span><br>   &#125;()<br><br>   <span class="hljs-comment">// Separate stop channel because Processor should be stopped strictly after controller</span><br>   processorStopCh := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-keyword">struct</span>&#123;&#125;)<br>   <span class="hljs-keyword">var</span> wg wait.Group<br>   <span class="hljs-keyword">defer</span> wg.Wait()              <span class="hljs-comment">// Wait for Processor to stop</span><br>   <span class="hljs-keyword">defer</span> <span class="hljs-built_in">close</span>(processorStopCh) <span class="hljs-comment">// Tell Processor to stop</span><br>   wg.StartWithChannel(processorStopCh, s.cacheMutationDetector.Run)<br>   wg.StartWithChannel(processorStopCh, s.processor.run)<br><br>   <span class="hljs-keyword">defer</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>      s.startedLock.Lock()<br>      <span class="hljs-keyword">defer</span> s.startedLock.Unlock()<br>      s.stopped = <span class="hljs-literal">true</span> <span class="hljs-comment">// Don&#x27;t want any new listeners</span><br>   &#125;()<br>   <span class="hljs-comment">// 运行 controller</span><br>   s.controller.Run(stopCh)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="HandleDeltas"><a href="#HandleDeltas" class="headerlink" title="HandleDeltas()"></a>HandleDeltas()</h4><p>对 DeltaFIFO 中 pop 出的元素进行处理</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *sharedIndexInformer)</span></span> HandleDeltas(obj <span class="hljs-keyword">interface</span>&#123;&#125;) <span class="hljs-type">error</span> &#123;<br>	s.blockDeltas.Lock()<br>	<span class="hljs-keyword">defer</span> s.blockDeltas.Unlock()<br><br>	<span class="hljs-keyword">if</span> deltas, ok := obj.(Deltas); ok &#123;<br>    <span class="hljs-comment">// 又调用了 processDeltas，其中第二个参数传递的是 indexer</span><br>		<span class="hljs-keyword">return</span> processDeltas(s, s.indexer, s.transform, deltas)<br>	&#125;<br>	<span class="hljs-keyword">return</span> errors.New(<span class="hljs-string">&quot;object given as Process argument is not Deltas&quot;</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="AddEventHandler"><a href="#AddEventHandler" class="headerlink" title="AddEventHandler()"></a>AddEventHandler()</h4><p>添加事件处理函数，但发生事件时（add，update，delete）会调用对应的回调函数，实际调用的是AddEventHandlerWithResyncPeriod，该函数可以调用多次（也就是 add 多个 EventHandler），每次都会创建一个 listener，当发生事件时，会一并通知所有的 listener</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *sharedIndexInformer)</span></span> AddEventHandler(handler ResourceEventHandler) (ResourceEventHandlerRegistration, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-keyword">return</span> s.AddEventHandlerWithResyncPeriod(handler, s.defaultEventHandlerResyncPeriod)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="AddEventHandlerWithResyncPeriod"><a href="#AddEventHandlerWithResyncPeriod" class="headerlink" title="AddEventHandlerWithResyncPeriod()"></a>AddEventHandlerWithResyncPeriod()</h4><p>该函数会创建一个 listener</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *sharedIndexInformer)</span></span> AddEventHandlerWithResyncPeriod(handler ResourceEventHandler, resyncPeriod time.Duration) (ResourceEventHandlerRegistration, <span class="hljs-type">error</span>) &#123;<br>	s.startedLock.Lock()<br>	<span class="hljs-keyword">defer</span> s.startedLock.Unlock()<br><br>	<span class="hljs-keyword">if</span> s.stopped &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, fmt.Errorf(<span class="hljs-string">&quot;handler %v was not added to shared informer because it has stopped already&quot;</span>, handler)<br>	&#125;<br><br>	<span class="hljs-keyword">if</span> resyncPeriod &gt; <span class="hljs-number">0</span> &#123;<br>		<span class="hljs-keyword">if</span> resyncPeriod &lt; minimumResyncPeriod &#123;<br>			klog.Warningf(<span class="hljs-string">&quot;resyncPeriod %v is too small. Changing it to the minimum allowed value of %v&quot;</span>, resyncPeriod, minimumResyncPeriod)<br>			resyncPeriod = minimumResyncPeriod<br>		&#125;<br><br>		<span class="hljs-keyword">if</span> resyncPeriod &lt; s.resyncCheckPeriod &#123;<br>			<span class="hljs-keyword">if</span> s.started &#123;<br>				klog.Warningf(<span class="hljs-string">&quot;resyncPeriod %v is smaller than resyncCheckPeriod %v and the informer has already started. Changing it to %v&quot;</span>, resyncPeriod, s.resyncCheckPeriod, s.resyncCheckPeriod)<br>				resyncPeriod = s.resyncCheckPeriod<br>			&#125; <span class="hljs-keyword">else</span> &#123;<br>				<span class="hljs-comment">// if the event handler&#x27;s resyncPeriod is smaller than the current resyncCheckPeriod, update</span><br>				<span class="hljs-comment">// resyncCheckPeriod to match resyncPeriod and adjust the resync periods of all the listeners</span><br>				<span class="hljs-comment">// accordingly</span><br>				s.resyncCheckPeriod = resyncPeriod<br>				s.processor.resyncCheckPeriodChanged(resyncPeriod)<br>			&#125;<br>		&#125;<br>	&#125;<br><br>  <span class="hljs-comment">// 创建一个 listener</span><br>	listener := newProcessListener(handler, resyncPeriod, determineResyncPeriod(resyncPeriod, s.resyncCheckPeriod), s.clock.Now(), initialBufferSize)<br><br>	<span class="hljs-keyword">if</span> !s.started &#123;<br>		<span class="hljs-keyword">return</span> s.processor.addListener(listener), <span class="hljs-literal">nil</span><br>	&#125;<br><br>	<span class="hljs-comment">// in order to safely join, we have to</span><br>	<span class="hljs-comment">// 1. stop sending add/update/delete notifications</span><br>	<span class="hljs-comment">// 2. do a list against the store</span><br>	<span class="hljs-comment">// 3. send synthetic &quot;Add&quot; events to the new handler</span><br>	<span class="hljs-comment">// 4. unblock</span><br>	s.blockDeltas.Lock()<br>	<span class="hljs-keyword">defer</span> s.blockDeltas.Unlock()<br><br>  <span class="hljs-comment">// 将 listener 添加到 s.processor</span><br>	handle := s.processor.addListener(listener)<br>  <span class="hljs-comment">// 遍历当前 indexer 里的所有数据，对所有的 listener 进行通知</span><br>	<span class="hljs-keyword">for</span> _, item := <span class="hljs-keyword">range</span> s.indexer.List() &#123;<br>		listener.add(addNotification&#123;newObj: item&#125;)<br>	&#125;<br>	<span class="hljs-keyword">return</span> handle, <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="OnAdd"><a href="#OnAdd" class="headerlink" title="OnAdd()"></a>OnAdd()</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// Conforms to ResourceEventHandler</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *sharedIndexInformer)</span></span> OnAdd(obj <span class="hljs-keyword">interface</span>&#123;&#125;) &#123;<br>	<span class="hljs-comment">// Invocation of this function is locked under s.blockDeltas, so it is</span><br>	<span class="hljs-comment">// save to distribute the notification</span><br>	s.cacheMutationDetector.AddObject(obj)<br>	s.processor.distribute(addNotification&#123;newObj: obj&#125;, <span class="hljs-literal">false</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="OnUpdate"><a href="#OnUpdate" class="headerlink" title="OnUpdate()"></a>OnUpdate()</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// Conforms to ResourceEventHandler</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *sharedIndexInformer)</span></span> OnUpdate(old, <span class="hljs-built_in">new</span> <span class="hljs-keyword">interface</span>&#123;&#125;) &#123;<br>	isSync := <span class="hljs-literal">false</span><br><br>	<span class="hljs-comment">// If is a Sync event, isSync should be true</span><br>	<span class="hljs-comment">// If is a Replaced event, isSync is true if resource version is unchanged.</span><br>	<span class="hljs-comment">// If RV is unchanged: this is a Sync/Replaced event, so isSync is true</span><br><br>	<span class="hljs-keyword">if</span> accessor, err := meta.Accessor(<span class="hljs-built_in">new</span>); err == <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">if</span> oldAccessor, err := meta.Accessor(old); err == <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-comment">// Events that didn&#x27;t change resourceVersion are treated as resync events</span><br>			<span class="hljs-comment">// and only propagated to listeners that requested resync</span><br>			isSync = accessor.GetResourceVersion() == oldAccessor.GetResourceVersion()<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-comment">// Invocation of this function is locked under s.blockDeltas, so it is</span><br>	<span class="hljs-comment">// save to distribute the notification</span><br>	s.cacheMutationDetector.AddObject(<span class="hljs-built_in">new</span>)<br>	s.processor.distribute(updateNotification&#123;oldObj: old, newObj: <span class="hljs-built_in">new</span>&#125;, isSync)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="OnDelete"><a href="#OnDelete" class="headerlink" title="OnDelete()"></a>OnDelete()</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// Conforms to ResourceEventHandler</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *sharedIndexInformer)</span></span> OnDelete(old <span class="hljs-keyword">interface</span>&#123;&#125;) &#123;<br>	<span class="hljs-comment">// Invocation of this function is locked under s.blockDeltas, so it is</span><br>	<span class="hljs-comment">// save to distribute the notification</span><br>	s.processor.distribute(deleteNotification&#123;oldObj: old&#125;, <span class="hljs-literal">false</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="sharedProcessor"><a href="#sharedProcessor" class="headerlink" title="sharedProcessor"></a>sharedProcessor</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// sharedProcessor has a collection of processorListener and can</span><br><span class="hljs-comment">// distribute a notification object to its listeners.  There are two</span><br><span class="hljs-comment">// kinds of distribute operations.  The sync distributions go to a</span><br><span class="hljs-comment">// subset of the listeners that (a) is recomputed in the occasional</span><br><span class="hljs-comment">// calls to shouldResync and (b) every listener is initially put in.</span><br><span class="hljs-comment">// The non-sync distributions go to every listener.</span><br><span class="hljs-keyword">type</span> sharedProcessor <span class="hljs-keyword">struct</span> &#123;<br>	listenersStarted <span class="hljs-type">bool</span><br>	listenersLock    sync.RWMutex<br>	<span class="hljs-comment">// Map from listeners to whether or not they are currently syncing</span><br>	listeners <span class="hljs-keyword">map</span>[*processorListener]<span class="hljs-type">bool</span><br>	clock     clock.Clock<br>	wg        wait.Group<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="addListener"><a href="#addListener" class="headerlink" title="addListener()"></a>addListener()</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(p *sharedProcessor)</span></span> addListener(listener *processorListener) &#123;<br>	p.listenersLock.Lock()<br>	<span class="hljs-keyword">defer</span> p.listenersLock.Unlock()<br><br>	p.addListenerLocked(listener)<br>	<span class="hljs-keyword">if</span> p.listenersStarted &#123;<br>		p.wg.Start(listener.run)<br>		p.wg.Start(listener.pop)<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="distribute"><a href="#distribute" class="headerlink" title="distribute()"></a>distribute()</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(p *sharedProcessor)</span></span> distribute(obj <span class="hljs-keyword">interface</span>&#123;&#125;, sync <span class="hljs-type">bool</span>) &#123;<br>	p.listenersLock.RLock()<br>	<span class="hljs-keyword">defer</span> p.listenersLock.RUnlock()<br><br>	<span class="hljs-keyword">for</span> listener, isSyncing := <span class="hljs-keyword">range</span> p.listeners &#123;<br>		<span class="hljs-keyword">switch</span> &#123;<br>		<span class="hljs-keyword">case</span> !sync:<br>			<span class="hljs-comment">// non-sync messages are delivered to every listener</span><br>			listener.add(obj)<br>		<span class="hljs-keyword">case</span> isSyncing:<br>			<span class="hljs-comment">// sync messages are delivered to every syncing listener</span><br>			listener.add(obj)<br>		<span class="hljs-keyword">default</span>:<br>			<span class="hljs-comment">// skipping a sync obj for a non-syncing listener</span><br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="processorListener"><a href="#processorListener" class="headerlink" title="processorListener"></a>processorListener</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// processorListener relays notifications from a sharedProcessor to</span><br><span class="hljs-comment">// one ResourceEventHandler --- using two goroutines, two unbuffered</span><br><span class="hljs-comment">// channels, and an unbounded ring buffer.  The `add(notification)`</span><br><span class="hljs-comment">// function sends the given notification to `addCh`.  One goroutine</span><br><span class="hljs-comment">// runs `pop()`, which pumps notifications from `addCh` to `nextCh`</span><br><span class="hljs-comment">// using storage in the ring buffer while `nextCh` is not keeping up.</span><br><span class="hljs-comment">// Another goroutine runs `run()`, which receives notifications from</span><br><span class="hljs-comment">// `nextCh` and synchronously invokes the appropriate handler method.</span><br><span class="hljs-comment">//</span><br><span class="hljs-comment">// processorListener also keeps track of the adjusted requested resync</span><br><span class="hljs-comment">// period of the listener.</span><br><span class="hljs-keyword">type</span> processorListener <span class="hljs-keyword">struct</span> &#123;<br>	nextCh <span class="hljs-keyword">chan</span> <span class="hljs-keyword">interface</span>&#123;&#125;<br>	addCh  <span class="hljs-keyword">chan</span> <span class="hljs-keyword">interface</span>&#123;&#125;<br><br>	handler ResourceEventHandler<br><br>	<span class="hljs-comment">// pendingNotifications is an unbounded ring buffer that holds all notifications not yet distributed.</span><br>	<span class="hljs-comment">// There is one per listener, but a failing/stalled listener will have infinite pendingNotifications</span><br>	<span class="hljs-comment">// added until we OOM.</span><br>	<span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> This is no worse than before, since reflectors were backed by unbounded DeltaFIFOs, but</span><br>	<span class="hljs-comment">// we should try to do something better.</span><br>	pendingNotifications buffer.RingGrowing<br><br>	<span class="hljs-comment">// requestedResyncPeriod is how frequently the listener wants a</span><br>	<span class="hljs-comment">// full resync from the shared informer, but modified by two</span><br>	<span class="hljs-comment">// adjustments.  One is imposing a lower bound,</span><br>	<span class="hljs-comment">// `minimumResyncPeriod`.  The other is another lower bound, the</span><br>	<span class="hljs-comment">// sharedIndexInformer&#x27;s `resyncCheckPeriod`, that is imposed (a) only</span><br>	<span class="hljs-comment">// in AddEventHandlerWithResyncPeriod invocations made after the</span><br>	<span class="hljs-comment">// sharedIndexInformer starts and (b) only if the informer does</span><br>	<span class="hljs-comment">// resyncs at all.</span><br>	requestedResyncPeriod time.Duration<br>	<span class="hljs-comment">// resyncPeriod is the threshold that will be used in the logic</span><br>	<span class="hljs-comment">// for this listener.  This value differs from</span><br>	<span class="hljs-comment">// requestedResyncPeriod only when the sharedIndexInformer does</span><br>	<span class="hljs-comment">// not do resyncs, in which case the value here is zero.  The</span><br>	<span class="hljs-comment">// actual time between resyncs depends on when the</span><br>	<span class="hljs-comment">// sharedProcessor&#x27;s `shouldResync` function is invoked and when</span><br>	<span class="hljs-comment">// the sharedIndexInformer processes `Sync` type Delta objects.</span><br>	resyncPeriod time.Duration<br>	<span class="hljs-comment">// nextResync is the earliest time the listener should get a full resync</span><br>	nextResync time.Time<br>	<span class="hljs-comment">// resyncLock guards access to resyncPeriod and nextResync</span><br>	resyncLock sync.Mutex<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="newProcessListener"><a href="#newProcessListener" class="headerlink" title="newProcessListener()"></a>newProcessListener()</h4><p>该函数在 sharedIndexInformer.AddEventHandlerWithResyncPeriod 中调用，创建一个新的 listener</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">newProcessListener</span><span class="hljs-params">(handler ResourceEventHandler, requestedResyncPeriod, resyncPeriod time.Duration, now time.Time, bufferSize <span class="hljs-type">int</span>)</span></span> *processorListener &#123;<br>	ret := &amp;processorListener&#123;<br>		nextCh:                <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-keyword">interface</span>&#123;&#125;),<br>		addCh:                 <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-keyword">interface</span>&#123;&#125;),<br>		handler:               handler,<br>		pendingNotifications:  *buffer.NewRingGrowing(bufferSize),<br>		requestedResyncPeriod: requestedResyncPeriod,<br>		resyncPeriod:          resyncPeriod,<br>	&#125;<br><br>	ret.determineNextResync(now)<br><br>	<span class="hljs-keyword">return</span> ret<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="functions-1"><a href="#functions-1" class="headerlink" title="functions"></a>functions</h2><h3 id="NewSharedIndexInformer"><a href="#NewSharedIndexInformer" class="headerlink" title="NewSharedIndexInformer"></a>NewSharedIndexInformer</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// NewSharedIndexInformer creates a new instance for the listwatcher.</span><br><span class="hljs-comment">// The created informer will not do resyncs if the given</span><br><span class="hljs-comment">// defaultEventHandlerResyncPeriod is zero.  Otherwise: for each</span><br><span class="hljs-comment">// handler that with a non-zero requested resync period, whether added</span><br><span class="hljs-comment">// before or after the informer starts, the nominal resync period is</span><br><span class="hljs-comment">// the requested resync period rounded up to a multiple of the</span><br><span class="hljs-comment">// informer&#x27;s resync checking period.  Such an informer&#x27;s resync</span><br><span class="hljs-comment">// checking period is established when the informer starts running,</span><br><span class="hljs-comment">// and is the maximum of (a) the minimum of the resync periods</span><br><span class="hljs-comment">// requested before the informer starts and the</span><br><span class="hljs-comment">// defaultEventHandlerResyncPeriod given here and (b) the constant</span><br><span class="hljs-comment">// `minimumResyncPeriod` defined in this file.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewSharedIndexInformer</span><span class="hljs-params">(lw ListerWatcher, exampleObject runtime.Object, defaultEventHandlerResyncPeriod time.Duration, indexers Indexers)</span></span> SharedIndexInformer &#123;<br>	realClock := &amp;clock.RealClock&#123;&#125;<br>	sharedIndexInformer := &amp;sharedIndexInformer&#123;<br>		processor:                       &amp;sharedProcessor&#123;clock: realClock&#125;,<br>		indexer:                         NewIndexer(DeletionHandlingMetaNamespaceKeyFunc, indexers),<br>		listerWatcher:                   lw,<br>		objectType:                      exampleObject,<br>		resyncCheckPeriod:               defaultEventHandlerResyncPeriod,<br>		defaultEventHandlerResyncPeriod: defaultEventHandlerResyncPeriod,<br>		cacheMutationDetector:           NewCacheMutationDetector(fmt.Sprintf(<span class="hljs-string">&quot;%T&quot;</span>, exampleObject)),<br>		clock:                           realClock,<br>	&#125;<br>	<span class="hljs-keyword">return</span> sharedIndexInformer<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<h1 id="tools-x2F-cache-x2F-controller-go"><a href="#tools-x2F-cache-x2F-controller-go" class="headerlink" title="tools&#x2F;cache&#x2F;controller.go"></a>tools&#x2F;cache&#x2F;controller.go</h1><h2 id="types-2"><a href="#types-2" class="headerlink" title="types"></a>types</h2><h3 id="controller"><a href="#controller" class="headerlink" title="controller"></a>controller</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// `*controller` implements Controller</span><br><span class="hljs-keyword">type</span> controller <span class="hljs-keyword">struct</span> &#123;<br>	config         Config<br>	reflector      *Reflector<br>	reflectorMutex sync.RWMutex<br>	clock          clock.Clock<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="processLoop"><a href="#processLoop" class="headerlink" title="processLoop()"></a>processLoop()</h4><p>processLoop 会不断从 DeltaFIFO 中 pop 出元素，并调用 c.config.Process 对 pop 出的元素进行处理，这个 Process 实际是 HandleDeltas</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// processLoop drains the work queue.</span><br><span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> Consider doing the processing in parallel. This will require a little thought</span><br><span class="hljs-comment">// to make sure that we don&#x27;t end up processing the same object multiple times</span><br><span class="hljs-comment">// concurrently.</span><br><span class="hljs-comment">//</span><br><span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> Plumb through the stopCh here (and down to the queue) so that this can</span><br><span class="hljs-comment">// actually exit when the controller is stopped. Or just give up on this stuff</span><br><span class="hljs-comment">// ever being stoppable. Converting this whole package to use Context would</span><br><span class="hljs-comment">// also be helpful.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *controller)</span></span> processLoop() &#123;<br>   <span class="hljs-keyword">for</span> &#123;<br>      obj, err := c.config.Queue.Pop(PopProcessFunc(c.config.Process))<br>      <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>         <span class="hljs-keyword">if</span> err == ErrFIFOClosed &#123;<br>            <span class="hljs-keyword">return</span><br>         &#125;<br>         <span class="hljs-keyword">if</span> c.config.RetryOnError &#123;<br>            <span class="hljs-comment">// This is the safe way to re-enqueue.</span><br>            c.config.Queue.AddIfNotPresent(obj)<br>         &#125;<br>      &#125;<br>   &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="Run-1"><a href="#Run-1" class="headerlink" title="Run()"></a>Run()</h4><p>sharedIndexInformer.Run 里会创建一个 DeltaFIFO，并将 config.Queue 设置为这个 DeltaFIFO</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// Run begins processing items, and will continue until a value is sent down stopCh or it is closed.</span><br><span class="hljs-comment">// It&#x27;s an error to call Run more than once.</span><br><span class="hljs-comment">// Run blocks; call via go.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *controller)</span></span> Run(stopCh &lt;-<span class="hljs-keyword">chan</span> <span class="hljs-keyword">struct</span>&#123;&#125;) &#123;<br>	<span class="hljs-keyword">defer</span> utilruntime.HandleCrash()<br>	<span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>		&lt;-stopCh<br>		c.config.Queue.Close()<br>	&#125;()<br>  <br>	<span class="hljs-comment">// 创建一个 reflector 用来 list-watch</span><br>  <span class="hljs-comment">// 这里的 c.config.Queue 实际是一个 DeltaFIFO</span><br>	r := NewReflector(<br>		c.config.ListerWatcher,<br>		c.config.ObjectType,<br>		c.config.Queue,<br>		c.config.FullResyncPeriod,<br>	)<br>	r.ShouldResync = c.config.ShouldResync<br>	r.WatchListPageSize = c.config.WatchListPageSize<br>	r.clock = c.clock<br>	<span class="hljs-keyword">if</span> c.config.WatchErrorHandler != <span class="hljs-literal">nil</span> &#123;<br>		r.watchErrorHandler = c.config.WatchErrorHandler<br>	&#125;<br><br>	c.reflectorMutex.Lock()<br>	c.reflector = r<br>	c.reflectorMutex.Unlock()<br><br>	<span class="hljs-keyword">var</span> wg wait.Group<br><br>	wg.StartWithChannel(stopCh, r.Run)<br><br>	wait.Until(c.processLoop, time.Second, stopCh)<br>	wg.Wait()<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="Config"><a href="#Config" class="headerlink" title="Config"></a>Config</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Config <span class="hljs-keyword">struct</span> &#123;<br>   <span class="hljs-comment">// The queue for your objects - has to be a DeltaFIFO due to</span><br>   <span class="hljs-comment">// assumptions in the implementation. Your Process() function</span><br>   <span class="hljs-comment">// should accept the output of this Queue&#x27;s Pop() method.</span><br>   <span class="hljs-comment">// 应该传递一个 DeltaFIFO 类型的 queue，Process() 中会从该 queue</span><br>   <span class="hljs-comment">// 中 pop 元素进行处理</span><br>   Queue<br><br>   <span class="hljs-comment">// Something that can list and watch your objects.</span><br>   ListerWatcher<br><br>   <span class="hljs-comment">// Something that can process a popped Deltas.</span><br>   <span class="hljs-comment">// Pop 出来的 obj 处理函数</span><br>   Process ProcessFunc<br><br>   <span class="hljs-comment">// ObjectType is an example object of the type this controller is</span><br>   <span class="hljs-comment">// expected to handle.  Only the type needs to be right, except</span><br>   <span class="hljs-comment">// that when that is `unstructured.Unstructured` the object&#x27;s</span><br>   <span class="hljs-comment">// `&quot;apiVersion&quot;` and `&quot;kind&quot;` must also be right.</span><br>   ObjectType runtime.Object<br><br>   <span class="hljs-comment">// FullResyncPeriod is the period at which ShouldResync is considered.</span><br>   FullResyncPeriod time.Duration<br><br>   <span class="hljs-comment">// ShouldResync is periodically used by the reflector to determine</span><br>   <span class="hljs-comment">// whether to Resync the Queue. If ShouldResync is `nil` or</span><br>   <span class="hljs-comment">// returns true, it means the reflector should proceed with the</span><br>   <span class="hljs-comment">// resync.</span><br>   ShouldResync ShouldResyncFunc<br><br>   <span class="hljs-comment">// If true, when Process() returns an error, re-enqueue the object.</span><br>   <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> add interface to let you inject a delay/backoff or drop</span><br>   <span class="hljs-comment">//       the object completely if desired. Pass the object in</span><br>   <span class="hljs-comment">//       question to this interface as a parameter.  This is probably moot</span><br>   <span class="hljs-comment">//       now that this functionality appears at a higher level.</span><br>   RetryOnError <span class="hljs-type">bool</span><br><br>   <span class="hljs-comment">// Called whenever the ListAndWatch drops the connection with an error.</span><br>   WatchErrorHandler WatchErrorHandler<br><br>   <span class="hljs-comment">// WatchListPageSize is the requested chunk size of initial and relist watch lists.</span><br>   WatchListPageSize <span class="hljs-type">int64</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="ProcessFunc"><a href="#ProcessFunc" class="headerlink" title="ProcessFunc"></a>ProcessFunc</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// ProcessFunc processes a single object.</span><br><span class="hljs-keyword">type</span> ProcessFunc <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(obj <span class="hljs-keyword">interface</span>&#123;&#125;)</span></span> <span class="hljs-type">error</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="functions-2"><a href="#functions-2" class="headerlink" title="functions"></a>functions</h2><h3 id="New"><a href="#New" class="headerlink" title="New"></a>New</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// New makes a new Controller from the given Config.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">New</span><span class="hljs-params">(c *Config)</span></span> Controller &#123;<br>   ctlr := &amp;controller&#123;<br>      config: *c,<br>      clock:  &amp;clock.RealClock&#123;&#125;,<br>   &#125;<br>   <span class="hljs-keyword">return</span> ctlr<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="processDeltas"><a href="#processDeltas" class="headerlink" title="processDeltas"></a>processDeltas</h3><p>如果是 HandleDeltas 调用该函数，那么第二个参数传递的是 indexer，那么这里就会根据 pop 的事件类型对 indexer 进行相应操作，同时还传递了一个 handler 参数，这是一个接口类型，需要实现 OnAdd、OnUpdate、OnDelete 三个方法，sharedIndexInformer 实现了这个接口，实际会调用 sharedProcessor 的 OnAdd 等方法，这些方法是用户自己设置的回调函数</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// Multiplexes updates in the form of a list of Deltas into a Store, and informs</span><br><span class="hljs-comment">// a given handler of events OnUpdate, OnAdd, OnDelete</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">processDeltas</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">	// Object which receives event notifications from the given deltas</span></span><br><span class="hljs-params"><span class="hljs-function">	handler ResourceEventHandler,</span></span><br><span class="hljs-params"><span class="hljs-function">	clientState Store,</span></span><br><span class="hljs-params"><span class="hljs-function">	transformer TransformFunc,</span></span><br><span class="hljs-params"><span class="hljs-function">	deltas Deltas,</span></span><br><span class="hljs-params"><span class="hljs-function">)</span></span> <span class="hljs-type">error</span> &#123;<br>	<span class="hljs-comment">// from oldest to newest</span><br>	<span class="hljs-keyword">for</span> _, d := <span class="hljs-keyword">range</span> deltas &#123;<br>		obj := d.Object<br>		<span class="hljs-keyword">if</span> transformer != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">var</span> err <span class="hljs-type">error</span><br>			obj, err = transformer(obj)<br>			<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>				<span class="hljs-keyword">return</span> err<br>			&#125;<br>		&#125;<br><br>		<span class="hljs-keyword">switch</span> d.Type &#123;<br>		<span class="hljs-keyword">case</span> Sync, Replaced, Added, Updated:<br>			<span class="hljs-keyword">if</span> old, exists, err := clientState.Get(obj); err == <span class="hljs-literal">nil</span> &amp;&amp; exists &#123;<br>        <span class="hljs-comment">// 更新 indexer 里的数据</span><br>				<span class="hljs-keyword">if</span> err := clientState.Update(obj); err != <span class="hljs-literal">nil</span> &#123;<br>					<span class="hljs-keyword">return</span> err<br>				&#125;<br>        <span class="hljs-comment">// 同时执行用户设置的回调函数</span><br>				handler.OnUpdate(old, obj)<br>			&#125; <span class="hljs-keyword">else</span> &#123;<br>				<span class="hljs-keyword">if</span> err := clientState.Add(obj); err != <span class="hljs-literal">nil</span> &#123;<br>					<span class="hljs-keyword">return</span> err<br>				&#125;<br>				handler.OnAdd(obj)<br>			&#125;<br>		<span class="hljs-keyword">case</span> Deleted:<br>			<span class="hljs-keyword">if</span> err := clientState.Delete(obj); err != <span class="hljs-literal">nil</span> &#123;<br>				<span class="hljs-keyword">return</span> err<br>			&#125;<br>			handler.OnDelete(obj)<br>		&#125;<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="tools-x2F-cache-x2F-reflector-go"><a href="#tools-x2F-cache-x2F-reflector-go" class="headerlink" title="tools&#x2F;cache&#x2F;reflector.go"></a>tools&#x2F;cache&#x2F;reflector.go</h1><h2 id="types-3"><a href="#types-3" class="headerlink" title="types"></a>types</h2><h2 id="functions-3"><a href="#functions-3" class="headerlink" title="functions"></a>functions</h2><h3 id="watchHandler"><a href="#watchHandler" class="headerlink" title="watchHandler"></a>watchHandler</h3><p>当 watch 到有事件产生时，会执行该函数对事件进行相应的处理</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// watchHandler watches w and sets setLastSyncResourceVersion</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">watchHandler</span><span class="hljs-params">(start time.Time,</span></span><br><span class="hljs-params"><span class="hljs-function">   w watch.Interface,</span></span><br><span class="hljs-params"><span class="hljs-function">   store Store,</span></span><br><span class="hljs-params"><span class="hljs-function">	 // 省略其他参数...</span></span><br><span class="hljs-params"><span class="hljs-function">)</span></span> <span class="hljs-type">error</span> &#123;<br>  	eventCount := <span class="hljs-number">0</span><br><br>	<span class="hljs-comment">// Stopping the watcher should be idempotent and if we return from this function there&#x27;s no way</span><br>	<span class="hljs-comment">// we&#x27;re coming back in with the same watch interface.</span><br>	<span class="hljs-keyword">defer</span> w.Stop()<br><br>loop:<br>	<span class="hljs-keyword">for</span> &#123;<br>		<span class="hljs-keyword">select</span> &#123;<br>		<span class="hljs-comment">// 省略...</span><br>    <span class="hljs-comment">// 有事件产生了  </span><br>		<span class="hljs-keyword">case</span> event, ok := &lt;-w.ResultChan():<br>			<span class="hljs-keyword">if</span> !ok &#123;<br>				<span class="hljs-keyword">break</span> loop<br>			&#125;<br>			<span class="hljs-keyword">if</span> event.Type == watch.Error &#123;<br>				<span class="hljs-keyword">return</span> apierrors.FromObject(event.Object)<br>			&#125;<br>			<span class="hljs-comment">// 省略...</span><br>      <span class="hljs-comment">// 判断事件类型，进行相应的处理</span><br>			<span class="hljs-keyword">switch</span> event.Type &#123;<br>			<span class="hljs-keyword">case</span> watch.Added:<br>        <span class="hljs-comment">// 这里的 store 实际是 DeltaFIFO，调用的是 DeltaFIFO.Add()</span><br>				err := store.Add(event.Object)<br>				<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>					utilruntime.HandleError(fmt.Errorf(<span class="hljs-string">&quot;%s: unable to add watch event object (%#v) to store: %v&quot;</span>, name, event.Object, err))<br>				&#125;<br>			<span class="hljs-keyword">case</span> watch.Modified:<br>				err := store.Update(event.Object)<br>				<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>					utilruntime.HandleError(fmt.Errorf(<span class="hljs-string">&quot;%s: unable to update watch event object (%#v) to store: %v&quot;</span>, name, event.Object, err))<br>				&#125;<br>			<span class="hljs-keyword">case</span> watch.Deleted:<br>				<span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> Will any consumers need access to the &quot;last known</span><br>				<span class="hljs-comment">// state&quot;, which is passed in event.Object? If so, may need</span><br>				<span class="hljs-comment">// to change this.</span><br>				err := store.Delete(event.Object)<br>				<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>					utilruntime.HandleError(fmt.Errorf(<span class="hljs-string">&quot;%s: unable to delete watch event object (%#v) from store: %v&quot;</span>, name, event.Object, err))<br>				&#125;<br>			<span class="hljs-keyword">case</span> watch.Bookmark:<br>				<span class="hljs-comment">// A `Bookmark` means watch has synced here, just update the resourceVersion</span><br>			<span class="hljs-keyword">default</span>:<br>				utilruntime.HandleError(fmt.Errorf(<span class="hljs-string">&quot;%s: unable to understand watch event %#v&quot;</span>, name, event))<br>			&#125;<br>			setLastSyncResourceVersion(resourceVersion)<br>			<span class="hljs-keyword">if</span> rvu, ok := store.(ResourceVersionUpdater); ok &#123;<br>				rvu.UpdateResourceVersion(resourceVersion)<br>			&#125;<br>			eventCount++<br>		&#125;<br>	&#125;<br>  <span class="hljs-comment">// 省略...</span><br>&#125;<br><br><br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="tools-x2F-cache-x2F-delta-fifo-go"><a href="#tools-x2F-cache-x2F-delta-fifo-go" class="headerlink" title="tools&#x2F;cache&#x2F;delta_fifo.go"></a>tools&#x2F;cache&#x2F;delta_fifo.go</h1><h2 id="types-4"><a href="#types-4" class="headerlink" title="types"></a>types</h2><h3 id="DeltaFIFO"><a href="#DeltaFIFO" class="headerlink" title="DeltaFIFO"></a>DeltaFIFO</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// DeltaFIFO is like FIFO, but differs in two ways.  One is that the</span><br><span class="hljs-comment">// accumulator associated with a given object&#x27;s key is not that object</span><br><span class="hljs-comment">// but rather a Deltas, which is a slice of Delta values for that</span><br><span class="hljs-comment">// object.  Applying an object to a Deltas means to append a Delta</span><br><span class="hljs-comment">// except when the potentially appended Delta is a Deleted and the</span><br><span class="hljs-comment">// Deltas already ends with a Deleted.  In that case the Deltas does</span><br><span class="hljs-comment">// not grow, although the terminal Deleted will be replaced by the new</span><br><span class="hljs-comment">// Deleted if the older Deleted&#x27;s object is a</span><br><span class="hljs-comment">// DeletedFinalStateUnknown.</span><br><span class="hljs-comment">//</span><br><span class="hljs-comment">// The other difference is that DeltaFIFO has two additional ways that</span><br><span class="hljs-comment">// an object can be applied to an accumulator: Replaced and Sync.</span><br><span class="hljs-comment">// If EmitDeltaTypeReplaced is not set to true, Sync will be used in</span><br><span class="hljs-comment">// replace events for backwards compatibility.  Sync is used for periodic</span><br><span class="hljs-comment">// resync events.</span><br><span class="hljs-comment">//</span><br><span class="hljs-comment">// DeltaFIFO is a producer-consumer queue, where a Reflector is</span><br><span class="hljs-comment">// intended to be the producer, and the consumer is whatever calls</span><br><span class="hljs-comment">// the Pop() method.</span><br><span class="hljs-comment">//</span><br><span class="hljs-comment">// DeltaFIFO solves this use case:</span><br><span class="hljs-comment">//   - You want to process every object change (delta) at most once.</span><br><span class="hljs-comment">//   - When you process an object, you want to see everything</span><br><span class="hljs-comment">//     that&#x27;s happened to it since you last processed it.</span><br><span class="hljs-comment">//   - You want to process the deletion of some of the objects.</span><br><span class="hljs-comment">//   - You might want to periodically reprocess objects.</span><br><span class="hljs-comment">//</span><br><span class="hljs-comment">// DeltaFIFO&#x27;s Pop(), Get(), and GetByKey() methods return</span><br><span class="hljs-comment">// interface&#123;&#125; to satisfy the Store/Queue interfaces, but they</span><br><span class="hljs-comment">// will always return an object of type Deltas. List() returns</span><br><span class="hljs-comment">// the newest object from each accumulator in the FIFO.</span><br><span class="hljs-comment">//</span><br><span class="hljs-comment">// A DeltaFIFO&#x27;s knownObjects KeyListerGetter provides the abilities</span><br><span class="hljs-comment">// to list Store keys and to get objects by Store key.  The objects in</span><br><span class="hljs-comment">// question are called &quot;known objects&quot; and this set of objects</span><br><span class="hljs-comment">// modifies the behavior of the Delete, Replace, and Resync methods</span><br><span class="hljs-comment">// (each in a different way).</span><br><span class="hljs-comment">//</span><br><span class="hljs-comment">// A note on threading: If you call Pop() in parallel from multiple</span><br><span class="hljs-comment">// threads, you could end up with multiple threads processing slightly</span><br><span class="hljs-comment">// different versions of the same object.</span><br><span class="hljs-keyword">type</span> DeltaFIFO <span class="hljs-keyword">struct</span> &#123;<br>	<span class="hljs-comment">// lock/cond protects access to &#x27;items&#x27; and &#x27;queue&#x27;.</span><br>	lock sync.RWMutex<br>	cond sync.Cond<br><br>	<span class="hljs-comment">// `items` maps a key to a Deltas.</span><br>	<span class="hljs-comment">// Each such Deltas has at least one Delta.</span><br>	items <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]Deltas<br><br>	<span class="hljs-comment">// `queue` maintains FIFO order of keys for consumption in Pop().</span><br>	<span class="hljs-comment">// There are no duplicates in `queue`.</span><br>	<span class="hljs-comment">// A key is in `queue` if and only if it is in `items`.</span><br>	queue []<span class="hljs-type">string</span><br><br>	<span class="hljs-comment">// populated is true if the first batch of items inserted by Replace() has been populated</span><br>	<span class="hljs-comment">// or Delete/Add/Update/AddIfNotPresent was called first.</span><br>	populated <span class="hljs-type">bool</span><br>	<span class="hljs-comment">// initialPopulationCount is the number of items inserted by the first call of Replace()</span><br>	initialPopulationCount <span class="hljs-type">int</span><br><br>	<span class="hljs-comment">// keyFunc is used to make the key used for queued item</span><br>	<span class="hljs-comment">// insertion and retrieval, and should be deterministic.</span><br>	keyFunc KeyFunc<br><br>	<span class="hljs-comment">// knownObjects list keys that are &quot;known&quot; --- affecting Delete(),</span><br>	<span class="hljs-comment">// Replace(), and Resync()</span><br>	knownObjects KeyListerGetter<br><br>	<span class="hljs-comment">// Used to indicate a queue is closed so a control loop can exit when a queue is empty.</span><br>	<span class="hljs-comment">// Currently, not used to gate any of CRUD operations.</span><br>	closed <span class="hljs-type">bool</span><br><br>	<span class="hljs-comment">// emitDeltaTypeReplaced is whether to emit the Replaced or Sync</span><br>	<span class="hljs-comment">// DeltaType when Replace() is called (to preserve backwards compat).</span><br>	emitDeltaTypeReplaced <span class="hljs-type">bool</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="Add"><a href="#Add" class="headerlink" title="Add()"></a>Add()</h4><p>实际调用的是 queueActionLocked 方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// Add inserts an item, and puts it in the queue. The item is only enqueued</span><br><span class="hljs-comment">// if it doesn&#x27;t already exist in the set.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(f *DeltaFIFO)</span></span> Add(obj <span class="hljs-keyword">interface</span>&#123;&#125;) <span class="hljs-type">error</span> &#123;<br>   f.lock.Lock()<br>   <span class="hljs-keyword">defer</span> f.lock.Unlock()<br>   f.populated = <span class="hljs-literal">true</span><br>   <span class="hljs-keyword">return</span> f.queueActionLocked(Added, obj)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="queueActionLocked"><a href="#queueActionLocked" class="headerlink" title="queueActionLocked()"></a>queueActionLocked()</h4><p>queueActionLocked 会将 actionType 和 obj 封装为一个 Delta 对象，并 push 到 DeltaFIFO</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// queueActionLocked appends to the delta list for the object.</span><br><span class="hljs-comment">// Caller must lock first.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(f *DeltaFIFO)</span></span> queueActionLocked(actionType DeltaType, obj <span class="hljs-keyword">interface</span>&#123;&#125;) <span class="hljs-type">error</span> &#123;<br>	id, err := f.KeyOf(obj)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> KeyError&#123;obj, err&#125;<br>	&#125;<br>	oldDeltas := f.items[id]<br>	newDeltas := <span class="hljs-built_in">append</span>(oldDeltas, Delta&#123;actionType, obj&#125;)<br>	newDeltas = dedupDeltas(newDeltas)<br><br>	<span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(newDeltas) &gt; <span class="hljs-number">0</span> &#123;<br>		<span class="hljs-keyword">if</span> _, exists := f.items[id]; !exists &#123;<br>			f.queue = <span class="hljs-built_in">append</span>(f.queue, id)<br>		&#125;<br>		f.items[id] = newDeltas<br>		f.cond.Broadcast()<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		<span class="hljs-comment">// This never happens, because dedupDeltas never returns an empty list</span><br>		<span class="hljs-comment">// when given a non-empty list (as it is here).</span><br>		<span class="hljs-comment">// If somehow it happens anyway, deal with it but complain.</span><br>		<span class="hljs-keyword">if</span> oldDeltas == <span class="hljs-literal">nil</span> &#123;<br>			klog.Errorf(<span class="hljs-string">&quot;Impossible dedupDeltas for id=%q: oldDeltas=%#+v, obj=%#+v; ignoring&quot;</span>, id, oldDeltas, obj)<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>		&#125;<br>		klog.Errorf(<span class="hljs-string">&quot;Impossible dedupDeltas for id=%q: oldDeltas=%#+v, obj=%#+v; breaking invariant by storing empty Deltas&quot;</span>, id, oldDeltas, obj)<br>		f.items[id] = newDeltas<br>		<span class="hljs-keyword">return</span> fmt.Errorf(<span class="hljs-string">&quot;Impossible dedupDeltas for id=%q: oldDeltas=%#+v, obj=%#+v; broke DeltaFIFO invariant by storing empty Deltas&quot;</span>, id, oldDeltas, obj)<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="functions-4"><a href="#functions-4" class="headerlink" title="functions"></a>functions</h2><h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a target="_blank" rel="noopener" href="https://github.com/k8s-club/k8s-club/blob/main/articles/K8s%20%E7%B3%BB%E5%88%97(%E5%9B%9B)%20-%20%E6%B5%85%E8%B0%88%20Informer.md">K8s 系列(四) - 浅谈 Informer.md</a></p>
+<p><a target="_blank" rel="noopener" href="https://cloudnative.to/blog/client-go-informer-source-code/#indexer">深入了解 Kubernetes Informer</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/k8s/">#k8s</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>k8s client-go 源码阅读</div>
+      <div>https://autsu.github.io/2022/10/07/client-go-yuan-ma/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年10月7日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/10/10/k8s-secret/" title="k8s Secret">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">k8s Secret</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/10/03/kubebuilder/" title="kubebuilder 实践">
+                        <span class="hidden-mobile">kubebuilder 实践</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

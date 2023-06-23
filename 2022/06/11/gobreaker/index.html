@@ -1,0 +1,810 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="该文章仅作为本人笔记，不具备太大的参考价值 该文章着重记录源码，没有对熔断器这一概念做过多理念上的说明解释 该文章排版、思路较为混乱，后续可能会进行修改  示例官方示例官方示例有点太简单了，完全无法体会到 熔断 这一概念 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go 熔断器 gobreaker 源码阅读">
+<meta property="og:url" content="https://autsu.github.io/2022/06/11/gobreaker/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="该文章仅作为本人笔记，不具备太大的参考价值 该文章着重记录源码，没有对熔断器这一概念做过多理念上的说明解释 该文章排版、思路较为混乱，后续可能会进行修改  示例官方示例官方示例有点太简单了，完全无法体会到 熔断 这一概念 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-06-11T12:40:11.000Z">
+<meta property="article:modified_time" content="2023-03-18T13:37:15.165Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="源码">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>go 熔断器 gobreaker 源码阅读 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="go 熔断器 gobreaker 源码阅读"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-06-11 20:40" pubdate>
+          2022年6月11日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          27k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          227 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">go 熔断器 gobreaker 源码阅读</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>该文章仅作为本人笔记，不具备太大的参考价值</p>
+<p>该文章着重记录源码，没有对熔断器这一概念做过多理念上的说明解释</p>
+<p>该文章排版、思路较为混乱，后续可能会进行修改</p>
+</blockquote>
+<h1 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h1><h2 id="官方示例"><a href="#官方示例" class="headerlink" title="官方示例"></a>官方示例</h2><p>官方示例有点太简单了，完全无法体会到 <strong>熔断</strong> 这一概念</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;io/ioutil&quot;</span><br>	<span class="hljs-string">&quot;log&quot;</span><br>	<span class="hljs-string">&quot;net/http&quot;</span><br><br>	<span class="hljs-string">&quot;github.com/sony/gobreaker&quot;</span><br>)<br><br><span class="hljs-keyword">var</span> cb *gobreaker.CircuitBreaker<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">init</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-keyword">var</span> st gobreaker.Settings<br>	st.Name = <span class="hljs-string">&quot;HTTP GET&quot;</span><br>	st.ReadyToTrip = <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(counts gobreaker.Counts)</span></span> <span class="hljs-type">bool</span> &#123;<br>		failureRatio := <span class="hljs-type">float64</span>(counts.TotalFailures) / <span class="hljs-type">float64</span>(counts.Requests)<br>		<span class="hljs-keyword">return</span> counts.Requests &gt;= <span class="hljs-number">3</span> &amp;&amp; failureRatio &gt;= <span class="hljs-number">0.6</span><br>	&#125;<br><br>	cb = gobreaker.NewCircuitBreaker(st)<br>&#125;<br><br><span class="hljs-comment">// Get wraps http.Get in CircuitBreaker.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Get</span><span class="hljs-params">(url <span class="hljs-type">string</span>)</span></span> ([]<span class="hljs-type">byte</span>, <span class="hljs-type">error</span>) &#123;<br>	body, err := cb.Execute(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> (<span class="hljs-keyword">interface</span>&#123;&#125;, <span class="hljs-type">error</span>) &#123;<br>		resp, err := http.Get(url)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>		&#125;<br><br>		<span class="hljs-keyword">defer</span> resp.Body.Close()<br>		body, err := ioutil.ReadAll(resp.Body)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>		&#125;<br><br>		<span class="hljs-keyword">return</span> body, <span class="hljs-literal">nil</span><br>	&#125;)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br><br>	<span class="hljs-keyword">return</span> body.([]<span class="hljs-type">byte</span>), <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	body, err := Get(<span class="hljs-string">&quot;http://www.google.com/robots.txt&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatal(err)<br>	&#125;<br><br>	fmt.Println(<span class="hljs-type">string</span>(body))<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="我的示例"><a href="#我的示例" class="headerlink" title="我的示例"></a>我的示例</h2><p>先写一个 http server，他会随机为请求返回 200 或者 500</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;math/rand&quot;</span><br>	<span class="hljs-string">&quot;net/http&quot;</span><br>	<span class="hljs-string">&quot;time&quot;</span><br>)<br><br><span class="hljs-keyword">var</span> canVisit <span class="hljs-type">bool</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	rand.Seed(time.Now().Unix())<br>	<span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>		<span class="hljs-keyword">for</span> &#123;<br>			t := rand.Int63n(<span class="hljs-number">10</span>)<br>			<span class="hljs-keyword">select</span> &#123;<br>			<span class="hljs-keyword">case</span> &lt;-time.After(time.Duration(t) * time.Second):<br>				canVisit = !canVisit<br>			&#125;<br>		&#125;<br>	&#125;()<br><br>	http.HandleFunc(<span class="hljs-string">&quot;/&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;<br>		<span class="hljs-keyword">if</span> canVisit &#123;<br>			w.WriteHeader(http.StatusInternalServerError)<br>			w.Write([]<span class="hljs-type">byte</span>(<span class="hljs-string">&quot;server error&quot;</span>))<br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>			w.WriteHeader(http.StatusOK)<br>			w.Write([]<span class="hljs-type">byte</span>(<span class="hljs-string">&quot;success&quot;</span>))<br>		&#125;<br>	&#125;)<br>	<span class="hljs-keyword">if</span> err := http.ListenAndServe(<span class="hljs-string">&quot;:9000&quot;</span>, <span class="hljs-literal">nil</span>); err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-built_in">panic</span>(err)<br>	&#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>熔断器程序，会一直访问上面的 http server，返回 200 算请求成功，500 算失败，来观察熔断器的状态和效果：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;io/ioutil&quot;</span><br>	<span class="hljs-string">&quot;log&quot;</span><br>	<span class="hljs-string">&quot;net/http&quot;</span><br>	<span class="hljs-string">&quot;time&quot;</span><br><br>	<span class="hljs-string">&quot;github.com/sony/gobreaker&quot;</span><br>)<br><br><span class="hljs-keyword">var</span> cb *gobreaker.CircuitBreaker<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">init</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-keyword">var</span> st gobreaker.Settings<br>	st.Name = <span class="hljs-string">&quot;HTTP GET&quot;</span><br>	st.ReadyToTrip = <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(counts gobreaker.Counts)</span></span> <span class="hljs-type">bool</span> &#123;<br>		failureRatio := <span class="hljs-type">float64</span>(counts.TotalFailures) / <span class="hljs-type">float64</span>(counts.Requests)<br>		<span class="hljs-keyword">return</span> counts.Requests &gt;= <span class="hljs-number">3</span> &amp;&amp; failureRatio &gt;= <span class="hljs-number">0.5</span><br>	&#125;<br>	st.Timeout = time.Second * <span class="hljs-number">10</span>	<span class="hljs-comment">// 从开启切换到半开的时间</span><br>	st.OnStateChange = <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(name <span class="hljs-type">string</span>, from, to gobreaker.State)</span></span> &#123;<br>		log.Printf(<span class="hljs-string">&quot;state change: [%v] -&gt; [%v]\n&quot;</span>, from, to)<br>	&#125;<br>	cb = gobreaker.NewCircuitBreaker(st)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Get</span><span class="hljs-params">(url <span class="hljs-type">string</span>)</span></span> ([]<span class="hljs-type">byte</span>, <span class="hljs-type">error</span>) &#123;<br>	body, err := cb.Execute(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> (<span class="hljs-keyword">interface</span>&#123;&#125;, <span class="hljs-type">error</span>) &#123;<br>		resp, err := http.Get(url)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>		&#125;<br><br>		<span class="hljs-keyword">defer</span> resp.Body.Close()<br>		<span class="hljs-keyword">if</span> resp.StatusCode &gt;= <span class="hljs-number">400</span> &#123;<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, fmt.Errorf(<span class="hljs-string">&quot;[%v]%v&quot;</span>, resp.StatusCode, http.StatusText(resp.StatusCode))<br>		&#125;<br>		body, err := ioutil.ReadAll(resp.Body)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>		&#125;<br><br>		<span class="hljs-keyword">return</span> body, <span class="hljs-literal">nil</span><br>	&#125;)<br><br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br>	<span class="hljs-keyword">return</span> body.([]<span class="hljs-type">byte</span>), <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-keyword">for</span> &#123;<br>		body, err := Get(<span class="hljs-string">&quot;http://localhost:9000&quot;</span>)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			log.Println(err)<br>		&#125;<br>		log.Printf(<span class="hljs-string">&quot;%v, %+v\n&quot;</span>, cb.State(), cb.Counts())<br>		fmt.Println(<span class="hljs-type">string</span>(body))<br>		time.Sleep(time.Millisecond * <span class="hljs-number">500</span>)<br>	&#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>输出日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs shell">2022/06/10 22:02:36 closed, &#123;Requests:1 TotalSuccesses:1 TotalFailures:0 ConsecutiveSuccesses:1 ConsecutiveFailures:0&#125;<br>....<br><br>2022/06/10 22:03:26 [500]Internal Server Error<br>2022/06/10 22:03:26 closed, &#123;Requests:101 TotalSuccesses:51 TotalFailures:50 ConsecutiveSuccesses:0 ConsecutiveFailures:8&#125;<br><br>2022/06/10 22:03:26 state change: [closed] -&gt; [open]<br>2022/06/10 22:03:26 [500]Internal Server Error<br>2022/06/10 22:03:26 open, &#123;Requests:0 TotalSuccesses:0 TotalFailures:0 ConsecutiveSuccesses:0 ConsecutiveFailures:0&#125;<br></code></pre></td></tr></table></figure>
+
+<p>第二段日志记录了错误，此时的总请求次数是 101，总错误是 50，还没达到 ReadyToTrip 的条件（错误率 &gt;&#x3D; 50%），然后第三段日志，发现此时请求依然失败，此时总请求 102，总错误 51，达到了 50%，所以发生了状态转换，熔断器进行开启模式。</p>
+<p>后续应该会一直保持开启状态，直到 10s 后切换为半开状态，这里日志就没记录了。</p>
+<h1 id="熔断器的-3-种状态"><a href="#熔断器的-3-种状态" class="headerlink" title="熔断器的 3 种状态"></a>熔断器的 3 种状态</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// State is a type that represents a state of CircuitBreaker.</span><br><span class="hljs-keyword">type</span> State <span class="hljs-type">int</span><br><br><span class="hljs-comment">// These constants are states of CircuitBreaker.</span><br><span class="hljs-comment">// 熔断器的状态</span><br><span class="hljs-keyword">const</span> (<br>	<span class="hljs-comment">// StateClosed 表示关闭状态，此时所有请求都会通过</span><br>	StateClosed State = <span class="hljs-literal">iota</span><br>	<span class="hljs-comment">// StateHalfOpen 半开状态，会根据情况变更为开启或者关闭状态</span><br>	StateHalfOpen<br>	<span class="hljs-comment">// StateOpen 开启状态，此时会拒绝所有请求</span><br>	StateOpen<br>)<br></code></pre></td></tr></table></figure>
+
+<p>熔断器有三种状态：</p>
+<ul>
+<li>开启：所有请求都会拒绝</li>
+<li>关闭：所有请求都会通过</li>
+<li>半开启：开启状态自然不能一直维持，需要某个条件将其切换到一种中间状态：也就是这里的半开启状态。当开启状态持续了一段时间后，就会变更为半开启状态，表示可以做试探了，如果此时请求依然失败，则变更为开启状态；如果成功次数达到了我们的需求，则变更为关闭状态</li>
+</ul>
+<h1 id="计数器"><a href="#计数器" class="headerlink" title="计数器"></a>计数器</h1><p>计数器保存了熔断器的所有信息，具体属性如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// Counts 保存请求的数量及其成功失败的次数。</span><br><span class="hljs-comment">// CircuitBreaker 在状态更改或关闭状态间隔时清除内部计数。</span><br><span class="hljs-comment">// Counts 会忽略在清除之前发送的请求的结果。</span><br><span class="hljs-keyword">type</span> Counts <span class="hljs-keyword">struct</span> &#123;<br>	Requests             <span class="hljs-type">uint32</span> <span class="hljs-comment">// 总请求次数</span><br>	TotalSuccesses       <span class="hljs-type">uint32</span> <span class="hljs-comment">// 总成功次数</span><br>	TotalFailures        <span class="hljs-type">uint32</span> <span class="hljs-comment">// 总失败次数</span><br>	ConsecutiveSuccesses <span class="hljs-type">uint32</span> <span class="hljs-comment">// 连续成功次数</span><br>	ConsecutiveFailures  <span class="hljs-type">uint32</span> <span class="hljs-comment">// 连续失败次数</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>此外还提供了一些列更新计数的方法：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *Counts)</span></span> onRequest() &#123;<br>	c.Requests++<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *Counts)</span></span> onSuccess() &#123;<br>	c.TotalSuccesses++<br>	c.ConsecutiveSuccesses++<br>	c.ConsecutiveFailures = <span class="hljs-number">0</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *Counts)</span></span> onFailure() &#123;<br>	c.TotalFailures++<br>	c.ConsecutiveFailures++<br>	c.ConsecutiveSuccesses = <span class="hljs-number">0</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *Counts)</span></span> clear() &#123;<br>	c.Requests = <span class="hljs-number">0</span><br>	c.TotalSuccesses = <span class="hljs-number">0</span><br>	c.TotalFailures = <span class="hljs-number">0</span><br>	c.ConsecutiveSuccesses = <span class="hljs-number">0</span><br>	c.ConsecutiveFailures = <span class="hljs-number">0</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="熔断器"><a href="#熔断器" class="headerlink" title="熔断器"></a>熔断器</h1><p>CircuitBreaker 定义了熔断器结构体，这也是最核心的结构体</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// CircuitBreaker is a state machine to prevent sending requests that are likely to fail.</span><br><span class="hljs-keyword">type</span> CircuitBreaker <span class="hljs-keyword">struct</span> &#123;<br>	<span class="hljs-comment">// 虚线内的属性和 Settings 中的相同，如果 Settings 中没有设置，则使用默认值来填充</span><br>	<span class="hljs-comment">// ==================</span><br>	name        <span class="hljs-type">string</span><br>  <span class="hljs-comment">// 比较迷的一个变量，源码里有两种情况：</span><br>	<span class="hljs-comment">// 1. 请求总数（Requests） &gt;= MaxRequests，那么会返回请求过多的错误</span><br>	<span class="hljs-comment">// 2. 连续成功次数（ConsecutiveSuccesses） &gt;= MaxRequests，那么变更为关闭状态</span><br>	<span class="hljs-comment">// 1 在 beforeRequest() 函数中，2 在 afterRequest() -&gt; onSuccess() 的 HalfOpen 分支中</span><br>	<span class="hljs-comment">// 也就是在请求前会确保请求总数不超过 MaxRequest，请求后如果处于半开状态且连续成功数 &gt;= MaxRequest</span><br>	<span class="hljs-comment">// 那么会变更为关闭状态</span><br>	maxRequests <span class="hljs-type">uint32</span><br>  <br>	<span class="hljs-comment">// 关闭状态下定期清空计数的时间，如果为 0，则不清空</span><br>  <span class="hljs-comment">// 这里我不太明白清空计数的原因，在网上找了一个分析，意思是如果一直处于成功状态，</span><br>	<span class="hljs-comment">// 那么计数的意义就不是很大，此外如果请求量过大可能会导致溢出，所以需要定期清空</span><br>	interval      time.Duration<br>  <br>	<span class="hljs-comment">// 打开状态的持续时间，到时后会变更为半打开状态。</span><br>	timeout time.Duration<br>  <br>	<span class="hljs-comment">// 关闭状态下会调用该回调函数，如果返回 true，则进入打开状态</span><br>	readyToTrip   <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(counts Counts)</span></span> <span class="hljs-type">bool</span><br>  <br>  <span class="hljs-comment">// 用来判断请求是否成功的回调函数</span><br>	isSuccessful  <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(err <span class="hljs-type">error</span>)</span></span> <span class="hljs-type">bool</span><br>  <br>  <span class="hljs-comment">// 发生状态变更时的回调函数</span><br>	onStateChange <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(name <span class="hljs-type">string</span>, from State, to State)</span></span><br>  <span class="hljs-comment">// ====================</span><br><br>	mutex      sync.Mutex<br>	state      State<br>	generation <span class="hljs-type">uint64</span><br>	counts     Counts<br>  <span class="hljs-comment">// 这个变量貌似有两种情况：</span><br>	<span class="hljs-comment">// 1. 开启状态下，代表切换到半开启的绝对时间（time.Time 代表一个绝对时间）</span><br>	<span class="hljs-comment">//    具体值是 time.Now + timeout</span><br>	<span class="hljs-comment">// 2. 关闭状态下，代表进入下一个周期的绝对时间（进入下一个周期会清空计数）</span><br>	<span class="hljs-comment">// 	  具体值是 time.Now + interval</span><br>	expiry time.Time<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>其中的一部分值是通过配置类来指定的，如果不指定则会设置为默认配置：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewCircuitBreaker</span><span class="hljs-params">(st Settings)</span></span> *CircuitBreaker &#123;<br>	cb := <span class="hljs-built_in">new</span>(CircuitBreaker)<br><br>	cb.name = st.Name<br>	cb.onStateChange = st.OnStateChange<br><br>	<span class="hljs-keyword">if</span> st.MaxRequests == <span class="hljs-number">0</span> &#123;<br>		cb.maxRequests = <span class="hljs-number">1</span><br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		cb.maxRequests = st.MaxRequests<br>	&#125;<br><br>	<span class="hljs-keyword">if</span> st.Interval &lt;= <span class="hljs-number">0</span> &#123;<br>		cb.interval = defaultInterval<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		cb.interval = st.Interval<br>	&#125;<br><br>	<span class="hljs-keyword">if</span> st.Timeout &lt;= <span class="hljs-number">0</span> &#123;<br>		cb.timeout = defaultTimeout<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		cb.timeout = st.Timeout<br>	&#125;<br><br>	<span class="hljs-keyword">if</span> st.ReadyToTrip == <span class="hljs-literal">nil</span> &#123;<br>		cb.readyToTrip = defaultReadyToTrip<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		cb.readyToTrip = st.ReadyToTrip<br>	&#125;<br><br>	<span class="hljs-keyword">if</span> st.IsSuccessful == <span class="hljs-literal">nil</span> &#123;<br>		cb.isSuccessful = defaultIsSuccessful<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		cb.isSuccessful = st.IsSuccessful<br>	&#125;<br><br>	cb.toNewGeneration(time.Now())<br><br>	<span class="hljs-keyword">return</span> cb<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="配置类"><a href="#配置类" class="headerlink" title="配置类"></a>配置类</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Settings <span class="hljs-keyword">struct</span> &#123;<br>	<span class="hljs-comment">// 熔断器的名称</span><br>	Name <span class="hljs-type">string</span><br><br>	<span class="hljs-comment">// MaxRequests 是 CircuitBreaker 半开时允许通过的最大请求数。</span><br>	<span class="hljs-comment">// 如果 MaxRequests 为 0，则 CircuitBreaker 只允许 1 个请求。</span><br>	<span class="hljs-comment">// FIXME 比较迷的一个变量，源码里有两种情况：</span><br>	<span class="hljs-comment">// 1. 请求总数（Requests） &gt;= MaxRequests，那么会返回请求过多的错误</span><br>	<span class="hljs-comment">// 2. 连续成功次数（ConsecutiveSuccesses） &gt;= MaxRequests，那么变更为关闭状态</span><br>	<span class="hljs-comment">// 1 在 beforeRequest() 函数中，2 在 afterRequest() -&gt; onSuccess() 的 HalfOpen 分支中</span><br>	<span class="hljs-comment">// 也就是在请求前会确保请求总数不超过 MaxRequest，请求后如果处于半开状态且连续成功数 &gt;= MaxRequest</span><br>	<span class="hljs-comment">// 那么会变更为关闭状态</span><br>	MaxRequests <span class="hljs-type">uint32</span><br><br>	<span class="hljs-comment">// Interval 是熔断器处于关闭状态时，定期清除内部 Counts 的时间。</span><br>	<span class="hljs-comment">// 如果 Interval 小于或等于 0，CircuitBreaker 在关闭状态期间不会清除内部计数。</span><br>	<span class="hljs-comment">// FIXME 这个东西暂时没发现用处何在</span><br>	<span class="hljs-comment">// 在网上找了一个分析，意思是如果一直处于成功状态，那么计数的意义就不是很大，</span><br>	<span class="hljs-comment">// 需要定期清空，不然可能会溢出</span><br>	Interval time.Duration<br><br>	<span class="hljs-comment">// Timeout 是打开状态的持续时间，到时后会变更为半打开状态。</span><br>	<span class="hljs-comment">// 如果 Timeout 小于或等于 0，则将 CircuitBreaker 的超时值设置为 60 秒。</span><br>	Timeout time.Duration<br><br>	<span class="hljs-comment">// 每当请求在关闭状态下失败时，就会调用 ReadyToTrip，参数传递的是 Counts 的副本。</span><br>	<span class="hljs-comment">// 如果 ReadyToTrip 返回 true，CircuitBreaker 将进入打开状态。</span><br>	<span class="hljs-comment">// 如果 ReadyToTrip 为 nil，则使用默认 ReadyToTrip。</span><br>	<span class="hljs-comment">// 当连续失败次数超过 5 次时，默认 ReadyToTrip 返回 true。</span><br>	ReadyToTrip <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(counts Counts)</span></span> <span class="hljs-type">bool</span><br><br>	<span class="hljs-comment">// OnStateChange 是熔断器状态变更时的回调函数</span><br>	OnStateChange <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(name <span class="hljs-type">string</span>, from State, to State)</span></span><br><br>	<span class="hljs-comment">// IsSuccessful 判断请求是否成功，传入的 err 是执行用户请求函数后返回的。</span><br>	<span class="hljs-comment">// （也就是 CircuitBreaker.Execute 的参数 req）</span><br>	<span class="hljs-comment">// 如果 IsSuccessful 返回 true， 则说明请求发生了错误，否则说明没有错误。</span><br>	<span class="hljs-comment">// 如果 IsSuccessful 为 nil， 则使用默认 IsSuccessful，该默认函数的逻辑是：</span><br>	<span class="hljs-comment">// if err == nil &#123; return true &#125;</span><br>	IsSuccessful <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(err <span class="hljs-type">error</span>)</span></span> <span class="hljs-type">bool</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>默认配置：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">const</span> defaultInterval = time.Duration(<span class="hljs-number">0</span>) * time.Second<br><span class="hljs-keyword">const</span> defaultTimeout = time.Duration(<span class="hljs-number">60</span>) * time.Second<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">defaultReadyToTrip</span><span class="hljs-params">(counts Counts)</span></span> <span class="hljs-type">bool</span> &#123;<br>	<span class="hljs-keyword">return</span> counts.ConsecutiveFailures &gt; <span class="hljs-number">5</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">defaultIsSuccessful</span><span class="hljs-params">(err <span class="hljs-type">error</span>)</span></span> <span class="hljs-type">bool</span> &#123;<br>	<span class="hljs-keyword">return</span> err == <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="状态转换"><a href="#状态转换" class="headerlink" title="状态转换"></a>状态转换</h1><p>一共有一下几种状态转换：</p>
+<ul>
+<li>关闭 -&gt; 开启</li>
+<li>开启 -&gt; 半开</li>
+<li>半开 -&gt; 开启</li>
+<li>半开 -&gt; 关闭</li>
+</ul>
+<p>gobreaker 定义了一些方法来完成上面的状态转换，顾名思义，如下所示：</p>
+<h2 id="CircuitBreaker-onSuccess"><a href="#CircuitBreaker-onSuccess" class="headerlink" title="CircuitBreaker.onSuccess"></a><strong>CircuitBreaker.onSuccess</strong></h2><p>这个函数定义了 <strong>半开 -&gt; 关闭</strong> 的状态转换 ，是通过 cb.setState 来完成的</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 熔断器请求成功时调用该函数</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> onSuccess(state State, now time.Time) &#123;<br>	<span class="hljs-keyword">switch</span> state &#123;<br>	<span class="hljs-keyword">case</span> StateClosed: <span class="hljs-comment">// 如果此时是关闭状态，则更新计数</span><br>		cb.counts.onSuccess()<br>	<span class="hljs-keyword">case</span> StateHalfOpen: <span class="hljs-comment">// 半开状态</span><br>		cb.counts.onSuccess() <span class="hljs-comment">// 更新计数</span><br>		<span class="hljs-comment">// 连续成功总数超过了设置的 maxRequests，变更为关闭状态</span><br>		<span class="hljs-keyword">if</span> cb.counts.ConsecutiveSuccesses &gt;= cb.maxRequests &#123;<br>			cb.setState(StateClosed, now)<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="CircuitBreaker-onFailure"><a href="#CircuitBreaker-onFailure" class="headerlink" title="CircuitBreaker.onFailure"></a><strong>CircuitBreaker.onFailure</strong></h2><p>这个函数定义了 **半开 -&gt; 开启 ** 和 <strong>关闭 -&gt; 开启</strong> 的状态转换</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 熔断器请求失败时调用该函数</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> onFailure(state State, now time.Time) &#123;<br>	<span class="hljs-keyword">switch</span> state &#123;<br>	<span class="hljs-comment">// 关闭状态下请求失败了</span><br>	<span class="hljs-keyword">case</span> StateClosed:<br>		cb.counts.onFailure() <span class="hljs-comment">// 更新计数</span><br>		<span class="hljs-comment">// 如果回调函数 readyToTrip 返回 true</span><br>		<span class="hljs-comment">// 因为一次失败可能不足以直接判定为需要熔断，所以可能失败多次后才会返回 true</span><br>		<span class="hljs-comment">// 比如官方示例中设置的回调函数是：</span><br>		<span class="hljs-comment">// st.ReadyToTrip = func(counts gobreaker.Counts) bool &#123;</span><br>		<span class="hljs-comment">//		failureRatio := float64(counts.TotalFailures) / float64(counts.Requests)</span><br>		<span class="hljs-comment">//		return counts.Requests &gt;= 3 &amp;&amp; failureRatio &gt;= 0.6</span><br>		<span class="hljs-comment">//	&#125;</span><br>		<span class="hljs-comment">// 可以看到这里需要请求次数大于3，且总失败率大于等于 60% 才会返回 true</span><br>		<span class="hljs-keyword">if</span> cb.readyToTrip(cb.counts) &#123;<br>			cb.setState(StateOpen, now) <span class="hljs-comment">// 变更熔断器为开启状态</span><br>		&#125;<br>	<span class="hljs-keyword">case</span> StateHalfOpen: <span class="hljs-comment">// 半开状态下失败了，变更为开启状态</span><br>		cb.setState(StateOpen, now)<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="CircuitBreaker-currentState"><a href="#CircuitBreaker-currentState" class="headerlink" title="CircuitBreaker.currentState"></a><strong>CircuitBreaker.currentState</strong></h2><p>这个函数定义了 <strong>开启 -&gt; 半开</strong> 的状态转换：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// currentState 返回熔断器当前的状态，now 用来判断是否发生了状态变更</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> currentState(now time.Time) (State, <span class="hljs-type">uint64</span>) &#123;<br>   <span class="hljs-comment">// func toNewGeneration</span><br>   <span class="hljs-comment">// case StateClosed:</span><br>   <span class="hljs-comment">//    if cb.interval == 0 &#123;</span><br>   <span class="hljs-comment">//       cb.expiry = zero</span><br>   <span class="hljs-comment">//    &#125; else &#123;</span><br>   <span class="hljs-comment">//       cb.expiry = now.Add(cb.interval)</span><br>   <span class="hljs-comment">//    &#125;</span><br>   <span class="hljs-keyword">switch</span> cb.state &#123;<br>   <span class="hljs-comment">// 如上面的注释代码所示，如果 cb.interval 为 0，那么 cb.expiry 会设置为 zero，</span><br>   <span class="hljs-comment">// 此时下面的 if 条件就不满足了，关闭状态下也不会调用 cb.toNewGeneration 来清空计数</span><br>   <span class="hljs-comment">// 如果设置了 cb.interval，那么会设置 cb.expiry 的时间，如果处于关闭状态且达到了</span><br>   <span class="hljs-comment">// expiry 的时间，就会调用 cb.toNewGeneration 来清空计数</span><br>   <span class="hljs-keyword">case</span> StateClosed:<br>      <span class="hljs-keyword">if</span> !cb.expiry.IsZero() &amp;&amp; cb.expiry.Before(now) &#123;<br>         cb.toNewGeneration(now)<br>      &#125;<br>   <span class="hljs-keyword">case</span> StateOpen:<br>      <span class="hljs-comment">// 超过了 expiry 的时间，可以切换到半开状态了</span><br>      <span class="hljs-keyword">if</span> cb.expiry.Before(now) &#123;<br>         cb.setState(StateHalfOpen, now)<br>      &#125;<br>   &#125;<br>   <span class="hljs-keyword">return</span> cb.state, cb.generation<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="核心方法-Execute"><a href="#核心方法-Execute" class="headerlink" title="核心方法 Execute"></a>核心方法 Execute</h1><p>这个方法就是熔断器的执行方法，用户传入一个函数，熔断器会根据当前状态进行相应的操作</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> Execute(req <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> (<span class="hljs-keyword">interface</span>&#123;&#125;, <span class="hljs-type">error</span>)) (<span class="hljs-keyword">interface</span>&#123;&#125;, <span class="hljs-type">error</span>) &#123;<br>	generation, err := cb.beforeRequest()<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br><br>	<span class="hljs-keyword">defer</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>		e := <span class="hljs-built_in">recover</span>()<br>		<span class="hljs-keyword">if</span> e != <span class="hljs-literal">nil</span> &#123;<br>			cb.afterRequest(generation, <span class="hljs-literal">false</span>)<br>			<span class="hljs-built_in">panic</span>(e)<br>		&#125;<br>	&#125;()<br><br>	result, err := req()<br>	cb.afterRequest(generation, cb.isSuccessful(err))<br>	<span class="hljs-keyword">return</span> result, err<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>可以看到其中调用了用户传入的函数，此外还有两个函数：beforeRequest() 和 afterRequest() 代表执行请求前和执行请求后，这两个函数内部会更新熔断器的计数以及状态</p>
+<h1 id="beforeRequest"><a href="#beforeRequest" class="headerlink" title="beforeRequest"></a><strong>beforeRequest</strong></h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> beforeRequest() (<span class="hljs-type">uint64</span>, <span class="hljs-type">error</span>) &#123;<br>	cb.mutex.Lock()<br>	<span class="hljs-keyword">defer</span> cb.mutex.Unlock()<br><br>	now := time.Now()<br>	state, generation := cb.currentState(now)<br><br>	<span class="hljs-comment">// 如果熔断器处于开启状态，直接返回错误，因为该方法在 Execute 中先于用户请求执行，</span><br>	<span class="hljs-comment">// 且逻辑是有 err 直接 return，所以不会执行之后的代码，具体查看 Execute，下面是截取的部分：</span><br>	<span class="hljs-comment">// generation, err := cb.beforeRequest()</span><br>	<span class="hljs-comment">//	if err != nil &#123;</span><br>	<span class="hljs-comment">//		return nil, err</span><br>	<span class="hljs-comment">//	&#125;</span><br>	<span class="hljs-keyword">if</span> state == StateOpen &#123;<br>		<span class="hljs-keyword">return</span> generation, ErrOpenState<br>		<span class="hljs-comment">// 请求前如果处于半开状态，会进行限流操作</span><br>	&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> state == StateHalfOpen &amp;&amp; cb.counts.Requests &gt;= cb.maxRequests &#123;<br>		<span class="hljs-keyword">return</span> generation, ErrTooManyRequests<br>	&#125;<br><br>	cb.counts.onRequest() <span class="hljs-comment">// 更新计数</span><br>	<span class="hljs-keyword">return</span> generation, <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="afterRequest"><a href="#afterRequest" class="headerlink" title="afterRequest"></a><strong>afterRequest</strong></h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> afterRequest(before <span class="hljs-type">uint64</span>, success <span class="hljs-type">bool</span>) &#123;<br>	cb.mutex.Lock()<br>	<span class="hljs-keyword">defer</span> cb.mutex.Unlock()<br><br>	now := time.Now()<br>	state, generation := cb.currentState(now)<br>	<span class="hljs-keyword">if</span> generation != before &#123;<br>		<span class="hljs-keyword">return</span><br>	&#125;<br><br>  <span class="hljs-comment">// 更新状态和计数</span><br>	<span class="hljs-keyword">if</span> success &#123;<br>		cb.onSuccess(state, now)<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		cb.onFailure(state, now)<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这两个函数又调用了同一个函数 <code>cb.currentState</code></p>
+<h1 id="currentState"><a href="#currentState" class="headerlink" title="currentState"></a>currentState</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// currentState 返回熔断器当前的状态，now 用来判断是否需要执行某些操作，这些操作包括：</span><br><span class="hljs-comment">// 1. 关闭状态下清空计数（如果设置了 interval 且达到了清空时间）</span><br><span class="hljs-comment">// 2. 开启状态转换为半开启状态（到达了转换时间）</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> currentState(now time.Time) (State, <span class="hljs-type">uint64</span>) &#123;<br>	<span class="hljs-comment">// func toNewGeneration</span><br>	<span class="hljs-comment">// case StateClosed:</span><br>	<span class="hljs-comment">//		if cb.interval == 0 &#123;</span><br>	<span class="hljs-comment">//			cb.expiry = zero</span><br>	<span class="hljs-comment">//		&#125; else &#123;</span><br>	<span class="hljs-comment">//			cb.expiry = now.Add(cb.interval)</span><br>	<span class="hljs-comment">//		&#125;</span><br>	<span class="hljs-keyword">switch</span> cb.state &#123;<br>	<span class="hljs-comment">// 如上面的注释代码所示，如果 cb.interval 为 0，那么 cb.expiry 会设置为 zero，</span><br>	<span class="hljs-comment">// 此时下面的 if 条件就不满足了，关闭状态下也不会调用 cb.toNewGeneration 来清空计数</span><br>	<span class="hljs-comment">// 如果设置了 cb.interval，那么会设置 cb.expiry 的时间，如果处于关闭状态且达到了</span><br>	<span class="hljs-comment">// expiry 的时间，就会调用 cb.toNewGeneration 来清空计数</span><br>	<span class="hljs-keyword">case</span> StateClosed:<br>		<span class="hljs-keyword">if</span> !cb.expiry.IsZero() &amp;&amp; cb.expiry.Before(now) &#123;<br>			cb.toNewGeneration(now)<br>		&#125;<br>	<span class="hljs-keyword">case</span> StateOpen:<br>		<span class="hljs-comment">// 超过了 expiry 的时间，可以切换到半开状态了</span><br>		<span class="hljs-keyword">if</span> cb.expiry.Before(now) &#123;<br>			cb.setState(StateHalfOpen, now)<br>		&#125;<br>	&#125;<br>	<span class="hljs-keyword">return</span> cb.state, cb.generation<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这个函数又调用了另一个函数 <code>toNewGeneration</code></p>
+<h1 id="toNewGeneration"><a href="#toNewGeneration" class="headerlink" title="toNewGeneration"></a>toNewGeneration</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 进入一个新周期，会清空计数，并对 cb.expiry 进行更新</span><br><span class="hljs-comment">// 该函数会在 setState、currentState、NewCircuitBreaker 调用</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> toNewGeneration(now time.Time) &#123;<br>   cb.generation++<br>   cb.counts.clear()<br><br>   <span class="hljs-keyword">var</span> zero time.Time<br>   <span class="hljs-keyword">switch</span> cb.state &#123;<br>   <span class="hljs-keyword">case</span> StateClosed:<br>      <span class="hljs-keyword">if</span> cb.interval == <span class="hljs-number">0</span> &#123;<br>         cb.expiry = zero<br>      &#125; <span class="hljs-keyword">else</span> &#123;<br>         cb.expiry = now.Add(cb.interval)<br>      &#125;<br>   <span class="hljs-keyword">case</span> StateOpen:<br>      cb.expiry = now.Add(cb.timeout) <span class="hljs-comment">// 设置 open -&gt; halfOpen 的绝对时间</span><br>   <span class="hljs-keyword">default</span>: <span class="hljs-comment">// StateHalfOpen</span><br>      cb.expiry = zero<br>   &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>光看文档感觉熔断器并不是一个多么复杂的东西，但是等实际阅读代码才发现还是有点小复杂的，何况这个开源库还只是对熔断器的一个最精简实现，还有其他的更复杂的实现库，阅读这个源码主要有一些不清楚的点在于，里面的属性<code> CircuitBreaker.expiry</code> 和 <code>CircuitBreaker.maxRequests</code> 在不同情况下有不同的意义，导致看的有点头疼，状态的转换看着也有点绕，还有一开始对 <code>CircuitBreaker.interval</code> 这个属性的意义也不太理解</p>
+<h1 id="完整源码注释"><a href="#完整源码注释" class="headerlink" title="完整源码注释"></a>完整源码注释</h1><p><a target="_blank" rel="noopener" href="https://github.com/youseebiggirl/gobreaker_annotation">https://github.com/youseebiggirl/gobreaker_annotation</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br><span class="line">427</span><br><span class="line">428</span><br><span class="line">429</span><br><span class="line">430</span><br><span class="line">431</span><br><span class="line">432</span><br><span class="line">433</span><br><span class="line">434</span><br><span class="line">435</span><br><span class="line">436</span><br><span class="line">437</span><br><span class="line">438</span><br><span class="line">439</span><br><span class="line">440</span><br><span class="line">441</span><br><span class="line">442</span><br><span class="line">443</span><br><span class="line">444</span><br><span class="line">445</span><br><span class="line">446</span><br><span class="line">447</span><br><span class="line">448</span><br><span class="line">449</span><br><span class="line">450</span><br><span class="line">451</span><br><span class="line">452</span><br><span class="line">453</span><br><span class="line">454</span><br><span class="line">455</span><br><span class="line">456</span><br><span class="line">457</span><br><span class="line">458</span><br><span class="line">459</span><br><span class="line">460</span><br><span class="line">461</span><br><span class="line">462</span><br><span class="line">463</span><br><span class="line">464</span><br><span class="line">465</span><br><span class="line">466</span><br><span class="line">467</span><br><span class="line">468</span><br><span class="line">469</span><br><span class="line">470</span><br><span class="line">471</span><br><span class="line">472</span><br><span class="line">473</span><br><span class="line">474</span><br><span class="line">475</span><br><span class="line">476</span><br><span class="line">477</span><br><span class="line">478</span><br><span class="line">479</span><br><span class="line">480</span><br><span class="line">481</span><br><span class="line">482</span><br><span class="line">483</span><br><span class="line">484</span><br><span class="line">485</span><br><span class="line">486</span><br><span class="line">487</span><br><span class="line">488</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// Package gobreaker implements the Circuit Breaker pattern.</span><br><span class="hljs-comment">// See https://msdn.microsoft.com/en-us/library/dn589784.aspx.</span><br><span class="hljs-keyword">package</span> gobreaker<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;errors&quot;</span><br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;sync&quot;</span><br>	<span class="hljs-string">&quot;time&quot;</span><br>)<br><br><span class="hljs-comment">// State is a type that represents a state of CircuitBreaker.</span><br><span class="hljs-keyword">type</span> State <span class="hljs-type">int</span><br><br><span class="hljs-comment">// These constants are states of CircuitBreaker.</span><br><span class="hljs-comment">// 熔断器的状态</span><br><span class="hljs-keyword">const</span> (<br>	<span class="hljs-comment">// StateClosed 表示关闭状态，此时所有请求都会通过</span><br>	StateClosed State = <span class="hljs-literal">iota</span><br>	<span class="hljs-comment">// StateHalfOpen 半开状态，会根据情况变更为开启或者关闭状态</span><br>	StateHalfOpen<br>	<span class="hljs-comment">// StateOpen 开启状态，此时会拒绝所有请求</span><br>	StateOpen<br>)<br><br><span class="hljs-keyword">var</span> (<br>	<span class="hljs-comment">// ErrTooManyRequests is returned when the CB state is half open and the requests count is over the cb maxRequests</span><br>	<span class="hljs-comment">// 该错误在状态为半开且请求数超过 maxRequests 时返回</span><br>	ErrTooManyRequests = errors.New(<span class="hljs-string">&quot;too many requests&quot;</span>)<br>	<span class="hljs-comment">// ErrOpenState is returned when the CB state is open</span><br>	<span class="hljs-comment">// 该错误在状态为开启时返回</span><br>	ErrOpenState = errors.New(<span class="hljs-string">&quot;circuit breaker is open&quot;</span>)<br>)<br><br><span class="hljs-comment">// String implements stringer interface.</span><br><span class="hljs-comment">// String 继承了 stringer 接口，相当于自定义了 fmt.Println(State) 的输出</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s State)</span></span> String() <span class="hljs-type">string</span> &#123;<br>	<span class="hljs-keyword">switch</span> s &#123;<br>	<span class="hljs-keyword">case</span> StateClosed:<br>		<span class="hljs-keyword">return</span> <span class="hljs-string">&quot;closed&quot;</span><br>	<span class="hljs-keyword">case</span> StateHalfOpen:<br>		<span class="hljs-keyword">return</span> <span class="hljs-string">&quot;half-open&quot;</span><br>	<span class="hljs-keyword">case</span> StateOpen:<br>		<span class="hljs-keyword">return</span> <span class="hljs-string">&quot;open&quot;</span><br>	<span class="hljs-keyword">default</span>:<br>		<span class="hljs-keyword">return</span> fmt.Sprintf(<span class="hljs-string">&quot;unknown state: %d&quot;</span>, s)<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// Counts holds the numbers of requests and their successes/failures.</span><br><span class="hljs-comment">// CircuitBreaker clears the internal Counts either</span><br><span class="hljs-comment">// on the change of the state or at the closed-state intervals.</span><br><span class="hljs-comment">// Counts ignores the results of the requests sent before clearing.</span><br><span class="hljs-comment">// Counts 保存请求的数量及其成功失败的次数。</span><br><span class="hljs-comment">// CircuitBreaker 在状态更改或关闭状态间隔时清除内部计数。</span><br><span class="hljs-comment">// Counts 会忽略在清除之前发送的请求的结果。</span><br><span class="hljs-keyword">type</span> Counts <span class="hljs-keyword">struct</span> &#123;<br>	Requests             <span class="hljs-type">uint32</span> <span class="hljs-comment">// 总请求次数</span><br>	TotalSuccesses       <span class="hljs-type">uint32</span> <span class="hljs-comment">// 总成功次数</span><br>	TotalFailures        <span class="hljs-type">uint32</span> <span class="hljs-comment">// 总失败次数</span><br>	ConsecutiveSuccesses <span class="hljs-type">uint32</span> <span class="hljs-comment">// 连续成功次数</span><br>	ConsecutiveFailures  <span class="hljs-type">uint32</span> <span class="hljs-comment">// 连续失败次数</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *Counts)</span></span> onRequest() &#123;<br>	c.Requests++<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *Counts)</span></span> onSuccess() &#123;<br>	c.TotalSuccesses++<br>	c.ConsecutiveSuccesses++<br>	c.ConsecutiveFailures = <span class="hljs-number">0</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *Counts)</span></span> onFailure() &#123;<br>	c.TotalFailures++<br>	c.ConsecutiveFailures++<br>	c.ConsecutiveSuccesses = <span class="hljs-number">0</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *Counts)</span></span> clear() &#123;<br>	c.Requests = <span class="hljs-number">0</span><br>	c.TotalSuccesses = <span class="hljs-number">0</span><br>	c.TotalFailures = <span class="hljs-number">0</span><br>	c.ConsecutiveSuccesses = <span class="hljs-number">0</span><br>	c.ConsecutiveFailures = <span class="hljs-number">0</span><br>&#125;<br><br><span class="hljs-comment">// Settings configures CircuitBreaker:</span><br><span class="hljs-comment">//</span><br><span class="hljs-comment">// Name is the name of the CircuitBreaker.</span><br><span class="hljs-comment">//</span><br><span class="hljs-comment">// MaxRequests is the maximum number of requests allowed to pass through</span><br><span class="hljs-comment">// when the CircuitBreaker is half-open.</span><br><span class="hljs-comment">// If MaxRequests is 0, the CircuitBreaker allows only 1 request.</span><br><span class="hljs-comment">//</span><br><span class="hljs-comment">// Interval is the cyclic period of the closed state</span><br><span class="hljs-comment">// for the CircuitBreaker to clear the internal Counts.</span><br><span class="hljs-comment">// If Interval is less than or equal to 0, the CircuitBreaker doesn&#x27;t clear internal Counts during the closed state.</span><br><span class="hljs-comment">//</span><br><span class="hljs-comment">// Timeout is the period of the open state,</span><br><span class="hljs-comment">// after which the state of the CircuitBreaker becomes half-open.</span><br><span class="hljs-comment">// If Timeout is less than or equal to 0, the timeout value of the CircuitBreaker is set to 60 seconds.</span><br><span class="hljs-comment">//</span><br><span class="hljs-comment">// ReadyToTrip is called with a copy of Counts whenever a request fails in the closed state.</span><br><span class="hljs-comment">// If ReadyToTrip returns true, the CircuitBreaker will be placed into the open state.</span><br><span class="hljs-comment">// If ReadyToTrip is nil, default ReadyToTrip is used.</span><br><span class="hljs-comment">// Default ReadyToTrip returns true when the number of consecutive failures is more than 5.</span><br><span class="hljs-comment">//</span><br><span class="hljs-comment">// OnStateChange is called whenever the state of the CircuitBreaker changes.</span><br><span class="hljs-comment">//</span><br><span class="hljs-comment">// IsSuccessful is called with the error returned from a request.</span><br><span class="hljs-comment">// If IsSuccessful returns true, the error is counted as a success.</span><br><span class="hljs-comment">// Otherwise the error is counted as a failure.</span><br><span class="hljs-comment">// If IsSuccessful is nil, default IsSuccessful is used, which returns false for all non-nil errors.</span><br><span class="hljs-keyword">type</span> Settings <span class="hljs-keyword">struct</span> &#123;<br>	<span class="hljs-comment">// 熔断器的名称</span><br>	Name <span class="hljs-type">string</span><br><br>	<span class="hljs-comment">// MaxRequests 是 CircuitBreaker 半开时允许通过的最大请求数。</span><br>	<span class="hljs-comment">// 如果 MaxRequests 为 0，则 CircuitBreaker 只允许 1 个请求。</span><br>	<span class="hljs-comment">// FIXME 比较迷的一个变量，源码里有两种情况：</span><br>	<span class="hljs-comment">// 1. 请求总数（Requests） &gt;= MaxRequests，那么会返回请求过多的错误</span><br>	<span class="hljs-comment">// 2. 连续成功次数（ConsecutiveSuccesses） &gt;= MaxRequests，那么变更为关闭状态</span><br>	<span class="hljs-comment">// 1 在 beforeRequest() 函数中，2 在 afterRequest() -&gt; onSuccess() 的 HalfOpen 分支中</span><br>	<span class="hljs-comment">// 也就是在请求前会确保请求总数不超过 MaxRequest，请求后如果处于半开状态且连续成功数 &gt;= MaxRequest</span><br>	<span class="hljs-comment">// 那么会变更为关闭状态</span><br>	MaxRequests <span class="hljs-type">uint32</span><br><br>	<span class="hljs-comment">// Interval 是熔断器处于关闭状态时，定期清除内部 Counts 的时间。</span><br>	<span class="hljs-comment">// 如果 Interval 小于或等于 0，CircuitBreaker 在关闭状态期间不会清除内部计数。</span><br>	<span class="hljs-comment">// FIXME 这个东西暂时没发现用处何在</span><br>	<span class="hljs-comment">// 在网上找了一个分析，意思是如果一直处于成功状态，那么计数的意义就不是很大，</span><br>	<span class="hljs-comment">// 需要定期清空，不然可能会溢出</span><br>	Interval time.Duration<br><br>	<span class="hljs-comment">// Timeout 是打开状态的持续时间，到时后会变更为半打开状态。</span><br>	<span class="hljs-comment">// 如果 Timeout 小于或等于 0，则将 CircuitBreaker 的超时值设置为 60 秒。</span><br>	Timeout time.Duration<br><br>	<span class="hljs-comment">// 每当请求在关闭状态下失败时，就会调用 ReadyToTrip，参数传递的是 Counts 的副本。</span><br>	<span class="hljs-comment">// 如果 ReadyToTrip 返回 true，CircuitBreaker 将进入打开状态。</span><br>	<span class="hljs-comment">// 如果 ReadyToTrip 为 nil，则使用默认 ReadyToTrip。</span><br>	<span class="hljs-comment">// 当连续失败次数超过 5 次时，默认 ReadyToTrip 返回 true。</span><br>	ReadyToTrip <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(counts Counts)</span></span> <span class="hljs-type">bool</span><br><br>	<span class="hljs-comment">// OnStateChange 是熔断器状态变更时的回调函数</span><br>	OnStateChange <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(name <span class="hljs-type">string</span>, from State, to State)</span></span><br><br>	<span class="hljs-comment">// IsSuccessful 判断请求是否成功，传入的 err 是执行用户请求函数后返回的。</span><br>	<span class="hljs-comment">// （也就是 CircuitBreaker.Execute 的参数 req）</span><br>	<span class="hljs-comment">// 如果 IsSuccessful 返回 true， 则说明请求发生了错误，否则说明没有错误。</span><br>	<span class="hljs-comment">// 如果 IsSuccessful 为 nil， 则使用默认 IsSuccessful，该默认函数的逻辑是：</span><br>	<span class="hljs-comment">// if err == nil &#123; return true &#125;</span><br>	IsSuccessful <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(err <span class="hljs-type">error</span>)</span></span> <span class="hljs-type">bool</span><br>&#125;<br><br><span class="hljs-comment">// CircuitBreaker is a state machine to prevent sending requests that are likely to fail.</span><br><span class="hljs-keyword">type</span> CircuitBreaker <span class="hljs-keyword">struct</span> &#123;<br>	<span class="hljs-comment">// 虚线内的属性和 Settings 中的相同，如果 Settings 中没有设置，则使用默认值来填充</span><br>	<span class="hljs-comment">// ==================</span><br>	name <span class="hljs-type">string</span><br>	<span class="hljs-comment">// 比较迷的一个变量，源码里有两种情况：</span><br>	<span class="hljs-comment">// 1. 请求总数（Requests） &gt;= MaxRequests，那么会返回请求过多的错误</span><br>	<span class="hljs-comment">// 2. 连续成功次数（ConsecutiveSuccesses） &gt;= MaxRequests，那么变更为关闭状态</span><br>	<span class="hljs-comment">// 1 在 beforeRequest() 函数中，2 在 afterRequest() -&gt; onSuccess() 的 HalfOpen 分支中</span><br>	<span class="hljs-comment">// 也就是在请求前会确保请求总数不超过 MaxRequest，请求后如果处于半开状态且连续成功数 &gt;= MaxRequest</span><br>	<span class="hljs-comment">// 那么会变更为关闭状态</span><br>	maxRequests <span class="hljs-type">uint32</span><br><br>	<span class="hljs-comment">// 关闭状态下定期清空计数的时间，如果为 0，则不清空</span><br>	<span class="hljs-comment">// 这里我不太明白清空计数的原因，在网上找了一个分析，意思是如果一直处于成功状态，</span><br>	<span class="hljs-comment">// 那么计数的意义就不是很大，此外如果请求量过大可能会导致溢出，所以需要定期清空</span><br>	interval time.Duration<br><br>	<span class="hljs-comment">// 打开状态的持续时间，到时后会变更为半打开状态。</span><br>	timeout time.Duration<br><br>	<span class="hljs-comment">// 关闭状态下会调用该回调函数，如果返回 true，则进入打开状态</span><br>	readyToTrip <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(counts Counts)</span></span> <span class="hljs-type">bool</span><br><br>	<span class="hljs-comment">// 用来判断请求是否成功的回调函数</span><br>	isSuccessful <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(err <span class="hljs-type">error</span>)</span></span> <span class="hljs-type">bool</span><br><br>	<span class="hljs-comment">// 发生状态变更时的回调函数</span><br>	onStateChange <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(name <span class="hljs-type">string</span>, from State, to State)</span></span><br>	<span class="hljs-comment">// ====================</span><br><br>	mutex      sync.Mutex<br>	state      State<br>	generation <span class="hljs-type">uint64</span><br>	counts     Counts<br>	<span class="hljs-comment">// 这个变量貌似有两种情况：</span><br>	<span class="hljs-comment">// 1. 开启状态下，代表切换到半开启的绝对时间（time.Time 代表一个绝对时间）</span><br>	<span class="hljs-comment">//    具体值是 time.Now + timeout</span><br>	<span class="hljs-comment">// 2. 关闭状态下，代表进入下一个周期的绝对时间（进入下一个周期会清空计数）</span><br>	<span class="hljs-comment">// 	  具体值是 time.Now + interval</span><br>	expiry time.Time<br>&#125;<br><br><span class="hljs-comment">// TwoStepCircuitBreaker is like CircuitBreaker but instead of surrounding a function</span><br><span class="hljs-comment">// with the breaker functionality, it only checks whether a request can proceed and</span><br><span class="hljs-comment">// expects the caller to report the outcome in a separate step using a callback.</span><br><span class="hljs-keyword">type</span> TwoStepCircuitBreaker <span class="hljs-keyword">struct</span> &#123;<br>	cb *CircuitBreaker<br>&#125;<br><br><span class="hljs-comment">// NewCircuitBreaker returns a new CircuitBreaker configured with the given Settings.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewCircuitBreaker</span><span class="hljs-params">(st Settings)</span></span> *CircuitBreaker &#123;<br>	cb := <span class="hljs-built_in">new</span>(CircuitBreaker)<br><br>	cb.name = st.Name<br>	cb.onStateChange = st.OnStateChange<br><br>	<span class="hljs-keyword">if</span> st.MaxRequests == <span class="hljs-number">0</span> &#123;<br>		cb.maxRequests = <span class="hljs-number">1</span><br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		cb.maxRequests = st.MaxRequests<br>	&#125;<br><br>	<span class="hljs-keyword">if</span> st.Interval &lt;= <span class="hljs-number">0</span> &#123;<br>		cb.interval = defaultInterval<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		cb.interval = st.Interval<br>	&#125;<br><br>	<span class="hljs-keyword">if</span> st.Timeout &lt;= <span class="hljs-number">0</span> &#123;<br>		cb.timeout = defaultTimeout<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		cb.timeout = st.Timeout<br>	&#125;<br><br>	<span class="hljs-keyword">if</span> st.ReadyToTrip == <span class="hljs-literal">nil</span> &#123;<br>		cb.readyToTrip = defaultReadyToTrip<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		cb.readyToTrip = st.ReadyToTrip<br>	&#125;<br><br>	<span class="hljs-keyword">if</span> st.IsSuccessful == <span class="hljs-literal">nil</span> &#123;<br>		cb.isSuccessful = defaultIsSuccessful<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		cb.isSuccessful = st.IsSuccessful<br>	&#125;<br><br>	cb.toNewGeneration(time.Now())<br><br>	<span class="hljs-keyword">return</span> cb<br>&#125;<br><br><span class="hljs-comment">// NewTwoStepCircuitBreaker returns a new TwoStepCircuitBreaker configured with the given Settings.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewTwoStepCircuitBreaker</span><span class="hljs-params">(st Settings)</span></span> *TwoStepCircuitBreaker &#123;<br>	<span class="hljs-keyword">return</span> &amp;TwoStepCircuitBreaker&#123;<br>		cb: NewCircuitBreaker(st),<br>	&#125;<br>&#125;<br><br><span class="hljs-keyword">const</span> defaultInterval = time.Duration(<span class="hljs-number">0</span>) * time.Second<br><span class="hljs-keyword">const</span> defaultTimeout = time.Duration(<span class="hljs-number">60</span>) * time.Second<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">defaultReadyToTrip</span><span class="hljs-params">(counts Counts)</span></span> <span class="hljs-type">bool</span> &#123;<br>	<span class="hljs-keyword">return</span> counts.ConsecutiveFailures &gt; <span class="hljs-number">5</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">defaultIsSuccessful</span><span class="hljs-params">(err <span class="hljs-type">error</span>)</span></span> <span class="hljs-type">bool</span> &#123;<br>	<span class="hljs-keyword">return</span> err == <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-comment">// Name returns the name of the CircuitBreaker.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> Name() <span class="hljs-type">string</span> &#123;<br>	<span class="hljs-keyword">return</span> cb.name<br>&#125;<br><br><span class="hljs-comment">// State returns the current state of the CircuitBreaker.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> State() State &#123;<br>	cb.mutex.Lock()<br>	<span class="hljs-keyword">defer</span> cb.mutex.Unlock()<br><br>	now := time.Now()<br>	state, _ := cb.currentState(now)<br>	<span class="hljs-keyword">return</span> state<br>&#125;<br><br><span class="hljs-comment">// Counts returns internal counters</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> Counts() Counts &#123;<br>	cb.mutex.Lock()<br>	<span class="hljs-keyword">defer</span> cb.mutex.Unlock()<br><br>	<span class="hljs-keyword">return</span> cb.counts<br>&#125;<br><br><span class="hljs-comment">// Execute runs the given request if the CircuitBreaker accepts it.</span><br><span class="hljs-comment">// Execute returns an error instantly if the CircuitBreaker rejects the request.</span><br><span class="hljs-comment">// Otherwise, Execute returns the result of the request.</span><br><span class="hljs-comment">// If a panic occurs in the request, the CircuitBreaker handles it as an error</span><br><span class="hljs-comment">// and causes the same panic again.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> Execute(req <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> (<span class="hljs-keyword">interface</span>&#123;&#125;, <span class="hljs-type">error</span>)) (<span class="hljs-keyword">interface</span>&#123;&#125;, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-comment">// 执行请求前</span><br>	generation, err := cb.beforeRequest()<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br><br>	<span class="hljs-keyword">defer</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>		e := <span class="hljs-built_in">recover</span>()<br>		<span class="hljs-keyword">if</span> e != <span class="hljs-literal">nil</span> &#123;<br>			cb.afterRequest(generation, <span class="hljs-literal">false</span>)<br>			<span class="hljs-built_in">panic</span>(e)<br>		&#125;<br>	&#125;()<br><br>	result, err := req()<br>	<span class="hljs-comment">// 执行请求后</span><br>	cb.afterRequest(generation, cb.isSuccessful(err))<br>	<span class="hljs-keyword">return</span> result, err<br>&#125;<br><br><span class="hljs-comment">// Name returns the name of the TwoStepCircuitBreaker.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(tscb *TwoStepCircuitBreaker)</span></span> Name() <span class="hljs-type">string</span> &#123;<br>	<span class="hljs-keyword">return</span> tscb.cb.Name()<br>&#125;<br><br><span class="hljs-comment">// State returns the current state of the TwoStepCircuitBreaker.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(tscb *TwoStepCircuitBreaker)</span></span> State() State &#123;<br>	<span class="hljs-keyword">return</span> tscb.cb.State()<br>&#125;<br><br><span class="hljs-comment">// Counts returns internal counters</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(tscb *TwoStepCircuitBreaker)</span></span> Counts() Counts &#123;<br>	<span class="hljs-keyword">return</span> tscb.cb.Counts()<br>&#125;<br><br><span class="hljs-comment">// Allow checks if a new request can proceed. It returns a callback that should be used to</span><br><span class="hljs-comment">// register the success or failure in a separate step. If the circuit breaker doesn&#x27;t allow</span><br><span class="hljs-comment">// requests, it returns an error.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(tscb *TwoStepCircuitBreaker)</span></span> Allow() (done <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(success <span class="hljs-type">bool</span>)</span></span>, err <span class="hljs-type">error</span>) &#123;<br>	generation, err := tscb.cb.beforeRequest()<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br><br>	<span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(success <span class="hljs-type">bool</span>)</span></span> &#123;<br>		tscb.cb.afterRequest(generation, success)<br>	&#125;, <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> beforeRequest() (<span class="hljs-type">uint64</span>, <span class="hljs-type">error</span>) &#123;<br>	cb.mutex.Lock()<br>	<span class="hljs-keyword">defer</span> cb.mutex.Unlock()<br><br>	now := time.Now()<br>	state, generation := cb.currentState(now)<br><br>	<span class="hljs-comment">// 如果熔断器处于开启状态，直接返回错误，因为该方法在 Execute 中先于用户请求执行，</span><br>	<span class="hljs-comment">// 且逻辑是有 err 直接 return，所以不会执行之后的代码，具体查看 Execute，下面是截取的部分：</span><br>	<span class="hljs-comment">// generation, err := cb.beforeRequest()</span><br>	<span class="hljs-comment">//	if err != nil &#123;</span><br>	<span class="hljs-comment">//		return nil, err</span><br>	<span class="hljs-comment">//	&#125;</span><br>	<span class="hljs-keyword">if</span> state == StateOpen &#123;<br>		<span class="hljs-keyword">return</span> generation, ErrOpenState<br>		<span class="hljs-comment">// 请求前如果处于半开状态，会进行限流操作</span><br>	&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> state == StateHalfOpen &amp;&amp; cb.counts.Requests &gt;= cb.maxRequests &#123;<br>		<span class="hljs-keyword">return</span> generation, ErrTooManyRequests<br>	&#125;<br><br>	cb.counts.onRequest() <span class="hljs-comment">// 更新计数</span><br>	<span class="hljs-keyword">return</span> generation, <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> afterRequest(before <span class="hljs-type">uint64</span>, success <span class="hljs-type">bool</span>) &#123;<br>	cb.mutex.Lock()<br>	<span class="hljs-keyword">defer</span> cb.mutex.Unlock()<br><br>	now := time.Now()<br>	state, generation := cb.currentState(now)<br>	<span class="hljs-keyword">if</span> generation != before &#123;<br>		<span class="hljs-keyword">return</span><br>	&#125;<br><br>	<span class="hljs-comment">// 更新状态和计数</span><br>	<span class="hljs-keyword">if</span> success &#123;<br>		cb.onSuccess(state, now)<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		cb.onFailure(state, now)<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// 熔断器请求成功时调用该函数</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> onSuccess(state State, now time.Time) &#123;<br>	<span class="hljs-keyword">switch</span> state &#123;<br>	<span class="hljs-keyword">case</span> StateClosed: <span class="hljs-comment">// 如果此时是关闭状态，则更新计数</span><br>		cb.counts.onSuccess()<br>	<span class="hljs-keyword">case</span> StateHalfOpen: <span class="hljs-comment">// 半开状态</span><br>		cb.counts.onSuccess() <span class="hljs-comment">// 更新计数</span><br>		<span class="hljs-comment">// 连续成功总数超过了设置的 maxRequests，变更为关闭状态</span><br>		<span class="hljs-keyword">if</span> cb.counts.ConsecutiveSuccesses &gt;= cb.maxRequests &#123;<br>			cb.setState(StateClosed, now)<br>		&#125;<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// 熔断器请求失败时调用该函数</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> onFailure(state State, now time.Time) &#123;<br>	<span class="hljs-keyword">switch</span> state &#123;<br>	<span class="hljs-comment">// 关闭状态下请求失败了</span><br>	<span class="hljs-keyword">case</span> StateClosed:<br>		cb.counts.onFailure() <span class="hljs-comment">// 更新计数</span><br>		<span class="hljs-comment">// 如果回调函数 readyToTrip 返回 true</span><br>		<span class="hljs-comment">// 因为一次失败可能不足以直接判定为需要熔断，所以可能失败多次后才会返回 true</span><br>		<span class="hljs-comment">// 比如官方示例中设置的回调函数是：</span><br>		<span class="hljs-comment">// st.ReadyToTrip = func(counts gobreaker.Counts) bool &#123;</span><br>		<span class="hljs-comment">//		failureRatio := float64(counts.TotalFailures) / float64(counts.Requests)</span><br>		<span class="hljs-comment">//		return counts.Requests &gt;= 3 &amp;&amp; failureRatio &gt;= 0.6</span><br>		<span class="hljs-comment">//	&#125;</span><br>		<span class="hljs-comment">// 可以看到这里需要请求次数大于3，且总失败率大于等于 60% 才会返回 true</span><br>		<span class="hljs-keyword">if</span> cb.readyToTrip(cb.counts) &#123;<br>			cb.setState(StateOpen, now) <span class="hljs-comment">// 变更熔断器为开启状态</span><br>		&#125;<br>	<span class="hljs-keyword">case</span> StateHalfOpen: <span class="hljs-comment">// 半开状态下失败了，变更为开启状态</span><br>		cb.setState(StateOpen, now)<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// currentState 返回熔断器当前的状态，now 用来判断是否需要执行某些操作，这些操作包括：</span><br><span class="hljs-comment">// 1. 关闭状态下清空计数（如果设置了 interval 且达到了清空时间）</span><br><span class="hljs-comment">// 2. 开启状态转换为半开启状态（到达了转换时间）</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> currentState(now time.Time) (State, <span class="hljs-type">uint64</span>) &#123;<br>	<span class="hljs-comment">// func toNewGeneration</span><br>	<span class="hljs-comment">// case StateClosed:</span><br>	<span class="hljs-comment">//		if cb.interval == 0 &#123;</span><br>	<span class="hljs-comment">//			cb.expiry = zero</span><br>	<span class="hljs-comment">//		&#125; else &#123;</span><br>	<span class="hljs-comment">//			cb.expiry = now.Add(cb.interval)</span><br>	<span class="hljs-comment">//		&#125;</span><br>	<span class="hljs-keyword">switch</span> cb.state &#123;<br>	<span class="hljs-comment">// 如上面的注释代码所示，如果 cb.interval 为 0，那么 cb.expiry 会设置为 zero，</span><br>	<span class="hljs-comment">// 此时下面的 if 条件就不满足了，关闭状态下也不会调用 cb.toNewGeneration 来清空计数</span><br>	<span class="hljs-comment">// 如果设置了 cb.interval，那么会设置 cb.expiry 的时间，如果处于关闭状态且达到了</span><br>	<span class="hljs-comment">// expiry 的时间，就会调用 cb.toNewGeneration 来清空计数</span><br>	<span class="hljs-keyword">case</span> StateClosed:<br>		<span class="hljs-keyword">if</span> !cb.expiry.IsZero() &amp;&amp; cb.expiry.Before(now) &#123;<br>			cb.toNewGeneration(now)<br>		&#125;<br>	<span class="hljs-keyword">case</span> StateOpen:<br>		<span class="hljs-comment">// 超过了 expiry 的时间，可以切换到半开状态了</span><br>		<span class="hljs-keyword">if</span> cb.expiry.Before(now) &#123;<br>			cb.setState(StateHalfOpen, now)<br>		&#125;<br>	&#125;<br>	<span class="hljs-keyword">return</span> cb.state, cb.generation<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> setState(state State, now time.Time) &#123;<br>	<span class="hljs-keyword">if</span> cb.state == state &#123;<br>		<span class="hljs-keyword">return</span><br>	&#125;<br><br>	prev := cb.state<br>	cb.state = state<br><br>	cb.toNewGeneration(now) <span class="hljs-comment">// 设置新状态后更新计数</span><br><br>	<span class="hljs-keyword">if</span> cb.onStateChange != <span class="hljs-literal">nil</span> &#123;<br>		cb.onStateChange(cb.name, prev, state)<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// 进入一个新周期，会清空计数，并对 cb.expiry 进行更新</span><br><span class="hljs-comment">// 该函数会在 setState、currentState、NewCircuitBreaker 调用</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(cb *CircuitBreaker)</span></span> toNewGeneration(now time.Time) &#123;<br>	cb.generation++<br>	cb.counts.clear()<br><br>	<span class="hljs-keyword">var</span> zero time.Time<br>	<span class="hljs-keyword">switch</span> cb.state &#123;<br>	<span class="hljs-keyword">case</span> StateClosed:<br>		<span class="hljs-keyword">if</span> cb.interval == <span class="hljs-number">0</span> &#123;<br>			cb.expiry = zero<br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>			cb.expiry = now.Add(cb.interval)<br>		&#125;<br>	<span class="hljs-keyword">case</span> StateOpen:<br>		cb.expiry = now.Add(cb.timeout) <span class="hljs-comment">// 设置 open -&gt; halfOpen 的绝对时间</span><br>	<span class="hljs-keyword">default</span>: <span class="hljs-comment">// StateHalfOpen</span><br>		cb.expiry = zero<br>	&#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/go/">#go</a>
+      
+        <a href="/tags/%E6%BA%90%E7%A0%81/">#源码</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>go 熔断器 gobreaker 源码阅读</div>
+      <div>https://autsu.github.io/2022/06/11/gobreaker/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年6月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/06/24/127.0.0.1_localhost_0.0.0.0/" title="127.0.0.1，localhost，0.0.0.0 的区别（包含虚拟网卡相关操作）">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">127.0.0.1，localhost，0.0.0.0 的区别（包含虚拟网卡相关操作）</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/06/08/go_seek/" title="go 文件操作的&#34;坑&#34;之 Seek()">
+                        <span class="hidden-mobile">go 文件操作的&#34;坑&#34;之 Seek()</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
