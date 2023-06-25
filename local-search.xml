@@ -2458,9 +2458,9 @@
     
     <tags>
       
-      <tag>剑指offer</tag>
-      
       <tag>字符串</tag>
+      
+      <tag>剑指offer</tag>
       
       <tag>自动机</tag>
       
@@ -2603,9 +2603,9 @@
     
     <tags>
       
-      <tag>etcd</tag>
-      
       <tag>issues</tag>
+      
+      <tag>etcd</tag>
       
     </tags>
     
@@ -2645,11 +2645,11 @@
     
     <tags>
       
+      <tag>剑指offer</tag>
+      
       <tag>数组</tag>
       
       <tag>二分查找</tag>
-      
-      <tag>剑指offer</tag>
       
     </tags>
     
@@ -2668,9 +2668,9 @@
     
     <tags>
       
-      <tag>剑指offer</tag>
-      
       <tag>链表</tag>
+      
+      <tag>剑指offer</tag>
       
     </tags>
     
@@ -2689,9 +2689,9 @@
     
     <tags>
       
-      <tag>数组</tag>
-      
       <tag>双指针</tag>
+      
+      <tag>数组</tag>
       
     </tags>
     
@@ -2771,9 +2771,9 @@
     
     <tags>
       
-      <tag>二分查找</tag>
-      
       <tag>剑指offer</tag>
+      
+      <tag>二分查找</tag>
       
     </tags>
     
@@ -2859,11 +2859,11 @@
     
     <tags>
       
-      <tag>数组</tag>
-      
       <tag>剑指offer</tag>
       
       <tag>双指针</tag>
+      
+      <tag>数组</tag>
       
     </tags>
     
@@ -2882,9 +2882,9 @@
     
     <tags>
       
-      <tag>剑指offer</tag>
-      
       <tag>字符串</tag>
+      
+      <tag>剑指offer</tag>
       
       <tag>哈希表</tag>
       
@@ -2907,9 +2907,9 @@
     
     <tags>
       
-      <tag>剑指offer</tag>
-      
       <tag>字符串</tag>
+      
+      <tag>剑指offer</tag>
       
       <tag>哈希表</tag>
       
@@ -2930,9 +2930,9 @@
     
     <tags>
       
-      <tag>剑指offer</tag>
-      
       <tag>链表</tag>
+      
+      <tag>剑指offer</tag>
       
       <tag>双指针</tag>
       
@@ -2955,9 +2955,9 @@
     
     <tags>
       
-      <tag>剑指offer</tag>
-      
       <tag>链表</tag>
+      
+      <tag>剑指offer</tag>
       
       <tag>算法</tag>
       
@@ -2978,9 +2978,9 @@
     
     <tags>
       
-      <tag>数组</tag>
-      
       <tag>剑指offer</tag>
+      
+      <tag>数组</tag>
       
       <tag>算法</tag>
       
@@ -3096,25 +3096,6 @@
   
   
   <entry>
-    <title>go 交换 container/list 的值</title>
-    <link href="/2020/02/24/2021-2-24-go-container-list-swap/"/>
-    <url>/2020/02/24/2021-2-24-go-container-list-swap/</url>
-    
-    <content type="html"><![CDATA[<h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>在 <strong>LeetCode 255.用队列实现栈</strong> 这道题里，需要用到两个队列来实现一个栈，并且在算法流程中，需要交换这两个队列的内容，例如：队列 A  &#x3D;&gt; [1, 2, 3]，队列 B &#x3D;&gt; [555]，交换后：A &#x3D;&gt; [555]，B &#x3D;&gt; [1, 2, 3]。</p><p>go 标准库中并没有提供队列的实现，但是提供了 container&#x2F;list 这样一个双向链表，所以可以用 list 来模拟一个队列，定义如下结构体：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> MyStack <span class="hljs-keyword">struct</span> &#123;<br>    Queue1 *list.List<span class="hljs-comment">// 队列 1</span><br>    Queue2 *list.List<span class="hljs-comment">// 队列 2</span><br>&#125;<br></code></pre></td></tr></table></figure><p>在 <code>push</code> 方法中需要交换两个队列的内容：</p><h3 id="写法1"><a href="#写法1" class="headerlink" title="写法1"></a>写法1</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(this *MyStack)</span></span> Push(x <span class="hljs-type">int</span>) &#123;<br>  <span class="hljs-comment">// 省略其他代码</span><br>  <span class="hljs-comment">// 在这里交换值</span><br>  this.Queue1, this.Queue2 = this.Queue2, this.Queue1<br>&#125;<br></code></pre></td></tr></table></figure><p>上面的代码是可以正确运行的，这里的交换语句让 Queue1 重新指向了另一个 list，Queue2 也同样如此，例如：Queue1 &#x3D;&gt; 0x0001，Queue2 &#x3D;&gt; 0x0013，交换后：Queue1 &#x3D;&gt; 0x0013，Queue2 &#x3D;&gt; 0x0001，这里仅仅是改变了结构体成员属性的值（指向），并没有对属性 list 内部进行更改。</p><h3 id="写法2"><a href="#写法2" class="headerlink" title="写法2"></a>写法2</h3><p>为了让代码更简洁一些，我尝试用两个变量保存 this.Queue1和 this.Queue2：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(this *MyStack)</span></span> Push(x <span class="hljs-type">int</span>) &#123;<br>  q1 := this.Queue1<br>  q2 := this.Queue2<br>  <span class="hljs-comment">// 省略其他代码</span><br>  <span class="hljs-comment">// 在这里交换值</span><br>  q1, q2 = q2, q1<br>&#125;<br></code></pre></td></tr></table></figure><p>上面这段代码会出错，因为这里的交换的是仅仅两个变量 q1 和 q2 的值，并没有对结构体中的属性造成影响。</p><h3 id="写法3"><a href="#写法3" class="headerlink" title="写法3"></a>写法3</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(this *MyStack)</span></span> Push(x <span class="hljs-type">int</span>) &#123;<br>  q1 := this.Queue1<br>  q2 := this.Queue2<br>  <span class="hljs-comment">// 省略其他代码</span><br>  <span class="hljs-comment">// 在这里交换值</span><br>  *q1, *q2 = *q2, *q1<br>&#125;<br></code></pre></td></tr></table></figure><p>因为 q1 和 q2 都是指针变量，所以可以通过 *<strong>取内容符</strong> 来交换值，就和交换两个指针参数值一样，看起来也没有任何问题，但是运行结果却诡异的出现了死循环，而且排查了许久都找不到原因。</p><h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p><strong>Struct ll</strong>  定义一个类似的结构体：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> ll <span class="hljs-keyword">struct</span> &#123;<br>l1 *list.List<br>l2 *list.List<br>&#125;<br></code></pre></td></tr></table></figure><p><strong>swap()</strong> 类似 <strong>方法三</strong> 中的取值交换方式：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">swap</span><span class="hljs-params">(l1, l2 *list.List)</span></span> &#123;<br>*l1, *l2 = *l2, *l1<br>&#125;<br></code></pre></td></tr></table></figure><p><strong>_print</strong> 定义一个输出函数用来友好输出链表，输出值的同时也输出地址值：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> _<span class="hljs-title">print</span><span class="hljs-params">(name <span class="hljs-type">string</span>, l *list.List)</span></span> &#123;<br>fmt.Print(name + <span class="hljs-string">&quot;: &quot;</span>)<br><span class="hljs-keyword">for</span> i := l.Front(); i != <span class="hljs-literal">nil</span>; i = i.Next() &#123;<br>fmt.Printf(<span class="hljs-string">&quot;%v[%p] -&gt; \t&quot;</span>, i.Value, i)<br>&#125;<br>fmt.Println()<br>&#125;<br></code></pre></td></tr></table></figure><p>测试代码：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 创建两个 list</span><br>l1 := list.New()<br>l2 := list.New()<br><br><span class="hljs-comment">// 为两个链表添加值，l1: 1 -&gt; 2 -&gt; 3，l2: 666</span><br>l1.PushBack(<span class="hljs-number">1</span>)<br>l1.PushBack(<span class="hljs-number">2</span>)<br>l1.PushBack(<span class="hljs-number">3</span>)<br>l2.PushBack(<span class="hljs-number">666</span>)<br><br><span class="hljs-comment">// 输出交换前的值</span><br>fmt.Println(<span class="hljs-string">&quot;before: &quot;</span>)<br>_print(<span class="hljs-string">&quot;l1&quot;</span>, l1)<br>_print(<span class="hljs-string">&quot;l2&quot;</span>, l2)<br><br><span class="hljs-comment">// 交换函数</span><br>swap(l1, l2)<br><span class="hljs-comment">// 输出交换后的值</span><br>fmt.Println(<span class="hljs-string">&quot;after: &quot;</span>)<br>_print(<span class="hljs-string">&quot;l1&quot;</span>, l1)<br>_print(<span class="hljs-string">&quot;l2&quot;</span>, l2)<br></code></pre></td></tr></table></figure><p>运行结果：</p><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">before</span>: <br><span class="hljs-attribute">l1</span>: <span class="hljs-number">1</span>[<span class="hljs-number">0</span>xc00009cde0] -&gt; <span class="hljs-number">2</span>[<span class="hljs-number">0</span>xc00009ce10] -&gt; <span class="hljs-number">3</span>[<span class="hljs-number">0</span>xc00009ce40] -&gt; <br><span class="hljs-attribute">l2</span>: <span class="hljs-number">666</span>[<span class="hljs-number">0</span>xc00009ce70] -&gt; <br><br><span class="hljs-attribute">after</span>: <br><span class="hljs-attribute">l1</span>: <span class="hljs-number">666</span>[<span class="hljs-number">0</span>xc00009ce70] -&gt; <br><span class="hljs-attribute">l2</span>: <span class="hljs-number">1</span>[<span class="hljs-number">0</span>xc00009cde0] -&gt; <span class="hljs-number">2</span>[<span class="hljs-number">0</span>xc00009ce10] -&gt; <span class="hljs-number">3</span>[<span class="hljs-number">0</span>xc00009ce40] -&gt; <br></code></pre></td></tr></table></figure><p>两个链表的值确实已经发生了改变，但是为什么在 <strong>方法 3</strong> 中会产生诡异的错误呢？继续尝试追加值：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 交换完之后 pushback</span><br>fmt.Println(<span class="hljs-string">&quot;after swap pushback: &quot;</span>)<br>l2.PushBack(<span class="hljs-number">555</span>)<br>l1.PushBack(<span class="hljs-number">6</span>)<br><span class="hljs-comment">// 输出两个链表</span><br>_print(<span class="hljs-string">&quot;l1&quot;</span>, l1)<br>_print(<span class="hljs-string">&quot;l2&quot;</span>, l2)<br></code></pre></td></tr></table></figure><p>运行结果：</p><figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs xl">after swap pushback: <br><span class="hljs-function"><span class="hljs-title">l1</span>: 666[0xc000104e70] -&gt;</span> <span class="hljs-number">6</span>[<span class="hljs-number">0</span><span class="hljs-function"><span class="hljs-title">xc000104ed0</span>] -&gt;</span> <span class="hljs-number">555</span>[<span class="hljs-number">0</span><span class="hljs-function"><span class="hljs-title">xc000104ea0</span>] -&gt;</span> &lt;<span class="hljs-function"><span class="hljs-title">nil</span>&gt;[0xc000104db0] -&gt;</span> <br><span class="hljs-function"><span class="hljs-title">l2</span>: 1[0xc000104de0] -&gt;</span> <span class="hljs-number">2</span>[<span class="hljs-number">0</span><span class="hljs-function"><span class="hljs-title">xc000104e10</span>] -&gt;</span> <span class="hljs-number">3</span>[<span class="hljs-number">0</span><span class="hljs-function"><span class="hljs-title">xc000104e40</span>] -&gt;</span> <br></code></pre></td></tr></table></figure><p>上面的代码向 l1 尾部添加了 元素 6，向 l2 尾部添加元素 555，正确结果应该是：</p><p>l1:  666 -&gt; 6</p><p>l2:  1 -&gt; 2 -&gt; 3 -&gt; 555</p><p>但运行结果却十分诡异：</p><p>l1:  666 -&gt; 6 -&gt; 555 -&gt; nil</p><p>l2:  1 -&gt; 2 -&gt; 3</p><p>本来应该添加到 l2 的 555 被添加到了 l1，并且 l1 还多了一个 额外的 nil</p><h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>结合源码进行了分析（不一定正确）</p><p><img src="https://zengh1.github.io/post-images/1618573823911.png"></p><p>至于为什么会出现 <strong>测试</strong> 中的诡异情况，发现自己水平有限，画图画的晕头转向，找不出一个合理的原因，只能草草归结于 <strong>list 的环形被破坏，导致产生无法预料的结果</strong>。</p><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>写法1 <code>this.Queue1, this.Queue2 = this.Queue2, this.Queue1</code>  只是交换了结构体属性 q1 和 q2 的指向，没有对 list 内部进行修改，而 写法3 <code>*this.Queue1, *this.Queue2 = *this.Queue2, *this.Queue1</code> 则是直接对 list 内部进行了修改，所以产生了无法预料的后果，这也充分说明了指针的危险性。</p>]]></content>
-    
-    
-    
-    <tags>
-      
-      <tag>go</tag>
-      
-    </tags>
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>go container/list 源码分析【未完】</title>
     <link href="/2020/02/24/2021-2-24-go-container-list-source-code/"/>
     <url>/2020/02/24/2021-2-24-go-container-list-source-code/</url>
@@ -3128,6 +3109,25 @@
       <tag>go</tag>
       
       <tag>源码</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>go 交换 container/list 的值</title>
+    <link href="/2020/02/24/2021-2-24-go-container-list-swap/"/>
+    <url>/2020/02/24/2021-2-24-go-container-list-swap/</url>
+    
+    <content type="html"><![CDATA[<h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>在 <strong>LeetCode 255.用队列实现栈</strong> 这道题里，需要用到两个队列来实现一个栈，并且在算法流程中，需要交换这两个队列的内容，例如：队列 A  &#x3D;&gt; [1, 2, 3]，队列 B &#x3D;&gt; [555]，交换后：A &#x3D;&gt; [555]，B &#x3D;&gt; [1, 2, 3]。</p><p>go 标准库中并没有提供队列的实现，但是提供了 container&#x2F;list 这样一个双向链表，所以可以用 list 来模拟一个队列，定义如下结构体：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> MyStack <span class="hljs-keyword">struct</span> &#123;<br>    Queue1 *list.List<span class="hljs-comment">// 队列 1</span><br>    Queue2 *list.List<span class="hljs-comment">// 队列 2</span><br>&#125;<br></code></pre></td></tr></table></figure><p>在 <code>push</code> 方法中需要交换两个队列的内容：</p><h3 id="写法1"><a href="#写法1" class="headerlink" title="写法1"></a>写法1</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(this *MyStack)</span></span> Push(x <span class="hljs-type">int</span>) &#123;<br>  <span class="hljs-comment">// 省略其他代码</span><br>  <span class="hljs-comment">// 在这里交换值</span><br>  this.Queue1, this.Queue2 = this.Queue2, this.Queue1<br>&#125;<br></code></pre></td></tr></table></figure><p>上面的代码是可以正确运行的，这里的交换语句让 Queue1 重新指向了另一个 list，Queue2 也同样如此，例如：Queue1 &#x3D;&gt; 0x0001，Queue2 &#x3D;&gt; 0x0013，交换后：Queue1 &#x3D;&gt; 0x0013，Queue2 &#x3D;&gt; 0x0001，这里仅仅是改变了结构体成员属性的值（指向），并没有对属性 list 内部进行更改。</p><h3 id="写法2"><a href="#写法2" class="headerlink" title="写法2"></a>写法2</h3><p>为了让代码更简洁一些，我尝试用两个变量保存 this.Queue1和 this.Queue2：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(this *MyStack)</span></span> Push(x <span class="hljs-type">int</span>) &#123;<br>  q1 := this.Queue1<br>  q2 := this.Queue2<br>  <span class="hljs-comment">// 省略其他代码</span><br>  <span class="hljs-comment">// 在这里交换值</span><br>  q1, q2 = q2, q1<br>&#125;<br></code></pre></td></tr></table></figure><p>上面这段代码会出错，因为这里的交换的是仅仅两个变量 q1 和 q2 的值，并没有对结构体中的属性造成影响。</p><h3 id="写法3"><a href="#写法3" class="headerlink" title="写法3"></a>写法3</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(this *MyStack)</span></span> Push(x <span class="hljs-type">int</span>) &#123;<br>  q1 := this.Queue1<br>  q2 := this.Queue2<br>  <span class="hljs-comment">// 省略其他代码</span><br>  <span class="hljs-comment">// 在这里交换值</span><br>  *q1, *q2 = *q2, *q1<br>&#125;<br></code></pre></td></tr></table></figure><p>因为 q1 和 q2 都是指针变量，所以可以通过 *<strong>取内容符</strong> 来交换值，就和交换两个指针参数值一样，看起来也没有任何问题，但是运行结果却诡异的出现了死循环，而且排查了许久都找不到原因。</p><h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p><strong>Struct ll</strong>  定义一个类似的结构体：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> ll <span class="hljs-keyword">struct</span> &#123;<br>l1 *list.List<br>l2 *list.List<br>&#125;<br></code></pre></td></tr></table></figure><p><strong>swap()</strong> 类似 <strong>方法三</strong> 中的取值交换方式：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">swap</span><span class="hljs-params">(l1, l2 *list.List)</span></span> &#123;<br>*l1, *l2 = *l2, *l1<br>&#125;<br></code></pre></td></tr></table></figure><p><strong>_print</strong> 定义一个输出函数用来友好输出链表，输出值的同时也输出地址值：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> _<span class="hljs-title">print</span><span class="hljs-params">(name <span class="hljs-type">string</span>, l *list.List)</span></span> &#123;<br>fmt.Print(name + <span class="hljs-string">&quot;: &quot;</span>)<br><span class="hljs-keyword">for</span> i := l.Front(); i != <span class="hljs-literal">nil</span>; i = i.Next() &#123;<br>fmt.Printf(<span class="hljs-string">&quot;%v[%p] -&gt; \t&quot;</span>, i.Value, i)<br>&#125;<br>fmt.Println()<br>&#125;<br></code></pre></td></tr></table></figure><p>测试代码：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 创建两个 list</span><br>l1 := list.New()<br>l2 := list.New()<br><br><span class="hljs-comment">// 为两个链表添加值，l1: 1 -&gt; 2 -&gt; 3，l2: 666</span><br>l1.PushBack(<span class="hljs-number">1</span>)<br>l1.PushBack(<span class="hljs-number">2</span>)<br>l1.PushBack(<span class="hljs-number">3</span>)<br>l2.PushBack(<span class="hljs-number">666</span>)<br><br><span class="hljs-comment">// 输出交换前的值</span><br>fmt.Println(<span class="hljs-string">&quot;before: &quot;</span>)<br>_print(<span class="hljs-string">&quot;l1&quot;</span>, l1)<br>_print(<span class="hljs-string">&quot;l2&quot;</span>, l2)<br><br><span class="hljs-comment">// 交换函数</span><br>swap(l1, l2)<br><span class="hljs-comment">// 输出交换后的值</span><br>fmt.Println(<span class="hljs-string">&quot;after: &quot;</span>)<br>_print(<span class="hljs-string">&quot;l1&quot;</span>, l1)<br>_print(<span class="hljs-string">&quot;l2&quot;</span>, l2)<br></code></pre></td></tr></table></figure><p>运行结果：</p><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">before</span>: <br><span class="hljs-attribute">l1</span>: <span class="hljs-number">1</span>[<span class="hljs-number">0</span>xc00009cde0] -&gt; <span class="hljs-number">2</span>[<span class="hljs-number">0</span>xc00009ce10] -&gt; <span class="hljs-number">3</span>[<span class="hljs-number">0</span>xc00009ce40] -&gt; <br><span class="hljs-attribute">l2</span>: <span class="hljs-number">666</span>[<span class="hljs-number">0</span>xc00009ce70] -&gt; <br><br><span class="hljs-attribute">after</span>: <br><span class="hljs-attribute">l1</span>: <span class="hljs-number">666</span>[<span class="hljs-number">0</span>xc00009ce70] -&gt; <br><span class="hljs-attribute">l2</span>: <span class="hljs-number">1</span>[<span class="hljs-number">0</span>xc00009cde0] -&gt; <span class="hljs-number">2</span>[<span class="hljs-number">0</span>xc00009ce10] -&gt; <span class="hljs-number">3</span>[<span class="hljs-number">0</span>xc00009ce40] -&gt; <br></code></pre></td></tr></table></figure><p>两个链表的值确实已经发生了改变，但是为什么在 <strong>方法 3</strong> 中会产生诡异的错误呢？继续尝试追加值：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 交换完之后 pushback</span><br>fmt.Println(<span class="hljs-string">&quot;after swap pushback: &quot;</span>)<br>l2.PushBack(<span class="hljs-number">555</span>)<br>l1.PushBack(<span class="hljs-number">6</span>)<br><span class="hljs-comment">// 输出两个链表</span><br>_print(<span class="hljs-string">&quot;l1&quot;</span>, l1)<br>_print(<span class="hljs-string">&quot;l2&quot;</span>, l2)<br></code></pre></td></tr></table></figure><p>运行结果：</p><figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs xl">after swap pushback: <br><span class="hljs-function"><span class="hljs-title">l1</span>: 666[0xc000104e70] -&gt;</span> <span class="hljs-number">6</span>[<span class="hljs-number">0</span><span class="hljs-function"><span class="hljs-title">xc000104ed0</span>] -&gt;</span> <span class="hljs-number">555</span>[<span class="hljs-number">0</span><span class="hljs-function"><span class="hljs-title">xc000104ea0</span>] -&gt;</span> &lt;<span class="hljs-function"><span class="hljs-title">nil</span>&gt;[0xc000104db0] -&gt;</span> <br><span class="hljs-function"><span class="hljs-title">l2</span>: 1[0xc000104de0] -&gt;</span> <span class="hljs-number">2</span>[<span class="hljs-number">0</span><span class="hljs-function"><span class="hljs-title">xc000104e10</span>] -&gt;</span> <span class="hljs-number">3</span>[<span class="hljs-number">0</span><span class="hljs-function"><span class="hljs-title">xc000104e40</span>] -&gt;</span> <br></code></pre></td></tr></table></figure><p>上面的代码向 l1 尾部添加了 元素 6，向 l2 尾部添加元素 555，正确结果应该是：</p><p>l1:  666 -&gt; 6</p><p>l2:  1 -&gt; 2 -&gt; 3 -&gt; 555</p><p>但运行结果却十分诡异：</p><p>l1:  666 -&gt; 6 -&gt; 555 -&gt; nil</p><p>l2:  1 -&gt; 2 -&gt; 3</p><p>本来应该添加到 l2 的 555 被添加到了 l1，并且 l1 还多了一个 额外的 nil</p><h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>结合源码进行了分析（不一定正确）</p><p><img src="https://zengh1.github.io/post-images/1618573823911.png"></p><p>至于为什么会出现 <strong>测试</strong> 中的诡异情况，发现自己水平有限，画图画的晕头转向，找不出一个合理的原因，只能草草归结于 <strong>list 的环形被破坏，导致产生无法预料的结果</strong>。</p><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>写法1 <code>this.Queue1, this.Queue2 = this.Queue2, this.Queue1</code>  只是交换了结构体属性 q1 和 q2 的指向，没有对 list 内部进行修改，而 写法3 <code>*this.Queue1, *this.Queue2 = *this.Queue2, *this.Queue1</code> 则是直接对 list 内部进行了修改，所以产生了无法预料的后果，这也充分说明了指针的危险性。</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>go</tag>
       
     </tags>
     
@@ -3155,25 +3155,6 @@
   
   
   <entry>
-    <title>c++ 引用：如何理解&quot;引用被初始化后，不能再指向其他对象&quot;</title>
-    <link href="/2020/01/11/2021-1-11-reference_c++/"/>
-    <url>/2020/01/11/2021-1-11-reference_c++/</url>
-    
-    <content type="html"><![CDATA[<p>在 c++ 的引用规则中，有这么一条：<strong>一旦初始化完成 ，引用将和它的初始值对象一直绑定在一起（即不能再指向其他对象）</strong>。抱着初学者的好奇心态，我尝试改变引用的指向，写出了如下代码：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// 定义两个 string 变量</span><br>std::string s = <span class="hljs-string">&quot;123&quot;</span>;<br>std::string s2 = <span class="hljs-string">&quot;456&quot;</span>;<br><br><span class="hljs-comment">// 让 s1 引用 s</span><br>std::string &amp;s1 = s;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;修改前：&quot;</span> &lt;&lt; <span class="hljs-string">&quot;s1: &quot;</span> &lt;&lt; s1 &lt;&lt; std::endl;<br><span class="hljs-comment">// 修改 s1 的引用？</span><br>s1 = s2;  <br>std::cout &lt;&lt; <span class="hljs-string">&quot;修改后：&quot;</span> &lt;&lt; <span class="hljs-string">&quot;s1: &quot;</span> &lt;&lt; s1 &lt;&lt; std::endl;<br><br><span class="hljs-comment">// output</span><br>修改前：s1: <span class="hljs-number">123</span><br>修改后：s1: <span class="hljs-number">456</span><br><br></code></pre></td></tr></table></figure><p>这里我让 s1 重新指向 s2，并且从输出结果来看，s1 的值也确实被修改了，不对啊，规则中明明说好了不能修改的，怎么实际代码中可以？为了验证引用是否真的被修改，将三个变量的指针打印出来：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;指针 =&gt; s1: %p | s2: %p | s: %p \n&quot;</span>, &amp;s1, &amp;s2, &amp;s);<br><br><span class="hljs-comment">// output</span><br>指针 =&gt; s1: <span class="hljs-number">0x7ffee199e7c8</span> | s2: <span class="hljs-number">0x7ffee199e7b0</span> | s: <span class="hljs-number">0x7ffee199e7c8</span> <br></code></pre></td></tr></table></figure><p>s1 和 s3 是同一个地址，说明引用并未改变，所以并不是引用被修改了，而是我的理解出现了问题，代码中的 s1 &#x3D; s2，并不是让引用重新指向 s2，而是把值赋给了与引用绑定的对象（等同于 s &#x3D; s2），这里做一个简单验证就很好理解了：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// 定义两个 string 变量</span><br>std::string s = <span class="hljs-string">&quot;123&quot;</span>;<br>std::string s2 = <span class="hljs-string">&quot;456&quot;</span>;<br><br><span class="hljs-comment">// 让 s1 引用 s</span><br>std::string &amp;s1 = s;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;修改前：&quot;</span> &lt;&lt; <span class="hljs-string">&quot;s1: &quot;</span> &lt;&lt; s1 &lt;&lt; std::endl;<br><span class="hljs-comment">// 修改 s1 的引用？</span><br>s1 = s2;  <br><span class="hljs-comment">// 修改 s2 的值，如果 s1 的引用被修改为指向 s2，那么 s1 的值应该也会改为 &quot;666&quot;</span><br>s2 = <span class="hljs-string">&quot;666&quot;</span>;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;修改后：&quot;</span> &lt;&lt; <span class="hljs-string">&quot;s1: &quot;</span> &lt;&lt; s1 &lt;&lt; std::endl;<br><br><br><span class="hljs-comment">// output</span><br>修改前：s1: <span class="hljs-number">123</span><br>修改后：s1: <span class="hljs-number">456</span><br></code></pre></td></tr></table></figure><p>s1 并没有被修改为 “666”，所以可以印证上面的说法。</p>]]></content>
-    
-    
-    
-    <tags>
-      
-      <tag>c++</tag>
-      
-    </tags>
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>硬链接和软链接</title>
     <link href="/2020/01/11/2021-1-19-soft-hard-link/"/>
     <url>/2020/01/11/2021-1-19-soft-hard-link/</url>
@@ -3185,6 +3166,25 @@
     <tags>
       
       <tag>linux</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>c++ 引用：如何理解&quot;引用被初始化后，不能再指向其他对象&quot;</title>
+    <link href="/2020/01/11/2021-1-11-reference_c++/"/>
+    <url>/2020/01/11/2021-1-11-reference_c++/</url>
+    
+    <content type="html"><![CDATA[<p>在 c++ 的引用规则中，有这么一条：<strong>一旦初始化完成 ，引用将和它的初始值对象一直绑定在一起（即不能再指向其他对象）</strong>。抱着初学者的好奇心态，我尝试改变引用的指向，写出了如下代码：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// 定义两个 string 变量</span><br>std::string s = <span class="hljs-string">&quot;123&quot;</span>;<br>std::string s2 = <span class="hljs-string">&quot;456&quot;</span>;<br><br><span class="hljs-comment">// 让 s1 引用 s</span><br>std::string &amp;s1 = s;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;修改前：&quot;</span> &lt;&lt; <span class="hljs-string">&quot;s1: &quot;</span> &lt;&lt; s1 &lt;&lt; std::endl;<br><span class="hljs-comment">// 修改 s1 的引用？</span><br>s1 = s2;  <br>std::cout &lt;&lt; <span class="hljs-string">&quot;修改后：&quot;</span> &lt;&lt; <span class="hljs-string">&quot;s1: &quot;</span> &lt;&lt; s1 &lt;&lt; std::endl;<br><br><span class="hljs-comment">// output</span><br>修改前：s1: <span class="hljs-number">123</span><br>修改后：s1: <span class="hljs-number">456</span><br><br></code></pre></td></tr></table></figure><p>这里我让 s1 重新指向 s2，并且从输出结果来看，s1 的值也确实被修改了，不对啊，规则中明明说好了不能修改的，怎么实际代码中可以？为了验证引用是否真的被修改，将三个变量的指针打印出来：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;指针 =&gt; s1: %p | s2: %p | s: %p \n&quot;</span>, &amp;s1, &amp;s2, &amp;s);<br><br><span class="hljs-comment">// output</span><br>指针 =&gt; s1: <span class="hljs-number">0x7ffee199e7c8</span> | s2: <span class="hljs-number">0x7ffee199e7b0</span> | s: <span class="hljs-number">0x7ffee199e7c8</span> <br></code></pre></td></tr></table></figure><p>s1 和 s3 是同一个地址，说明引用并未改变，所以并不是引用被修改了，而是我的理解出现了问题，代码中的 s1 &#x3D; s2，并不是让引用重新指向 s2，而是把值赋给了与引用绑定的对象（等同于 s &#x3D; s2），这里做一个简单验证就很好理解了：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// 定义两个 string 变量</span><br>std::string s = <span class="hljs-string">&quot;123&quot;</span>;<br>std::string s2 = <span class="hljs-string">&quot;456&quot;</span>;<br><br><span class="hljs-comment">// 让 s1 引用 s</span><br>std::string &amp;s1 = s;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;修改前：&quot;</span> &lt;&lt; <span class="hljs-string">&quot;s1: &quot;</span> &lt;&lt; s1 &lt;&lt; std::endl;<br><span class="hljs-comment">// 修改 s1 的引用？</span><br>s1 = s2;  <br><span class="hljs-comment">// 修改 s2 的值，如果 s1 的引用被修改为指向 s2，那么 s1 的值应该也会改为 &quot;666&quot;</span><br>s2 = <span class="hljs-string">&quot;666&quot;</span>;<br>std::cout &lt;&lt; <span class="hljs-string">&quot;修改后：&quot;</span> &lt;&lt; <span class="hljs-string">&quot;s1: &quot;</span> &lt;&lt; s1 &lt;&lt; std::endl;<br><br><br><span class="hljs-comment">// output</span><br>修改前：s1: <span class="hljs-number">123</span><br>修改后：s1: <span class="hljs-number">456</span><br></code></pre></td></tr></table></figure><p>s1 并没有被修改为 “666”，所以可以印证上面的说法。</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>c++</tag>
       
     </tags>
     
