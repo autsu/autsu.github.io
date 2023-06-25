@@ -245,6 +245,46 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2022/09/06/linux_veth_pair/" target="_self">
+          Linux 虚拟网络设备 Veth-Pair
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/06/linux_veth_pair/" target="_self">
+        <div>
+          介绍Veth-Pair 是什么顾名思义，Veth-Pair 就是一对的虚拟设备接口，它总是以两张虚拟网卡（Veth Peer）成对出现，每个 Veth 都有两端，其中一端连着网络协议栈，另一端连接另一个 Veth。比如下图所示，该 Veth-Pair 有两张虚拟网卡 veth0 和 veth1，它们彼此相连，此外每个虚拟网卡都还连接着网络协议栈。 123456789101112131415----
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-09-06 22:37" pubdate>
+              2022-09-06
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/linux/">#linux</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2022/09/06/EOF_cuo_wu/" target="_self">
           一个 EOF 引发的低级错误
         </a>
@@ -602,48 +642,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/go/">#go</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/08/02/tcp_yong_se_kong_zhi/" target="_self">
-          TCP 拥塞控制
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/02/tcp_yong_se_kong_zhi/" target="_self">
-        <div>
-          发送方维护一个叫做 拥塞窗口 cwnd 的状态变量，其值 取决于网络的拥塞程度，并且 动态变化。  拥塞窗口 cwnd 的维护原则：只要网络 没有出现拥塞，拥塞窗口 就再 增大 一些；但只要网络 出现拥塞，拥塞窗口就减少一些。 判断出现 网络拥塞的依据：没有按时收到应当到达的确认报文（即发生超时重传）。  发送方将拥塞窗口作为 发送窗口 swnd，即 swnd &#x3D; cwnd。**拥塞窗口
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-08-02 19:04" pubdate>
-              2022-08-02
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
-            
-              <a href="/tags/TCP/">#TCP</a>
             
           </div>
         
