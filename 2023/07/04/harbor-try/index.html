@@ -1,0 +1,772 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言参考官方文档 + 网上的一些博客，其实部署还是比较容易的，但是我在实践过程中还是踩了一些坑，特此记录一下。 我使用的是 Helm 的部署方式，会将其部署到 k8s 上。 这篇文章目前只是简单记录了一下搭建的过程和 harbor 的简单使用，并没用对 harbor 进行详细的探索。 部署使用 Helm 部署，首先需要准备一份 values.yaml，这个 yaml 的模版可以从 这个 repo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="私有镜像仓库 harbor 部署实践">
+<meta property="og:url" content="https://autsu.github.io/2023/07/04/harbor-try/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言参考官方文档 + 网上的一些博客，其实部署还是比较容易的，但是我在实践过程中还是踩了一些坑，特此记录一下。 我使用的是 Helm 的部署方式，会将其部署到 k8s 上。 这篇文章目前只是简单记录了一下搭建的过程和 harbor 的简单使用，并没用对 harbor 进行详细的探索。 部署使用 Helm 部署，首先需要准备一份 values.yaml，这个 yaml 的模版可以从 这个 repo">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/harbor1.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/harbor2.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/harbor3.jpg">
+<meta property="article:published_time" content="2023-07-04T14:19:49.000Z">
+<meta property="article:modified_time" content="2023-07-04T17:25:52.888Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="k8s">
+<meta property="article:tag" content="harbor">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/harbor1.jpg">
+  
+  
+  
+  <title>私有镜像仓库 harbor 部署实践 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="私有镜像仓库 harbor 部署实践"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-07-04 22:19" pubdate>
+          2023年7月4日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          36k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          298 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">私有镜像仓库 harbor 部署实践</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>参考官方文档 + 网上的一些博客，其实部署还是比较容易的，但是我在实践过程中还是踩了一些坑，特此记录一下。</p>
+<p>我使用的是 Helm 的部署方式，会将其部署到 k8s 上。</p>
+<p>这篇文章目前只是简单记录了一下搭建的过程和 harbor 的简单使用，并没用对 harbor 进行详细的探索。</p>
+<h1 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h1><p>使用 Helm 部署，首先需要准备一份 values.yaml，这个 yaml 的模版可以从 <a target="_blank" rel="noopener" href="https://github.com/goharbor/harbor-helm">这个 repo</a> 里获取（你也可以直接复制我下面提供的），然后需要根据自己的需求，对这个模版进行修改。</p>
+<p>这里我修改了这几部分：</p>
+<ul>
+<li><p>type：用于指定 harbor 的 service 的类型，我修改成了 nodePort。</p>
+</li>
+<li><p>commonName：如果开启了 TLS 则必填，且必须和 externalURL 的域名部分相同，即 https:&#x2F;&#x2F; 后面的，但是端口号可以忽略，比如如果 externalURL 为 <a target="_blank" rel="noopener" href="https://core.harbor.domain:30003/">https://core.harbor.domain:30003</a> ，那么 commonName 需要指定为 core.harbor.domain。如果 commonName 和 externalURL 域名部分不同，会导致一些操作（比如 docker 的 login 和 push ）出现证书验证失败的问题。</p>
+<blockquote>
+<p>如果你和我一样不小心掉到坑里了，把 commonName 配置的和 externalURL 域名部分不一致，导致出现 <code> x509: certificate is valid for harbor-cert, not core.harbor.domain</code> 错误，那么恭喜你，可以重头再来了。。。开玩笑的，其实只要更新一下 values.yaml，然后执行 <code>helm upgrade harbor harbor/harbor -f values.yaml -n harbor</code> 更新一下 release 就可以了。</p>
+</blockquote>
+</li>
+<li><p>externalURL：指定 harbor 的访问域名，这里要注意的是，<strong>如果指定的是 nodePort 类型的，那么必须要加上端口号</strong>，比如 <a target="_blank" rel="noopener" href="https://core.harbor.domain:30003/">https://core.harbor.domain:30003</a> 这样。</p>
+</li>
+</ul>
+<p>tls 这里我为了方便就直接让 Harbor 自动创建证书文件了，没有像 <a target="_blank" rel="noopener" href="https://icloudnative.io/posts/install-harbor-on-kubernetes/#1-harbor-%E7%AE%80%E4%BB%8B">其他博客</a> 一样创建自定义证书，所以 <code>certSource: auto</code> 这里保持原样即可，无需修改。</p>
+<p>还有一个需要注意的地方是 <code>harborAdminPassword: &quot;Harbor12345&quot;</code> 这里，指定的是 harbor admin 用户的登录密码，这里要不要改就看自己的需求了，如果只是测试一下，感觉没啥改的必要。</p>
+<p>还有如果指定的 service type 是 nodeport 的话，这个 yaml 会把 nodePort 的端口写死，比如默认 http 对应的 nodePort 端口是 30002，而 https 是 30003。这个要不要改也是看自己的需求了，我这里是没改。</p>
+<p>下面是我修改后的文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br><span class="line">427</span><br><span class="line">428</span><br><span class="line">429</span><br><span class="line">430</span><br><span class="line">431</span><br><span class="line">432</span><br><span class="line">433</span><br><span class="line">434</span><br><span class="line">435</span><br><span class="line">436</span><br><span class="line">437</span><br><span class="line">438</span><br><span class="line">439</span><br><span class="line">440</span><br><span class="line">441</span><br><span class="line">442</span><br><span class="line">443</span><br><span class="line">444</span><br><span class="line">445</span><br><span class="line">446</span><br><span class="line">447</span><br><span class="line">448</span><br><span class="line">449</span><br><span class="line">450</span><br><span class="line">451</span><br><span class="line">452</span><br><span class="line">453</span><br><span class="line">454</span><br><span class="line">455</span><br><span class="line">456</span><br><span class="line">457</span><br><span class="line">458</span><br><span class="line">459</span><br><span class="line">460</span><br><span class="line">461</span><br><span class="line">462</span><br><span class="line">463</span><br><span class="line">464</span><br><span class="line">465</span><br><span class="line">466</span><br><span class="line">467</span><br><span class="line">468</span><br><span class="line">469</span><br><span class="line">470</span><br><span class="line">471</span><br><span class="line">472</span><br><span class="line">473</span><br><span class="line">474</span><br><span class="line">475</span><br><span class="line">476</span><br><span class="line">477</span><br><span class="line">478</span><br><span class="line">479</span><br><span class="line">480</span><br><span class="line">481</span><br><span class="line">482</span><br><span class="line">483</span><br><span class="line">484</span><br><span class="line">485</span><br><span class="line">486</span><br><span class="line">487</span><br><span class="line">488</span><br><span class="line">489</span><br><span class="line">490</span><br><span class="line">491</span><br><span class="line">492</span><br><span class="line">493</span><br><span class="line">494</span><br><span class="line">495</span><br><span class="line">496</span><br><span class="line">497</span><br><span class="line">498</span><br><span class="line">499</span><br><span class="line">500</span><br><span class="line">501</span><br><span class="line">502</span><br><span class="line">503</span><br><span class="line">504</span><br><span class="line">505</span><br><span class="line">506</span><br><span class="line">507</span><br><span class="line">508</span><br><span class="line">509</span><br><span class="line">510</span><br><span class="line">511</span><br><span class="line">512</span><br><span class="line">513</span><br><span class="line">514</span><br><span class="line">515</span><br><span class="line">516</span><br><span class="line">517</span><br><span class="line">518</span><br><span class="line">519</span><br><span class="line">520</span><br><span class="line">521</span><br><span class="line">522</span><br><span class="line">523</span><br><span class="line">524</span><br><span class="line">525</span><br><span class="line">526</span><br><span class="line">527</span><br><span class="line">528</span><br><span class="line">529</span><br><span class="line">530</span><br><span class="line">531</span><br><span class="line">532</span><br><span class="line">533</span><br><span class="line">534</span><br><span class="line">535</span><br><span class="line">536</span><br><span class="line">537</span><br><span class="line">538</span><br><span class="line">539</span><br><span class="line">540</span><br><span class="line">541</span><br><span class="line">542</span><br><span class="line">543</span><br><span class="line">544</span><br><span class="line">545</span><br><span class="line">546</span><br><span class="line">547</span><br><span class="line">548</span><br><span class="line">549</span><br><span class="line">550</span><br><span class="line">551</span><br><span class="line">552</span><br><span class="line">553</span><br><span class="line">554</span><br><span class="line">555</span><br><span class="line">556</span><br><span class="line">557</span><br><span class="line">558</span><br><span class="line">559</span><br><span class="line">560</span><br><span class="line">561</span><br><span class="line">562</span><br><span class="line">563</span><br><span class="line">564</span><br><span class="line">565</span><br><span class="line">566</span><br><span class="line">567</span><br><span class="line">568</span><br><span class="line">569</span><br><span class="line">570</span><br><span class="line">571</span><br><span class="line">572</span><br><span class="line">573</span><br><span class="line">574</span><br><span class="line">575</span><br><span class="line">576</span><br><span class="line">577</span><br><span class="line">578</span><br><span class="line">579</span><br><span class="line">580</span><br><span class="line">581</span><br><span class="line">582</span><br><span class="line">583</span><br><span class="line">584</span><br><span class="line">585</span><br><span class="line">586</span><br><span class="line">587</span><br><span class="line">588</span><br><span class="line">589</span><br><span class="line">590</span><br><span class="line">591</span><br><span class="line">592</span><br><span class="line">593</span><br><span class="line">594</span><br><span class="line">595</span><br><span class="line">596</span><br><span class="line">597</span><br><span class="line">598</span><br><span class="line">599</span><br><span class="line">600</span><br><span class="line">601</span><br><span class="line">602</span><br><span class="line">603</span><br><span class="line">604</span><br><span class="line">605</span><br><span class="line">606</span><br><span class="line">607</span><br><span class="line">608</span><br><span class="line">609</span><br><span class="line">610</span><br><span class="line">611</span><br><span class="line">612</span><br><span class="line">613</span><br><span class="line">614</span><br><span class="line">615</span><br><span class="line">616</span><br><span class="line">617</span><br><span class="line">618</span><br><span class="line">619</span><br><span class="line">620</span><br><span class="line">621</span><br><span class="line">622</span><br><span class="line">623</span><br><span class="line">624</span><br><span class="line">625</span><br><span class="line">626</span><br><span class="line">627</span><br><span class="line">628</span><br><span class="line">629</span><br><span class="line">630</span><br><span class="line">631</span><br><span class="line">632</span><br><span class="line">633</span><br><span class="line">634</span><br><span class="line">635</span><br><span class="line">636</span><br><span class="line">637</span><br><span class="line">638</span><br><span class="line">639</span><br><span class="line">640</span><br><span class="line">641</span><br><span class="line">642</span><br><span class="line">643</span><br><span class="line">644</span><br><span class="line">645</span><br><span class="line">646</span><br><span class="line">647</span><br><span class="line">648</span><br><span class="line">649</span><br><span class="line">650</span><br><span class="line">651</span><br><span class="line">652</span><br><span class="line">653</span><br><span class="line">654</span><br><span class="line">655</span><br><span class="line">656</span><br><span class="line">657</span><br><span class="line">658</span><br><span class="line">659</span><br><span class="line">660</span><br><span class="line">661</span><br><span class="line">662</span><br><span class="line">663</span><br><span class="line">664</span><br><span class="line">665</span><br><span class="line">666</span><br><span class="line">667</span><br><span class="line">668</span><br><span class="line">669</span><br><span class="line">670</span><br><span class="line">671</span><br><span class="line">672</span><br><span class="line">673</span><br><span class="line">674</span><br><span class="line">675</span><br><span class="line">676</span><br><span class="line">677</span><br><span class="line">678</span><br><span class="line">679</span><br><span class="line">680</span><br><span class="line">681</span><br><span class="line">682</span><br><span class="line">683</span><br><span class="line">684</span><br><span class="line">685</span><br><span class="line">686</span><br><span class="line">687</span><br><span class="line">688</span><br><span class="line">689</span><br><span class="line">690</span><br><span class="line">691</span><br><span class="line">692</span><br><span class="line">693</span><br><span class="line">694</span><br><span class="line">695</span><br><span class="line">696</span><br><span class="line">697</span><br><span class="line">698</span><br><span class="line">699</span><br><span class="line">700</span><br><span class="line">701</span><br><span class="line">702</span><br><span class="line">703</span><br><span class="line">704</span><br><span class="line">705</span><br><span class="line">706</span><br><span class="line">707</span><br><span class="line">708</span><br><span class="line">709</span><br><span class="line">710</span><br><span class="line">711</span><br><span class="line">712</span><br><span class="line">713</span><br><span class="line">714</span><br><span class="line">715</span><br><span class="line">716</span><br><span class="line">717</span><br><span class="line">718</span><br><span class="line">719</span><br><span class="line">720</span><br><span class="line">721</span><br><span class="line">722</span><br><span class="line">723</span><br><span class="line">724</span><br><span class="line">725</span><br><span class="line">726</span><br><span class="line">727</span><br><span class="line">728</span><br><span class="line">729</span><br><span class="line">730</span><br><span class="line">731</span><br><span class="line">732</span><br><span class="line">733</span><br><span class="line">734</span><br><span class="line">735</span><br><span class="line">736</span><br><span class="line">737</span><br><span class="line">738</span><br><span class="line">739</span><br><span class="line">740</span><br><span class="line">741</span><br><span class="line">742</span><br><span class="line">743</span><br><span class="line">744</span><br><span class="line">745</span><br><span class="line">746</span><br><span class="line">747</span><br><span class="line">748</span><br><span class="line">749</span><br><span class="line">750</span><br><span class="line">751</span><br><span class="line">752</span><br><span class="line">753</span><br><span class="line">754</span><br><span class="line">755</span><br><span class="line">756</span><br><span class="line">757</span><br><span class="line">758</span><br><span class="line">759</span><br><span class="line">760</span><br><span class="line">761</span><br><span class="line">762</span><br><span class="line">763</span><br><span class="line">764</span><br><span class="line">765</span><br><span class="line">766</span><br><span class="line">767</span><br><span class="line">768</span><br><span class="line">769</span><br><span class="line">770</span><br><span class="line">771</span><br><span class="line">772</span><br><span class="line">773</span><br><span class="line">774</span><br><span class="line">775</span><br><span class="line">776</span><br><span class="line">777</span><br><span class="line">778</span><br><span class="line">779</span><br><span class="line">780</span><br><span class="line">781</span><br><span class="line">782</span><br><span class="line">783</span><br><span class="line">784</span><br><span class="line">785</span><br><span class="line">786</span><br><span class="line">787</span><br><span class="line">788</span><br><span class="line">789</span><br><span class="line">790</span><br><span class="line">791</span><br><span class="line">792</span><br><span class="line">793</span><br><span class="line">794</span><br><span class="line">795</span><br><span class="line">796</span><br><span class="line">797</span><br><span class="line">798</span><br><span class="line">799</span><br><span class="line">800</span><br><span class="line">801</span><br><span class="line">802</span><br><span class="line">803</span><br><span class="line">804</span><br><span class="line">805</span><br><span class="line">806</span><br><span class="line">807</span><br><span class="line">808</span><br><span class="line">809</span><br><span class="line">810</span><br><span class="line">811</span><br><span class="line">812</span><br><span class="line">813</span><br><span class="line">814</span><br><span class="line">815</span><br><span class="line">816</span><br><span class="line">817</span><br><span class="line">818</span><br><span class="line">819</span><br><span class="line">820</span><br><span class="line">821</span><br><span class="line">822</span><br><span class="line">823</span><br><span class="line">824</span><br><span class="line">825</span><br><span class="line">826</span><br><span class="line">827</span><br><span class="line">828</span><br><span class="line">829</span><br><span class="line">830</span><br><span class="line">831</span><br><span class="line">832</span><br><span class="line">833</span><br><span class="line">834</span><br><span class="line">835</span><br><span class="line">836</span><br><span class="line">837</span><br><span class="line">838</span><br><span class="line">839</span><br><span class="line">840</span><br><span class="line">841</span><br><span class="line">842</span><br><span class="line">843</span><br><span class="line">844</span><br><span class="line">845</span><br><span class="line">846</span><br><span class="line">847</span><br><span class="line">848</span><br><span class="line">849</span><br><span class="line">850</span><br><span class="line">851</span><br><span class="line">852</span><br><span class="line">853</span><br><span class="line">854</span><br><span class="line">855</span><br><span class="line">856</span><br><span class="line">857</span><br><span class="line">858</span><br><span class="line">859</span><br><span class="line">860</span><br><span class="line">861</span><br><span class="line">862</span><br><span class="line">863</span><br><span class="line">864</span><br><span class="line">865</span><br><span class="line">866</span><br><span class="line">867</span><br><span class="line">868</span><br><span class="line">869</span><br><span class="line">870</span><br><span class="line">871</span><br><span class="line">872</span><br><span class="line">873</span><br><span class="line">874</span><br><span class="line">875</span><br><span class="line">876</span><br><span class="line">877</span><br><span class="line">878</span><br><span class="line">879</span><br><span class="line">880</span><br><span class="line">881</span><br><span class="line">882</span><br><span class="line">883</span><br><span class="line">884</span><br><span class="line">885</span><br><span class="line">886</span><br><span class="line">887</span><br><span class="line">888</span><br><span class="line">889</span><br><span class="line">890</span><br><span class="line">891</span><br><span class="line">892</span><br><span class="line">893</span><br><span class="line">894</span><br><span class="line">895</span><br><span class="line">896</span><br><span class="line">897</span><br><span class="line">898</span><br><span class="line">899</span><br><span class="line">900</span><br><span class="line">901</span><br><span class="line">902</span><br><span class="line">903</span><br><span class="line">904</span><br><span class="line">905</span><br><span class="line">906</span><br><span class="line">907</span><br><span class="line">908</span><br><span class="line">909</span><br><span class="line">910</span><br><span class="line">911</span><br><span class="line">912</span><br><span class="line">913</span><br><span class="line">914</span><br><span class="line">915</span><br><span class="line">916</span><br><span class="line">917</span><br><span class="line">918</span><br><span class="line">919</span><br><span class="line">920</span><br><span class="line">921</span><br><span class="line">922</span><br><span class="line">923</span><br><span class="line">924</span><br><span class="line">925</span><br><span class="line">926</span><br><span class="line">927</span><br><span class="line">928</span><br><span class="line">929</span><br><span class="line">930</span><br><span class="line">931</span><br><span class="line">932</span><br><span class="line">933</span><br><span class="line">934</span><br><span class="line">935</span><br><span class="line">936</span><br><span class="line">937</span><br><span class="line">938</span><br><span class="line">939</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">expose:</span><br>  <span class="hljs-comment"># Set how to expose the service. Set the type as &quot;ingress&quot;, &quot;clusterIP&quot;, &quot;nodePort&quot; or &quot;loadBalancer&quot;</span><br>  <span class="hljs-comment"># and fill the information in the corresponding section</span><br>  <span class="hljs-attr">type:</span> <span class="hljs-string">nodePort</span><br>  <span class="hljs-attr">tls:</span><br>    <span class="hljs-comment"># Enable TLS or not.</span><br>    <span class="hljs-comment"># Delete the &quot;ssl-redirect&quot; annotations in &quot;expose.ingress.annotations&quot; when TLS is disabled and &quot;expose.type&quot; is &quot;ingress&quot;</span><br>    <span class="hljs-comment"># <span class="hljs-doctag">Note:</span> if the &quot;expose.type&quot; is &quot;ingress&quot; and TLS is disabled,</span><br>    <span class="hljs-comment"># the port must be included in the command when pulling/pushing images.</span><br>    <span class="hljs-comment"># Refer to https://github.com/goharbor/harbor/issues/5291 for details.</span><br>    <span class="hljs-attr">enabled:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-comment"># The source of the tls certificate. Set as &quot;auto&quot;, &quot;secret&quot;</span><br>    <span class="hljs-comment"># or &quot;none&quot; and fill the information in the corresponding section</span><br>    <span class="hljs-comment"># 1) auto: generate the tls certificate automatically</span><br>    <span class="hljs-comment"># 2) secret: read the tls certificate from the specified secret.</span><br>    <span class="hljs-comment"># The tls certificate can be generated manually or by cert manager</span><br>    <span class="hljs-comment"># 3) none: configure no tls certificate for the ingress. If the default</span><br>    <span class="hljs-comment"># tls certificate is configured in the ingress controller, choose this option</span><br>    <span class="hljs-attr">certSource:</span> <span class="hljs-string">auto</span><br>    <span class="hljs-attr">auto:</span><br>      <span class="hljs-comment"># The common name used to generate the certificate, it&#x27;s necessary</span><br>      <span class="hljs-comment"># when the type isn&#x27;t &quot;ingress&quot;</span><br>      <span class="hljs-attr">commonName:</span> <span class="hljs-string">&quot;core.harbor.domain&quot;</span> <span class="hljs-comment"># 必填，如果开启 TLS，貌似必须和 externalURL 的域名部分相同，即 https:// 后面的</span><br>    <span class="hljs-attr">secret:</span><br>      <span class="hljs-comment"># The name of secret which contains keys named:</span><br>      <span class="hljs-comment"># &quot;tls.crt&quot; - the certificate</span><br>      <span class="hljs-comment"># &quot;tls.key&quot; - the private key</span><br>      <span class="hljs-attr">secretName:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-attr">ingress:</span><br>    <span class="hljs-attr">hosts:</span><br>      <span class="hljs-attr">core:</span> <span class="hljs-string">core.harbor.domain</span><br>    <span class="hljs-comment"># set to the type of ingress controller if it has specific requirements.</span><br>    <span class="hljs-comment"># leave as `default` for most ingress controllers.</span><br>    <span class="hljs-comment"># set to `gce` if using the GCE ingress controller</span><br>    <span class="hljs-comment"># set to `ncp` if using the NCP (NSX-T Container Plugin) ingress controller</span><br>    <span class="hljs-comment"># set to `alb` if using the ALB ingress controller</span><br>    <span class="hljs-comment"># set to `f5-bigip` if using the F5 BIG-IP ingress controller</span><br>    <span class="hljs-attr">controller:</span> <span class="hljs-string">default</span><br>    <span class="hljs-comment">## Allow .Capabilities.KubeVersion.Version to be overridden while creating ingress</span><br>    <span class="hljs-attr">kubeVersionOverride:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-attr">className:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-attr">annotations:</span><br>      <span class="hljs-comment"># note different ingress controllers may require a different ssl-redirect annotation</span><br>      <span class="hljs-comment"># for Envoy, use ingress.kubernetes.io/force-ssl-redirect: &quot;true&quot; and remove the nginx lines below</span><br>      <span class="hljs-attr">ingress.kubernetes.io/ssl-redirect:</span> <span class="hljs-string">&quot;true&quot;</span><br>      <span class="hljs-attr">ingress.kubernetes.io/proxy-body-size:</span> <span class="hljs-string">&quot;0&quot;</span><br>      <span class="hljs-attr">nginx.ingress.kubernetes.io/ssl-redirect:</span> <span class="hljs-string">&quot;true&quot;</span><br>      <span class="hljs-attr">nginx.ingress.kubernetes.io/proxy-body-size:</span> <span class="hljs-string">&quot;0&quot;</span><br>    <span class="hljs-attr">harbor:</span><br>      <span class="hljs-comment"># harbor ingress-specific annotations</span><br>      <span class="hljs-attr">annotations:</span> &#123;&#125;<br>      <span class="hljs-comment"># harbor ingress-specific labels</span><br>      <span class="hljs-attr">labels:</span> &#123;&#125;<br>  <span class="hljs-attr">clusterIP:</span><br>    <span class="hljs-comment"># The name of ClusterIP service</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">harbor</span><br>    <span class="hljs-comment"># Annotations on the ClusterIP service</span><br>    <span class="hljs-attr">annotations:</span> &#123;&#125;<br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-comment"># The service port Harbor listens on when serving HTTP</span><br>      <span class="hljs-attr">httpPort:</span> <span class="hljs-number">80</span><br>      <span class="hljs-comment"># The service port Harbor listens on when serving HTTPS</span><br>  <span class="hljs-attr">nodePort:</span><br>    <span class="hljs-comment"># The name of NodePort service</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">harbor</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-attr">http:</span><br>        <span class="hljs-comment"># The service port Harbor listens on when serving HTTP</span><br>        <span class="hljs-attr">port:</span> <span class="hljs-number">80</span><br>        <span class="hljs-comment"># The node port Harbor listens on when serving HTTP</span><br>        <span class="hljs-attr">nodePort:</span> <span class="hljs-number">30002</span><br>      <span class="hljs-attr">https:</span><br>        <span class="hljs-comment"># The service port Harbor listens on when serving HTTPS</span><br>        <span class="hljs-attr">port:</span> <span class="hljs-number">443</span><br>        <span class="hljs-comment"># The node port Harbor listens on when serving HTTPS</span><br>        <span class="hljs-attr">nodePort:</span> <span class="hljs-number">30003</span><br>  <span class="hljs-attr">loadBalancer:</span><br>    <span class="hljs-comment"># The name of LoadBalancer service</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">harbor</span><br>    <span class="hljs-comment"># Set the IP if the LoadBalancer supports assigning IP</span><br>    <span class="hljs-attr">IP:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-comment"># The service port Harbor listens on when serving HTTP</span><br>      <span class="hljs-attr">httpPort:</span> <span class="hljs-number">80</span><br>      <span class="hljs-comment"># The service port Harbor listens on when serving HTTPS</span><br>      <span class="hljs-attr">httpsPort:</span> <span class="hljs-number">443</span><br>    <span class="hljs-attr">annotations:</span> &#123;&#125;<br>    <span class="hljs-attr">sourceRanges:</span> []<br><br><span class="hljs-comment"># The external URL for Harbor core service. It is used to</span><br><span class="hljs-comment"># 1) populate the docker/helm commands showed on portal</span><br><span class="hljs-comment"># 2) populate the token service URL returned to docker client</span><br><span class="hljs-comment">#</span><br><span class="hljs-comment"># Format: protocol://domain[:port]. Usually:</span><br><span class="hljs-comment"># 1) if &quot;expose.type&quot; is &quot;ingress&quot;, the &quot;domain&quot; should be</span><br><span class="hljs-comment"># the value of &quot;expose.ingress.hosts.core&quot;</span><br><span class="hljs-comment"># 2) if &quot;expose.type&quot; is &quot;clusterIP&quot;, the &quot;domain&quot; should be</span><br><span class="hljs-comment"># the value of &quot;expose.clusterIP.name&quot;</span><br><span class="hljs-comment"># 3) if &quot;expose.type&quot; is &quot;nodePort&quot;, the &quot;domain&quot; should be</span><br><span class="hljs-comment"># the IP address of k8s node</span><br><span class="hljs-comment">#</span><br><span class="hljs-comment"># If Harbor is deployed behind the proxy, set it as the URL of proxy</span><br><span class="hljs-attr">externalURL:</span> <span class="hljs-string">https://core.harbor.domain:30003</span><br><br><span class="hljs-comment"># The internal TLS used for harbor components secure communicating. In order to enable https</span><br><span class="hljs-comment"># in each components tls cert files need to provided in advance.</span><br><span class="hljs-attr">internalTLS:</span><br>  <span class="hljs-comment"># If internal TLS enabled</span><br>  <span class="hljs-attr">enabled:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-comment"># There are three ways to provide tls</span><br>  <span class="hljs-comment"># 1) &quot;auto&quot; will generate cert automatically</span><br>  <span class="hljs-comment"># 2) &quot;manual&quot; need provide cert file manually in following value</span><br>  <span class="hljs-comment"># 3) &quot;secret&quot; internal certificates from secret</span><br>  <span class="hljs-attr">certSource:</span> <span class="hljs-string">&quot;auto&quot;</span><br>  <span class="hljs-comment"># The content of trust ca, only available when `certSource` is &quot;manual&quot;</span><br>  <span class="hljs-attr">trustCa:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment"># core related cert configuration</span><br>  <span class="hljs-attr">core:</span><br>    <span class="hljs-comment"># secret name for core&#x27;s tls certs</span><br>    <span class="hljs-attr">secretName:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># Content of core&#x27;s TLS cert file, only available when `certSource` is &quot;manual&quot;</span><br>    <span class="hljs-attr">crt:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># Content of core&#x27;s TLS key file, only available when `certSource` is &quot;manual&quot;</span><br>    <span class="hljs-attr">key:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment"># jobservice related cert configuration</span><br>  <span class="hljs-attr">jobservice:</span><br>    <span class="hljs-comment"># secret name for jobservice&#x27;s tls certs</span><br>    <span class="hljs-attr">secretName:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># Content of jobservice&#x27;s TLS key file, only available when `certSource` is &quot;manual&quot;</span><br>    <span class="hljs-attr">crt:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># Content of jobservice&#x27;s TLS key file, only available when `certSource` is &quot;manual&quot;</span><br>    <span class="hljs-attr">key:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment"># registry related cert configuration</span><br>  <span class="hljs-attr">registry:</span><br>    <span class="hljs-comment"># secret name for registry&#x27;s tls certs</span><br>    <span class="hljs-attr">secretName:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># Content of registry&#x27;s TLS key file, only available when `certSource` is &quot;manual&quot;</span><br>    <span class="hljs-attr">crt:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># Content of registry&#x27;s TLS key file, only available when `certSource` is &quot;manual&quot;</span><br>    <span class="hljs-attr">key:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment"># portal related cert configuration</span><br>  <span class="hljs-attr">portal:</span><br>    <span class="hljs-comment"># secret name for portal&#x27;s tls certs</span><br>    <span class="hljs-attr">secretName:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># Content of portal&#x27;s TLS key file, only available when `certSource` is &quot;manual&quot;</span><br>    <span class="hljs-attr">crt:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># Content of portal&#x27;s TLS key file, only available when `certSource` is &quot;manual&quot;</span><br>    <span class="hljs-attr">key:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment"># trivy related cert configuration</span><br>  <span class="hljs-attr">trivy:</span><br>    <span class="hljs-comment"># secret name for trivy&#x27;s tls certs</span><br>    <span class="hljs-attr">secretName:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># Content of trivy&#x27;s TLS key file, only available when `certSource` is &quot;manual&quot;</span><br>    <span class="hljs-attr">crt:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># Content of trivy&#x27;s TLS key file, only available when `certSource` is &quot;manual&quot;</span><br>    <span class="hljs-attr">key:</span> <span class="hljs-string">&quot;&quot;</span><br><br><span class="hljs-attr">ipFamily:</span><br>  <span class="hljs-comment"># ipv6Enabled set to true if ipv6 is enabled in cluster, currently it affected the nginx related component</span><br>  <span class="hljs-attr">ipv6:</span><br>    <span class="hljs-attr">enabled:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-comment"># ipv4Enabled set to true if ipv4 is enabled in cluster, currently it affected the nginx related component</span><br>  <span class="hljs-attr">ipv4:</span><br>    <span class="hljs-attr">enabled:</span> <span class="hljs-literal">true</span><br><br><span class="hljs-comment"># The persistence is enabled by default and a default StorageClass</span><br><span class="hljs-comment"># is needed in the k8s cluster to provision volumes dynamically.</span><br><span class="hljs-comment"># Specify another StorageClass in the &quot;storageClass&quot; or set &quot;existingClaim&quot;</span><br><span class="hljs-comment"># if you already have existing persistent volumes to use</span><br><span class="hljs-comment">#</span><br><span class="hljs-comment"># For storing images and charts, you can also use &quot;azure&quot;, &quot;gcs&quot;, &quot;s3&quot;,</span><br><span class="hljs-comment"># &quot;swift&quot; or &quot;oss&quot;. Set it in the &quot;imageChartStorage&quot; section</span><br><span class="hljs-attr">persistence:</span><br>  <span class="hljs-attr">enabled:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-comment"># Setting it to &quot;keep&quot; to avoid removing PVCs during a helm delete</span><br>  <span class="hljs-comment"># operation. Leaving it empty will delete PVCs after the chart deleted</span><br>  <span class="hljs-comment"># (this does not apply for PVCs that are created for internal database</span><br>  <span class="hljs-comment"># and redis components, i.e. they are never deleted automatically)</span><br>  <span class="hljs-attr">resourcePolicy:</span> <span class="hljs-string">&quot;keep&quot;</span><br>  <span class="hljs-attr">persistentVolumeClaim:</span><br>    <span class="hljs-attr">registry:</span><br>      <span class="hljs-comment"># Use the existing PVC which must be created manually before bound,</span><br>      <span class="hljs-comment"># and specify the &quot;subPath&quot; if the PVC is shared with other components</span><br>      <span class="hljs-attr">existingClaim:</span> <span class="hljs-string">&quot;&quot;</span><br>      <span class="hljs-comment"># Specify the &quot;storageClass&quot; used to provision the volume. Or the default</span><br>      <span class="hljs-comment"># StorageClass will be used (the default).</span><br>      <span class="hljs-comment"># Set it to &quot;-&quot; to disable dynamic provisioning</span><br>      <span class="hljs-attr">storageClass:</span> <span class="hljs-string">&quot;&quot;</span><br>      <span class="hljs-attr">subPath:</span> <span class="hljs-string">&quot;&quot;</span><br>      <span class="hljs-attr">accessMode:</span> <span class="hljs-string">ReadWriteOnce</span><br>      <span class="hljs-attr">size:</span> <span class="hljs-string">5Gi</span><br>      <span class="hljs-attr">annotations:</span> &#123;&#125;<br>    <span class="hljs-attr">jobservice:</span><br>      <span class="hljs-attr">jobLog:</span><br>        <span class="hljs-attr">existingClaim:</span> <span class="hljs-string">&quot;&quot;</span><br>        <span class="hljs-attr">storageClass:</span> <span class="hljs-string">&quot;&quot;</span><br>        <span class="hljs-attr">subPath:</span> <span class="hljs-string">&quot;&quot;</span><br>        <span class="hljs-attr">accessMode:</span> <span class="hljs-string">ReadWriteOnce</span><br>        <span class="hljs-attr">size:</span> <span class="hljs-string">1Gi</span><br>        <span class="hljs-attr">annotations:</span> &#123;&#125;<br>    <span class="hljs-comment"># If external database is used, the following settings for database will</span><br>    <span class="hljs-comment"># be ignored</span><br>    <span class="hljs-attr">database:</span><br>      <span class="hljs-attr">existingClaim:</span> <span class="hljs-string">&quot;&quot;</span><br>      <span class="hljs-attr">storageClass:</span> <span class="hljs-string">&quot;&quot;</span><br>      <span class="hljs-attr">subPath:</span> <span class="hljs-string">&quot;&quot;</span><br>      <span class="hljs-attr">accessMode:</span> <span class="hljs-string">ReadWriteOnce</span><br>      <span class="hljs-attr">size:</span> <span class="hljs-string">1Gi</span><br>      <span class="hljs-attr">annotations:</span> &#123;&#125;<br>    <span class="hljs-comment"># If external Redis is used, the following settings for Redis will</span><br>    <span class="hljs-comment"># be ignored</span><br>    <span class="hljs-attr">redis:</span><br>      <span class="hljs-attr">existingClaim:</span> <span class="hljs-string">&quot;&quot;</span><br>      <span class="hljs-attr">storageClass:</span> <span class="hljs-string">&quot;&quot;</span><br>      <span class="hljs-attr">subPath:</span> <span class="hljs-string">&quot;&quot;</span><br>      <span class="hljs-attr">accessMode:</span> <span class="hljs-string">ReadWriteOnce</span><br>      <span class="hljs-attr">size:</span> <span class="hljs-string">1Gi</span><br>      <span class="hljs-attr">annotations:</span> &#123;&#125;<br>    <span class="hljs-attr">trivy:</span><br>      <span class="hljs-attr">existingClaim:</span> <span class="hljs-string">&quot;&quot;</span><br>      <span class="hljs-attr">storageClass:</span> <span class="hljs-string">&quot;&quot;</span><br>      <span class="hljs-attr">subPath:</span> <span class="hljs-string">&quot;&quot;</span><br>      <span class="hljs-attr">accessMode:</span> <span class="hljs-string">ReadWriteOnce</span><br>      <span class="hljs-attr">size:</span> <span class="hljs-string">5Gi</span><br>      <span class="hljs-attr">annotations:</span> &#123;&#125;<br>  <span class="hljs-comment"># Define which storage backend is used for registry to store</span><br>  <span class="hljs-comment"># images and charts. Refer to</span><br>  <span class="hljs-comment"># https://github.com/docker/distribution/blob/master/docs/configuration.md#storage</span><br>  <span class="hljs-comment"># for the detail.</span><br>  <span class="hljs-attr">imageChartStorage:</span><br>    <span class="hljs-comment"># Specify whether to disable `redirect` for images and chart storage, for</span><br>    <span class="hljs-comment"># backends which not supported it (such as using minio for `s3` storage type), please disable</span><br>    <span class="hljs-comment"># it. To disable redirects, simply set `disableredirect` to `true` instead.</span><br>    <span class="hljs-comment"># Refer to</span><br>    <span class="hljs-comment"># https://github.com/docker/distribution/blob/master/docs/configuration.md#redirect</span><br>    <span class="hljs-comment"># for the detail.</span><br>    <span class="hljs-attr">disableredirect:</span> <span class="hljs-literal">false</span><br>    <span class="hljs-comment"># Specify the &quot;caBundleSecretName&quot; if the storage service uses a self-signed certificate.</span><br>    <span class="hljs-comment"># The secret must contain keys named &quot;ca.crt&quot; which will be injected into the trust store</span><br>    <span class="hljs-comment"># of registry&#x27;s containers.</span><br>    <span class="hljs-comment"># caBundleSecretName:</span><br><br>    <span class="hljs-comment"># Specify the type of storage: &quot;filesystem&quot;, &quot;azure&quot;, &quot;gcs&quot;, &quot;s3&quot;, &quot;swift&quot;,</span><br>    <span class="hljs-comment"># &quot;oss&quot; and fill the information needed in the corresponding section. The type</span><br>    <span class="hljs-comment"># must be &quot;filesystem&quot; if you want to use persistent volumes for registry</span><br>    <span class="hljs-attr">type:</span> <span class="hljs-string">filesystem</span><br>    <span class="hljs-attr">filesystem:</span><br>      <span class="hljs-attr">rootdirectory:</span> <span class="hljs-string">/storage</span><br>      <span class="hljs-comment">#maxthreads: 100</span><br>    <span class="hljs-attr">azure:</span><br>      <span class="hljs-attr">accountname:</span> <span class="hljs-string">accountname</span><br>      <span class="hljs-attr">accountkey:</span> <span class="hljs-string">base64encodedaccountkey</span><br>      <span class="hljs-attr">container:</span> <span class="hljs-string">containername</span><br>      <span class="hljs-comment">#realm: core.windows.net</span><br>      <span class="hljs-comment"># To use existing secret, the key must be AZURE_STORAGE_ACCESS_KEY</span><br>      <span class="hljs-attr">existingSecret:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-attr">gcs:</span><br>      <span class="hljs-attr">bucket:</span> <span class="hljs-string">bucketname</span><br>      <span class="hljs-comment"># The base64 encoded json file which contains the key</span><br>      <span class="hljs-attr">encodedkey:</span> <span class="hljs-string">base64-encoded-json-key-file</span><br>      <span class="hljs-comment">#rootdirectory: /gcs/object/name/prefix</span><br>      <span class="hljs-comment">#chunksize: &quot;5242880&quot;</span><br>      <span class="hljs-comment"># To use existing secret, the key must be GCS_KEY_DATA</span><br>      <span class="hljs-attr">existingSecret:</span> <span class="hljs-string">&quot;&quot;</span><br>      <span class="hljs-attr">useWorkloadIdentity:</span> <span class="hljs-literal">false</span><br>    <span class="hljs-attr">s3:</span><br>      <span class="hljs-comment"># Set an existing secret for S3 accesskey and secretkey</span><br>      <span class="hljs-comment"># keys in the secret should be REGISTRY_STORAGE_S3_ACCESSKEY and REGISTRY_STORAGE_S3_SECRETKEY for registry</span><br>      <span class="hljs-comment">#existingSecret: &quot;&quot;</span><br>      <span class="hljs-attr">region:</span> <span class="hljs-string">us-west-1</span><br>      <span class="hljs-attr">bucket:</span> <span class="hljs-string">bucketname</span><br>      <span class="hljs-comment">#accesskey: awsaccesskey</span><br>      <span class="hljs-comment">#secretkey: awssecretkey</span><br>      <span class="hljs-comment">#regionendpoint: http://myobjects.local</span><br>      <span class="hljs-comment">#encrypt: false</span><br>      <span class="hljs-comment">#keyid: mykeyid</span><br>      <span class="hljs-comment">#secure: true</span><br>      <span class="hljs-comment">#skipverify: false</span><br>      <span class="hljs-comment">#v4auth: true</span><br>      <span class="hljs-comment">#chunksize: &quot;5242880&quot;</span><br>      <span class="hljs-comment">#rootdirectory: /s3/object/name/prefix</span><br>      <span class="hljs-comment">#storageclass: STANDARD</span><br>      <span class="hljs-comment">#multipartcopychunksize: &quot;33554432&quot;</span><br>      <span class="hljs-comment">#multipartcopymaxconcurrency: 100</span><br>      <span class="hljs-comment">#multipartcopythresholdsize: &quot;33554432&quot;</span><br>    <span class="hljs-attr">swift:</span><br>      <span class="hljs-attr">authurl:</span> <span class="hljs-string">https://storage.myprovider.com/v3/auth</span><br>      <span class="hljs-attr">username:</span> <span class="hljs-string">username</span><br>      <span class="hljs-attr">password:</span> <span class="hljs-string">password</span><br>      <span class="hljs-attr">container:</span> <span class="hljs-string">containername</span><br>      <span class="hljs-comment">#region: fr</span><br>      <span class="hljs-comment">#tenant: tenantname</span><br>      <span class="hljs-comment">#tenantid: tenantid</span><br>      <span class="hljs-comment">#domain: domainname</span><br>      <span class="hljs-comment">#domainid: domainid</span><br>      <span class="hljs-comment">#trustid: trustid</span><br>      <span class="hljs-comment">#insecureskipverify: false</span><br>      <span class="hljs-comment">#chunksize: 5M</span><br>      <span class="hljs-comment">#prefix:</span><br>      <span class="hljs-comment">#secretkey: secretkey</span><br>      <span class="hljs-comment">#accesskey: accesskey</span><br>      <span class="hljs-comment">#authversion: 3</span><br>      <span class="hljs-comment">#endpointtype: public</span><br>      <span class="hljs-comment">#tempurlcontainerkey: false</span><br>      <span class="hljs-comment">#tempurlmethods:</span><br>    <span class="hljs-attr">oss:</span><br>      <span class="hljs-attr">accesskeyid:</span> <span class="hljs-string">accesskeyid</span><br>      <span class="hljs-attr">accesskeysecret:</span> <span class="hljs-string">accesskeysecret</span><br>      <span class="hljs-attr">region:</span> <span class="hljs-string">regionname</span><br>      <span class="hljs-attr">bucket:</span> <span class="hljs-string">bucketname</span><br>      <span class="hljs-comment">#endpoint: endpoint</span><br>      <span class="hljs-comment">#internal: false</span><br>      <span class="hljs-comment">#encrypt: false</span><br>      <span class="hljs-comment">#secure: true</span><br>      <span class="hljs-comment">#chunksize: 10M</span><br>      <span class="hljs-comment">#rootdirectory: rootdirectory</span><br><br><span class="hljs-attr">imagePullPolicy:</span> <span class="hljs-string">IfNotPresent</span><br><br><span class="hljs-comment"># Use this set to assign a list of default pullSecrets</span><br><span class="hljs-attr">imagePullSecrets:</span><br><span class="hljs-comment">#  - name: docker-registry-secret</span><br><span class="hljs-comment">#  - name: internal-registry-secret</span><br><br><span class="hljs-comment"># The update strategy for deployments with persistent volumes(jobservice, registry): &quot;RollingUpdate&quot; or &quot;Recreate&quot;</span><br><span class="hljs-comment"># Set it as &quot;Recreate&quot; when &quot;RWM&quot; for volumes isn&#x27;t supported</span><br><span class="hljs-attr">updateStrategy:</span><br>  <span class="hljs-attr">type:</span> <span class="hljs-string">RollingUpdate</span><br><br><span class="hljs-comment"># debug, info, warning, error or fatal</span><br><span class="hljs-attr">logLevel:</span> <span class="hljs-string">info</span><br><br><span class="hljs-comment"># The initial password of Harbor admin. Change it from portal after launching Harbor</span><br><span class="hljs-comment"># or give an existing secret for it</span><br><span class="hljs-comment"># key in secret is given via (default to HARBOR_ADMIN_PASSWORD)</span><br><span class="hljs-comment"># existingSecretAdminPassword:</span><br><span class="hljs-attr">existingSecretAdminPasswordKey:</span> <span class="hljs-string">HARBOR_ADMIN_PASSWORD</span><br><span class="hljs-attr">harborAdminPassword:</span> <span class="hljs-string">&quot;Harbor12345&quot;</span><br><br><span class="hljs-comment"># The name of the secret which contains key named &quot;ca.crt&quot;. Setting this enables the</span><br><span class="hljs-comment"># download link on portal to download the CA certificate when the certificate isn&#x27;t</span><br><span class="hljs-comment"># generated automatically</span><br><span class="hljs-attr">caSecretName:</span> <span class="hljs-string">&quot;&quot;</span><br><br><span class="hljs-comment"># The secret key used for encryption. Must be a string of 16 chars.</span><br><span class="hljs-attr">secretKey:</span> <span class="hljs-string">&quot;not-a-secure-key&quot;</span><br><span class="hljs-comment"># If using existingSecretSecretKey, the key must be secretKey</span><br><span class="hljs-attr">existingSecretSecretKey:</span> <span class="hljs-string">&quot;&quot;</span><br><br><span class="hljs-comment"># The proxy settings for updating trivy vulnerabilities from the Internet and replicating</span><br><span class="hljs-comment"># artifacts from/to the registries that cannot be reached directly</span><br><span class="hljs-attr">proxy:</span><br>  <span class="hljs-attr">httpProxy:</span><br>  <span class="hljs-attr">httpsProxy:</span><br>  <span class="hljs-attr">noProxy:</span> <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span><span class="hljs-string">,localhost,.local,.internal</span><br>  <span class="hljs-attr">components:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">core</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">jobservice</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">trivy</span><br><br><span class="hljs-comment"># Run the migration job via helm hook</span><br><span class="hljs-attr">enableMigrateHelmHook:</span> <span class="hljs-literal">false</span><br><br><span class="hljs-comment"># The custom ca bundle secret, the secret must contain key named &quot;ca.crt&quot;</span><br><span class="hljs-comment"># which will be injected into the trust store for core, jobservice, registry, trivy components</span><br><span class="hljs-comment"># caBundleSecretName: &quot;&quot;</span><br><br><span class="hljs-comment">## UAA Authentication Options</span><br><span class="hljs-comment"># If you&#x27;re using UAA for authentication behind a self-signed</span><br><span class="hljs-comment"># certificate you will need to provide the CA Cert.</span><br><span class="hljs-comment"># Set uaaSecretName below to provide a pre-created secret that</span><br><span class="hljs-comment"># contains a base64 encoded CA Certificate named `ca.crt`.</span><br><span class="hljs-comment"># uaaSecretName:</span><br><br><span class="hljs-comment"># If service exposed via &quot;ingress&quot;, the Nginx will not be used</span><br><span class="hljs-attr">nginx:</span><br>  <span class="hljs-attr">image:</span><br>    <span class="hljs-attr">repository:</span> <span class="hljs-string">goharbor/nginx-photon</span><br>    <span class="hljs-attr">tag:</span> <span class="hljs-string">dev</span><br>  <span class="hljs-comment"># set the service account to be used, default if left empty</span><br>  <span class="hljs-attr">serviceAccountName:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment"># mount the service account token</span><br>  <span class="hljs-attr">automountServiceAccountToken:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-attr">replicas:</span> <span class="hljs-number">1</span><br>  <span class="hljs-attr">revisionHistoryLimit:</span> <span class="hljs-number">10</span><br>  <span class="hljs-comment"># resources:</span><br>  <span class="hljs-comment">#  requests:</span><br>  <span class="hljs-comment">#    memory: 256Mi</span><br>  <span class="hljs-comment">#    cpu: 100m</span><br>  <span class="hljs-attr">extraEnvVars:</span> []<br>  <span class="hljs-attr">nodeSelector:</span> &#123;&#125;<br>  <span class="hljs-attr">tolerations:</span> []<br>  <span class="hljs-attr">affinity:</span> &#123;&#125;<br>  <span class="hljs-comment"># Spread Pods across failure-domains like regions, availability zones or nodes</span><br>  <span class="hljs-attr">topologySpreadConstraints:</span> []<br>  <span class="hljs-comment"># - maxSkew: 1</span><br>  <span class="hljs-comment">#   topologyKey: topology.kubernetes.io/zone</span><br>  <span class="hljs-comment">#   nodeTaintsPolicy: Honor</span><br>  <span class="hljs-comment">#   whenUnsatisfiable: DoNotSchedule</span><br>  <span class="hljs-comment">## Additional deployment annotations</span><br>  <span class="hljs-attr">podAnnotations:</span> &#123;&#125;<br>  <span class="hljs-comment">## Additional deployment labels</span><br>  <span class="hljs-attr">podLabels:</span> &#123;&#125;<br>  <span class="hljs-comment">## The priority class to run the pod as</span><br>  <span class="hljs-attr">priorityClassName:</span><br><br><span class="hljs-attr">portal:</span><br>  <span class="hljs-attr">image:</span><br>    <span class="hljs-attr">repository:</span> <span class="hljs-string">goharbor/harbor-portal</span><br>    <span class="hljs-attr">tag:</span> <span class="hljs-string">dev</span><br>  <span class="hljs-comment"># set the service account to be used, default if left empty</span><br>  <span class="hljs-attr">serviceAccountName:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment"># mount the service account token</span><br>  <span class="hljs-attr">automountServiceAccountToken:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-attr">replicas:</span> <span class="hljs-number">1</span><br>  <span class="hljs-attr">revisionHistoryLimit:</span> <span class="hljs-number">10</span><br>  <span class="hljs-comment"># resources:</span><br>  <span class="hljs-comment">#  requests:</span><br>  <span class="hljs-comment">#    memory: 256Mi</span><br>  <span class="hljs-comment">#    cpu: 100m</span><br>  <span class="hljs-attr">extraEnvVars:</span> []<br>  <span class="hljs-attr">nodeSelector:</span> &#123;&#125;<br>  <span class="hljs-attr">tolerations:</span> []<br>  <span class="hljs-attr">affinity:</span> &#123;&#125;<br>  <span class="hljs-comment"># Spread Pods across failure-domains like regions, availability zones or nodes</span><br>  <span class="hljs-attr">topologySpreadConstraints:</span> []<br>  <span class="hljs-comment"># - maxSkew: 1</span><br>  <span class="hljs-comment">#   topologyKey: topology.kubernetes.io/zone</span><br>  <span class="hljs-comment">#   nodeTaintsPolicy: Honor</span><br>  <span class="hljs-comment">#   whenUnsatisfiable: DoNotSchedule</span><br>  <span class="hljs-comment">## Additional deployment annotations</span><br>  <span class="hljs-attr">podAnnotations:</span> &#123;&#125;<br>  <span class="hljs-comment">## Additional deployment labels</span><br>  <span class="hljs-attr">podLabels:</span> &#123;&#125;<br>  <span class="hljs-comment">## The priority class to run the pod as</span><br>  <span class="hljs-attr">priorityClassName:</span><br><br><span class="hljs-attr">core:</span><br>  <span class="hljs-attr">image:</span><br>    <span class="hljs-attr">repository:</span> <span class="hljs-string">goharbor/harbor-core</span><br>    <span class="hljs-attr">tag:</span> <span class="hljs-string">dev</span><br>  <span class="hljs-comment"># set the service account to be used, default if left empty</span><br>  <span class="hljs-attr">serviceAccountName:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment"># mount the service account token</span><br>  <span class="hljs-attr">automountServiceAccountToken:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-attr">replicas:</span> <span class="hljs-number">1</span><br>  <span class="hljs-attr">revisionHistoryLimit:</span> <span class="hljs-number">10</span><br>  <span class="hljs-comment">## Startup probe values</span><br>  <span class="hljs-attr">startupProbe:</span><br>    <span class="hljs-attr">enabled:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-attr">initialDelaySeconds:</span> <span class="hljs-number">10</span><br>  <span class="hljs-comment"># resources:</span><br>  <span class="hljs-comment">#  requests:</span><br>  <span class="hljs-comment">#    memory: 256Mi</span><br>  <span class="hljs-comment">#    cpu: 100m</span><br>  <span class="hljs-attr">extraEnvVars:</span> []<br>  <span class="hljs-attr">nodeSelector:</span> &#123;&#125;<br>  <span class="hljs-attr">tolerations:</span> []<br>  <span class="hljs-attr">affinity:</span> &#123;&#125;<br>  <span class="hljs-comment"># Spread Pods across failure-domains like regions, availability zones or nodes</span><br>  <span class="hljs-attr">topologySpreadConstraints:</span> []<br>  <span class="hljs-comment"># - maxSkew: 1</span><br>  <span class="hljs-comment">#   topologyKey: topology.kubernetes.io/zone</span><br>  <span class="hljs-comment">#   nodeTaintsPolicy: Honor</span><br>  <span class="hljs-comment">#   whenUnsatisfiable: DoNotSchedule</span><br>  <span class="hljs-comment">## Additional deployment annotations</span><br>  <span class="hljs-attr">podAnnotations:</span> &#123;&#125;<br>  <span class="hljs-comment">## Additional deployment labels</span><br>  <span class="hljs-attr">podLabels:</span> &#123;&#125;<br>  <span class="hljs-comment">## Additional service annotations</span><br>  <span class="hljs-attr">serviceAnnotations:</span> &#123;&#125;<br>  <span class="hljs-comment">## User settings configuration json string</span><br>  <span class="hljs-attr">configureUserSettings:</span><br>  <span class="hljs-comment"># Secret is used when core server communicates with other components.</span><br>  <span class="hljs-comment"># If a secret key is not specified, Helm will generate one.</span><br>  <span class="hljs-comment"># Must be a string of 16 chars.</span><br>  <span class="hljs-attr">secret:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment"># Fill the name of a kubernetes secret if you want to use your own</span><br>  <span class="hljs-comment"># TLS certificate and private key for token encryption/decryption.</span><br>  <span class="hljs-comment"># The secret must contain keys named:</span><br>  <span class="hljs-comment"># &quot;tls.key&quot; - the private key</span><br>  <span class="hljs-comment"># &quot;tls.crt&quot; - the certificate</span><br>  <span class="hljs-attr">secretName:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment"># If not specifying a preexisting secret, a secret can be created from tokenKey and tokenCert and used instead.</span><br>  <span class="hljs-comment"># If none of secretName, tokenKey, and tokenCert are specified, an ephemeral key and certificate will be autogenerated.</span><br>  <span class="hljs-comment"># tokenKey and tokenCert must BOTH be set or BOTH unset.</span><br>  <span class="hljs-comment"># The tokenKey value is formatted as a multiline string containing a PEM-encoded RSA key, indented one more than tokenKey on the following line.</span><br>  <span class="hljs-attr">tokenKey:</span> <span class="hljs-string">|</span><br><span class="hljs-string">  # If tokenKey is set, the value of tokenCert must be set as a PEM-encoded certificate signed by tokenKey, and supplied as a multiline string, indented one more than tokenCert on the following line.</span><br><span class="hljs-string">  tokenCert: |</span><br><span class="hljs-string">  # The XSRF key. Will be generated automatically if it isn&#x27;t specified</span><br><span class="hljs-string">  xsrfKey: &quot;&quot;</span><br><span class="hljs-string">  ## The priority class to run the pod as</span><br><span class="hljs-string">  priorityClassName:</span><br><span class="hljs-string">  # The time duration for async update artifact pull_time and repository</span><br><span class="hljs-string">  # pull_count, the unit is second. Will be 10 seconds if it isn&#x27;t set.</span><br><span class="hljs-string">  # eg. artifactPullAsyncFlushDuration: 10</span><br><span class="hljs-string">  artifactPullAsyncFlushDuration:</span><br><span class="hljs-string">  gdpr:</span><br><span class="hljs-string">    deleteUser: false</span><br><span class="hljs-string"></span><br><span class="hljs-attr">jobservice:</span><br>  <span class="hljs-attr">image:</span><br>    <span class="hljs-attr">repository:</span> <span class="hljs-string">goharbor/harbor-jobservice</span><br>    <span class="hljs-attr">tag:</span> <span class="hljs-string">dev</span><br>  <span class="hljs-attr">replicas:</span> <span class="hljs-number">1</span><br>  <span class="hljs-attr">revisionHistoryLimit:</span> <span class="hljs-number">10</span><br>  <span class="hljs-comment"># set the service account to be used, default if left empty</span><br>  <span class="hljs-attr">serviceAccountName:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment"># mount the service account token</span><br>  <span class="hljs-attr">automountServiceAccountToken:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-attr">maxJobWorkers:</span> <span class="hljs-number">10</span><br>  <span class="hljs-comment"># The logger for jobs: &quot;file&quot;, &quot;database&quot; or &quot;stdout&quot;</span><br>  <span class="hljs-attr">jobLoggers:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">file</span><br>    <span class="hljs-comment"># - database</span><br>    <span class="hljs-comment"># - stdout</span><br>  <span class="hljs-comment"># The jobLogger sweeper duration (ignored if `jobLogger` is `stdout`)</span><br>  <span class="hljs-attr">loggerSweeperDuration:</span> <span class="hljs-number">14</span> <span class="hljs-comment">#days</span><br>  <span class="hljs-attr">notification:</span><br>    <span class="hljs-attr">webhook_job_max_retry:</span> <span class="hljs-number">3</span><br>    <span class="hljs-attr">webhook_job_http_client_timeout:</span> <span class="hljs-number">3</span> <span class="hljs-comment"># in seconds</span><br>  <span class="hljs-attr">reaper:</span><br>    <span class="hljs-comment"># the max time to wait for a task to finish, if unfinished after max_update_hours, the task will be mark as error, but the task will continue to run, default value is 24</span><br>    <span class="hljs-attr">max_update_hours:</span> <span class="hljs-number">24</span><br>    <span class="hljs-comment"># the max time for execution in running state without new task created</span><br>    <span class="hljs-attr">max_dangling_hours:</span> <span class="hljs-number">168</span><br><br>  <span class="hljs-comment"># resources:</span><br>  <span class="hljs-comment">#   requests:</span><br>  <span class="hljs-comment">#     memory: 256Mi</span><br>  <span class="hljs-comment">#     cpu: 100m</span><br>  <span class="hljs-attr">extraEnvVars:</span> []<br>  <span class="hljs-attr">nodeSelector:</span> &#123;&#125;<br>  <span class="hljs-attr">tolerations:</span> []<br>  <span class="hljs-attr">affinity:</span> &#123;&#125;<br>  <span class="hljs-comment"># Spread Pods across failure-domains like regions, availability zones or nodes</span><br>  <span class="hljs-attr">topologySpreadConstraints:</span><br>  <span class="hljs-comment"># - maxSkew: 1</span><br>  <span class="hljs-comment">#   topologyKey: topology.kubernetes.io/zone</span><br>  <span class="hljs-comment">#   nodeTaintsPolicy: Honor</span><br>  <span class="hljs-comment">#   whenUnsatisfiable: DoNotSchedule</span><br>  <span class="hljs-comment">## Additional deployment annotations</span><br>  <span class="hljs-attr">podAnnotations:</span> &#123;&#125;<br>  <span class="hljs-comment">## Additional deployment labels</span><br>  <span class="hljs-attr">podLabels:</span> &#123;&#125;<br>  <span class="hljs-comment"># Secret is used when job service communicates with other components.</span><br>  <span class="hljs-comment"># If a secret key is not specified, Helm will generate one.</span><br>  <span class="hljs-comment"># Must be a string of 16 chars.</span><br>  <span class="hljs-attr">secret:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment">## The priority class to run the pod as</span><br>  <span class="hljs-attr">priorityClassName:</span><br><br><span class="hljs-attr">registry:</span><br>  <span class="hljs-comment"># set the service account to be used, default if left empty</span><br>  <span class="hljs-attr">serviceAccountName:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment"># mount the service account token</span><br>  <span class="hljs-attr">automountServiceAccountToken:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-attr">registry:</span><br>    <span class="hljs-attr">image:</span><br>      <span class="hljs-attr">repository:</span> <span class="hljs-string">goharbor/registry-photon</span><br>      <span class="hljs-attr">tag:</span> <span class="hljs-string">dev</span><br>    <span class="hljs-comment"># resources:</span><br>    <span class="hljs-comment">#  requests:</span><br>    <span class="hljs-comment">#    memory: 256Mi</span><br>    <span class="hljs-comment">#    cpu: 100m</span><br>    <span class="hljs-attr">extraEnvVars:</span> []<br>  <span class="hljs-attr">controller:</span><br>    <span class="hljs-attr">image:</span><br>      <span class="hljs-attr">repository:</span> <span class="hljs-string">goharbor/harbor-registryctl</span><br>      <span class="hljs-attr">tag:</span> <span class="hljs-string">dev</span><br><br>    <span class="hljs-comment"># resources:</span><br>    <span class="hljs-comment">#  requests:</span><br>    <span class="hljs-comment">#    memory: 256Mi</span><br>    <span class="hljs-comment">#    cpu: 100m</span><br>    <span class="hljs-attr">extraEnvVars:</span> []<br>  <span class="hljs-attr">replicas:</span> <span class="hljs-number">1</span><br>  <span class="hljs-attr">revisionHistoryLimit:</span> <span class="hljs-number">10</span><br>  <span class="hljs-attr">nodeSelector:</span> &#123;&#125;<br>  <span class="hljs-attr">tolerations:</span> []<br>  <span class="hljs-attr">affinity:</span> &#123;&#125;<br>  <span class="hljs-comment"># Spread Pods across failure-domains like regions, availability zones or nodes</span><br>  <span class="hljs-attr">topologySpreadConstraints:</span> []<br>  <span class="hljs-comment"># - maxSkew: 1</span><br>  <span class="hljs-comment">#   topologyKey: topology.kubernetes.io/zone</span><br>  <span class="hljs-comment">#   nodeTaintsPolicy: Honor</span><br>  <span class="hljs-comment">#   whenUnsatisfiable: DoNotSchedule</span><br>  <span class="hljs-comment">## Additional deployment annotations</span><br>  <span class="hljs-attr">podAnnotations:</span> &#123;&#125;<br>  <span class="hljs-comment">## Additional deployment labels</span><br>  <span class="hljs-attr">podLabels:</span> &#123;&#125;<br>  <span class="hljs-comment">## The priority class to run the pod as</span><br>  <span class="hljs-attr">priorityClassName:</span><br>  <span class="hljs-comment"># Secret is used to secure the upload state from client</span><br>  <span class="hljs-comment"># and registry storage backend.</span><br>  <span class="hljs-comment"># See: https://github.com/docker/distribution/blob/master/docs/configuration.md#http</span><br>  <span class="hljs-comment"># If a secret key is not specified, Helm will generate one.</span><br>  <span class="hljs-comment"># Must be a string of 16 chars.</span><br>  <span class="hljs-attr">secret:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment"># If true, the registry returns relative URLs in Location headers. The client is responsible for resolving the correct URL.</span><br>  <span class="hljs-attr">relativeurls:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-attr">credentials:</span><br>    <span class="hljs-attr">username:</span> <span class="hljs-string">&quot;harbor_registry_user&quot;</span><br>    <span class="hljs-attr">password:</span> <span class="hljs-string">&quot;harbor_registry_password&quot;</span><br>    <span class="hljs-comment"># If using existingSecret, the key must be REGISTRY_PASSWD and REGISTRY_HTPASSWD</span><br>    <span class="hljs-attr">existingSecret:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># Login and password in htpasswd string format. Excludes `registry.credentials.username`  and `registry.credentials.password`. May come in handy when integrating with tools like argocd or flux. This allows the same line to be generated each time the template is rendered, instead of the `htpasswd` function from helm, which generates different lines each time because of the salt.</span><br>    <span class="hljs-comment"># htpasswdString: $apr1$XLefHzeG$Xl4.s00sMSCCcMyJljSZb0 # example string</span><br>  <span class="hljs-attr">middleware:</span><br>    <span class="hljs-attr">enabled:</span> <span class="hljs-literal">false</span><br>    <span class="hljs-attr">type:</span> <span class="hljs-string">cloudFront</span><br>    <span class="hljs-attr">cloudFront:</span><br>      <span class="hljs-attr">baseurl:</span> <span class="hljs-string">example.cloudfront.net</span><br>      <span class="hljs-attr">keypairid:</span> <span class="hljs-string">KEYPAIRID</span><br>      <span class="hljs-attr">duration:</span> <span class="hljs-string">3000s</span><br>      <span class="hljs-attr">ipfilteredby:</span> <span class="hljs-string">none</span><br>      <span class="hljs-comment"># The secret key that should be present is CLOUDFRONT_KEY_DATA, which should be the encoded private key</span><br>      <span class="hljs-comment"># that allows access to CloudFront</span><br>      <span class="hljs-attr">privateKeySecret:</span> <span class="hljs-string">&quot;my-secret&quot;</span><br>  <span class="hljs-comment"># enable purge _upload directories</span><br>  <span class="hljs-attr">upload_purging:</span><br>    <span class="hljs-attr">enabled:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-comment"># remove files in _upload directories which exist for a period of time, default is one week.</span><br>    <span class="hljs-attr">age:</span> <span class="hljs-string">168h</span><br>    <span class="hljs-comment"># the interval of the purge operations</span><br>    <span class="hljs-attr">interval:</span> <span class="hljs-string">24h</span><br>    <span class="hljs-attr">dryrun:</span> <span class="hljs-literal">false</span><br><br><span class="hljs-attr">trivy:</span><br>  <span class="hljs-comment"># enabled the flag to enable Trivy scanner</span><br>  <span class="hljs-attr">enabled:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-attr">image:</span><br>    <span class="hljs-comment"># repository the repository for Trivy adapter image</span><br>    <span class="hljs-attr">repository:</span> <span class="hljs-string">goharbor/trivy-adapter-photon</span><br>    <span class="hljs-comment"># tag the tag for Trivy adapter image</span><br>    <span class="hljs-attr">tag:</span> <span class="hljs-string">dev</span><br>  <span class="hljs-comment"># set the service account to be used, default if left empty</span><br>  <span class="hljs-attr">serviceAccountName:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment"># mount the service account token</span><br>  <span class="hljs-attr">automountServiceAccountToken:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-comment"># replicas the number of Pod replicas</span><br>  <span class="hljs-attr">replicas:</span> <span class="hljs-number">1</span><br>  <span class="hljs-comment"># debugMode the flag to enable Trivy debug mode with more verbose scanning log</span><br>  <span class="hljs-attr">debugMode:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-comment"># vulnType a comma-separated list of vulnerability types. Possible values are `os` and `library`.</span><br>  <span class="hljs-attr">vulnType:</span> <span class="hljs-string">&quot;os,library&quot;</span><br>  <span class="hljs-comment"># severity a comma-separated list of severities to be checked</span><br>  <span class="hljs-attr">severity:</span> <span class="hljs-string">&quot;UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL&quot;</span><br>  <span class="hljs-comment"># ignoreUnfixed the flag to display only fixed vulnerabilities</span><br>  <span class="hljs-attr">ignoreUnfixed:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-comment"># insecure the flag to skip verifying registry certificate</span><br>  <span class="hljs-attr">insecure:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-comment"># gitHubToken the GitHub access token to download Trivy DB</span><br>  <span class="hljs-comment">#</span><br>  <span class="hljs-comment"># Trivy DB contains vulnerability information from NVD, Red Hat, and many other upstream vulnerability databases.</span><br>  <span class="hljs-comment"># It is downloaded by Trivy from the GitHub release page https://github.com/aquasecurity/trivy-db/releases and cached</span><br>  <span class="hljs-comment"># in the local file system (`/home/scanner/.cache/trivy/db/trivy.db`). In addition, the database contains the update</span><br>  <span class="hljs-comment"># timestamp so Trivy can detect whether it should download a newer version from the Internet or use the cached one.</span><br>  <span class="hljs-comment"># Currently, the database is updated every 12 hours and published as a new release to GitHub.</span><br>  <span class="hljs-comment">#</span><br>  <span class="hljs-comment"># Anonymous downloads from GitHub are subject to the limit of 60 requests per hour. Normally such rate limit is enough</span><br>  <span class="hljs-comment"># for production operations. If, for any reason, it&#x27;s not enough, you could increase the rate limit to 5000</span><br>  <span class="hljs-comment"># requests per hour by specifying the GitHub access token. For more details on GitHub rate limiting please consult</span><br>  <span class="hljs-comment"># https://developer.github.com/v3/#rate-limiting</span><br>  <span class="hljs-comment">#</span><br>  <span class="hljs-comment"># You can create a GitHub token by following the instructions in</span><br>  <span class="hljs-comment"># https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line</span><br>  <span class="hljs-attr">gitHubToken:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment"># skipUpdate the flag to disable Trivy DB downloads from GitHub</span><br>  <span class="hljs-comment">#</span><br>  <span class="hljs-comment"># You might want to set the value of this flag to `true` in test or CI/CD environments to avoid GitHub rate limiting issues.</span><br>  <span class="hljs-comment"># If the value is set to `true` you have to manually download the `trivy.db` file and mount it in the</span><br>  <span class="hljs-comment"># `/home/scanner/.cache/trivy/db/trivy.db` path.</span><br>  <span class="hljs-attr">skipUpdate:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-comment"># The offlineScan option prevents Trivy from sending API requests to identify dependencies.</span><br>  <span class="hljs-comment">#</span><br>  <span class="hljs-comment"># Scanning JAR files and pom.xml may require Internet access for better detection, but this option tries to avoid it.</span><br>  <span class="hljs-comment"># For example, the offline mode will not try to resolve transitive dependencies in pom.xml when the dependency doesn&#x27;t</span><br>  <span class="hljs-comment"># exist in the local repositories. It means a number of detected vulnerabilities might be fewer in offline mode.</span><br>  <span class="hljs-comment"># It would work if all the dependencies are in local.</span><br>  <span class="hljs-comment"># This option doesn’t affect DB download. You need to specify skipUpdate as well as offlineScan in an air-gapped environment.</span><br>  <span class="hljs-attr">offlineScan:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-comment"># Comma-separated list of what security issues to detect. Possible values are `vuln`, `config` and `secret`. Defaults to `vuln`.</span><br>  <span class="hljs-attr">securityCheck:</span> <span class="hljs-string">&quot;vuln&quot;</span><br>  <span class="hljs-comment"># The duration to wait for scan completion</span><br>  <span class="hljs-attr">timeout:</span> <span class="hljs-string">5m0s</span><br>  <span class="hljs-attr">resources:</span><br>    <span class="hljs-attr">requests:</span><br>      <span class="hljs-attr">cpu:</span> <span class="hljs-string">200m</span><br>      <span class="hljs-attr">memory:</span> <span class="hljs-string">512Mi</span><br>    <span class="hljs-attr">limits:</span><br>      <span class="hljs-attr">cpu:</span> <span class="hljs-number">1</span><br>      <span class="hljs-attr">memory:</span> <span class="hljs-string">1Gi</span><br>  <span class="hljs-attr">extraEnvVars:</span> []<br>  <span class="hljs-attr">nodeSelector:</span> &#123;&#125;<br>  <span class="hljs-attr">tolerations:</span> []<br>  <span class="hljs-attr">affinity:</span> &#123;&#125;<br>  <span class="hljs-comment"># Spread Pods across failure-domains like regions, availability zones or nodes</span><br>  <span class="hljs-attr">topologySpreadConstraints:</span> []<br>  <span class="hljs-comment"># - maxSkew: 1</span><br>  <span class="hljs-comment">#   topologyKey: topology.kubernetes.io/zone</span><br>  <span class="hljs-comment">#   nodeTaintsPolicy: Honor</span><br>  <span class="hljs-comment">#   whenUnsatisfiable: DoNotSchedule</span><br>  <span class="hljs-comment">## Additional deployment annotations</span><br>  <span class="hljs-attr">podAnnotations:</span> &#123;&#125;<br>  <span class="hljs-comment">## Additional deployment labels</span><br>  <span class="hljs-attr">podLabels:</span> &#123;&#125;<br>  <span class="hljs-comment">## The priority class to run the pod as</span><br>  <span class="hljs-attr">priorityClassName:</span><br><br><span class="hljs-attr">database:</span><br>  <span class="hljs-comment"># if external database is used, set &quot;type&quot; to &quot;external&quot;</span><br>  <span class="hljs-comment"># and fill the connection information in &quot;external&quot; section</span><br>  <span class="hljs-attr">type:</span> <span class="hljs-string">internal</span><br>  <span class="hljs-attr">internal:</span><br>    <span class="hljs-comment"># set the service account to be used, default if left empty</span><br>    <span class="hljs-attr">serviceAccountName:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># mount the service account token</span><br>    <span class="hljs-attr">automountServiceAccountToken:</span> <span class="hljs-literal">false</span><br>    <span class="hljs-attr">image:</span><br>      <span class="hljs-attr">repository:</span> <span class="hljs-string">goharbor/harbor-db</span><br>      <span class="hljs-attr">tag:</span> <span class="hljs-string">dev</span><br>    <span class="hljs-comment"># The initial superuser password for internal database</span><br>    <span class="hljs-attr">password:</span> <span class="hljs-string">&quot;changeit&quot;</span><br>    <span class="hljs-comment"># The size limit for Shared memory, pgSQL use it for shared_buffer</span><br>    <span class="hljs-comment"># More details see:</span><br>    <span class="hljs-comment"># https://github.com/goharbor/harbor/issues/15034</span><br>    <span class="hljs-attr">shmSizeLimit:</span> <span class="hljs-string">512Mi</span><br>    <span class="hljs-comment"># resources:</span><br>    <span class="hljs-comment">#  requests:</span><br>    <span class="hljs-comment">#    memory: 256Mi</span><br>    <span class="hljs-comment">#    cpu: 100m</span><br>    <span class="hljs-comment"># The timeout used in livenessProbe; 1 to 5 seconds</span><br>    <span class="hljs-attr">livenessProbe:</span><br>      <span class="hljs-attr">timeoutSeconds:</span> <span class="hljs-number">1</span><br>    <span class="hljs-comment"># The timeout used in readinessProbe; 1 to 5 seconds</span><br>    <span class="hljs-attr">readinessProbe:</span><br>      <span class="hljs-attr">timeoutSeconds:</span> <span class="hljs-number">1</span><br>    <span class="hljs-attr">extraEnvVars:</span> []<br>    <span class="hljs-attr">nodeSelector:</span> &#123;&#125;<br>    <span class="hljs-attr">tolerations:</span> []<br>    <span class="hljs-attr">affinity:</span> &#123;&#125;<br>    <span class="hljs-comment">## The priority class to run the pod as</span><br>    <span class="hljs-attr">priorityClassName:</span><br>    <span class="hljs-attr">initContainer:</span><br>      <span class="hljs-attr">migrator:</span> &#123;&#125;<br>      <span class="hljs-comment"># resources:</span><br>      <span class="hljs-comment">#  requests:</span><br>      <span class="hljs-comment">#    memory: 128Mi</span><br>      <span class="hljs-comment">#    cpu: 100m</span><br>      <span class="hljs-attr">permissions:</span> &#123;&#125;<br>      <span class="hljs-comment"># resources:</span><br>      <span class="hljs-comment">#  requests:</span><br>      <span class="hljs-comment">#    memory: 128Mi</span><br>      <span class="hljs-comment">#    cpu: 100m</span><br>  <span class="hljs-attr">external:</span><br>    <span class="hljs-attr">host:</span> <span class="hljs-string">&quot;192.168.0.1&quot;</span><br>    <span class="hljs-attr">port:</span> <span class="hljs-string">&quot;5432&quot;</span><br>    <span class="hljs-attr">username:</span> <span class="hljs-string">&quot;user&quot;</span><br>    <span class="hljs-attr">password:</span> <span class="hljs-string">&quot;password&quot;</span><br>    <span class="hljs-attr">coreDatabase:</span> <span class="hljs-string">&quot;registry&quot;</span><br>    <span class="hljs-comment"># if using existing secret, the key must be &quot;password&quot;</span><br>    <span class="hljs-attr">existingSecret:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># &quot;disable&quot; - No SSL</span><br>    <span class="hljs-comment"># &quot;require&quot; - Always SSL (skip verification)</span><br>    <span class="hljs-comment"># &quot;verify-ca&quot; - Always SSL (verify that the certificate presented by the</span><br>    <span class="hljs-comment"># server was signed by a trusted CA)</span><br>    <span class="hljs-comment"># &quot;verify-full&quot; - Always SSL (verify that the certification presented by the</span><br>    <span class="hljs-comment"># server was signed by a trusted CA and the server host name matches the one</span><br>    <span class="hljs-comment"># in the certificate)</span><br>    <span class="hljs-attr">sslmode:</span> <span class="hljs-string">&quot;disable&quot;</span><br>  <span class="hljs-comment"># The maximum number of connections in the idle connection pool per pod (core+exporter).</span><br>  <span class="hljs-comment"># If it &lt;=0, no idle connections are retained.</span><br>  <span class="hljs-attr">maxIdleConns:</span> <span class="hljs-number">100</span><br>  <span class="hljs-comment"># The maximum number of open connections to the database per pod (core+exporter).</span><br>  <span class="hljs-comment"># If it &lt;= 0, then there is no limit on the number of open connections.</span><br>  <span class="hljs-comment"># <span class="hljs-doctag">Note:</span> the default number of connections is 1024 for postgre of harbor.</span><br>  <span class="hljs-attr">maxOpenConns:</span> <span class="hljs-number">900</span><br>  <span class="hljs-comment">## Additional deployment annotations</span><br>  <span class="hljs-attr">podAnnotations:</span> &#123;&#125;<br>  <span class="hljs-comment">## Additional deployment labels</span><br>  <span class="hljs-attr">podLabels:</span> &#123;&#125;<br><br><span class="hljs-attr">redis:</span><br>  <span class="hljs-comment"># if external Redis is used, set &quot;type&quot; to &quot;external&quot;</span><br>  <span class="hljs-comment"># and fill the connection information in &quot;external&quot; section</span><br>  <span class="hljs-attr">type:</span> <span class="hljs-string">internal</span><br>  <span class="hljs-attr">internal:</span><br>    <span class="hljs-comment"># set the service account to be used, default if left empty</span><br>    <span class="hljs-attr">serviceAccountName:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># mount the service account token</span><br>    <span class="hljs-attr">automountServiceAccountToken:</span> <span class="hljs-literal">false</span><br>    <span class="hljs-attr">image:</span><br>      <span class="hljs-attr">repository:</span> <span class="hljs-string">goharbor/redis-photon</span><br>      <span class="hljs-attr">tag:</span> <span class="hljs-string">dev</span><br>    <span class="hljs-comment"># resources:</span><br>    <span class="hljs-comment">#  requests:</span><br>    <span class="hljs-comment">#    memory: 256Mi</span><br>    <span class="hljs-comment">#    cpu: 100m</span><br>    <span class="hljs-attr">extraEnvVars:</span> []<br>    <span class="hljs-attr">nodeSelector:</span> &#123;&#125;<br>    <span class="hljs-attr">tolerations:</span> []<br>    <span class="hljs-attr">affinity:</span> &#123;&#125;<br>    <span class="hljs-comment">## The priority class to run the pod as</span><br>    <span class="hljs-attr">priorityClassName:</span><br>  <span class="hljs-attr">external:</span><br>    <span class="hljs-comment"># support redis, redis+sentinel</span><br>    <span class="hljs-comment"># addr for redis: &lt;host_redis&gt;:&lt;port_redis&gt;</span><br>    <span class="hljs-comment"># addr for redis+sentinel: &lt;host_sentinel1&gt;:&lt;port_sentinel1&gt;,&lt;host_sentinel2&gt;:&lt;port_sentinel2&gt;,&lt;host_sentinel3&gt;:&lt;port_sentinel3&gt;</span><br>    <span class="hljs-attr">addr:</span> <span class="hljs-string">&quot;192.168.0.2:6379&quot;</span><br>    <span class="hljs-comment"># The name of the set of Redis instances to monitor, it must be set to support redis+sentinel</span><br>    <span class="hljs-attr">sentinelMasterSet:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># The &quot;coreDatabaseIndex&quot; must be &quot;0&quot; as the library Harbor</span><br>    <span class="hljs-comment"># used doesn&#x27;t support configuring it</span><br>    <span class="hljs-attr">coreDatabaseIndex:</span> <span class="hljs-string">&quot;0&quot;</span><br>    <span class="hljs-attr">jobserviceDatabaseIndex:</span> <span class="hljs-string">&quot;1&quot;</span><br>    <span class="hljs-attr">registryDatabaseIndex:</span> <span class="hljs-string">&quot;2&quot;</span><br>    <span class="hljs-attr">trivyAdapterIndex:</span> <span class="hljs-string">&quot;5&quot;</span><br>    <span class="hljs-comment"># username field can be an empty string and it will be authenticated against the default user</span><br>    <span class="hljs-attr">username:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-attr">password:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># If using existingSecret, the key must be REDIS_PASSWORD</span><br>    <span class="hljs-attr">existingSecret:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment">## Additional deployment annotations</span><br>  <span class="hljs-attr">podAnnotations:</span> &#123;&#125;<br>  <span class="hljs-comment">## Additional deployment labels</span><br>  <span class="hljs-attr">podLabels:</span> &#123;&#125;<br><br><span class="hljs-attr">exporter:</span><br>  <span class="hljs-attr">replicas:</span> <span class="hljs-number">1</span><br>  <span class="hljs-attr">revisionHistoryLimit:</span> <span class="hljs-number">10</span><br>  <span class="hljs-comment"># resources:</span><br>  <span class="hljs-comment">#  requests:</span><br>  <span class="hljs-comment">#    memory: 256Mi</span><br>  <span class="hljs-comment">#    cpu: 100m</span><br>  <span class="hljs-attr">extraEnvVars:</span> []<br>  <span class="hljs-attr">podAnnotations:</span> &#123;&#125;<br>  <span class="hljs-comment">## Additional deployment labels</span><br>  <span class="hljs-attr">podLabels:</span> &#123;&#125;<br>  <span class="hljs-attr">serviceAccountName:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-comment"># mount the service account token</span><br>  <span class="hljs-attr">automountServiceAccountToken:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-attr">image:</span><br>    <span class="hljs-attr">repository:</span> <span class="hljs-string">goharbor/harbor-exporter</span><br>    <span class="hljs-attr">tag:</span> <span class="hljs-string">dev</span><br>  <span class="hljs-attr">nodeSelector:</span> &#123;&#125;<br>  <span class="hljs-attr">tolerations:</span> []<br>  <span class="hljs-attr">affinity:</span> &#123;&#125;<br>  <span class="hljs-comment"># Spread Pods across failure-domains like regions, availability zones or nodes</span><br>  <span class="hljs-attr">topologySpreadConstraints:</span> []<br>  <span class="hljs-comment"># - maxSkew: 1</span><br>  <span class="hljs-comment">#   topologyKey: topology.kubernetes.io/zone</span><br>  <span class="hljs-comment">#   nodeTaintsPolicy: Honor</span><br>  <span class="hljs-comment">#   whenUnsatisfiable: DoNotSchedule</span><br>  <span class="hljs-attr">cacheDuration:</span> <span class="hljs-number">23</span><br>  <span class="hljs-attr">cacheCleanInterval:</span> <span class="hljs-number">14400</span><br>  <span class="hljs-comment">## The priority class to run the pod as</span><br>  <span class="hljs-attr">priorityClassName:</span><br><br><span class="hljs-attr">metrics:</span><br>  <span class="hljs-attr">enabled:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-attr">core:</span><br>    <span class="hljs-attr">path:</span> <span class="hljs-string">/metrics</span><br>    <span class="hljs-attr">port:</span> <span class="hljs-number">8001</span><br>  <span class="hljs-attr">registry:</span><br>    <span class="hljs-attr">path:</span> <span class="hljs-string">/metrics</span><br>    <span class="hljs-attr">port:</span> <span class="hljs-number">8001</span><br>  <span class="hljs-attr">jobservice:</span><br>    <span class="hljs-attr">path:</span> <span class="hljs-string">/metrics</span><br>    <span class="hljs-attr">port:</span> <span class="hljs-number">8001</span><br>  <span class="hljs-attr">exporter:</span><br>    <span class="hljs-attr">path:</span> <span class="hljs-string">/metrics</span><br>    <span class="hljs-attr">port:</span> <span class="hljs-number">8001</span><br>  <span class="hljs-comment">## Create prometheus serviceMonitor to scrape harbor metrics.</span><br>  <span class="hljs-comment">## This requires the monitoring.coreos.com/v1 CRD. Please see</span><br>  <span class="hljs-comment">## https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md</span><br>  <span class="hljs-comment">##</span><br>  <span class="hljs-attr">serviceMonitor:</span><br>    <span class="hljs-attr">enabled:</span> <span class="hljs-literal">false</span><br>    <span class="hljs-attr">additionalLabels:</span> &#123;&#125;<br>    <span class="hljs-comment"># Scrape interval. If not set, the Prometheus default scrape interval is used.</span><br>    <span class="hljs-attr">interval:</span> <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-comment"># Metric relabel configs to apply to samples before ingestion.</span><br>    <span class="hljs-attr">metricRelabelings:</span><br>      []<br>      <span class="hljs-comment"># - action: keep</span><br>      <span class="hljs-comment">#   regex: &#x27;kube_(daemonset|deployment|pod|namespace|node|statefulset).+&#x27;</span><br>      <span class="hljs-comment">#   sourceLabels: [__name__]</span><br>    <span class="hljs-comment"># Relabel configs to apply to samples before ingestion.</span><br>    <span class="hljs-attr">relabelings:</span><br>      []<br>      <span class="hljs-comment"># - sourceLabels: [__meta_kubernetes_pod_node_name]</span><br>      <span class="hljs-comment">#   separator: ;</span><br>      <span class="hljs-comment">#   regex: ^(.*)$</span><br>      <span class="hljs-comment">#   targetLabel: nodename</span><br>      <span class="hljs-comment">#   replacement: $1</span><br>      <span class="hljs-comment">#   action: replace</span><br><br><span class="hljs-attr">trace:</span><br>  <span class="hljs-attr">enabled:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-comment"># trace provider: jaeger or otel</span><br>  <span class="hljs-comment"># jaeger should be 1.26+</span><br>  <span class="hljs-attr">provider:</span> <span class="hljs-string">jaeger</span><br>  <span class="hljs-comment"># set sample_rate to 1 if you wanna sampling 100% of trace data; set 0.5 if you wanna sampling 50% of trace data, and so forth</span><br>  <span class="hljs-attr">sample_rate:</span> <span class="hljs-number">1</span><br>  <span class="hljs-comment"># namespace used to differentiate different harbor services</span><br>  <span class="hljs-comment"># namespace:</span><br>  <span class="hljs-comment"># attributes is a key value dict contains user defined attributes used to initialize trace provider</span><br>  <span class="hljs-comment"># attributes:</span><br>  <span class="hljs-comment">#   application: harbor</span><br>  <span class="hljs-attr">jaeger:</span><br>    <span class="hljs-comment"># jaeger supports two modes:</span><br>    <span class="hljs-comment">#   collector mode(uncomment endpoint and uncomment username, password if needed)</span><br>    <span class="hljs-comment">#   agent mode(uncomment agent_host and agent_port)</span><br>    <span class="hljs-attr">endpoint:</span> <span class="hljs-string">http://hostname:14268/api/traces</span><br>    <span class="hljs-comment"># username:</span><br>    <span class="hljs-comment"># password:</span><br>    <span class="hljs-comment"># agent_host: hostname</span><br>    <span class="hljs-comment"># export trace data by jaeger.thrift in compact mode</span><br>    <span class="hljs-comment"># agent_port: 6831</span><br>  <span class="hljs-attr">otel:</span><br>    <span class="hljs-attr">endpoint:</span> <span class="hljs-string">hostname:4318</span><br>    <span class="hljs-attr">url_path:</span> <span class="hljs-string">/v1/traces</span><br>    <span class="hljs-attr">compression:</span> <span class="hljs-literal">false</span><br>    <span class="hljs-attr">insecure:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-comment"># timeout is in seconds</span><br>    <span class="hljs-attr">timeout:</span> <span class="hljs-number">10</span><br><br><span class="hljs-comment"># cache layer configurations</span><br><span class="hljs-comment"># if this feature enabled, harbor will cache the resource</span><br><span class="hljs-comment"># `project/project_metadata/repository/artifact/manifest` in the redis</span><br><span class="hljs-comment"># which help to improve the performance of high concurrent pulling manifest.</span><br><span class="hljs-attr">cache:</span><br>  <span class="hljs-comment"># default is not enabled.</span><br>  <span class="hljs-attr">enabled:</span> <span class="hljs-literal">false</span><br>  <span class="hljs-comment"># default keep cache for one day.</span><br>  <span class="hljs-attr">expireHours:</span> <span class="hljs-number">24</span><br><br></code></pre></td></tr></table></figure>
+
+<p>准备好 values.yaml 以后，就可以开始部署了：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">helm repo add harbor https://helm.goharbor.io<br>helm fetch harbor/harbor --untar<br>kubectl create ns harbor<br>helm install harbor harbor/harbor -f values.yaml -n harbor<br></code></pre></td></tr></table></figure>
+
+<p>然后等待所有的 pod 成功运行即可。</p>
+<blockquote>
+<p>我部署完有两个 pod 死活起不来，看了下 describe 是因为探针探活失败：<code>Readiness probe failed: Get &quot;http://10.233.103.29:4443/_notary_server/health&quot;: dial tcp 10.233.103.29:4443: connect: connection refuse </code>，不知道啥原因，不过目前用起来貌似还没啥影响，暂时就先不管了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs shell">k get po -n harbor -owide<br><br>NAME                                    READY   STATUS             RESTARTS         AGE     IP              NODE      NOMINATED NODE   READINESS GATES<br>harbor-core-59996c5bd-snkpr             1/1     Running            0                148m    10.233.116.38   worker3   &lt;none&gt;           &lt;none&gt;<br>harbor-database-0                       1/1     Running            0                4h46m   10.233.103.26   worker2   &lt;none&gt;           &lt;none&gt;<br>harbor-jobservice-76dc8fd6b9-7jgjs      1/1     Running            2 (148m ago)     148m    10.233.116.37   worker3   &lt;none&gt;           &lt;none&gt;<br>harbor-nginx-b8fddd6c8-sczxb            1/1     Running            0                148m    10.233.110.39   worker1   &lt;none&gt;           &lt;none&gt;<br>harbor-notary-server-549547797f-rjmmq   0/1     CrashLoopBackOff   30 (3m58s ago)   148m    10.233.116.39   worker3   &lt;none&gt;           &lt;none&gt;<br>harbor-notary-server-78976f954d-njwtp   0/1     CrashLoopBackOff   31 (41s ago)     150m    10.233.103.29   worker2   &lt;none&gt;           &lt;none&gt;<br>harbor-notary-signer-56fdb7f6b7-vwg2r   0/1     CrashLoopBackOff   30 (4m8s ago)    148m    10.233.110.40   worker1   &lt;none&gt;           &lt;none&gt;<br>harbor-notary-signer-7bb68698d9-2bggx   0/1     CrashLoopBackOff   31 (95s ago)     150m    10.233.110.38   worker1   &lt;none&gt;           &lt;none&gt;<br>harbor-portal-7f48c7b98d-l2m64          1/1     Running            0                4h46m   10.233.110.32   worker1   &lt;none&gt;           &lt;none&gt;<br>harbor-redis-0                          1/1     Running            0                4h46m   10.233.110.34   worker1   &lt;none&gt;           &lt;none&gt;<br>harbor-registry-6c7d666d67-hs9kr        2/2     Running            0                148m    10.233.103.31   worker2   &lt;none&gt;           &lt;none&gt;<br>harbor-trivy-0                          1/1     Running            0                4h46m   10.233.103.27   worker2   &lt;none&gt;           &lt;none&gt;<br></code></pre></td></tr></table></figure>
+
+<p>（就是 harbor-notary-server 和 harbor-notary-signer 这两个 pod）</p>
+</blockquote>
+<p>等 pod 都起来后，看一下 harbor 的 service：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">k get svc -n harbor<br>NAME                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                                     AGE<br>harbor                 NodePort    10.233.57.147   &lt;none&gt;        80:30002/TCP,443:30003/TCP,4443:30004/TCP   4h58m<br></code></pre></td></tr></table></figure>
+
+<p>然后就可以用集群内任意一台主机的 IP + 30002&#x2F;30003 端口访问了，这里不知道是不是因为 values.yaml 指定了开启 tls 的原因，我用 30002 （即 http 的端口）是无法访问的，必须要用 30003 （https 端口）访问，当然还要记得指定 scheme 为 https，比如 <code>https://192.168.31.244:30003/</code> 这样。</p>
+<p>成功访问，进入到登录页，然后就可以登录了，用户名是 admin，密码是 values.yaml 中指定的。</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/harbor1.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>进入到主页，我们点到项目，发现这里已经有一个默认的项目了，我们就直接使用这个。</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/harbor2.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>点进去以后，发现里面有一个 <strong>镜像仓库</strong> 子菜单，这正是我们想要的，点一下右边的 <strong>推送命令</strong>，里面列出了一些工具推送镜像到该 repo 的命令。</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/harbor3.jpg" srcset="/img/loading.gif" lazyload></p>
+<h1 id="使用-Docker-推送镜像"><a href="#使用-Docker-推送镜像" class="headerlink" title="使用 Docker 推送镜像"></a>使用 Docker 推送镜像</h1><p>首先执行 <code>docker login</code> 命令，登录到 harbor：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker login -u admin -p Harbor12345 core.harbor.domain:30003<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果这一步遇到了 <code>x509: certificate signed by unknown authority</code> 错误，那么你需要在 <code>/etc/docker/daemon.json</code> 里加入一条 <code>&quot;insecure-registries&quot;: [&quot;core.harbor.domain:30003&quot;]</code>，然后执行 <code>sudo systemctl restart docker</code> 重启 docker 让其生效。</p>
+</blockquote>
+<p>如果执行后输出 <code>Login Succeeded</code> ，那么恭喜你，登录成功了。</p>
+<p>然后我们可以先 docker pull 一个 image 用于后续的测试：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker pull nginx<br></code></pre></td></tr></table></figure>
+
+<p>然后我们给这个 image 打一个 tag，tag 的格式是 <code>&lt;harbor-url:harbor-port&gt;/&lt;project-name&gt;/&lt;image&gt;:&lt;tag&gt;</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker tag nginx core.harbor.domain:30003/library/nginx:latest<br></code></pre></td></tr></table></figure>
+
+<p>然后就可以往 harbor push 了：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker push core.harbor.domain:30003/library/nginx:latest<br></code></pre></td></tr></table></figure>
+
+<p>我前面截的第 3 张图的镜像仓库里面有一个 library&#x2F;nginx 镜像，正是上面 push 的这个镜像，说明已经 push 成功了，也说明我们搭建的 harbor 已经可以正常工作了。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/k8s/">#k8s</a>
+      
+        <a href="/tags/harbor/">#harbor</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>私有镜像仓库 harbor 部署实践</div>
+      <div>https://autsu.github.io/2023/07/04/harbor-try/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年7月4日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/06/26/prometheus-shijian/" title="prometheus 实践 [draft]">
+                        <span class="hidden-mobile">prometheus 实践 [draft]</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

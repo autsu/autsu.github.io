@@ -23,24 +23,24 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="题目描述 把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。输入一个递增排序的数组的一个旋转，输出旋转数组的最小元素。例如，数组 [3,4,5,1,2] 为 [1,2,3,4,5] 的一个旋转，该数组的最小值为1。   示例 1： 输入：[3,4,5,1,2]输出：1示例 2： 输入：[2,2,2,0,1]输出：0  图片来源：https:&#x2F;&#x2F;leetcode-cn.com&#x2F;pro">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://zengh1.github.io/post-images/1618572544771.png">
-<meta property="og:image" content="https://zengh1.github.io/post-images/1618572639234.jpg">
-<meta property="og:image" content="https://zengh1.github.io/post-images/1618572646946.jpg">
-<meta property="og:image" content="https://zengh1.github.io/post-images/1618572651504.jpg">
-<meta property="og:image" content="https://zengh1.github.io/post-images/1618572659962.jpg">
-<meta property="og:image" content="https://zengh1.github.io/post-images/1618572665167.jpg">
-<meta property="og:image" content="https://zengh1.github.io/post-images/1618572675768.jpg">
-<meta property="og:image" content="https://zengh1.github.io/post-images/1618572683253.jpg">
-<meta property="og:image" content="https://zengh1.github.io/post-images/1618572690139.jpg">
-<meta property="og:image" content="https://zengh1.github.io/post-images/1618572697498.jpg">
-<meta property="og:image" content="https://zengh1.github.io/post-images/1618572745215.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572544771.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572639234.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572646946.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572651504.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572659962.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572665167.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572675768.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572683253.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572690139.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572697498.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572745215.png">
 <meta property="article:published_time" content="2021-04-16T11:28:50.000Z">
-<meta property="article:modified_time" content="2023-03-18T13:37:15.143Z">
+<meta property="article:modified_time" content="2023-07-04T17:40:52.676Z">
 <meta property="article:author" content="void">
 <meta property="article:tag" content="剑指offer">
 <meta property="article:tag" content="二分查找">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://zengh1.github.io/post-images/1618572544771.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572544771.png">
   
   
   
@@ -86,7 +86,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -323,7 +323,7 @@
 <p>输入：[2,2,2,0,1]<br>输出：0</p>
 </blockquote>
 <p>图片来源：<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/xuan-zhuan-shu-zu-de-zui-xiao-shu-zi-lcof/solution/mian-shi-ti-11-xuan-zhuan-shu-zu-de-zui-xiao-shu-3/">https://leetcode-cn.com/problems/xuan-zhuan-shu-zu-de-zui-xiao-shu-zi-lcof/solution/mian-shi-ti-11-xuan-zhuan-shu-zu-de-zui-xiao-shu-3/</a></p>
-<p><img src="https://zengh1.github.io/post-images/1618572544771.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572544771.png" srcset="/img/loading.gif" lazyload></p>
 <p>从上图可以看出来，所谓的旋转数组，实质上是变成了两个有序数组，且左边的有序数组要大于右边的有序数组，所以右边的有序数组的第一个值，就是整个数组中的最小值。</p>
 <p>二分查找，是通过每次缩短查找区间来减少查找的次数，但前提是数组必须是有序的，而旋转数组恰好破坏了数组的有序性，但这并不代表旋转数组就不能使用二分查找来解决问题了。</p>
 <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><ol>
@@ -342,22 +342,22 @@
 <p>如果中位在右数组，那么可以去掉其右边的所有元素，因为这些元素是一定比它大的，例如 [5, 1, <strong>2</strong>, 3, 4]，中位所处数组为 [1, 2, 3, 4]，它右边的 3 和 4 可以直接去除掉。</p>
 <p>一种特殊情况：<br>[1, 0, <strong>1</strong>, 1, 1]，中位的值和 right 值相等，这时该如何处理呢？参照力扣的题解说法：遇到 <code>nums[mid] == nums[right]</code> 的时候，不能草率地下定结论最小数字在哪一边，但是可以确定的是，把 <code>right</code> 舍弃掉，并不影响结果。</p>
 <h2 id="图解"><a href="#图解" class="headerlink" title="图解"></a>图解</h2><p>图片来源：<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/xuan-zhuan-shu-zu-de-zui-xiao-shu-zi-lcof/solution/mian-shi-ti-11-xuan-zhuan-shu-zu-de-zui-xiao-shu-3/">https://leetcode-cn.com/problems/xuan-zhuan-shu-zu-de-zui-xiao-shu-zi-lcof/solution/mian-shi-ti-11-xuan-zhuan-shu-zu-de-zui-xiao-shu-3/</a></p>
-<p><img src="https://zengh1.github.io/post-images/1618572639234.jpg" srcset="/img/loading.gif" lazyload></p>
-<p><img src="https://zengh1.github.io/post-images/1618572646946.jpg" srcset="/img/loading.gif" lazyload></p>
-<p><img src="https://zengh1.github.io/post-images/1618572651504.jpg" srcset="/img/loading.gif" lazyload></p>
-<p><img src="https://zengh1.github.io/post-images/1618572659962.jpg" srcset="/img/loading.gif" lazyload></p>
-<p><img src="https://zengh1.github.io/post-images/1618572665167.jpg" srcset="/img/loading.gif" lazyload></p>
-<p><img src="https://zengh1.github.io/post-images/1618572675768.jpg" srcset="/img/loading.gif" lazyload></p>
-<p><img src="https://zengh1.github.io/post-images/1618572683253.jpg" srcset="/img/loading.gif" lazyload></p>
-<p><img src="https://zengh1.github.io/post-images/1618572690139.jpg" srcset="/img/loading.gif" lazyload></p>
-<p><img src="https://zengh1.github.io/post-images/1618572697498.jpg" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572639234.jpg" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572646946.jpg" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572651504.jpg" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572659962.jpg" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572665167.jpg" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572675768.jpg" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572683253.jpg" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572690139.jpg" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572697498.jpg" srcset="/img/loading.gif" lazyload></p>
 <h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">minArray</span><span class="hljs-params">(numbers []<span class="hljs-type">int</span>)</span></span> <span class="hljs-type">int</span> &#123;<br>    left, right := <span class="hljs-number">0</span>, <span class="hljs-built_in">len</span>(numbers)<span class="hljs-number">-1</span><br><br>    <span class="hljs-keyword">for</span> left &lt; right &#123;<br>        mid := (left + right) &gt;&gt; <span class="hljs-number">1</span><br>        <span class="hljs-comment">// 在第一个数组</span><br>        <span class="hljs-keyword">if</span> numbers[mid] &gt; numbers[right] &#123;<br>            left = mid + <span class="hljs-number">1</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> numbers[mid] &lt; numbers[right] &#123;   <span class="hljs-comment">// 在第二个</span><br>            right = mid<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            right--<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> numbers[left]<br>&#125;<br></code></pre></td></tr></table></figure>
 
 
 
 <h2 id="错误记录-x2F-思考"><a href="#错误记录-x2F-思考" class="headerlink" title="错误记录&#x2F;思考"></a>错误记录&#x2F;思考</h2><p>为什么判断是否在第一个数组，必须用 mid 和 right 比较，而不能和 left 比较？比如 [3, 4, 5, 1, 2]，可以通过 mid &gt; right 得到在第一个数组，但同样也可以用 mid &gt; left 判断出同样的结果。</p>
 <p>首先可以确定的是，mid 和 left 比较会出错，比如这个测试用例 [1, 1, 0, 1, 1]，两种比较方式结果如下图：</p>
-<p><img src="https://zengh1.github.io/post-images/1618572745215.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618572745215.png" srcset="/img/loading.gif" lazyload></p>
 <p>对于这样一种特殊旋转数组 [1, 2, 3, 4, 5] （即旋转了 0 个数），此时 mid 无法确定属于哪个数组，且也不符合之前的<strong>左数组大于右数组</strong>的条件，这种情况下，与 right 比较是安全的，这会将其分配到右数组 [3, 4, 5]，并将搜索区间转移到左部分 [1, 2, 3]。</p>
 <p>如果与 left 比较，会错误的分配到右数组 [1, 2, 3]，并将这部分从搜索区间中去除，留下 [4, 5]，结果也显然意见是错误的。</p>
 <p>综上，要避免与 left 比较。</p>

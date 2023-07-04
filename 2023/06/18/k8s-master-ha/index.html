@@ -18,20 +18,20 @@
   
     <meta name="description" content="什么是控制节点高可用控制节点，也可以叫做 k8s master 节点，负责管理和控制整个集群的运行。控制节点上运行着 k8s 控制平面组件，其中包括了负责集群内外通信的超核心的组件  —— api-server，这代表着如果控制节点挂掉了，那么整个集群都会因为 ”群龙无首“ 而不可用，所以在实际的生产环境中，k8s 集群一定会部署多个控制节点，这样可以保证某个节点挂掉后，其他节点还能继续提供服务，">
 <meta property="og:type" content="article">
-<meta property="og:title" content="K8s 控制节点高可用实践 [draft]">
+<meta property="og:title" content="K8s 控制节点高可用实践">
 <meta property="og:url" content="https://autsu.github.io/2023/06/18/k8s-master-ha/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="什么是控制节点高可用控制节点，也可以叫做 k8s master 节点，负责管理和控制整个集群的运行。控制节点上运行着 k8s 控制平面组件，其中包括了负责集群内外通信的超核心的组件  —— api-server，这代表着如果控制节点挂掉了，那么整个集群都会因为 ”群龙无首“ 而不可用，所以在实际的生产环境中，k8s 集群一定会部署多个控制节点，这样可以保证某个节点挂掉后，其他节点还能继续提供服务，">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-06-18T06:03:23.000Z">
-<meta property="article:modified_time" content="2023-06-25T16:22:07.324Z">
+<meta property="article:modified_time" content="2023-07-01T04:05:07.277Z">
 <meta property="article:author" content="void">
 <meta property="article:tag" content="k8s">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>K8s 控制节点高可用实践 [draft] - Hexo</title>
+  <title>K8s 控制节点高可用实践 - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -73,7 +73,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -218,7 +218,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="K8s 控制节点高可用实践 [draft]"></span>
+            <span id="subtitle" data-typed-text="K8s 控制节点高可用实践"></span>
           
         </div>
 
@@ -298,7 +298,7 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">K8s 控制节点高可用实践 [draft]</h1>
+            <h1 style="display: none">K8s 控制节点高可用实践</h1>
             
             
               <div class="markdown-body">
@@ -497,7 +497,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>K8s 控制节点高可用实践 [draft]</div>
+      <div>K8s 控制节点高可用实践</div>
       <div>https://autsu.github.io/2023/06/18/k8s-master-ha/</div>
     </div>
     <div class="license-meta">

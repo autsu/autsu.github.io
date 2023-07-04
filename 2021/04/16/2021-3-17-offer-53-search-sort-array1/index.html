@@ -23,15 +23,15 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="题目描述 统计一个数字在排序数组中出现的次数。 示例 1: 输入: nums &#x3D; [5,7,7,8,8,10], target &#x3D; 8输出: 2示例 2: 输入: nums &#x3D; [5,7,7,8,8,10], target &#x3D; 6输出: 0 限制： 0 &lt;&#x3D; 数组长度 &lt;&#x3D; 50000  方法1：二分查找这道题最简单粗暴的方法">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://zengh1.github.io/post-images/1618573278487.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618573278487.png">
 <meta property="article:published_time" content="2021-04-16T11:41:09.000Z">
-<meta property="article:modified_time" content="2023-03-18T13:37:15.134Z">
+<meta property="article:modified_time" content="2023-07-04T17:39:32.652Z">
 <meta property="article:author" content="void">
-<meta property="article:tag" content="剑指offer">
 <meta property="article:tag" content="数组">
+<meta property="article:tag" content="剑指offer">
 <meta property="article:tag" content="二分查找">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://zengh1.github.io/post-images/1618573278487.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618573278487.png">
   
   
   
@@ -77,7 +77,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -320,7 +320,7 @@
 <p>整道题的思路可以是这样：先查找出 target 最后出现的位置，记为 leftIndex，再查找出 target 第一次出现的位置，记为 rightIndex，然后用 leftIndex - rightIndex + 1 即可求出出现的次数。</p>
 <p>至于二分查找的特殊处理，可以将 [mid] &#x3D;&#x3D; target 时处理为 left &#x3D; mid + 1。</p>
 <p>具体的流程如下图：</p>
-<p><img src="https://zengh1.github.io/post-images/1618573278487.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618573278487.png" srcset="/img/loading.gif" lazyload></p>
 <p>代码如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">search</span><span class="hljs-params">(nums []<span class="hljs-type">int</span>, target <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">int</span> &#123;<br>    leftIndex := binarySearch(nums, target)<br>    rightIndex := binarySearch(nums, target<span class="hljs-number">-1</span>)<br><br>    <span class="hljs-keyword">return</span> leftIndex - rightIndex<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">binarySearch</span><span class="hljs-params">(nums []<span class="hljs-type">int</span>, target <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">int</span> &#123;<br>    l, r := <span class="hljs-number">0</span>, <span class="hljs-built_in">len</span>(nums)<span class="hljs-number">-1</span><br><br>    <span class="hljs-keyword">for</span> l &lt;= r &#123;<br>        m := (l + r) &gt;&gt; <span class="hljs-number">1</span><br>        <span class="hljs-keyword">if</span> nums[m] &lt;= target &#123;<br>            l = m + <span class="hljs-number">1</span><br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            r = m - <span class="hljs-number">1</span><br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> l<br>&#125;<br></code></pre></td></tr></table></figure>
                 
@@ -334,9 +334,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
-      
         <a href="/tags/%E6%95%B0%E7%BB%84/">#数组</a>
+      
+        <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
       
         <a href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">#二分查找</a>
       

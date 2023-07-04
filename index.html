@@ -62,7 +62,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -245,6 +245,48 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2023/07/04/harbor-try/" target="_self">
+          私有镜像仓库 harbor 部署实践
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/07/04/harbor-try/" target="_self">
+        <div>
+          前言参考官方文档 + 网上的一些博客，其实部署还是比较容易的，但是我在实践过程中还是踩了一些坑，特此记录一下。 我使用的是 Helm 的部署方式，会将其部署到 k8s 上。 这篇文章目前只是简单记录了一下搭建的过程和 harbor 的简单使用，并没用对 harbor 进行详细的探索。 部署使用 Helm 部署，首先需要准备一份 values.yaml，这个 yaml 的模版可以从 这个 repo
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-07-04 22:19" pubdate>
+              2023-07-04
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/k8s/">#k8s</a>
+            
+              <a href="/tags/harbor/">#harbor</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2023/06/26/prometheus-shijian/" target="_self">
           prometheus 实践 [draft]
         </a>
@@ -286,7 +328,7 @@
       <h1 class="index-header">
         
         <a href="/2023/06/18/k8s-master-ha/" target="_self">
-          K8s 控制节点高可用实践 [draft]
+          K8s 控制节点高可用实践
         </a>
       </h1>
 
@@ -413,7 +455,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/05/19/multipass-create-vm-so-easy/" target="_self">
         <div>
-          之前搭建 k8s 集群一直使用的是 Vmware，虽然总的来说用起来还算 OK，但是总感觉比较重，安装系统什么的也比较耗时（后来发现可以先创建好一台，然后克隆），加上 k8s 老被我搞坏，每次搞坏又都要重新创建集群（貌似可以做一个快照），搞得有点烦，就想看看有没有什么别的虚机工具，能够方便且快速的搭建虚机，最好还能支持命令行操作，找来找去，最终还是找到了之前用过的老朋友 multipass 开始创
+          背景之前搭建 k8s 集群一直使用的是 Vmware，虽然总的来说用起来还算 OK，但是总感觉比较重，安装系统什么的也比较耗时（后来发现可以先创建好一台，然后克隆），加上 k8s 老被我搞坏，每次搞坏又都要重新创建集群，每台虚机又要重新配置 root 用户、root ssh 连接之类的（后来也发现貌似可以做一个快照），搞得有点烦，就想看看有没有什么别的虚机工具，能够方便且快速的搭建虚机，最好能支持
         </div>
       </a>
 
@@ -587,46 +629,6 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2023-04-18 13:51" pubdate>
               2023-04-18
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/k8s/">#k8s</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/04/16/Kubespray-install/" target="_self">
-          通过 Kubespray 搭建 k8s 集群
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/16/Kubespray-install/" target="_self">
-        <div>
-          ⚠️  安装前最好确保你的主机够干净，我的虚拟机就因为之前自行用二进制搭建过，导致使用 kubespray 安装出现各种奇奇怪怪的错误，最后删除重新创建了一台，一次就安装成功了  初始化1234567891011121314151617181920212223apt install pip# ssh 登录要用，不然报错 &quot;to use the &#x27;ssh&#x27; conne
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-16 14:05" pubdate>
-              2023-04-16
             </time>
           </div>
         

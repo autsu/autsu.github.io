@@ -62,7 +62,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -245,6 +245,46 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2023/04/16/Kubespray-install/" target="_self">
+          通过 Kubespray 搭建 k8s 集群
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/16/Kubespray-install/" target="_self">
+        <div>
+          ⚠️  安装前最好确保你的主机够干净，我的虚拟机就因为之前自行用二进制搭建过，导致使用 kubespray 安装出现各种奇奇怪怪的错误，最后删除重新创建了一台，一次就安装成功了  初始化1234567891011121314151617181920212223apt install pip# ssh 登录要用，不然报错 &quot;to use the &#x27;ssh&#x27; conne
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-04-16 14:05" pubdate>
+              2023-04-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/k8s/">#k8s</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2023/04/14/zhuangji-jilu/" target="_self">
           装机记录
         </a>
@@ -326,7 +366,7 @@
       <h1 class="index-header">
         
         <a href="/2023/04/06/nginx-practice/" target="_self">
-          通过实践学习 Nginx
+          通过实践学习 Nginx [draft]
         </a>
       </h1>
 
@@ -406,14 +446,14 @@
       <h1 class="index-header">
         
         <a href="/2022/10/07/client-go-yuan-ma/" target="_self">
-          k8s client-go 源码阅读
+          k8s client-go informer 源码阅读 [draft]
         </a>
       </h1>
 
       
       <a class="index-excerpt index-excerpt__noimg" href="/2022/10/07/client-go-yuan-ma/" target="_self">
         <div>
-          架构 Informers 由几个核心的组件构成：  Reflector：负责从 api-server list（全量拉取数据） and watch（监听数据变更） DeltaFIFO：一个存储事件的队列，里面记录了事件的类型 Indexer：存储数据，数据来源是从 DeltaFIFO 中 pop 出来的，然后会根据事件类型进行对应的操作 sharedProcessor：用于运行用户设置的事件回调函
+          架构 Informers 由几个核心的组件构成：  Reflector：负责从 api-server List（全量拉取数据） and Watch（监听数据变更），然后扔到 DeltaFIFO 里面 DeltaFIFO：一个存储事件的队列，里面记录了事件的类型以及对象 Indexer：存储数据，数据来源是从 DeltaFIFO 中 pop 出来的，然后会根据事件类型进行对应的操作，比如如果 pop
         </div>
       </a>
 
@@ -583,46 +623,6 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2022-09-10 19:41" pubdate>
               2022-09-10
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/issue/">#issue</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/09/08/jetbrain_crash/" target="_self">
-          GoLand/Idea 启动闪退，报错 NSInternalInconsistencyException 的解决方法
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/08/jetbrain_crash/" target="_self">
-        <div>
-          环境：  机器：MacBook Air (M1, 2020) 系统：MacOS 12.5.1 Goland 版本：2022.2.2 Idea 版本：2022.1.1  今天启动 GoLand 发现会立马闪退，提示程序意外退出，后来又试了下 Idea 和 Clion，发现全部都是如此，尝试在终端启动查看错误信息： 1234567891011121314151617181920212223242526
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-09-08 00:55" pubdate>
-              2022-09-08
             </time>
           </div>
         
