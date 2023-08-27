@@ -16,17 +16,17 @@
   <meta name="author" content="void">
   <meta name="keywords" content="">
   
-    <meta name="description" content="B 树和 B+ 树的区别来源：https:&#x2F;&#x2F;draveness.me&#x2F;whys-the-design-mysql-b-plus-tree&#x2F; B 树与 B+ 树的最大区别就是，B 树可以在非叶结点中存储数据，但是 B+ 树的所有数据其实都存储在叶子节点中，当一个表底层的数据结构是 B 树时，假设我们需要访问所有『大于 4，并且小于 9 的数据』： 如果不考虑任何优化，在上面的简单 B 树中我们需要">
+    <meta name="description" content="B 树和 B+ 树的区别来源：https:&#x2F;&#x2F;draveness.me&#x2F;whys-the-design-mysql-b-plus-tree&#x2F; B 树与 B+ 树的最大区别就是，B 树可以在非叶结点中存储数据，但是 B+ 树的 所有数据其实都存储在叶子节点中，当一个表底层的数据结构是 B 树时，假设我们需要访问所有『大于 4，并且小于 9 的数据』： 如果不考虑任何优化，在上面的简单 B 树中我们需">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MySQL 为什么使用 B+ 树">
 <meta property="og:url" content="https://autsu.github.io/2021/09/11/mysql-wei-shi-me-shi-yong-b-shu/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="B 树和 B+ 树的区别来源：https:&#x2F;&#x2F;draveness.me&#x2F;whys-the-design-mysql-b-plus-tree&#x2F; B 树与 B+ 树的最大区别就是，B 树可以在非叶结点中存储数据，但是 B+ 树的所有数据其实都存储在叶子节点中，当一个表底层的数据结构是 B 树时，假设我们需要访问所有『大于 4，并且小于 9 的数据』： 如果不考虑任何优化，在上面的简单 B 树中我们需要">
+<meta property="og:description" content="B 树和 B+ 树的区别来源：https:&#x2F;&#x2F;draveness.me&#x2F;whys-the-design-mysql-b-plus-tree&#x2F; B 树与 B+ 树的最大区别就是，B 树可以在非叶结点中存储数据，但是 B+ 树的 所有数据其实都存储在叶子节点中，当一个表底层的数据结构是 B 树时，假设我们需要访问所有『大于 4，并且小于 9 的数据』： 如果不考虑任何优化，在上面的简单 B 树中我们需">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1631366394543.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1631366964858.png">
 <meta property="article:published_time" content="2021-09-11T11:56:55.000Z">
-<meta property="article:modified_time" content="2023-06-15T16:18:34.827Z">
+<meta property="article:modified_time" content="2023-08-24T14:49:52.708Z">
 <meta property="article:author" content="void">
 <meta property="article:tag" content="mysql">
 <meta name="twitter:card" content="summary_large_image">
@@ -307,7 +307,7 @@
               <div class="markdown-body">
                 
                 <h1 id="B-树和-B-树的区别"><a href="#B-树和-B-树的区别" class="headerlink" title="B 树和 B+ 树的区别"></a>B 树和 B+ 树的区别</h1><p><strong>来源：<a target="_blank" rel="noopener" href="https://draveness.me/whys-the-design-mysql-b-plus-tree/">https://draveness.me/whys-the-design-mysql-b-plus-tree/</a></strong></p>
-<p>B 树与 B+ 树的最大区别就是，B 树可以在非叶结点中存储数据，但是 B+ 树的<strong>所有数据其实都存储在叶子节点中</strong>，当一个表底层的数据结构是 B 树时，假设我们需要访问所有『大于 4，并且小于 9 的数据』：<br><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1631366394543.png" srcset="/img/loading.gif" lazyload></p>
+<p>B 树与 B+ 树的最大区别就是，B 树可以在非叶结点中存储数据，但是 B+ 树的 <strong>所有数据其实都存储在叶子节点中</strong>，当一个表底层的数据结构是 B 树时，假设我们需要访问所有『大于 4，并且小于 9 的数据』：<br><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1631366394543.png" srcset="/img/loading.gif" lazyload></p>
 <p>如果不考虑任何优化，在上面的简单 B 树中我们需要进行 4 次磁盘的随机 I&#x2F;O 才能找到所有满足条件的数据行：</p>
 <ol>
 <li>加载根节点所在的页，发现根节点的第一个元素是 6，大于 4；</li>
@@ -316,22 +316,27 @@
 <li>通过根节点的指针加载右子节点所在的页，遍历页面中的数据，找到 7 和 8；</li>
 </ol>
 <p>当然我们可以通过各种方式来对上述的过程进行优化，不过 B 树能做的优化 B+ 树基本都可以，所以我们不需要考虑优化 B 树而带来的收益，直接来看看什么样的优化 B+ 树可以做，而 B 树不行。</p>
-<p>由于<strong>所有的节点都可能包含目标数据</strong>，我们总是要<strong>从根节点向下遍历子树</strong>查找满足条件的数据行，这个特点带来了大量的<strong>随机 I&#x2F;O</strong>，也是 B 树最大的性能问题。</p>
-<p>B+ 树中就不存在这个问题了，因为所有的数据行都存储在叶节点中，而这些叶节点可以<strong>通过『指针』依次按顺序连接</strong>，当我们在如下所示的 B+ 树<strong>遍历数据时可以直接在多个子节点之间进行跳转</strong>，这样能够节省大量的磁盘 I&#x2F;O 时间，也不需要在不同层级的节点之间对数据进行拼接和排序；通过一个 B+ 树最左侧的叶子节点，我们可以像链表一样遍历整个树中的全部数据，我们也可以引入双向链表保证倒序遍历时的性能。</p>
+<p>由于 <strong>所有的节点都可能包含目标数据</strong>，我们总是要 <strong>从根节点向下遍历子树</strong> 查找满足条件的数据行，这个特点带来了大量的 <strong>随机 I&#x2F;O</strong>，也是 B 树最大的性能问题。</p>
+<p>B+ 树中就不存在这个问题了，因为 <strong>所有的数据行都存储在叶节点中</strong>，而这些叶节点可以 <strong>通过『指针』依次按顺序连接</strong>，当我们在如下所示的 B+ 树 <strong>遍历数据时可以直接在多个子节点之间进行跳转</strong>，这样能够节省大量的磁盘 I&#x2F;O 时间，也不需要在不同层级的节点之间对数据进行拼接和排序；通过一个 B+ 树最左侧的叶子节点，我们可以像链表一样遍历整个树中的全部数据，我们也可以引入双向链表保证倒序遍历时的性能。</p>
 <p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1631366964858.png" srcset="/img/loading.gif" lazyload></p>
-<p>我的理解：因为 B+ 树把所有数据存储在了叶节点，并且叶节点全部连接起来形成了一个<strong>双向链表</strong>，所以在<strong>范围查找</strong>时特别高效，只需要通过指针前后移动即可，这也是其相对于 B 树而言最大的优势，不再需要像 B 树那样进行回溯操作了（比如上面的例子中，要查找一个范围内的数据，需要在叶节点和根节点之间移动）。</p>
+<p>我的理解：因为 B+ 树把所有数据存储在了叶节点，并且叶节点全部连接起来形成了一个 <strong>双向链表</strong>，所以在 <strong>范围查找</strong> 时特别高效，只需要通过指针前后移动即可，这也是其相对于 B 树而言最大的优势，不再需要像 B 树那样进行回溯操作了</p>
+<blockquote>
+<p>疑问：</p>
+<p>叶子结点用类似链表的方式通过指针连接起来，那叶子结点也是一个磁盘页吗？如果是的话，通过指针移动不也是在做 IO 操作吗？（对存储的知识不懂）</p>
+<p>貌似是这样的，指针移动也是在做 IO 操作，但是相比 B 树的回溯操作来说，指针移动的次数更稳定，通常也更少</p>
+</blockquote>
 <p><strong>补充一点</strong></p>
 <p>B+ 树更适合外部存储。由于内节点无 data 域，每个节点能索引的范围更大更精确</p>
-<p>这个很好理解，由于 B- 树节点内部每个 key 都带着 data 域，而 B+ 树节点只存储 key 的副本，真实的 key 和 data 域都在叶子节点存储。前面说过磁盘是分 block 的，一次磁盘 IO 会读取若干个 block，具体和操作系统有关，那么由于磁盘 IO 数据大小是固定的，在一次 IO 中，单个元素越小，量就越大。这就意味着 B+ 树单次磁盘 IO 的信息量大于 B- 树，从这点来看 B+ 树相对 B- 树磁盘 IO 次数少。</p>
+<p>这个很好理解，由于 B 树节点内部每个 key 都带着 data 域，而 B+ 树节点只存储 key 的副本，真实的 key 和 data 域都在叶子节点存储。前面说过磁盘是分 block 的，一次磁盘 IO 会读取若干个 block，具体和操作系统有关，那么由于磁盘 IO 数据大小是固定的，在一次 IO 中，单个元素越小，量就越大。这就意味着 B+ 树单次磁盘 IO 的信息量大于 B- 树，从这点来看 B+ 树相对 B- 树磁盘 IO 次数少。</p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><strong>来源：<a target="_blank" rel="noopener" href="https://leetcode-cn.com/circle/discuss/F7bKlM/">https://leetcode-cn.com/circle/discuss/F7bKlM/</a></strong></p>
-<p><strong>1. B+ 树和 B 树的区别？</strong><br>B 树非叶子结点和叶子结点都存储数据,因此查询数据时，时间复杂度最好为 O(1)，最坏为 O(log n)。<br>B+ 树只在叶子结点存储数据，非叶子结点存储关键字，且不同非叶子结点的关键字可能重复，因此查询数据时，时间复杂度固定为 O(log n)。</p>
-<p>B+ 树叶子结点之间用链表相互连接，因而只需扫描叶子结点的链表就可以完成一次遍历操作，B树只能通过中序遍历。</p>
+<p><strong>1. B+ 树和 B 树的区别？</strong><br>B 树非叶子结点和叶子结点都存储数据，因此查询数据时，时间复杂度最好为 O(1)，最坏为 O(log n)。<br>B+ 树只在叶子结点存储数据，非叶子结点存储关键字，且不同非叶子结点的关键字可能重复，因此查询数据时，时间复杂度固定为 O(log n)。</p>
+<p>B+ 树叶子结点之间用链表相互连接，因而只需扫描叶子结点的链表就可以完成一次遍历操作，B 树只能通过中序遍历。</p>
 <p><strong>2. 为什么 B+ 树比 B 树更适合应用于数据库索引？</strong><br>B+ 树更加适应磁盘的特性，相比 B 树减少了 I&#x2F;O 读写的次数。由于索引文件很大因此索引文件存储在磁盘上，B+ 树的非叶子结点只存关键字不存数据，因而<strong>单个页可以存储更多的关键字</strong>，即<strong>一次性读入内存的需要查找的关键字也就越多</strong>，磁盘的随机 I&#x2F;O 读取次数相对就减少了。</p>
 <p>B+ 树的查询效率相比 B树 更加稳定，由于数据只存在在叶子结点上，所以查找效率固定为 O(log n)。</p>
 <p>B+ 树叶子结点之间用链表有序连接，所以扫描全部数据只需扫描一遍叶子结点，<strong>利于扫库和范围查询</strong>；B 树由于非叶子结点也存数据，所以只能通过中序遍历按序来扫。也就是说，对于范围查询和有序遍历而言，B+ 树的效率更高。</p>
-<h1 id="引申"><a href="#引申" class="headerlink" title="引申"></a>引申</h1><h2 id="为什么不使用二叉搜索树？"><a href="#为什么不使用二叉搜索树？" class="headerlink" title="为什么不使用二叉搜索树？"></a>为什么不使用二叉搜索树？</h2><p>树可以有二叉，也可以有多叉。多叉树就是每个节点有多个儿子，儿子之间的大小保证从左到右递增。二叉树是搜索效率最高的，但是实际上大多数的数据库存储却并不使用二叉树。其原因是，<strong>索引不止存在内存中，还要写到磁盘上</strong>。</p>
-<p>你可以想象一下一棵100万节点的平衡二叉树，树高20（2^20 &#x3D; 1048576）。一次查询可能需要访问20个数据块。在机械硬盘时代，从磁盘随机读一个数据块需要10 ms左右的寻址时间。也就是说，对于一个100万行的表，如果使用二叉树来存储，单独访问一个行可能需要20个10 ms的时间，这个查询可真够慢的。</p>
-<p>为了让一个查询尽量少地读磁盘，就必须让查询过程访问尽量少的数据块。那么，我们就不应该使用二叉树，而是要使用“N叉”树。这里，“N叉”树中的“N”取决于数据块的大小。</p>
+<h1 id="引申"><a href="#引申" class="headerlink" title="引申"></a>引申</h1><h2 id="为什么不使用二叉搜索树？"><a href="#为什么不使用二叉搜索树？" class="headerlink" title="为什么不使用二叉搜索树？"></a>为什么不使用二叉搜索树？</h2><p>树可以有二叉，也可以有多叉。多叉树就是每个节点有多个儿子，儿子之间的大小保证从左到右递增。二叉树是搜索效率最高的，但是实际上大多数的数据库存储却并不使用二叉树，其原因是，<strong>索引不止存在内存中，还要写到磁盘上</strong>。</p>
+<p>你可以想象一下一棵 100 万节点的平衡二叉树，树高 20（2^20 &#x3D; 1048576）。一次查询可能需要访问 20 个数据块。在机械硬盘时代，从磁盘随机读一个数据块需要 10 ms左右的寻址时间。也就是说，对于一个 100 万行的表，如果使用二叉树来存储，单独访问一个行可能需要 20 个 10 ms 的时间，这个查询可真够慢的。</p>
+<p>为了让一个查询尽量少地读磁盘，就必须让查询过程访问尽量少的数据块。那么，我们就不应该使用二叉树，而是要使用 N 叉树。这里，N 叉树中的 N 取决于数据块的大小。</p>
 
                 
               </div>

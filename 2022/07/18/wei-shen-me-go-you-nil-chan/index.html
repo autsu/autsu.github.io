@@ -24,7 +24,7 @@
 <meta property="og:description" content="如果没有调用 make 来对一个 chan 进行初始化，那么这个 chan 就是 nil chan。 对于 nil chan：  从 nil chan 接收将永远阻塞 发送值到 nil chan 会永远阻塞 close 一个 nil chan 会引发 panic  看到这里我不禁有点疑问，这样设计的意义在哪里？为什么写入和读取要阻塞，而不是像 nil map 一样直接 panic？ 带着这个问题找">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-07-18T14:35:52.000Z">
-<meta property="article:modified_time" content="2023-03-18T13:37:15.223Z">
+<meta property="article:modified_time" content="2023-08-09T11:10:23.379Z">
 <meta property="article:author" content="void">
 <meta property="article:tag" content="go">
 <meta name="twitter:card" content="summary_large_image">

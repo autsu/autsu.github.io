@@ -245,6 +245,172 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2022/07/14/url_dao_xian_shi_wang_ye_fa_shen_le_shen_me/" target="_self">
+          输入 url 到浏览器显示网页，期间发生了什么？
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/07/14/url_dao_xian_shi_wang_ye_fa_shen_le_shen_me/" target="_self">
+        <div>
+          1. 解析 URL 并构建请求报文首先浏览器做的第一步工作就是要对 URL 进行解析，从而构建出发送给 Web 服务器的请求报文。 URL 由三部分组成：协议类型，服务器地址和资源文件路径。比如 http://www.server.com/dir1/file1.html 这个 URL，它的协议类型是 http，服务器地址（域名）是 www.server.com，dir1/file1.html 就是
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-07-14 14:30" pubdate>
+              2022-07-14
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
+            
+              <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/">#面试题</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/07/12/go-mutex-yuan-ma/" target="_self">
+          go mutex 原理
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/07/12/go-mutex-yuan-ma/" target="_self">
+        <div>
+          参考：https://www.bilibili.com/video/BV15V411n7fM?p=2&amp;spm_id_from=pageDriver&amp;vd_source=2ff613424b86c58a71ba91b7304ffe9b  总览mutex 的数据结构： 1234type Mutex struct &#123;	state int32	sema  uint32&#125
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-07-12 22:09" pubdate>
+              2022-07-12
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/go/">#go</a>
+            
+              <a href="/tags/%E6%BA%90%E7%A0%81/">#源码</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/06/26/go-chan-yuan-ma/" target="_self">
+          go chan 原理（人话版）
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/06/26/go-chan-yuan-ma/" target="_self">
+        <div>
+          chan 原理（人话版） 说明：这里只是用大白话来阐述 chan 的大致原理，不保证严谨性，也不考虑一些繁枝细节（比如 sudog，gopark，goready），仅作为一个简单的参考理解，如果想深入理解 chan 的底层实现，请自行参阅其他博客  chan 底层有两个队列：sendq 和 recvq，这两个队列保存的都是被阻塞的 goroutine（简称 g），顾名思义，sendq 里面保存的是
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-06-26 20:51" pubdate>
+              2022-06-26
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/go/">#go</a>
+            
+              <a href="/tags/%E6%BA%90%E7%A0%81/">#源码</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/06/24/127.0.0.1_localhost_0.0.0.0/" target="_self">
+          127.0.0.1，localhost，0.0.0.0 的区别（包含虚拟网卡相关操作）
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/06/24/127.0.0.1_localhost_0.0.0.0/" target="_self">
+        <div>
+          127.0.0.1127.0.0.1 是 回环地址，当报文的目的地址是回环地址时，依然会走一遍网络协议栈，但是不会经过物理网卡，而是经过一个名为 lo 的虚拟网卡（mac 上交 lo0），具体的流程是： 从应用层到传输层再到网络层，到了网络层，系统会根据目的IP，在路由表中获取对应的路由信息，而这其中就包含选择哪个网卡把消息发出。 当发现 目标IP是外网IP 时，会从”真网卡”发出。 当发现 目标
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-06-24 20:50" pubdate>
+              2022-06-24
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2022/06/11/gobreaker/" target="_self">
           go 熔断器 gobreaker 源码阅读
         </a>
@@ -368,7 +534,7 @@
       <h1 class="index-header">
         
         <a href="/2022/06/01/go-gc/" target="_self">
-          go gc 白话版
+          go GC 白话版
         </a>
       </h1>
 
@@ -395,7 +561,7 @@
             
               <a href="/tags/go/">#go</a>
             
-              <a href="/tags/gc/">#gc</a>
+              <a href="/tags/GC/">#GC</a>
             
           </div>
         
@@ -485,173 +651,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/05/28/kqueue/" target="_self">
-          kqueue
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/28/kqueue/" target="_self">
-        <div>
-          一个 echo server 示例： 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-05-28 01:10" pubdate>
-              2022-05-28
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/">#多路复用</a>
-            
-              <a href="/tags/kqueue/">#kqueue</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/05/20/k8s-juan/" target="_self">
-          k8s 卷
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/20/k8s-juan/" target="_self">
-        <div>
-          为什么需要卷pod 类似逻辑主机，在逻辑主机中运行的进程共享诸如 CPU、RAM、网络接口等资源。有时候人们会期望进程也能共享磁盘，但是因为 pod 中运行的是一个个容器，而每个容器都有自己独立的文件系统（因为文件系统来自于容器镜像），所以不能共享磁盘。有时候可能存在这样一种需求：pod 中某个容器存储的数据需要持久化，但是因为容器存在挂掉的可能，如果挂掉后会新创建一个 pod 来顶替，但是因为
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-05-20 19:41" pubdate>
-              2022-05-20
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/k8s/">#k8s</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/05/17/mac-shang-zhi-zuo-windows/" target="_self">
-          在 mac 上制作 windows10 启动盘，亲测可用
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/17/mac-shang-zhi-zuo-windows/" target="_self">
-        <div>
-          来源：https://chinese.freecodecamp.org/news/how-make-a-windows-10-usb-using-your-mac-build-a-bootable-iso-from-your-macs-terminal/  准备 windows iso 文件 一个大小至少 8G 的 U 盘 mac 上安装好 homebrew  步骤 1查看 U 盘的名称： 1$
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-05-17 11:02" pubdate>
-              2022-05-17
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/">#实用工具</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/05/16/iptables/" target="_self">
-          linux iptables
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/16/iptables/" target="_self">
-        <div>
-          文档状态：Draft   链，表和规则规则顾名思义，规则就是针对网络包的不同 行为，做出对应的 处理操作，比如如果我收到的网络包的 IP 是 xx.xx.xx.xx，那么我就将其丢弃；如果我收到的包的端口是 8080，我就将其转发给 XXX 之类的，也可以说，规则就是匹配条件 + 处理操作。 匹配条件 示例  阻止特定的 ip 地址 在我们继续进行其他示例之前，如果您想阻止特定的 ip 地址，您
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-05-16 10:53" pubdate>
-              2022-05-16
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/linux/">#linux</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/4/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/#board">3</a><a class="page-number" href="/page/4/#board">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/#board">6</a><a class="page-number" href="/page/7/#board">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/#board">16</a><a class="extend next" rel="next" href="/page/6/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/4/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/#board">3</a><a class="page-number" href="/page/4/#board">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/#board">6</a><a class="page-number" href="/page/7/#board">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/#board">17</a><a class="extend next" rel="next" href="/page/6/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

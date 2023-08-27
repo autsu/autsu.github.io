@@ -245,6 +245,166 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2022/05/08/multipass-xiu-gai-pei-zhi/" target="_self">
+          multipass 修改配置（内存、硬盘、CPU 等）适用于 m1 mac
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/08/multipass-xiu-gai-pei-zhi/" target="_self">
+        <div>
+          multipass 是一款比较轻量级的虚拟机方案，使用起来也比较方便，操作方式与容器类似，但是使用过程中发现没有直接提供修改配置的简单方法，比如默认创建的虚拟机硬盘大小只会分配 5G，如果要跑 k8s 之类的显然是不够用的（k3s 都不够），而且默认创建的 CPU 只有 1 核，连 minikube 都跑不起来（最低需要 2 核），所以就需要修改配置。 在 github 上找到的解决方案（适用于
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-05-08 15:46" pubdate>
+              2022-05-08
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/multipass/">#multipass</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/05/08/k8s-nginx-pod-de-containerport-wen-ti/" target="_self">
+          k8s nginx pod 的 containerPort 问题
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/08/k8s-nginx-pod-de-containerport-wen-ti/" target="_self">
+        <div>
+          问题重现有如下 yaml： 12345678910111213apiVersion: v1kind: Podmetadata:  name: nginx  labels:    app: nginxspec:  containers:  - name: nginx    image: nginx:alpine    ports:    - containerPort: 8080      host
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-05-08 15:42" pubdate>
+              2022-05-08
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/k8s/">#k8s</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/05/07/k8s-daemonset/" target="_self">
+          k8s DaemonSet
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/07/k8s-daemonset/" target="_self">
+        <div>
+          顾名思义，daemon 代表守护程序，所以 DaemonSet （简称 ds）会在每个节点上运行一个专门的 pod，这个 pod 是特殊的，比如资源监控器或者日志收集器，或者 k8s 自己的 kube-proxy。与 rc 或者 rs 不同，这两个会随机地分布在整个集群中，比如副本数量为 5，一共有 4 个节点，可能会在节点 1 创建两个副本，节点 2 创建 1 个副本，节点 4 创建 2 个副本
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-05-07 22:59" pubdate>
+              2022-05-07
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/k8s/">#k8s</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/05/07/k8s-replicaset/" target="_self">
+          k8s ReplicaSet
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/07/k8s-replicaset/" target="_self">
+        <div>
+          本篇笔记摘自 《Kubernetes in Aciton 》  介绍ReplicaSet（简称 rs） 是 ReplicationController （简称 rc）的升级版，它的标签选择器功能更加强大。 标签选择器使用 selector.matchExpressions 进行标签选择，比如： 123456selector:	matchExpressions:	- key: app				#
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-05-07 11:12" pubdate>
+              2022-05-07
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/k8s/">#k8s</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2022/05/06/k8s-replicationcontroller/" target="_self">
           k8s ReplicationController
         </a>
@@ -333,7 +493,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2022/05/04/k8s-pod-bi-ji/" target="_self">
         <div>
-          本篇笔记摘自 《Kubernetes in Aciton 》第三章：pod：运行于 Kubernetes 中的容器  什么是 podpod 是 k8s 的最基本构建模块，他是多个容器的集合（当然也可以只有1个容器），一个 pod 里的所有容器都会运行在同一个节点上，不存在一个 pod 中的容器 A 在节点 1 运行，容器 B 在节点 2 运行这种情况。 为何不将所有进程放到一个容器中？ 容器被设
+          本篇笔记摘自 《Kubernetes in Aciton 》第三章：pod：运行于 Kubernetes 中的容器  什么是 PodK8s 中的 Pod 是 最小的可调度和管理单元，它可以 包含一个或多个容器。Pod 是 K8s 中部署和运行应用程序的基本单位，它提供了一个共享的网络命名空间、存储卷和容器之间的共享环境。 一个 Pod 可以包含多个容器，这些容器 共享相同的网络和存储，可以在同一
         </div>
       </a>
 
@@ -479,164 +639,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/03/16/mysql-buffer-pool-de-yi-xie-yi-wen-ji-lu/" target="_self">
-          Mysql Buffer Pool 的一些疑问记录
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/16/mysql-buffer-pool-de-yi-xie-yi-wen-ji-lu/" target="_self">
-        <div>
-          这是我在看 Mysql Buffer Pool 时的一个疑问，先说说 Buffer Pool，为了提高性能，Mysql 为读写操作添加了一层缓存，这样就可以直接从内存中操作，速度相比操作硬盘要快很多，只要之后再将内存中的数据定期写入到磁盘中即可保证数据一致。但是这样就产生了一个问题：如果在内存写入到磁盘之前，Mysql 进程挂掉了，这样岂不是就丢失数据了？ 通过网上查阅资料，了解了 Mysql 对
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-03-16 23:00" pubdate>
-              2022-03-16
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/mysql/">#mysql</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/03/10/go-slice-append-de-keng-cun-yi/" target="_self">
-          Go slice append 的坑 [存疑]
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/10/go-slice-append-de-keng-cun-yi/" target="_self">
-        <div>
-          引子使用过 Go 的小伙伴应该都遇到过这样一个坑：当使用 slice 作为参数传递时，如果调用方函数内部发生了 append 操作，那么对应的改变不会在实参处体现出来，比如： 1234567891011121314package mainimport &quot;fmt&quot;func main() &#123;	slice := make([]int, 0, 0)	slice = fn(sl
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-03-10 14:31" pubdate>
-              2022-03-10
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/02/15/cao-zuo-xi-tong-mian-shi-ti/" target="_self">
-          操作系统面试题
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/02/15/cao-zuo-xi-tong-mian-shi-ti/" target="_self">
-        <div>
-          页的概念线程怎么调度的进程间通信有哪几种方式，哪种方式最快？1.无名管道( pipe )：管道是一种半双工的通信方式，数据只能单向流动，而且只能在具有亲缘关系的进程间使用。进程的亲缘关系通常是指父子进程关系。 2.高级管道(popen)：将另一个程序当做一个新的进程在当前程序进程中启动，则它算是当前程序的子进程，这种方式我们成为高级管道方式。 3.有名管道 (named pipe) ： 有名管道也
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-02-15 01:28" pubdate>
-              2022-02-15
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">#操作系统</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/02/14/mvcc-yu-shi-wu-ge-chi/" target="_self">
-          MVCC 与事务隔离
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/02/14/mvcc-yu-shi-wu-ge-chi/" target="_self">
-        <div>
-          申明：以下内容来自网上的博客、课程，通过自己的理解进行一下转述，可能存在一些错误和纰漏  介绍MySQL 的 可重复读 和 读已提交 是基于 MVCC 实现的，它的最大优点是读不加锁，因此读写不冲突，并发性能好，其实现主要基于以下技术及数据结构： 首先，InnoDB 里面每个事务有一个唯一的事务ID，叫作 transaction id。它是在事务开始的时候向InnoDB的事务系统申请的，是按申
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-02-14 16:01" pubdate>
-              2022-02-14
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/mysql/">#mysql</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/6/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/#board">5</a><a class="page-number" href="/page/6/#board">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/#board">8</a><a class="page-number" href="/page/9/#board">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/#board">16</a><a class="extend next" rel="next" href="/page/8/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/6/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/#board">5</a><a class="page-number" href="/page/6/#board">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/#board">8</a><a class="page-number" href="/page/9/#board">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/#board">17</a><a class="extend next" rel="next" href="/page/8/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

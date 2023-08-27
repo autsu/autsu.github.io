@@ -24,7 +24,7 @@
 <meta property="og:description" content="ssh 到家里的另外一台电脑，发现输入延迟比较严重，体验不是很好，ping 发现延迟普遍在 100 -200 之间，有几次甚至超过了 400，在网上找到了一个解决方法： 1$ sudo vim &#x2F;etc&#x2F;ssh&#x2F;sshd_config 输入 &#x2F;UseDNS 查找这一行，找到后发现这行 UseDNS no 是被注释的，去掉注释，然后 service sshd restart 即可，修改之后">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-05-11T14:44:05.000Z">
-<meta property="article:modified_time" content="2023-03-18T13:37:15.219Z">
+<meta property="article:modified_time" content="2023-08-09T11:10:23.377Z">
 <meta property="article:author" content="void">
 <meta name="twitter:card" content="summary_large_image">
   

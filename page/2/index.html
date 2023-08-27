@@ -245,15 +245,179 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2023/05/08/metallb/" target="_self">
+          k8s loadbalancer —— Metallb [draft] 
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/05/08/metallb/" target="_self">
+        <div>
+          安装（Layer2 模式）首先需要查看你的 kube-proxy 使用的是不是 ipvs 模式，执行下面的命令： 1kubectl edit configmap -n kube-system kube-proxy  其中有一个配置项 mode，如果它的值是 ipvs，则表示使用的 ipvs 模式。 12345apiVersion: v1data:  config.conf: |-    apiVe
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-05-08 12:37" pubdate>
+              2023-05-08
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/k8s/">#k8s</a>
+            
+              <a href="/tags/loadbalancer/">#loadbalancer</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/05/07/chatgpt-QA/" target="_self">
+          Chatgpt Q&amp;A
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/05/07/chatgpt-QA/" target="_self">
+        <div>
+          这个文档记录了 chatGPT 的一些有帮助的回答。 网络为什么网络协议栈要分层？不能直接把应用层的东西一起放到传输层吗网络协议栈之所以要分层，主要是为了提高网络协议的可维护性、可扩展性、互操作性以及灵活性。 具体来说，网络协议栈分层的好处包括： 模块化设计：将协议栈分成不同的层次，每一层都有明确的功能和接口，可以独立设计、测试、实现和优化，提高了系统的可维护性和可扩展性。 抽象层次：每一层都通过
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-05-07 08:57" pubdate>
+              2023-05-07
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/chatgpt/">#chatgpt</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/04/20/controller-runtime-source/" target="_self">
+          Controller-Runtime 之 Source 
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/20/controller-runtime-source/" target="_self">
+        <div>
+          背景Source 是 Watches() 的第一个参数，代表一种事件源，实际类型是一个 interface，原型： 123type Source interface &#123;	Start(context.Context, handler.EventHandler, workqueue.RateLimitingInterface, ...predicate.Predicate) error&#1
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-04-20 16:10" pubdate>
+              2023-04-20
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/k8s/">#k8s</a>
+            
+              <a href="/tags/controller-runtime/">#controller-runtime</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/04/18/k8s-storageclass/" target="_self">
+          K8s Storageclass
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/18/k8s-storageclass/" target="_self">
+        <div>
+          搭建 NFS StorageClass搭建 NFS Server12345678910# 安装 NFS 服务端sudo apt-get install nfs-kernel-server  # 创建一个 dir 作为 NFS 共享目录mkdir /share# 编辑配置sudo vim /etc/exports# 在最后一行添加/share *(rw,sync,no_root_squash,no_
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-04-18 13:51" pubdate>
+              2023-04-18
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/k8s/">#k8s</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2023/04/16/Kubespray-install/" target="_self">
-          通过 Kubespray 搭建 k8s 集群
+          使用 Kubespray 搭建 k8s 集群
         </a>
       </h1>
 
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/04/16/Kubespray-install/" target="_self">
         <div>
-          ⚠️  安装前最好确保你的主机够干净，我的虚拟机就因为之前自行用二进制搭建过，导致使用 kubespray 安装出现各种奇奇怪怪的错误，最后删除重新创建了一台，一次就安装成功了  初始化1234567891011121314151617181920212223apt install pip# ssh 登录要用，不然报错 &quot;to use the &#x27;ssh&#x27; conne
+          ⚠️  安装前最好确保你的主机够干净，我的虚拟机就因为之前自行用二进制搭建过，导致使用 kubespray 安装出现各种奇奇怪怪的错误，最后删除重新创建了一台，一次就安装成功了             初始化1234567891011121314151617181920212223apt install pip# ssh 登录要用，不然报错 &quot;to use th
         </div>
       </a>
 
@@ -479,171 +643,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/10/03/kubebuilder/" target="_self">
-          kubebuilder 实践
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/10/03/kubebuilder/" target="_self">
-        <div>
-          快速入门下载 kubebuiler123456$ os=$(go env GOOS)$ arch=$(go env GOARCH)$ curl -L -o kubebuilder https://go.kubebuilder.io/dl/latest/$&#123;os&#125;/$&#123;arch&#125;$ chmod +x kubebuilder$ sudo mv ./kubebui
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-10-03 22:08" pubdate>
-              2022-10-03
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/k8s/">#k8s</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/09/29/docker-tag/" target="_self">
-          docker tag 的用处
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/29/docker-tag/" target="_self">
-        <div>
-          docker tag 相当于对镜像做一次备份，将当前的镜像（比如 tag:latest）备份出去一份（比如 tag: v1），然后如果开发了新的镜像，可以直接覆盖掉当前的（tag:latest），然后再给 latest 打个标签：tag:v2，相当于又备份了一份，现在就有了 v1，v2，latest 三个镜像，使用 tag 不仅可以备份镜像，还可以对镜像做标注区分。 详细可以看下面的例子：  12
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-09-29 00:14" pubdate>
-              2022-09-29
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/docker/">#docker</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/09/11/k8s-statefulset/" target="_self">
-          k8s StatefulSet
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/11/k8s-statefulset/" target="_self">
-        <div>
-          有状态与无状态无状态应用，指的是在运行时不需要维护或跟踪任何特定状态的应用程序。例如，Web 服务器或 API 服务器通常可以处理来自客户端的请求，而无需了解以前的请求或客户端状态。这些应用程序可以很容易地水平扩展，因为它们不需要共享状态，所以可以在任何节点上运行。像 Deployment 也是一个典型的“无状态应用”，它会按照事先声明的模板创建出 pod，这表示每个 pod 的定义将会是一模一样
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-09-11 23:43" pubdate>
-              2022-09-11
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/k8s/">#k8s</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/09/10/ubuntu-arm64-an-zhuang-docker/" target="_self">
-          ubuntu arm64 使用 apt-get 安装 docker，以及 snap 的一些问题记录
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/10/ubuntu-arm64-an-zhuang-docker/" target="_self">
-        <div>
-          使用 snap 可以比较方便的安装 docker，但是有一次出现了 k8s pod 无法拉取镜像的问题，看了下 pod describe，发现是因为走代理的问题（我使用的是 ubuntu 虚拟机，连接宿主机的 clashx 进行代理），连接的代理是宿主机的老地址 192.168.2.5，但是因为重启过路由器，所以宿主机的地址变更为了 192.168.2.3，代理不通自然也拉取不了镜像了，报错： 1
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-09-10 19:41" pubdate>
-              2022-09-10
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/issue/">#issue</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/#board">3</a><a class="page-number" href="/page/4/#board">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/#board">16</a><a class="extend next" rel="next" href="/page/3/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/#board">3</a><a class="page-number" href="/page/4/#board">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/#board">17</a><a class="extend next" rel="next" href="/page/3/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

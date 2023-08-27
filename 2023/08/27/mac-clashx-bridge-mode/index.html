@@ -16,22 +16,31 @@
   <meta name="author" content="void">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Go相关map、channel、slice 的底层实现mapmap 使用的是拉链法，用哈希桶来保存键值对，每个桶可以保存 8 个键值对，它会用哈希算法计算出 key 的 hash 值，然后用这个哈希值的高 8 位作为 tophash，用于在一个桶中区别出 key，然后桶的数量是 2^b ，用低 b 位来决定这个 key 放到哪个桶。每个桶还会连接一个溢出桶，如果一个桶已经满了，但是依然有 key">
+    <meta name="description" content="背景前段时间搞了台台式当服务器用，用的是 Windows + Linux 虚拟机的方式，然后 Windows 装上 Clash for windows 并且开启 Tun 模式，这样虚拟机也可以享受 Clash 的代理，但是使用过程中发现一个问题，就是这些虚拟机虽然能科学上网了，但是速度相比宿主机非常慢， 同样的一个 Github 上的包，在 Windows 上下载有几 m&#x2F;s 的速度，到">
 <meta property="og:type" content="article">
-<meta property="og:title" content="面试题收集 1">
-<meta property="og:url" content="https://autsu.github.io/2022/08/18/mian_shi_ti_shou_ji1/index.html">
+<meta property="og:title" content="Mac + Clashx Pro 构建网关旁路由">
+<meta property="og:url" content="https://autsu.github.io/2023/08/27/mac-clashx-bridge-mode/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Go相关map、channel、slice 的底层实现mapmap 使用的是拉链法，用哈希桶来保存键值对，每个桶可以保存 8 个键值对，它会用哈希算法计算出 key 的 hash 值，然后用这个哈希值的高 8 位作为 tophash，用于在一个桶中区别出 key，然后桶的数量是 2^b ，用低 b 位来决定这个 key 放到哪个桶。每个桶还会连接一个溢出桶，如果一个桶已经满了，但是依然有 key">
+<meta property="og:description" content="背景前段时间搞了台台式当服务器用，用的是 Windows + Linux 虚拟机的方式，然后 Windows 装上 Clash for windows 并且开启 Tun 模式，这样虚拟机也可以享受 Clash 的代理，但是使用过程中发现一个问题，就是这些虚拟机虽然能科学上网了，但是速度相比宿主机非常慢， 同样的一个 Github 上的包，在 Windows 上下载有几 m&#x2F;s 的速度，到">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-08-18T14:12:52.000Z">
-<meta property="article:modified_time" content="2023-03-18T13:37:15.209Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx1.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx2.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx3.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx4.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx5.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx7.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx8.png">
+<meta property="article:published_time" content="2023-08-27T15:01:37.000Z">
+<meta property="article:modified_time" content="2023-08-27T16:51:46.616Z">
 <meta property="article:author" content="void">
-<meta property="article:tag" content="面经">
+<meta property="article:tag" content="misc">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx1.jpg">
   
   
   
-  <title>面试题收集 1 - Hexo</title>
+  <title>Mac + Clashx Pro 构建网关旁路由 - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -218,7 +227,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="面试题收集 1"></span>
+            <span id="subtitle" data-typed-text="Mac + Clashx Pro 构建网关旁路由"></span>
           
         </div>
 
@@ -229,8 +238,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-08-18 22:12" pubdate>
-          2022年8月18日 晚上
+        <time datetime="2023-08-27 23:01" pubdate>
+          2023年8月27日 晚上
         </time>
       </span>
     
@@ -241,7 +250,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.1k 字
+          1.6k 字
         
       </span>
     
@@ -252,7 +261,7 @@
         
         
         
-          10 分钟
+          14 分钟
         
       </span>
     
@@ -298,24 +307,36 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">面试题收集 1</h1>
+            <h1 style="display: none">Mac + Clashx Pro 构建网关旁路由</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="Go相关"><a href="#Go相关" class="headerlink" title="Go相关"></a>Go相关</h1><h2 id="map、channel、slice-的底层实现"><a href="#map、channel、slice-的底层实现" class="headerlink" title="map、channel、slice 的底层实现"></a>map、channel、slice 的底层实现</h2><h3 id="map"><a href="#map" class="headerlink" title="map"></a>map</h3><p>map 使用的是拉链法，用哈希桶来保存键值对，每个桶可以保存 8 个键值对，它会用哈希算法计算出 key 的 hash 值，然后用这个哈希值的高 8 位作为 tophash，用于在一个桶中区别出 key，然后桶的数量是 2^b ，用低 b 位来决定这个 key 放到哪个桶。每个桶还会连接一个溢出桶，如果一个桶已经满了，但是依然有 key 落入到这个桶，那么就会将其放到溢出桶中。</p>
-<p>map 的默认负载因子是 6.5，负载因子表示的是当前键值对的数量 &#x2F; 当前桶的数量，如果 map 的负载因子达到了 6.5，那么就说明此时可能所有桶都快装满了，如果再添加键值对，大概率会放到溢出桶中，所以此时就需要进行扩容了，对应的扩容策略是：创建数量是之前桶的 2 倍的新桶，然后将旧桶中的值迁移到新桶中（迁移的策略是怎样的？rehash），还有一种情况是溢出桶的数量过多，可能的原因是键值对数量少，但过于分散，导致桶的数量多，解决办法是创建同样数量的新桶，将旧桶中的数据迁移到这些新桶中，使整体键值对的排布更紧凑。</p>
-<p>此外 go map 扩容采用的渐进式扩容，当执行插入、更新、删除操作时进行小部分扩容，而不是一次性将所有桶进行迁移，这样可以减少搬迁操作对性能的影响。</p>
-<h3 id="channel"><a href="#channel" class="headerlink" title="channel"></a>channel</h3><p>channel 底层主要由一个发送阻塞队列和一个接收阻塞队列，以及一把互斥锁组成，发送阻塞队列存储的是因为发送操作而被阻塞的 goroutine，接收阻塞队列同理，这里面存储的都是被挂起的 goroutine，当执行发送操作时，会先检查接收阻塞队列里有没有值，有的话从队头取出，并将这个 goroutine 唤醒，并将数据拷贝给它，执行接收操作同理。互斥锁用来保证 chan 的线程安全。此外如果是有缓冲的 chan，还会存在一个环形数组，</p>
-<h2 id="sync-map、sync-pool、sync-Once的原理"><a href="#sync-map、sync-pool、sync-Once的原理" class="headerlink" title="sync.map、sync.pool、sync.Once的原理"></a>sync.map、sync.pool、sync.Once的原理</h2><h2 id="GC的过程、写屏障的含义及作用"><a href="#GC的过程、写屏障的含义及作用" class="headerlink" title="GC的过程、写屏障的含义及作用"></a>GC的过程、写屏障的含义及作用</h2><h2 id="GMP-模型，触发-Goroutine-切换的原因有哪些？for-死循环会怎么样？全局-goroutine-里面存储什么？"><a href="#GMP-模型，触发-Goroutine-切换的原因有哪些？for-死循环会怎么样？全局-goroutine-里面存储什么？" class="headerlink" title="GMP 模型，触发 Goroutine 切换的原因有哪些？for 死循环会怎么样？全局 goroutine 里面存储什么？"></a>GMP 模型，触发 Goroutine 切换的原因有哪些？for 死循环会怎么样？全局 goroutine 里面存储什么？</h2><h2 id="interface-的底层实现，怎么判空？"><a href="#interface-的底层实现，怎么判空？" class="headerlink" title="interface 的底层实现，怎么判空？"></a>interface 的底层实现，怎么判空？</h2><h2 id="reflect-的使用"><a href="#reflect-的使用" class="headerlink" title="reflect 的使用"></a>reflect 的使用</h2><h2 id="逃逸分析"><a href="#逃逸分析" class="headerlink" title="逃逸分析"></a>逃逸分析</h2><h2 id="context的使用"><a href="#context的使用" class="headerlink" title="context的使用"></a>context的使用</h2><h2 id="go-性能问题的定位过程（pprof的使用）"><a href="#go-性能问题的定位过程（pprof的使用）" class="headerlink" title="go 性能问题的定位过程（pprof的使用）"></a>go 性能问题的定位过程（pprof的使用）</h2><h2 id="协程池的使用"><a href="#协程池的使用" class="headerlink" title="协程池的使用"></a>协程池的使用</h2><h1 id="Redis相关"><a href="#Redis相关" class="headerlink" title="Redis相关"></a>Redis相关</h1><h2 id="redis的数据类型以及日常的应用"><a href="#redis的数据类型以及日常的应用" class="headerlink" title="redis的数据类型以及日常的应用"></a>redis的数据类型以及日常的应用</h2><ul>
-<li>string 字符串类型</li>
-<li>hashmap 哈希表</li>
-<li>list 双向链表</li>
-<li>set 去重集合</li>
-<li>zset 排序 set</li>
-</ul>
-<h2 id="redis的发布-x2F-订阅的原理"><a href="#redis的发布-x2F-订阅的原理" class="headerlink" title="redis的发布&#x2F;订阅的原理"></a>redis的发布&#x2F;订阅的原理</h2><h2 id="zset的底层实现"><a href="#zset的底层实现" class="headerlink" title="zset的底层实现"></a>zset的底层实现</h2><p>zset 底层使用跳表 + 哈希表实现，</p>
-<h2 id="数据缓存过期策略"><a href="#数据缓存过期策略" class="headerlink" title="数据缓存过期策略"></a>数据缓存过期策略</h2><h2 id="redis的部署模式"><a href="#redis的部署模式" class="headerlink" title="redis的部署模式"></a>redis的部署模式</h2><h2 id="redis为什么速度比较快"><a href="#redis为什么速度比较快" class="headerlink" title="redis为什么速度比较快"></a>redis为什么速度比较快</h2><h2 id="reids的大key、热key的处理"><a href="#reids的大key、热key的处理" class="headerlink" title="reids的大key、热key的处理"></a>reids的大key、热key的处理</h2><h2 id="如何实现分布式锁的"><a href="#如何实现分布式锁的" class="headerlink" title="如何实现分布式锁的"></a>如何实现分布式锁的</h2><h2 id="持久化策略及其对比"><a href="#持久化策略及其对比" class="headerlink" title="持久化策略及其对比"></a>持久化策略及其对比</h2><h2 id="缓存雪崩、缓存击穿、缓存穿透"><a href="#缓存雪崩、缓存击穿、缓存穿透" class="headerlink" title="缓存雪崩、缓存击穿、缓存穿透"></a>缓存雪崩、缓存击穿、缓存穿透</h2>
+                <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>前段时间搞了台台式当服务器用，用的是 Windows + Linux 虚拟机的方式，然后 Windows 装上 Clash for windows 并且开启 Tun 模式，这样虚拟机也可以享受 Clash 的代理，但是使用过程中发现一个问题，就是这些虚拟机虽然能科学上网了，但是速度相比宿主机非常慢， 同样的一个 Github 上的包，在 Windows 上下载有几 m&#x2F;s 的速度，到了虚拟机这边只有 10k&#x2F;m，导致使用起来的体验非常差，也不知道是不是 Clash for windows 这个狗屎玩意的原因，为了解决这个问题，我在网上看到了一种使用旁路由的方法，大概意思就是让一台设备使用软件科学上网，然后将这台设备作为一个旁路由，让其他设备去连接它，连上以后直接就拥有了翻墙的能力，设备本身无需安装和配置任何工具，相当于是走了透明代理，非常方便，我手里刚好还有一台 Macbook，可以用这台来实验一下。</p>
+<h1 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h1><p>首先 Mac 上需要安装好 Clashx Pro，注意是 Pro 而不是普通的 Clashx，因为只有 Pro 才有增强模式，装好以后配置好你的机场，然后开启 <strong>设置为系统代理</strong> 和 <strong>增强模式</strong> 这两个选项（允许局域网连接不开貌似也没影响），这些基本操作没什么好说的，效果如下：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx1.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>然后需要将 Mac 设置为静态 IP，在 【设置 - 网络 - Wi-Fi - 详细信息 - TCP&#x2F;IP】里，将 【配置 IPv4 】改为手动，然后设置你的 IP 地址，子网掩码等信息，IP 地址只要和路由器 IP 在同一网段即可（这里涉及一些网络相关的知识，本文就不细说了），大概像下面这样：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx2.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>我这里的路由器 IP 是 192.168.31.1，然后子网掩码是 255.255.255.0，代表 192.168.31 这部分是网络号，那我们设置的静态 IP 就只需要改最后一部分即可，比如我改成了 192.168.31.254。</p>
+<p>然后还需要注意一下这里的 DNS，这个 DNS 貌似是 Clashx 的 DNS，这个地方不需要改，而且后面其他设备连接时需要用到：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx3.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>设置完上面的东西以后，Mac 这边就算完事了，其他设备就可以连接这台旁路由了，连接方法如下：</p>
+<p>将要连接的设备的 IP 也改为手动静态方式，IP 和子网掩码就不多说了，主要是路由器 IP（网关地址）和 DNS 这里，路由器 IP 要配置为 Mac 的 IP 地址（也就是我们前面给 Mac 设置好的静态 IP），DNS 就写 Clashx 的 DNS，比如 ios 可以配置成下面这样：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx4.jpg" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx5.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>没什么好说的，就是把路由器地址设置为 Mac 的 IP，然后 DNS 设置为固定的 198.18.0.2 即可。</p>
+<p>Windows 也是一样的，只要注意配置的静态 IP 别和其他设备冲突即可，类似下面这样即可：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx6.png" srcset="/img/loading.gif" lazyload></p>
+<p>Windows 还需要注意的一点是，得确认一下当前网络连接的设备是什么，直接改 WiFi 里面的配置可能无效，我这里就踩坑了，得去控制面板里看一下当前网络使用的网络设备，比如我这里就是 vEthernet 这个鬼东西，好像是 WSL 还是 hyper-v 给搞得一个东西：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx7.png" srcset="/img/loading.gif" lazyload></p>
+<p>然后再去改这个设备的网络配置信息：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx8.png" srcset="/img/loading.gif" lazyload></p>
+<p>然后就可以愉快的享受科学上网了~</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>上面提到的这种方法可能稍微麻烦一些，需要改每台连接设备的配置，好像还有一种修改路由器 DHCP 的方法，直接在路由器层面进行配置，这样其他设备就可以直接连接了，相对来说方便一些，我这里因为一些原因就先不实践了，具体可以看一下 <a target="_blank" rel="noopener" href="https://qust.me/post/clashxProMac/">这篇文章</a>。</p>
+<p>整体用下来感觉还不错，手机上用起来感觉速度比小火箭快一些，虚拟机里面下载 Github 包的速度也能上 m&#x2F;s 了，不过我这个机场不是太给力，经常报一些 SSL 错误和 EOF 错误，不过总体用下来比 CFW 的 Tun 模式还是要好不少的。</p>
+<p>然后我这里还遇到一个问题，就是 Mac 上的 Clash 退出以后，Mac 就上不了网了，这种情况需要将网络设置重新改回自动分配 IP 地址。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://qust.me/post/clashxProMac/">https://qust.me/post/clashxProMac/</a></p>
+
                 
               </div>
             
@@ -327,7 +348,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E9%9D%A2%E7%BB%8F/">#面经</a>
+        <a href="/tags/misc/">#misc</a>
       
     </div>
   
@@ -339,8 +360,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>面试题收集 1</div>
-      <div>https://autsu.github.io/2022/08/18/mian_shi_ti_shou_ji1/</div>
+      <div>Mac + Clashx Pro 构建网关旁路由</div>
+      <div>https://autsu.github.io/2023/08/27/mac-clashx-bridge-mode/</div>
     </div>
     <div class="license-meta">
       
@@ -352,7 +373,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年8月18日</div>
+          <div>2023年8月27日</div>
         </div>
       
       
@@ -384,18 +405,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/08/27/huan_cun_yi_zhi_xing/" title="如何保证缓存和数据库的一致性">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">如何保证缓存和数据库的一致性</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2022/08/17/leetcode_347_and_692/" title="两个类似的堆问题：leetcode 347 前 K 个高频元素 和 692. 前 K 个高频单词 ">
-                        <span class="hidden-mobile">两个类似的堆问题：leetcode 347 前 K 个高频元素 和 692. 前 K 个高频单词 </span>
+                      <a href="/2023/07/26/redis-fen-bu-shi-suo/" title="分布式锁实现">
+                        <span class="hidden-mobile">分布式锁实现</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

@@ -1,0 +1,874 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="何为分布式锁分布式锁其实和普通的锁（比如 go 里面的 sync.Mutex）类似，也是用来保护同一资源的互斥访问，避免出现竞争条件和数据不一致等问题的一种手段罢了，只不过相比普通的锁而言，其针对的是分布式场景，也就是说，分布式锁可以跨进程使用，这是其和普通锁的根本区别。比如我在服务器 A 上运行了 a 进程，在服务器 B 上运行了 b 进程，如果想让这两个进程互斥的访问同一个资源，那普通的 sy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式锁实现">
+<meta property="og:url" content="https://autsu.github.io/2023/07/26/redis-fen-bu-shi-suo/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="何为分布式锁分布式锁其实和普通的锁（比如 go 里面的 sync.Mutex）类似，也是用来保护同一资源的互斥访问，避免出现竞争条件和数据不一致等问题的一种手段罢了，只不过相比普通的锁而言，其针对的是分布式场景，也就是说，分布式锁可以跨进程使用，这是其和普通锁的根本区别。比如我在服务器 A 上运行了 a 进程，在服务器 B 上运行了 b 进程，如果想让这两个进程互斥的访问同一个资源，那普通的 sy">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-07-26T10:53:09.000Z">
+<meta property="article:modified_time" content="2023-08-12T04:55:23.215Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="Redis">
+<meta property="article:tag" content="分布式">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>分布式锁实现 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="分布式锁实现"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-07-26 18:53" pubdate>
+          2023年7月26日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          13k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          106 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">分布式锁实现</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="何为分布式锁"><a href="#何为分布式锁" class="headerlink" title="何为分布式锁"></a>何为分布式锁</h1><p>分布式锁其实和普通的锁（比如 go 里面的 sync.Mutex）类似，也是用来保护同一资源的互斥访问，避免出现竞争条件和数据不一致等问题的一种手段罢了，只不过相比普通的锁而言，其针对的是分布式场景，也就是说，分布式锁可以跨进程使用，这是其和普通锁的根本区别。比如我在服务器 A 上运行了 a 进程，在服务器 B 上运行了 b 进程，如果想让这两个进程互斥的访问同一个资源，那普通的 sync.Mutex 肯定是不行的，因为这都是两台独立的机器了，就算是同一台机器上的两个进程，它们彼此之间也是独立的，地址空间都不一样，普通的锁一样也无法工作，这个时候就必须得上分布式锁了。</p>
+<h1 id="如何实现（基于-Redis）"><a href="#如何实现（基于-Redis）" class="headerlink" title="如何实现（基于 Redis）"></a>如何实现（基于 Redis）</h1><p>跨进程通信的一个常规方法就是通过网络，所以一般实现分布式锁都需要依赖一个外部中间件，比如 Redis 之类的，然后不同的进程通过网络去操作这个中间件，来实现类似锁的功能。比如如果是 Redis 实现的话，大致逻辑就是二者去操作同一个 key，加锁就是 set key，如果该 key 不存在则说明加锁成功，否则说明该锁已经被别人拿到了，该进程需要阻塞等待，就和 sync.Mutex 的工作机制一毛一样，同理，解锁就是 delete 掉这个 key。当然这只是一个大致的逻辑，实际的实现会有很多细节上的考虑。</p>
+<p>实现分布式锁有以下几个要点：</p>
+<ol>
+<li>互斥性。在任意时刻，只有一个客户端能持有锁。</li>
+<li>不会发生死锁。即使有一个客户端在持有锁的期间崩溃而没有主动解锁，也能保证后续其他客户端能加锁。</li>
+<li>解铃还须系铃人。加锁和解锁必须是同一个客户端，客户端自己不能把别人加的锁给解了。</li>
+</ol>
+<p>基于上面几点，可以给出基于 redis 实现的分布式锁的加锁伪代码：</p>
+<h2 id="初版代码"><a href="#初版代码" class="headerlink" title="初版代码"></a>初版代码</h2><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs processing"><span class="hljs-keyword">if</span> (<span class="hljs-title function_">setnx</span>(<span class="hljs-built_in">key</span>, <span class="hljs-number">1</span>) == <span class="hljs-number">1</span>) &#123;<br>    <span class="hljs-title function_">expire</span>(<span class="hljs-built_in">key</span>, <span class="hljs-number">30</span>)<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-comment">// TODO 业务逻辑</span><br>    &#125; <span class="hljs-keyword">finally</span> &#123;<br>        <span class="hljs-title function_">del</span>(<span class="hljs-built_in">key</span>)<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>逻辑很简单，先执行 setnx 设置 key，如果返回 1 表示该 key 不存在，也就代表当前进程可以持有锁，这样就满足了上面的要点 1：互斥性。接下来为这个锁设置过期时间，这样就能保证在当前持有锁的进程因为特殊原因挂掉，无法正常解锁这种意外情况下，锁依然能够被释放，一定程度避免了死锁的发生，满足了第 2 个要点。但是第 3 点这里的代码没有体现，只是简单的 delete 掉这个 key，这里后面会展开讨论。</p>
+<p>上述锁实现方式存在一些问题：</p>
+<h2 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h2><h3 id="1-SETNX-和-EXPIRE-非原子性"><a href="#1-SETNX-和-EXPIRE-非原子性" class="headerlink" title="1. SETNX 和 EXPIRE 非原子性"></a>1. SETNX 和 EXPIRE 非原子性</h3><p>比如执行完 <code>if (setnx(key, 1) == 1) </code> 这一行了，但在继续执行 <code>expire(key, 30)</code> 之前，程序崩溃了，导致这个 key 没有被设置过期时间，从而变成死锁。根本原因就在于这两个命令是非原子性的，也就是说它们不是一个整体，可能存在一个命令执行成功，一个执行失败的情况。</p>
+<p>其实上面的这个实现有点老了，redis 已经废弃掉了 setnx 这个命令，在 <a target="_blank" rel="noopener" href="https://redis.io/commands/setnx/">redis 官方文档</a> 中也已经给出了说明：</p>
+<blockquote>
+<p>SETNX (deprecated)</p>
+<p>As of Redis version 2.6.12, this command is regarded as deprecated.</p>
+<p>It can be replaced by <a target="_blank" rel="noopener" href="https://redis.io/commands/set"><code>SET</code></a> with the <code>NX</code> argument when migrating or writing new code.</p>
+</blockquote>
+<p>正如文档所说，新的实现方式是使用 <code>SET</code> 命令，并且追加 <code>NX</code> 参数，表示不存在时才执行，此外该命令同样还提供了 <code>EX</code> 和 <code>PX</code> 参数，用于指定该 key 的过期时间，EX 和 PX 分别表示过期时间的单位为秒和毫秒，这样一来，之前的两条命令就可以整合成类似 <code>SET KEYS[1] ARGV[1] PX ARGV[2] NX</code> 这样的一条命令，也就不存在非原子的问题了。</p>
+<p>此外还存在一种情况，就是项目依赖的 redis 版本比较老，只能用 SETNX 命令，这种情况下就只能使用 lua 脚本来实现原子性了，比如：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs lua"><span class="hljs-keyword">if</span> (redis.call(<span class="hljs-string">&#x27;setnx&#x27;</span>, KEYS[<span class="hljs-number">1</span>], ARGV[<span class="hljs-number">1</span>]) &lt; <span class="hljs-number">1</span>)<br><span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br><span class="hljs-keyword">end</span>;<br>redis.call(<span class="hljs-string">&#x27;expire&#x27;</span>, KEYS[<span class="hljs-number">1</span>], <span class="hljs-built_in">tonumber</span>(ARGV[<span class="hljs-number">2</span>]));<br><span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br><br>// 使用实例<br>EVAL <span class="hljs-string">&quot;if (redis.call(&#x27;setnx&#x27;,KEYS[1],ARGV[1]) &lt; 1) then return 0; end; redis.call(&#x27;expire&#x27;,KEYS[1],tonumber(ARGV[2])); return 1;&quot;</span> <span class="hljs-number">1</span> key value <span class="hljs-number">100</span><br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-锁误解除"><a href="#2-锁误解除" class="headerlink" title="2. 锁误解除"></a>2. 锁误解除</h3><p>正如我们之前所说，要点 3 中的 <code>解铃还须系铃人</code> 这一点在开头的初版伪代码中没有体现，这里先来说一下，什么情况下，会发生锁误解除这种情况：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>进程 A</th>
+<th>进程 B</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>时间 T1</td>
+<td>拿到分布式锁</td>
+<td></td>
+</tr>
+<tr>
+<td>时间 T2</td>
+<td></td>
+<td>尝试获取锁，但是锁已被占用，阻塞等待</td>
+</tr>
+<tr>
+<td>…</td>
+<td>业务处理</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>达到锁的超时时间，锁被释放</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>拿到锁</td>
+</tr>
+<tr>
+<td></td>
+<td>业务处理完成</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>继续执行下面的释放锁代码</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>释放锁（但是此时锁已经被 B 持有了，也就是释放了不属于自己的锁）</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>解决办法也很简单：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs lua">// 加锁<br>String uuid = UUID.randomUUID().toString().replaceAll(<span class="hljs-string">&quot;-&quot;</span>,<span class="hljs-string">&quot;&quot;</span>);<br>SET key uuid NX EX <span class="hljs-number">30</span><br><br>// 解锁<br><span class="hljs-keyword">if</span> (redis.call(<span class="hljs-string">&#x27;get&#x27;</span>, KEYS[<span class="hljs-number">1</span>]) == ARGV[<span class="hljs-number">1</span>])<br>    <span class="hljs-keyword">then</span> <span class="hljs-keyword">return</span> redis.call(<span class="hljs-string">&#x27;del&#x27;</span>, KEYS[<span class="hljs-number">1</span>])<br><span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-number">0</span><br><span class="hljs-keyword">end</span><br></code></pre></td></tr></table></figure>
+
+<p>我们首先需要某个东西用来标识当前进程，然后在获取锁操作 set 操作中，将这个东西作为 value 设置给这个 key，比如上面的代码中，使用了 uuid 来作为一个标识，同时用一个变量保存，然后执行 <code>SET key uuid NX EX 30</code> 将其设置为 value。在解锁时，需要先 get 一下这个 key，看看它的 value 还是不是我们之前创建的标识（我们将其用一个变量保存起来了，所以使用这个变量对比即可），如果是的话，就说明这个锁还是属于当前进程的，那么就可以正常释放，也就是执行接下来的 <code>del</code> 语句，否则则说明这个锁已经被过期释放，被另一个进程占用了，那我们就不能释放这个锁了。</p>
+<p><strong>锁误解除会导致什么问题？</strong>比如当前持有锁的是进程 B，但是因为上面提到的原因，进程 A 把该锁给误释放了，然后另一个尝试获取锁的进程 C 此时拿到了锁，执行它的业务，然后 B 此时也在执行自己的业务，这导致同一时间 B 和 C 都在处理业务，发生这种现象的原因就在于本来应该由 B 在其执行完自己的业务后自行释放锁，但是现在 A 错误的把锁释放了。</p>
+<p>需要注意的是，我们的 <strong>解锁代码是使用 lua 实现的</strong>，在 redis 中，使用 lua 脚本可以保证原子性，为什么要这么做呢？看下面这种情况：</p>
+<p>下面这段代码是使用 Java 实现的，思路基本一样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">wrongReleaseLock2</span><span class="hljs-params">(Jedis jedis, String lockKey, String requestId)</span> &#123;<br>    <span class="hljs-comment">// 判断加锁与解锁是不是同一个客户端</span><br>    <span class="hljs-keyword">if</span> (requestId.equals(jedis.get(lockKey))) &#123;<br>        jedis.del(lockKey);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这段代码看起来没什么问题，但是存在这样一种极端情况：</p>
+<ol>
+<li><p>当前进程 A 走到 <code>if (requestId.equals(jedis.get(lockKey)))</code> 这一行，并且判断为 true，准备接着执行下面的 <code>jedis.del</code> 。</p>
+</li>
+<li><p>但是在执行前，该锁刚好超时了，导致其被自动释放掉了。</p>
+</li>
+<li><p>然后又很不巧的，该锁被另一个进程 B 拿到了。</p>
+</li>
+<li><p>然后此时 A 才开始执行 <code>jedis.del</code>，但这把锁现在已经属于 B 了，这就导致进程 A 把本不属于自己的锁给释放掉了。</p>
+</li>
+</ol>
+<p>导致这个问题的原因是因为解锁操作要执行 get 和 del 2 个命令，而在上面的实现中，我们无法保证 get 和 del 执行期间不被其他命令干扰，比如我们期望的是执行完 get 后接着执行 del，即 get -&gt; del 这种操作顺序，但是实际可能存在 get -&gt; del（来自其他客户端） -&gt; get（来自其他客户端） -&gt; del 这种操作。为了解决这个问题，我们就需要用 lua 将这两个操作写成一个脚本，然后 redis 就会将其作为一个整体去执行，基于 redis 单线程执行命令的特性，其执行到这个 lua 脚本时，会等待执行完成后，再执行其他的命令，这样就保证了不被其他命令干扰。</p>
+<h3 id="3-超时解锁导致并发"><a href="#3-超时解锁导致并发" class="headerlink" title="3. 超时解锁导致并发"></a>3. 超时解锁导致并发</h3><p>还是上面的问题，我们已经解决了锁误解除的问题，但是还存在一个问题，就是锁超时自动释放后，进程 A 依旧在执行它的业务，然后此时进程 B 又拿到锁了，它也可以开始执行它的业务，这导致两个进程都在执行各自的业务，这种情况下，锁就已经失去了它的作用。</p>
+<p>解决这个问题一般有两种方法：</p>
+<ul>
+<li>将过期时间设置足够长，确保代码逻辑在锁释放之前能够执行完成。</li>
+<li>为获取锁的线程增加守护线程，为将要过期但未释放的锁增加有效时间。</li>
+</ul>
+<p>第一种感觉不是特别好用，因为代码逻辑的执行时间可能不是那么好预估的，而且如果设置的过长可能会导致其他进程被长时间阻塞，影响性能。</p>
+<p>第二种看起来还不错，只要在拿到锁后额外启动一条线程，去不断 “续约” 即可，比如我找到一个 <a target="_blank" rel="noopener" href="https://github.com/jiaxwu/lock/blob/main/lock.go">现成的实现</a>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(l *Lock)</span></span> TryLock(ctx context.Context) <span class="hljs-type">error</span> &#123;<br>	success, err := l.client.SetNX(ctx, l.resource, l.randomValue, l.ttl).Result()<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> err<br>	&#125;<br>	<span class="hljs-comment">// 加锁失败</span><br>	<span class="hljs-keyword">if</span> !success &#123;<br>		<span class="hljs-keyword">return</span> ErrLockFailed<br>	&#125;<br>	<span class="hljs-comment">// 加锁成功，启动看门狗</span><br>	<span class="hljs-keyword">go</span> l.startWatchDog()<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(l *Lock)</span></span> startWatchDog() &#123;<br>	ticker := time.NewTicker(l.ttl / <span class="hljs-number">3</span>)<br>	<span class="hljs-keyword">defer</span> ticker.Stop()<br>	<span class="hljs-keyword">for</span> &#123;<br>		<span class="hljs-keyword">select</span> &#123;<br>		<span class="hljs-keyword">case</span> &lt;-ticker.C:<br>			<span class="hljs-comment">// 延长锁的过期时间</span><br>			ctx, cancel := context.WithTimeout(context.Background(), l.ttl/<span class="hljs-number">3</span>*<span class="hljs-number">2</span>)<br>			ok, err := l.client.Expire(ctx, l.resource, l.ttl).Result()<br>			cancel()<br>			<span class="hljs-comment">// 异常或锁已经不存在则不再续期</span><br>			<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> || !ok &#123;<br>				<span class="hljs-keyword">return</span><br>			&#125;<br>		<span class="hljs-keyword">case</span> &lt;-l.watchDog:<br>			<span class="hljs-comment">// 已经解锁</span><br>			<span class="hljs-keyword">return</span><br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>上面的代码使用 Go 实现，大致逻辑是当执行 TryLock 成功拿到锁后，会启动一个 goroutine 去不断续约，直到业务逻辑已经执行完成，执行 unlock ，此时会 close 掉 l.watchDog，进而会让 select 走 <code>case &lt;-l.watchDog</code> 这个分支，将这个续约 goroutine return 掉从而停止续约。</p>
+<blockquote>
+<p>🤔 感觉这个实现有点小问题，就是 Go 里面的 select 是没有优先级的，如果多个 case 都满足，则会随机选择一个，那可不可能存在这样一种情况：已经执行 unlock 了，但是刚好此时的 ticker.C 也被触发了，也就是说 <code>case &lt;-ticker.C</code> 和 <code>case &lt;- l.watchDog</code> 这 2 个 case 都满足，然后 select 选择进入 <code>case &lt;- ticker.C</code> 这个分支，导致又被延长了一轮时间</p>
+<p>不过感觉好像问题也不是特别大？而且应该不会再延长时间了，因为执行完 unlock 后 key 已经被删除了，就算进入到 <code>case &lt;-ticker.C</code> 分支也会因为 key 不存在而导致 Expire 执行失败，进而直接 return 掉这个函数</p>
+</blockquote>
+<h3 id="4-分布式场景"><a href="#4-分布式场景" class="headerlink" title="4. 分布式场景"></a>4. 分布式场景</h3><blockquote>
+<p>以下内容引用自：<a target="_blank" rel="noopener" href="http://zhangtielei.com/posts/blog-redlock-reasoning.html">基于Redis的分布式锁到底安全吗（上）？</a></p>
+</blockquote>
+<p>假如 Redis 节点宕机了，那么所有客户端就都无法获得锁了，服务变得不可用。为了提高可用性，我们可以给这个 Redis 节点挂一个 Slave，当 Master 节点不可用的时候，系统自动切到 Slave 上（failover）。但由于 Redis 的主从复制（replication）是异步的，这可能导致在 failover 过程中丧失锁的安全性。考虑下面的执行序列：</p>
+<ol>
+<li>客户端1 从 Master 获取了锁。</li>
+<li>Master 宕机了，存储锁的 key 还没有来得及同步到 Slave 上。</li>
+<li>Slave 升级为 Master。</li>
+<li>客户端 2 从新的 Master 获取到了对应同一个资源的锁。</li>
+</ol>
+<p>这样就出现了两个客户端都持有锁的情况，为了解决上面的问题，可以使用 Readlock，其大致工作机制是：</p>
+<h4 id="加锁"><a href="#加锁" class="headerlink" title="加锁"></a>加锁</h4><ol>
+<li>获取当前时间（毫秒数）。</li>
+<li>按顺序依次向 N 个 Redis 节点执行 <strong>获取锁</strong> 的操作。这个获取操作跟前面基于单 Redis 节点的 <strong>获取锁</strong> 的过程相同，包含随机字符串 <code>my_random_value</code>（即唯一标识当前进程的字段，防止误解除），也包含过期时间 (比如 <code>PX 30000</code>，即锁的 <strong>有效时间</strong>)。为了保证在某个 Redis 节点不可用的时候算法能够继续运行，这个 <strong>获取锁</strong> 的操作还有一个超时时间  (time out)，它要远小于锁的有效时间（几十毫秒量级）。客户端在向某个 Redis 节点获取锁失败以后，应该立即尝试下一个 Redis 节点。这里的失败，应该包含任何类型的失败，比如该 Redis 节点不可用，或者该 Redis 节点上的锁已经被其它客户端持有（注：Redlock 原文中这里只提到了 Redis 节点不可用的情况，但也应该包含其它的失败情况）。</li>
+<li><strong>计算整个获取锁的过程总共消耗了多长时间</strong>，计算方法是用当前时间减去第 1 步记录的时间。如果客户端从大多数 Redis 节点（&gt;&#x3D;  N&#x2F;2+1）成功获取到了锁，并且 <strong>获取锁总共消耗的时间没有超过锁的有效时间</strong> (lock validity time)，那么 <strong>这时客户端才认为最终获取锁成功</strong>；否则，认为最终获取锁失败。</li>
+<li>如果最终获取锁成功了，那么这个锁的有效时间应该重新计算，它等于最初的锁的有效时间减去第 3 步计算出来的获取锁消耗的时间。</li>
+<li>如果最终获取锁失败了（可能由于获取到锁的 Redis 节点个数少于 N&#x2F;2+1，或者整个获取锁的过程消耗的时间超过了锁的最初有效时间），那么客户端应该立即向所有 Redis 节点发起 <strong>释放锁</strong> 的操作（即前面介绍的 Redis Lua 脚本的方式）。</li>
+</ol>
+<p>在 <a target="_blank" rel="noopener" href="https://github.com/go-redsync/redsync">Github</a> 上找到一个 redlock 的实现，下面截取了加锁部分的源码，可以看到和上面的实现思路基本相同：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *Mutex)</span></span> LockContext(ctx context.Context) <span class="hljs-type">error</span> &#123;<br>	<span class="hljs-keyword">if</span> ctx == <span class="hljs-literal">nil</span> &#123;<br>		ctx = context.Background()<br>	&#125;<br>	<br>    <span class="hljs-comment">// 随机值</span><br>	value, err := m.genValueFunc()<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> err<br>	&#125;<br><br>    <span class="hljs-comment">// 自旋重试</span><br>	<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; m.tries; i++ &#123;<br>		<span class="hljs-keyword">if</span> i != <span class="hljs-number">0</span> &#123;<br>			<span class="hljs-keyword">select</span> &#123;<br>			<span class="hljs-keyword">case</span> &lt;-ctx.Done():<br>				<span class="hljs-comment">// Exit early if the context is done.</span><br>				<span class="hljs-keyword">return</span> ErrFailed<br>			<span class="hljs-keyword">case</span> &lt;-time.After(m.delayFunc(i)):<br>				<span class="hljs-comment">// Fall-through when the delay timer completes.</span><br>			&#125;<br>		&#125;<br><br>        <span class="hljs-comment">// 记录当前时间</span><br>		start := time.Now()<br><br>        <span class="hljs-comment">// 向 pool 中的每个 redis 实例申请锁，返回申请成功的数量</span><br>		n, err := <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> (<span class="hljs-type">int</span>, <span class="hljs-type">error</span>) &#123;<br>			ctx, cancel := context.WithTimeout(ctx, time.Duration(<span class="hljs-type">int64</span>(<span class="hljs-type">float64</span>(m.expiry)*m.timeoutFactor)))<br>			<span class="hljs-keyword">defer</span> cancel()<br>			<span class="hljs-keyword">return</span> m.actOnPoolsAsync(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(pool redis.Pool)</span></span> (<span class="hljs-type">bool</span>, <span class="hljs-type">error</span>) &#123;<br>				<span class="hljs-keyword">return</span> m.acquire(ctx, pool, value)<br>			&#125;)<br>		&#125;()<br><br>        <span class="hljs-comment">// 计算加锁花费的时间</span><br>		now := time.Now()<br>		until := now.Add(m.expiry - now.Sub(start) - time.Duration(<span class="hljs-type">int64</span>(<span class="hljs-type">float64</span>(m.expiry)*m.driftFactor)))<br>        <span class="hljs-comment">// 如果成功的数量超过总结点的半数 + 1，且花费时间没有超过锁的有效时间，则加锁成功，return nil</span><br>		<span class="hljs-keyword">if</span> n &gt;= m.quorum &amp;&amp; now.Before(until) &#123;<br>			m.value = value<br>			m.until = until<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>		&#125;<br>        <span class="hljs-comment">// 否则走到这里说明加锁失败了，那么对所有节点执行释放锁操作</span><br>		<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> (<span class="hljs-type">int</span>, <span class="hljs-type">error</span>) &#123;<br>			ctx, cancel := context.WithTimeout(ctx, time.Duration(<span class="hljs-type">int64</span>(<span class="hljs-type">float64</span>(m.expiry)*m.timeoutFactor)))<br>			<span class="hljs-keyword">defer</span> cancel()<br>			<span class="hljs-keyword">return</span> m.actOnPoolsAsync(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(pool redis.Pool)</span></span> (<span class="hljs-type">bool</span>, <span class="hljs-type">error</span>) &#123;<br>				<span class="hljs-keyword">return</span> m.release(ctx, pool, value)<br>			&#125;)<br>		&#125;()<br>		<span class="hljs-keyword">if</span> i == m.tries<span class="hljs-number">-1</span> &amp;&amp; err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">return</span> err<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-keyword">return</span> ErrFailed<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>给单个实例加锁的代码如下，思路和我们之前的基本一样，就是简单的 <code>SETNX</code>  和超时，并没有做可重入锁的处理：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *Mutex)</span></span> acquire(ctx context.Context, pool redis.Pool, value <span class="hljs-type">string</span>) (<span class="hljs-type">bool</span>, <span class="hljs-type">error</span>) &#123;<br>	conn, err := pool.Get(ctx)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, err<br>	&#125;<br>	<span class="hljs-keyword">defer</span> conn.Close()<br>	reply, err := conn.SetNX(m.name, value, m.expiry)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, err<br>	&#125;<br>	<span class="hljs-keyword">return</span> reply, <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="解锁"><a href="#解锁" class="headerlink" title="解锁"></a><strong>解锁</strong></h4><p>解锁操作比较简单，只需要客户端向所有 Redis 节点发起 <strong>释放锁</strong> 的操作，不管这些节点当时在获取锁的时候成功与否。释放锁操作和我们前面提到的一样，使用 Lua 脚本来执行。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *Mutex)</span></span> UnlockContext(ctx context.Context) (<span class="hljs-type">bool</span>, <span class="hljs-type">error</span>) &#123;<br>	n, err := m.actOnPoolsAsync(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(pool redis.Pool)</span></span> (<span class="hljs-type">bool</span>, <span class="hljs-type">error</span>) &#123;<br>		<span class="hljs-keyword">return</span> m.release(ctx, pool, m.value)<br>	&#125;)<br>	<span class="hljs-keyword">if</span> n &lt; m.quorum &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, err<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>, <span class="hljs-literal">nil</span><br>&#125;<br><br><br><span class="hljs-keyword">var</span> deleteScript = redis.NewScript(<span class="hljs-number">1</span>, <span class="hljs-string">`</span><br><span class="hljs-string">	if redis.call(&quot;GET&quot;, KEYS[1]) == ARGV[1] then</span><br><span class="hljs-string">		return redis.call(&quot;DEL&quot;, KEYS[1])</span><br><span class="hljs-string">	else</span><br><span class="hljs-string">		return 0</span><br><span class="hljs-string">	end</span><br><span class="hljs-string">`</span>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *Mutex)</span></span> release(ctx context.Context, pool redis.Pool, value <span class="hljs-type">string</span>) (<span class="hljs-type">bool</span>, <span class="hljs-type">error</span>) &#123;<br>	conn, err := pool.Get(ctx)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, err<br>	&#125;<br>	<span class="hljs-keyword">defer</span> conn.Close()<br>	status, err := conn.Eval(deleteScript, m.name, value)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, err<br>	&#125;<br>	<span class="hljs-keyword">return</span> status != <span class="hljs-type">int64</span>(<span class="hljs-number">0</span>), <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="续期"><a href="#续期" class="headerlink" title="续期"></a>续期</h4><p>续期的代码如下，使用 Lua 实现，先判断是不是属于自己的 value，然后调用 <code>PEXPIRE</code> 重置超时时间。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *Mutex)</span></span> ExtendContext(ctx context.Context) (<span class="hljs-type">bool</span>, <span class="hljs-type">error</span>) &#123;<br>	start := time.Now()<br>	n, err := m.actOnPoolsAsync(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(pool redis.Pool)</span></span> (<span class="hljs-type">bool</span>, <span class="hljs-type">error</span>) &#123;<br>        <span class="hljs-comment">// 重新设置改 key 的过期时间为 m.expiry</span><br>        <span class="hljs-comment">// 因为调用的是 PEXPIRE 命令，所以需要转换为毫秒</span><br>		<span class="hljs-keyword">return</span> m.touch(ctx, pool, m.value, <span class="hljs-type">int</span>(m.expiry/time.Millisecond))<br>	&#125;)<br>	<span class="hljs-keyword">if</span> n &lt; m.quorum &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, err<br>	&#125;<br>	now := time.Now()<br>	until := now.Add(m.expiry - now.Sub(start) - time.Duration(<span class="hljs-type">int64</span>(<span class="hljs-type">float64</span>(m.expiry)*m.driftFactor)))<br>	<span class="hljs-keyword">if</span> now.Before(until) &#123;<br>		m.until = until<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>, <span class="hljs-literal">nil</span><br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, ErrExtendFailed<br>&#125;<br><br><span class="hljs-keyword">var</span> touchScript = redis.NewScript(<span class="hljs-number">1</span>, <span class="hljs-string">`</span><br><span class="hljs-string">	if redis.call(&quot;GET&quot;, KEYS[1]) == ARGV[1] then</span><br><span class="hljs-string">		return redis.call(&quot;PEXPIRE&quot;, KEYS[1], ARGV[2])</span><br><span class="hljs-string">	else</span><br><span class="hljs-string">		return 0</span><br><span class="hljs-string">	end</span><br><span class="hljs-string">`</span>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(m *Mutex)</span></span> touch(ctx context.Context, pool redis.Pool, value <span class="hljs-type">string</span>, expiry <span class="hljs-type">int</span>) (<span class="hljs-type">bool</span>, <span class="hljs-type">error</span>) &#123;<br>	conn, err := pool.Get(ctx)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, err<br>	&#125;<br>	<span class="hljs-keyword">defer</span> conn.Close()<br>	status, err := conn.Eval(touchScript, m.name, value, expiry)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, err<br>	&#125;<br>	<span class="hljs-keyword">return</span> status != <span class="hljs-type">int64</span>(<span class="hljs-number">0</span>), <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>🤔 为什么需要用 Lua 实现？</p>
+</blockquote>
+<h2 id="几种实现"><a href="#几种实现" class="headerlink" title="几种实现"></a>几种实现</h2><h3 id="go-zero"><a href="#go-zero" class="headerlink" title="go-zero"></a>go-zero</h3><p>地址：<a target="_blank" rel="noopener" href="https://github.com/zeromicro/go-zero/blob/master/core/stores/redis/redislock.go">https://github.com/zeromicro/go-zero/blob/master/core/stores/redis/redislock.go</a></p>
+<p>大名鼎鼎的微服务框架，它的加解锁操作都是使用 lua 脚本来实现的，貌似是因为它支持可重入特性？整体实现看起来也比较简单，但是好像没有实现看门狗机制？</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> redis<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;context&quot;</span><br>	<span class="hljs-string">&quot;math/rand&quot;</span><br>	<span class="hljs-string">&quot;strconv&quot;</span><br>	<span class="hljs-string">&quot;sync/atomic&quot;</span><br>	<span class="hljs-string">&quot;time&quot;</span><br><br>	red <span class="hljs-string">&quot;github.com/go-redis/redis/v8&quot;</span><br><br>	<span class="hljs-string">&quot;github.com/zeromicro/go-zero/core/logx&quot;</span><br>	<span class="hljs-string">&quot;github.com/zeromicro/go-zero/core/stringx&quot;</span><br>)<br><br><span class="hljs-keyword">const</span> (<br>	randomLen       = <span class="hljs-number">16</span><br>	tolerance       = <span class="hljs-number">500</span> <span class="hljs-comment">// milliseconds</span><br>	millisPerSecond = <span class="hljs-number">1000</span><br>)<br><br><span class="hljs-keyword">var</span> (<br>	lockScript = NewScript(<span class="hljs-string">`if redis.call(&quot;GET&quot;, KEYS[1]) == ARGV[1] then</span><br><span class="hljs-string">    redis.call(&quot;SET&quot;, KEYS[1], ARGV[1], &quot;PX&quot;, ARGV[2])</span><br><span class="hljs-string">    return &quot;OK&quot;</span><br><span class="hljs-string">else</span><br><span class="hljs-string">    return redis.call(&quot;SET&quot;, KEYS[1], ARGV[1], &quot;NX&quot;, &quot;PX&quot;, ARGV[2])</span><br><span class="hljs-string">end`</span>)<br>	delScript = NewScript(<span class="hljs-string">`if redis.call(&quot;GET&quot;, KEYS[1]) == ARGV[1] then</span><br><span class="hljs-string">    return redis.call(&quot;DEL&quot;, KEYS[1])</span><br><span class="hljs-string">else</span><br><span class="hljs-string">    return 0</span><br><span class="hljs-string">end`</span>)<br>)<br><br><span class="hljs-comment">// A RedisLock is a redis lock.</span><br><span class="hljs-keyword">type</span> RedisLock <span class="hljs-keyword">struct</span> &#123;<br>	store   *Redis<br>	seconds <span class="hljs-type">uint32</span><br>	key     <span class="hljs-type">string</span><br>	id      <span class="hljs-type">string</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">init</span><span class="hljs-params">()</span></span> &#123;<br>	rand.Seed(time.Now().UnixNano())<br>&#125;<br><br><span class="hljs-comment">// NewRedisLock returns a RedisLock.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewRedisLock</span><span class="hljs-params">(store *Redis, key <span class="hljs-type">string</span>)</span></span> *RedisLock &#123;<br>	<span class="hljs-keyword">return</span> &amp;RedisLock&#123;<br>		store: store,<br>		key:   key,<br>		id:    stringx.Randn(randomLen),<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// Acquire acquires the lock.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(rl *RedisLock)</span></span> Acquire() (<span class="hljs-type">bool</span>, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-keyword">return</span> rl.AcquireCtx(context.Background())<br>&#125;<br><br><span class="hljs-comment">// AcquireCtx acquires the lock with the given ctx.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(rl *RedisLock)</span></span> AcquireCtx(ctx context.Context) (<span class="hljs-type">bool</span>, <span class="hljs-type">error</span>) &#123;<br>	seconds := atomic.LoadUint32(&amp;rl.seconds)<br>	resp, err := rl.store.ScriptRunCtx(ctx, lockScript, []<span class="hljs-type">string</span>&#123;rl.key&#125;, []<span class="hljs-type">string</span>&#123;<br>		rl.id, strconv.Itoa(<span class="hljs-type">int</span>(seconds)*millisPerSecond + tolerance),<br>	&#125;)<br>	<span class="hljs-keyword">if</span> err == red.Nil &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, <span class="hljs-literal">nil</span><br>	&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		logx.Errorf(<span class="hljs-string">&quot;Error on acquiring lock for %s, %s&quot;</span>, rl.key, err.Error())<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, err<br>	&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> resp == <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, <span class="hljs-literal">nil</span><br>	&#125;<br><br>	reply, ok := resp.(<span class="hljs-type">string</span>)<br>	<span class="hljs-keyword">if</span> ok &amp;&amp; reply == <span class="hljs-string">&quot;OK&quot;</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>, <span class="hljs-literal">nil</span><br>	&#125;<br><br>	logx.Errorf(<span class="hljs-string">&quot;Unknown reply when acquiring lock for %s: %v&quot;</span>, rl.key, resp)<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-comment">// Release releases the lock.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(rl *RedisLock)</span></span> Release() (<span class="hljs-type">bool</span>, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-keyword">return</span> rl.ReleaseCtx(context.Background())<br>&#125;<br><br><span class="hljs-comment">// ReleaseCtx releases the lock with the given ctx.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(rl *RedisLock)</span></span> ReleaseCtx(ctx context.Context) (<span class="hljs-type">bool</span>, <span class="hljs-type">error</span>) &#123;<br>	resp, err := rl.store.ScriptRunCtx(ctx, delScript, []<span class="hljs-type">string</span>&#123;rl.key&#125;, []<span class="hljs-type">string</span>&#123;rl.id&#125;)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, err<br>	&#125;<br><br>	reply, ok := resp.(<span class="hljs-type">int64</span>)<br>	<span class="hljs-keyword">if</span> !ok &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, <span class="hljs-literal">nil</span><br>	&#125;<br><br>	<span class="hljs-keyword">return</span> reply == <span class="hljs-number">1</span>, <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-comment">// SetExpire sets the expiration.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(rl *RedisLock)</span></span> SetExpire(seconds <span class="hljs-type">int</span>) &#123;<br>	atomic.StoreUint32(&amp;rl.seconds, <span class="hljs-type">uint32</span>(seconds))<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="社区实现"><a href="#社区实现" class="headerlink" title="社区实现"></a>社区实现</h3><p>源码：<a target="_blank" rel="noopener" href="https://github.com/jiaxwu/lock">https://github.com/jiaxwu/lock</a></p>
+<p>博客：<a target="_blank" rel="noopener" href="https://juejin.cn/post/7148391514966589477#heading-6">https://juejin.cn/post/7148391514966589477#heading-6</a></p>
+<p>比较简短的一个库，不过基本功能差不多都实现了</p>
+<h3 id="redsync"><a href="#redsync" class="headerlink" title="redsync"></a>redsync</h3><p>地址：<a target="_blank" rel="noopener" href="https://github.com/go-redsync/redsync">https://github.com/go-redsync/redsync</a></p>
+<p>redlock 的实现，star 数还挺多的，看起来比较完善</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/qJK61ew0kCExvXrqb7-RSg">Redis 分布式锁的正确实现方式（ Java 版 ）</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiaomi-info.github.io/2019/12/17/redis-distributed-lock/">小米信息部技术团队——分布式锁的实现之 redis 篇</a></p>
+<p><a target="_blank" rel="noopener" href="http://zhangtielei.com/posts/blog-redlock-reasoning.html">基于Redis的分布式锁到底安全吗（上）？</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Redis/">#Redis</a>
+      
+        <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">#分布式</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>分布式锁实现</div>
+      <div>https://autsu.github.io/2023/07/26/redis-fen-bu-shi-suo/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年7月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/08/27/mac-clashx-bridge-mode/" title="Mac + Clashx Pro 构建网关旁路由">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Mac + Clashx Pro 构建网关旁路由</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/07/14/dong-tai-gui-hua-ru-men-50-ti-lc-198/" title="动态规划入门.打家劫舍">
+                        <span class="hidden-mobile">动态规划入门.打家劫舍</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

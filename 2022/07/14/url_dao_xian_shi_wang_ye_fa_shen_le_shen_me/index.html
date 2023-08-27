@@ -16,22 +16,37 @@
   <meta name="author" content="void">
   <meta name="keywords" content="">
   
-    <meta name="description" content="从请求 URL 中获取请求域名，通过 DNS 获取域名对应的 IP 地址  首先需要知道 DNS 域名服务器 的 IP 地址，这样才能给它发送 DNS 请求报文，而根据网络模型，光有 IP 地址是不够的，还需要知道 MAC 地址才能构建数据链路层的报文，所以需要通过 ARP 协议来根据 IP 获取对应的 MAC 地址。域名服务器的 IP 地址一般是默认配置好的，所以这里假定已经知道了 IP 地址">
+    <meta name="description" content="1. 解析 URL 并构建请求报文首先浏览器做的第一步工作就是要对 URL 进行解析，从而构建出发送给 Web 服务器的请求报文。 URL 由三部分组成：协议类型，服务器地址和资源文件路径。比如 http:&#x2F;&#x2F;www.server.com&#x2F;dir1&#x2F;file1.html 这个 URL，它的协议类型是 http，服务器地址（域名）是 www.server.com，dir1&#x2F;file1.html 就是">
 <meta property="og:type" content="article">
-<meta property="og:title" content="输入 url 到浏览器显示网页，期间发生了什么？（未完）">
+<meta property="og:title" content="输入 url 到浏览器显示网页，期间发生了什么？">
 <meta property="og:url" content="https://autsu.github.io/2022/07/14/url_dao_xian_shi_wang_ye_fa_shen_le_shen_me/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="从请求 URL 中获取请求域名，通过 DNS 获取域名对应的 IP 地址  首先需要知道 DNS 域名服务器 的 IP 地址，这样才能给它发送 DNS 请求报文，而根据网络模型，光有 IP 地址是不够的，还需要知道 MAC 地址才能构建数据链路层的报文，所以需要通过 ARP 协议来根据 IP 获取对应的 MAC 地址。域名服务器的 IP 地址一般是默认配置好的，所以这里假定已经知道了 IP 地址">
+<meta property="og:description" content="1. 解析 URL 并构建请求报文首先浏览器做的第一步工作就是要对 URL 进行解析，从而构建出发送给 Web 服务器的请求报文。 URL 由三部分组成：协议类型，服务器地址和资源文件路径。比如 http:&#x2F;&#x2F;www.server.com&#x2F;dir1&#x2F;file1.html 这个 URL，它的协议类型是 http，服务器地址（域名）是 www.server.com，dir1&#x2F;file1.html 就是">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/http_request_proto.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/http_request_data.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/dns_iterative_query.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/dns_query_digui.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/dns_query_iter.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/tcp_proto.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/tcp_wrap_http.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/tcp_san_ci_wo_shou.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/ip_proto_data.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/mac_proto_data.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/mac_addr_table.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/route_table.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/net_pack_wrap_unwrap.webp">
 <meta property="article:published_time" content="2022-07-14T06:30:52.000Z">
-<meta property="article:modified_time" content="2023-03-18T13:37:15.222Z">
+<meta property="article:modified_time" content="2023-08-10T15:49:23.342Z">
 <meta property="article:author" content="void">
 <meta property="article:tag" content="计算机网络">
+<meta property="article:tag" content="面试题">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/http_request_proto.png">
   
   
   
-  <title>输入 url 到浏览器显示网页，期间发生了什么？（未完） - Hexo</title>
+  <title>输入 url 到浏览器显示网页，期间发生了什么？ - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -218,7 +233,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="输入 url 到浏览器显示网页，期间发生了什么？（未完）"></span>
+            <span id="subtitle" data-typed-text="输入 url 到浏览器显示网页，期间发生了什么？"></span>
           
         </div>
 
@@ -241,7 +256,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.6k 字
+          7.5k 字
         
       </span>
     
@@ -252,7 +267,7 @@
         
         
         
-          14 分钟
+          63 分钟
         
       </span>
     
@@ -298,45 +313,159 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">输入 url 到浏览器显示网页，期间发生了什么？（未完）</h1>
+            <h1 style="display: none">输入 url 到浏览器显示网页，期间发生了什么？</h1>
             
             
               <div class="markdown-body">
                 
-                <ol>
-<li><p>从请求 URL 中获取请求域名，通过 DNS 获取域名对应的 IP 地址</p>
-<ol>
+                <h1 id="1-解析-URL-并构建请求报文"><a href="#1-解析-URL-并构建请求报文" class="headerlink" title="1. 解析 URL 并构建请求报文"></a>1. 解析 URL 并构建请求报文</h1><p>首先浏览器做的第一步工作就是要对 <code>URL</code> 进行解析，从而构建出发送给 <code>Web</code> 服务器的请求报文。</p>
+<p>URL 由三部分组成：<strong>协议类型，服务器地址和资源文件路径</strong>。比如 <a target="_blank" rel="noopener" href="http://www.server.com/dir1/file1.html">http://www.server.com/dir1/file1.html</a> 这个 URL，它的协议类型是 http，服务器地址（域名）是 <a target="_blank" rel="noopener" href="http://www.server.com,dir1/file1.html">www.server.com，dir1/file1.html</a> 就是文件路径。</p>
+<p>对 <code>URL</code> 进行解析之后，浏览器确定了 Web 服务器和文件名，接下来就是根据这些信息来生成 HTTP 请求消息了。</p>
+<p>HTTP 请求报文的格式如下：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/http_request_proto.png" srcset="/img/loading.gif" lazyload></p>
+<p>然后我们就可以根据 URL 里面的一些信息，以及一些其他信息（比如浏览器自动携带的 Cookie 等），构建出这个报文，类似下面这样：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/http_request_data.webp" srcset="/img/loading.gif" lazyload></p>
+<h1 id="2-从请求-URL-中解析域名地址（如果需要的话）"><a href="#2-从请求-URL-中解析域名地址（如果需要的话）" class="headerlink" title="2. 从请求 URL 中解析域名地址（如果需要的话）"></a>2. 从请求 URL 中解析域名地址（如果需要的话）</h1><p>URL 的服务器地址可能直接提供的就是 IP 地址，但是也有可能提供的是域名，如果是域名，那我们就需要将其解析成对应的 IP 地址。<strong>获取域名对应 IP 地址的流程如下：</strong></p>
+<h2 id="发送-DNS-请求报文到-DNS-域名服务器"><a href="#发送-DNS-请求报文到-DNS-域名服务器" class="headerlink" title="发送 DNS 请求报文到 DNS 域名服务器"></a><strong>发送 DNS 请求报文到 DNS 域名服务器</strong></h2><ol>
 <li><p>首先需要知道 DNS <strong>域名服务器</strong> 的 IP 地址，这样才能给它发送 DNS 请求报文，而根据网络模型，光有 IP 地址是不够的，还需要知道 MAC 地址才能构建数据链路层的报文，所以需要通过 ARP 协议来根据 IP 获取对应的 MAC 地址。域名服务器的 IP 地址一般是默认配置好的，所以这里假定已经知道了 IP 地址，只需要获取 MAC 地址。</p>
 <p>首先，主机会先检查一下自己的 ARP 表，看看有没有该 IP 缓存记录，有的话可以直接获取到对应的 MAC 地址，如果没有，就需要构建一个 ARP 请求报文，源 IP 和源 MAC 填写自己的，目的 IP 填写域名服务器的，目的 MAC 填写广播地址（FF-FF-FF-FF-FF-FF-FF），然后这个报文会发送给当前子网的所有主机，每个主机会查看报文里的目的 IP 地址是否与自己的 IP 地址相同，如果相同的话，就会回复 ARP 响应报文，里面有自己的 MAC 地址；如果不相同则会直接丢弃报文。主机获得域名服务器的 MAC 地址后，记录到自己的 ARP 表中，至此，主机已经获取到域名服务器的 MAC 地址了。</p>
 </li>
 <li><p>知道了域名服务器的 IP 地址和 MAC 地址后，就可以向其发送 DNS 请求报文了，DNS 请求报文在运输层被封装为 UDP 用户数据报，目的端口号为 53；UDP 用户数据报在网络层被封装为 IP 数据包，目的 IP 地址为域名服务器的 IP 地址；IP 数据报被封装在以太单播帧中发送，目的 MAC 地址为之前 ARP 请求获得的 MAC 地址，该单播帧通过交换机转发给本地域名服务器，本地域名服务器在收到报文后逐层解封，知道这是一个 DNS 请求，于是进入域名解析阶段。<del>给主机发送 DNS 响应报文，里面包含了域名对应的 IP 地址。</del></p>
 </li>
 </ol>
-</li>
-<li><p>域名解析</p>
-<ol>
-<li>根据域名的层级关系，由大到小为：<strong>根域、顶级域、权威域</strong>，层级代表的意思是：<del>高层级里面保存了下一层级的域名到 IP 的映射记录</del>，对应到域名是从右往左，也就是右边最大，左边最小，比如 <a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a> 这个域名，（最高层的根域在这个域名里没有体现出来，看了下别的博客，说的是实际是最后还有一个隐藏的 . 代表的就是根域名，这里暂时先不研究了），根域里保存的下一级顶级域的记录，也就是最右边的 .com 的记录，而 .com 又保存了 baidu.com 这个权威域的记录，最终再从 baidu.com 这个权威域里面找到最终的域名 <a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a> 的记录</li>
-</ol>
-</li>
-<li><p>构建 HTTP 请求报文</p>
-</li>
-<li><p>运输层封装应用层的 HTTP 报文</p>
-<ol>
-<li>因为 HTTP 底层使用的运输层协议是 TCP，所以会将应用层的报文封装到一个 TCP 报文中，然后添加上 TCP 的报文头，目的端口通过请求的 URL 获取，如果没有指定，则使用 HTTP 默认的 80 端口，或者 HTTPS 的默认端口 443，源端口取决于是否显式指定，如果没有则会由系统随机分配一个。</li>
-<li>然后就可以发起三次握手来建立连接了</li>
-</ol>
-</li>
-<li><p>网络层封装传输层的 TCP 报文</p>
-<ol>
-<li>和运输层类似，将 TCP 报文封装到一个 IP 数据报中，添加上 IP 的报文头，源地址填写自己的 IP，目的地址填写之前从 DNS 获取到的 IP</li>
-</ol>
-</li>
-<li><p>MAC</p>
-<ol>
-<li>可以通过 ARP 获取请求 IP 对应的 MAC 地址，这里有个问题：ARP 只能在一个子网内工作，如果请求的 IP 不是一个子网内的，此时该如何获取对应的 MAC 地址呢？原来在每个子网中，都配置了一台网关路由器，它连接了其他几个子网的交换机，当请求的 IP 不属于同一个子网时，就需要这台网关路由器来做转发（也就是将 MAC 地址填写为这个网关路由器的 MAC 地址），传递到另一个子网，具体如何转发取决于路由表，整个流程就像坐公交使用地图导航一样，选择一条路径，在不同的公交站间穿梭前进，网络也是这样的，多个子网相互连接组成一个大网络，数据报在这些互联的子网中选择一条道路前进，经过一个个子网，最终到达目的地。这里也发现了一个问题：<strong>在网络包传输的过程中，源 IP 和目标 IP 始终是不会变的，一直变化的是 MAC 地址，因为需要 MAC 地址在以太网内进行两个设备之间的包传输。</strong>可能这也是为什么需要 IP 和 MAC 两个地址的一点原因。</li>
-</ol>
-</li>
-</ol>
+<h2 id="域名解析阶段"><a href="#域名解析阶段" class="headerlink" title="域名解析阶段"></a><strong>域名解析阶段</strong></h2><p>根据域名的层级关系，由大到小为：<strong>根域、顶级域、权威域</strong>，层级代表的意思是：<del>高层级里面保存了下一层级的域名到 IP 的映射记录</del>，对应到域名是从右往左，也就是右边最大，左边最小，比如 <a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a> 这个域名，（最高层的根域在这个域名里没有体现出来，看了下别的博客，说的是实际是最后还有一个隐藏的 . 代表的就是根域名，这里暂时先不研究了），根域里保存的下一级顶级域的记录，也就是最右边的 .com 的记录，而 .com 又保存了 baidu.com 这个权威域的记录，最终再从 baidu.com 这个权威域里面找到最终的域名 <a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a> 的记录。</p>
+<p>知道了上面的前置概念后，我们就可以开始了解域名查询操作的流程了，域名查询分为了迭代查询和递归查询两种方式，<a target="_blank" rel="noopener" href="https://www.xiaolincoding.com/network/1_base/what_happen_url.html#%E7%9C%9F%E5%AE%9E%E5%9C%B0%E5%9D%80%E6%9F%A5%E8%AF%A2-dns">下面这张图</a> 清晰的展示了 DNS 查询的流程，并且这是迭代查询的方式。</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/dns_iterative_query.webp" srcset="/img/loading.gif" lazyload></p>
+<p>从上图可以看到，迭代查询是所有的查询操作都落在一个 server 上，比如 A 问 B 要 C 的地址，然后 B 把 C 的地址给 A，A 再去问 C 要 D 的地址。。。所有请求都是 A 发出的；而递归操作则是 A 问 B，B 再问 C 这样。。。</p>
+<p><strong>递归查询</strong></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/dns_query_digui.webp" srcset="/img/loading.gif" lazyload></p>
+<p><strong>迭代查询</strong></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/dns_query_iter.webp" srcset="/img/loading.gif" lazyload></p>
+<h2 id="DNS-域名服务器传回-DNS-响应报文"><a href="#DNS-域名服务器传回-DNS-响应报文" class="headerlink" title="DNS 域名服务器传回 DNS 响应报文"></a><strong>DNS 域名服务器传回 DNS 响应报文</strong></h2><p>然后我们就可以拿到该域名对应的 IP 地址了。</p>
+<h1 id="3-运输层封装应用层的-HTTP-报文"><a href="#3-运输层封装应用层的-HTTP-报文" class="headerlink" title="3. 运输层封装应用层的 HTTP 报文"></a>3. 运输层封装应用层的 HTTP 报文</h1><p>在之前我们已经构建好了应用层的 HTTP 请求报文，根据网络模型，我们需要按照 应用层 —— 运输层 —— 网络层 —— 数据链路层 —— 物理层 的方式构建报文，所以我们需要构建一个传输层协议的报文，来封装应用层的 HTTP 请求报文。HTTP 使用的传输层协议一般都是 TCP（除了 HTTP 3 没有使用，其他版本的 HTTP 都是使用的 TCP），所以接下来我们需要构建一个 TCP 报文。</p>
+<p>TCP 报文结构如下：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/tcp_proto.webp" srcset="/img/loading.gif" lazyload></p>
+<p>TCP 报文里包含非常多的参数，这里我们先不管其他的，只关注源端口和目标端口这两个，因为这两个值都是基于我们之前得到的结果进行填写的。其中，目标端口通过请求的 URL 获取，如果没有指定，则使用 HTTP 默认的 80 端口，或者 HTTPS 的默认端口 443，源端口取决于是否显式指定，如果没有则会由系统随机分配一个。</p>
+<p>然后我们会把之前的 HTTP 请求报文放到 TCP 报文的数据部分，也就是所谓的封装。需要注意的是 TCP 报文存在一个 MSS（最大分段大小）的概念，即 TCP 的报文段中的数据部分的最大字节数，如果我们的 HTTP 请求报文比较大，那么将会进行数据分割操作，也就是将数据拆成多个小的数据块，然后分多次发送，这也是为什么 TCP 称为流式传输的原因。</p>
+<p>至此我们已经封装好了 TCP 报文，类似下面这样：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/tcp_wrap_http.webp" srcset="/img/loading.gif" lazyload></p>
+<p>最后，在 TCP 传输数据之前，要先通过三次握手建立连接，这个所谓的「连接」，其实就是双方计算机里维护一个状态机，在连接建立的过程中，双方的状态变化时序图就像这样。</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/tcp_san_ci_wo_shou.webp" srcset="/img/loading.gif" lazyload></p>
+<ul>
+<li>一开始，客户端和服务端都处于 <code>CLOSED</code> 状态。先是服务端主动监听某个端口，处于 <code>LISTEN</code> 状态。</li>
+<li>然后客户端主动发起连接 <code>SYN</code>，之后处于 <code>SYN-SENT</code> 状态。</li>
+<li>服务端收到发起的连接，返回 <code>SYN</code>，并且 <code>ACK</code> 客户端的 <code>SYN</code>，之后处于 <code>SYN-RCVD</code> 状态。</li>
+<li>客户端收到服务端发送的 <code>SYN</code> 和 <code>ACK</code> 之后，发送对 <code>SYN</code> 确认的 <code>ACK</code>，之后处于 <code>ESTABLISHED</code> 状态，因为它一发一收成功了。</li>
+<li>服务端收到 <code>ACK</code> 的 <code>ACK</code> 之后，处于 <code>ESTABLISHED</code> 状态，因为它也一发一收了。</li>
+</ul>
+<p>所以三次握手目的是 <strong>保证双方都有发送和接收的能力</strong>。</p>
+<blockquote>
+<p>下面这段内容不确定正确性，只做记录</p>
+<p>TCP 三次握手发送的包，也是普通的 TCP 报文，结构和 TCP 结果相同，它会根据具体的操作来填充对应的填充位（SYN，ACK …）以及一些其他数据，然后发送出去，我们注意到在 TCP 报文中是不需要填写 IP 地址的，那它如何方式给对方呢？和常规的网络包一样，我们需要将这个运输层的包继续封装到一个网络层 IP 数据报中，而 IP 就是在此时填写，然后再继续按照网络模型层层封装，最后发送出去。。。</p>
+</blockquote>
+<p>至此，我们已经封装好了运输层 TCP 报文，并且使用三次握手建立的连接，做好了数据传输的准备。</p>
+<h1 id="4-网络层封装传输层的-TCP-报文"><a href="#4-网络层封装传输层的-TCP-报文" class="headerlink" title="4. 网络层封装传输层的 TCP 报文"></a>4. 网络层封装传输层的 TCP 报文</h1><p>运输层报文已经准备好了，按照网络模型，我们需要继续将这个 TCP 报文封装到一个 IP 数据报中，添加上 IP 的报文头，然后报文头里面需要填写源 IP 地址和目的 IP 地址，这里的源地址填写我们自己（也就是某张网卡）的 IP，目的地址填写之前从 DNS 获取到的 IP，这样就知道该发送给哪台机器了。</p>
+<blockquote>
+<p>在 TCP 报文中，我们只填写了端口号，但是没有填写 IP，所以运输层是 <strong>端到端</strong> 的，它负责把报文交给一个具体的应用；而网络层是 <strong>点到点</strong> 的，它负责把报文交给一台机器，这也体现了网络模型中的分层思想。</p>
+</blockquote>
+<p>封装好的 IP 数据报类似下面这样：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/ip_proto_data.webp" srcset="/img/loading.gif" lazyload></p>
+<h1 id="5-数据链路层封装-IP-数据报"><a href="#5-数据链路层封装-IP-数据报" class="headerlink" title="5. 数据链路层封装 IP 数据报"></a>5. 数据链路层封装 IP 数据报</h1><p>我们已经封装好了网络层的 IP 数据报，接下里我们需要继续创建一个数据链路层报文。</p>
+<blockquote>
+<p><strong>一点杂谈</strong></p>
+<p>互联网其实就是由一个一个小的局域网组成的大的网络，就像一个国家是由一个个城市组成的一样，每个城市又通过道路连接起来。发送一个网络报文就可以类比成现实生活中的开车旅游，我们要想到达目的地，就需要地图导航，告诉我们前进的路线。比如我们要想从 A 市到 C 市的 XX 小镇，根据地图的指引，我们需要先沿着 a 号公路行驶到 B 市，再从 B 市走 b 路到达 C 市市中心，最后，我们再走 c 小道到达最终的目的地 XX 小镇。</p>
+<p>同理，我们重新回到计算机网络，城市就相当于一个局域网，小镇就相当于这个局域网中的一台机器，网络报文就相当于汽车，道路就相当于网络设备，报文将在一个个局域网中穿梭，根据一系列的规则（地图指引），来选择其前进的方向，最终到达目的局域网中的某台机器。</p>
+</blockquote>
+<blockquote>
+<p><strong>Tips：网络层负责点到点的传输，其工作于大的网络，比如互联网&#x2F;广域网，而数据链路层负责同一局域网下的两点之间传输，其工作于小的局域网。</strong></p>
+</blockquote>
+<p>数据链路层报文里有两个字段：接收方 MAC 地址，发送方 MAC 地址，我们主要关注这两个字段即可。MAC 地址可以唯一标识局域网中的一台机器。</p>
+<p>**接收方 **的 MAC 地址就有点复杂，只要告诉以太网对方的 MAC 的地址，以太网就会帮我们把包发送过去，那么很显然这里应该填写对方的 MAC 地址。</p>
+<p>**发送方 **的 MAC 地址获取就比较简单了，MAC 地址是在网卡生产时写入到 ROM 里的，只要将这个值读取出来写入到 MAC 头部就可以了。</p>
+<p>那我们如何知道接收方的 MAC 地址呢？我们已经拿到了接收方的 IP 地址了，那么我们就可以通过 ARP 协议来获取该 IP 对应的 MAC 地址。</p>
+<p>我们需要构建一个 ARP 请求报文，源 IP 和源 MAC 填写自己的，目的 IP 填写目标 IP 的，目的 MAC 填写广播地址（FF-FF-FF-FF-FF-FF-FF），然后这个报文会发送给 <strong>当前子网的所有主机</strong>，每个主机会查看报文里的目的 IP 地址是否与自己的 IP 地址相同，如果相同的话，就会回复 ARP 响应报文，里面有自己的 MAC 地址；如果不相同则会直接丢弃报文。主机获得域名服务器的 MAC 地址后，记录到自己的 ARP 表中进行缓存，这样下次再问的话就可以直接返回了。</p>
+<p>这里可能会想到一个问题：ARP 只能在一个子网内工作，如果请求的 IP 不是一个子网内的，那将没人会进行应答，此时该如何获取对应的 MAC 地址呢？原来在每个子网中，都配置了一台网关路由器，它连接了其他几个子网的交换机，当请求的 IP 不属于同一个子网时，就需要这台网关路由器来做转发（也就是将 MAC 地址填写为这个网关路由器的 MAC 地址），传递到另一个子网，具体如何转发取决于路由表，整个流程就像坐公交使用地图导航一样，选择一条路径，在不同的公交站间穿梭前进，网络也是这样的，多个子网相互连接组成一个大网络，数据报在这些互联的子网中选择一条道路前进，经过一个个子网，最终到达目的地。这里也发现了一个问题：<strong>在网络包传输的过程中，源 IP 和目标 IP 始终是不会变的（前提：没有使用 NAT 网络的），一直变化的是 MAC 地址，因为需要 MAC 地址在以太网内进行两个设备之间的包传输。</strong>可能这也是为什么需要 IP 和 MAC 两个地址的一点原因。</p>
+<p>最终，封装好的数据链路层报文如下：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/mac_proto_data.webp" srcset="/img/loading.gif" lazyload></p>
+<h1 id="6-网卡发送最终的网络包"><a href="#6-网卡发送最终的网络包" class="headerlink" title="6. 网卡发送最终的网络包"></a>6. 网卡发送最终的网络包</h1><p>到现在，软件层面的网络包已经封装好了，接下来我们就需要借助硬件，将 <strong>数字信息转换为电信号</strong>，才能在网线上传输，也就是说，这才是真正的数据发送过程。负责执行这一操作的是 <strong>网卡</strong>，要控制网卡还需要靠 <strong>网卡驱动程序</strong>。网卡驱动获取网络包之后，会将其 <strong>复制</strong> 到网卡内的缓存区中，接着会在其 <strong>开头加上报头和起始帧分界符，在末尾加上用于检测错误的帧校验序列</strong>。</p>
+<p>最后网卡会将包转为电信号，通过网线发送出去。</p>
+<h1 id="7-已经变成电信号的网络包顺着网线打爆交换机的狗头"><a href="#7-已经变成电信号的网络包顺着网线打爆交换机的狗头" class="headerlink" title="7. 已经变成电信号的网络包顺着网线打爆交换机的狗头"></a>7. 已经变成电信号的网络包顺着网线打爆交换机的狗头</h1><p>网卡把网络包转为电信号后，发送给了交换机</p>
+<blockquote>
+<p>🤔 网线一定是连接着交换机吗？</p>
+</blockquote>
+<p><strong>交换机的包接收操作</strong></p>
+<p>首先，电信号到达网线接口，交换机里的模块进行接收，接下来交换机里的模块将电信号转换为数字信号。</p>
+<p>然后通过包末尾的 <code>FCS</code> 校验错误，如果没问题则放到缓冲区。</p>
+<p>与网卡不同，网卡在收到包后会检查该包的目的 MAC 地址，看和自己的 MAC 地址一不一致，如果不一致则说明这个包不是发给自己的，会直接丢弃；但是交换机不会进行这一步操作，而是直接接收所有的包并存放到缓冲区中。因此，和网卡不同，<strong>交换机的端口不具有 MAC 地址</strong>。</p>
+<p>将包存入缓冲区后，接下来需要查询一下这个包的接收方 MAC 地址是否已经在 MAC 地址表中有记录了。</p>
+<blockquote>
+<p>读者注：交换机与多个接口，每个接口都可以通过网线连接一台设备。</p>
+<p>然后交换机还有有一个 MAC 地址表，里面记录了每个接口到该接口连接设备的 MAC 地址的映射</p>
+<p>比如</p>
+<p>00-60-97-A5-43-3C 		1		代表接口 1 所连接的设备的 MAC 地址为 00-60-97-A5-43-3C</p>
+</blockquote>
+<p>交换机的 MAC 地址表主要包含两个信息：</p>
+<ul>
+<li>一个是设备的 MAC 地址，</li>
+<li>另一个是该设备连接在交换机的哪个端口上。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/mac_addr_table.webp" srcset="/img/loading.gif" lazyload></p>
+<p>举个例子，如果收到的包的接收方 MAC 地址为 <code>00-02-B3-1C-9C-F9</code>，则与图中表中的第 3 行匹配，根据端口列的信息，可知这个地址位于 <code>3</code> 号端口上，然后就可以通过交换电路将包发送到相应的端口了。</p>
+<p>所以，<strong>交换机根据 MAC 地址表查找 MAC 地址，然后将信号发送到相应的端口</strong>。</p>
+<h1 id="8-继续打爆路由器"><a href="#8-继续打爆路由器" class="headerlink" title="8. 继续打爆路由器"></a>8. 继续打爆路由器</h1><p>网络包经过交换机之后，现在到达了 <strong>路由器</strong>，并在此被转发到下一个路由器或目标设备。</p>
+<blockquote>
+<p>🤔 一定要先通过交换机，再通过路由器吗？</p>
+</blockquote>
+<p><strong>路由器的包接收操作</strong></p>
+<p>首先，电信号到达网线接口部分，路由器中的模块会将电信号转成数字信号，然后通过包末尾的 <code>FCS</code> 进行错误校验。</p>
+<p>如果没问题则检查 MAC 头部中的 <strong>接收方 MAC 地址</strong>，看看是不是发给自己的包，如果是就放到接收缓冲区中，否则就丢弃这个包。</p>
+<p>完成包接收操作之后，路由器就会 <strong>去掉</strong> 包开头的 MAC 头部。</p>
+<p><strong>MAC 头部的作用就是将包送达路由器</strong>，其中的接收方 MAC 地址就是路由器端口的 MAC 地址。因此，当包到达路由器之后，MAC 头部的任务就完成了，于是 MAC 头部就会 <strong>被丢弃</strong>。</p>
+<blockquote>
+<p>🤔 在前面的交换机发送操作中，交换机会根据自己的 MAC 地址表来转发包（转发给路由器），那么按理说路由器收到的包应该是属于自己的（也就是自身的 MAC 地址与包的目的 MAC 地址相同），那为啥这里又要再检查一遍呢？</p>
+<p>看 <a target="_blank" rel="noopener" href="https://www.xiaolincoding.com/network/1_base/what_happen_url.html">文章</a> 里面有这样一段内容：</p>
+<p><strong>当 MAC 地址表找不到指定的 MAC 地址会怎么样？</strong></p>
+<p>地址表中找不到指定的 MAC 地址。这可能是因为具有该地址的设备还没有向交换机发送过包，或者这个设备一段时间没有工作导致地址被从地址表中删除了。</p>
+<p>这种情况下，交换机无法判断应该把包转发到哪个端口，只能 <strong>将包转发到除了源端口之外的所有端口上，无论该设备连接在哪个端口上都能收到这个包</strong>。</p>
+<p>可能就是因为存在这种情况，所以路由器这边就还需要再判断一次</p>
+</blockquote>
+<p>接下来，路由器会根据 MAC 头部后方的 <code>IP</code> 头部中的内容进行包的转发操作。</p>
+<p>转发操作分为几个阶段，首先是查询 <strong>路由表</strong> 判断转发目标。</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/route_table.webp" srcset="/img/loading.gif" lazyload></p>
+<p>具体的工作流程根据上图，举个例子。</p>
+<p>假设地址为 <code>10.10.1.101</code> 的计算机要向地址为 <code>192.168.1.100</code> 的服务器发送一个包，这个包先到达图中的路由器。</p>
+<p>判断转发目标的第一步，就是根据包的接收方 IP 地址查询路由表中的目标地址栏，以找到相匹配的记录。</p>
+<p>路由匹配和前面讲的一样，每个条目的子网掩码和 <code>192.168.1.100</code> IP 做 <strong>&amp; 与运算</strong>后，得到的结果与对应条目的目标地址进行匹配，如果匹配就会作为候选转发目标，如果不匹配就继续与下个条目进行路由匹配。</p>
+<p>如第二条目的子网掩码 <code>255.255.255.0</code> 与 <code>192.168.1.100</code> IP 做 <strong>&amp; 与运算</strong>后，得到结果是 <code>192.168.1.0</code> ，这与第二条目的目标地址 <code>192.168.1.0</code> 匹配，该第二条目记录就会被作为转发目标。</p>
+<p>实在找不到匹配路由时，就会选择 <strong>默认路由</strong>，路由表中子网掩码为 <code>0.0.0.0</code> 的记录表示「默认路由」。</p>
+<p><strong>路由器的发送操作</strong></p>
+<p>接下来就会进入包的 <strong>发送操作</strong>。</p>
+<p>首先，我们需要根据 <strong>路由表的网关列</strong> 判断对方的地址。</p>
+<ul>
+<li>如果网关是一个 IP 地址，则这个IP 地址就是我们要转发到的目标地址，<strong>还未抵达终点</strong>，还需继续需要路由器转发。</li>
+<li>如果网关为空，则 IP 头部中的接收方 IP 地址就是要转发到的目标地址，也是就终于找到 IP 包头里的目标地址了，说明<strong>已抵达终点</strong>。</li>
+</ul>
+<p>知道对方的 IP 地址之后，接下来需要通过 <code>ARP</code> 协议根据 IP 地址查询 MAC 地址，并将查询的结果作为接收方 MAC 地址。</p>
+<p>路由器也有 ARP 缓存，因此首先会在 ARP 缓存中查询，如果找不到则发送 ARP 查询请求。</p>
+<p>接下来是发送方 MAC 地址字段，这里填写输出端口的 MAC 地址。还有一个以太类型字段，填写 <code>0800</code> （十六进制）表示 IP 协议。</p>
+<p>网络包完成后，接下来会将其转换成电信号并通过端口发送出去。这一步的工作过程和计算机也是相同的。</p>
+<p>发送出去的网络包会通过 <strong>交换机</strong> 到达下一个路由器。由于接收方 MAC 地址就是下一个路由器的地址，所以交换机会根据这一地址将包传输到下一个路由器。</p>
+<p>接下来，下一个路由器会将包转发给再下一个路由器，经过层层转发之后，网络包就到达了最终的目的地。</p>
+<p>不知你发现了没有，在网络包传输的过程中，<strong>源 IP 和目标 IP 始终是不会变的，一直变化的是 MAC 地址</strong>，因为需要 MAC 地址在以太网内进行 <strong>两个设备</strong> 之间的包传输。</p>
+<h1 id="9-开始扒皮"><a href="#9-开始扒皮" class="headerlink" title="9. 开始扒皮"></a>9. 开始扒皮</h1><p>经过一系列的操作后，我们的网络包终于到达目的主机了，接下来就可以将一个个层层封装的报文，再层层解开，拿到我们想要的信息。</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/net_pack_wrap_unwrap.webp" srcset="/img/loading.gif" lazyload></p>
+<p>数据包抵达服务器后，服务器会先扒开数据包的 MAC 头部，查看是否和服务器自己的 MAC 地址符合，符合就将包收起来。</p>
+<p>接着继续扒开数据包的 IP 头，发现 IP 地址符合，根据 IP 头中协议项，知道自己上层是 TCP 协议。</p>
+<p>于是，扒开 TCP 的头，里面有序列号，需要看一看这个序列包是不是我想要的，如果是就放入缓存中然后返回一个 ACK，如果不是就丢弃。TCP 头部里面还有端口号， HTTP 的服务器正在监听这个端口号。</p>
+<p>于是，服务器自然就知道是 HTTP 进程想要这个包，于是就将包发给 HTTP 进程。</p>
+<p>服务器的 HTTP 进程看到，原来这个请求是要访问一个页面，于是就把这个网页封装在 HTTP 响应报文里。</p>
+<p>HTTP 响应报文也需要穿上 TCP、IP、MAC 头部，不过这次是源地址是服务器 IP 地址，目的地址是客户端 IP 地址。</p>
+<p>穿好头部衣服后，从网卡出去，交由交换机转发到出城的路由器，路由器就把响应数据包发到了下一个路由器，就这样跳啊跳。</p>
+<p>最后跳到了客户端的城门把守的路由器，路由器扒开 IP 头部发现是要找城内的人，于是又把包发给了城内的交换机，再由交换机转发到客户端。</p>
+<p>客户端收到了服务器的响应数据包后，同样也非常的高兴，客户能拆快递了！</p>
+<p>于是，客户端开始扒皮，把收到的数据包的皮扒剩 HTTP 响应报文后，交给浏览器去渲染页面，一份特别的数据包快递，就这样显示出来了！</p>
+<p>最后，客户端要离开了，向服务器发起了 TCP 四次挥手，至此双方的连接就断开了。</p>
+<h1 id="参考-x2F-抄袭"><a href="#参考-x2F-抄袭" class="headerlink" title="参考&#x2F;抄袭"></a>参考&#x2F;抄袭</h1><p><a target="_blank" rel="noopener" href="https://www.xiaolincoding.com/network/1_base/what_happen_url.html">https://www.xiaolincoding.com/network/1_base/what_happen_url.html</a></p>
 
                 
               </div>
@@ -351,6 +480,8 @@
       
         <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
       
+        <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/">#面试题</a>
+      
     </div>
   
 </div>
@@ -361,7 +492,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>输入 url 到浏览器显示网页，期间发生了什么？（未完）</div>
+      <div>输入 url 到浏览器显示网页，期间发生了什么？</div>
       <div>https://autsu.github.io/2022/07/14/url_dao_xian_shi_wang_ye_fa_shen_le_shen_me/</div>
     </div>
     <div class="license-meta">

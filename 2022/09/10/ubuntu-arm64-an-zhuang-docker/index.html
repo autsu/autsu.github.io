@@ -24,8 +24,9 @@
 <meta property="og:description" content="使用 snap 可以比较方便的安装 docker，但是有一次出现了 k8s pod 无法拉取镜像的问题，看了下 pod describe，发现是因为走代理的问题（我使用的是 ubuntu 虚拟机，连接宿主机的 clashx 进行代理），连接的代理是宿主机的老地址 192.168.2.5，但是因为重启过路由器，所以宿主机的地址变更为了 192.168.2.3，代理不通自然也拉取不了镜像了，报错： 1">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-09-10T11:41:35.000Z">
-<meta property="article:modified_time" content="2023-03-18T13:37:15.221Z">
+<meta property="article:modified_time" content="2023-08-24T14:49:52.709Z">
 <meta property="article:author" content="void">
+<meta property="article:tag" content="docker">
 <meta property="article:tag" content="issue">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -326,6 +327,8 @@
   
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/docker/">#docker</a>
       
         <a href="/tags/issue/">#issue</a>
       

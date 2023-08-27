@@ -245,6 +245,159 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2022/03/16/mysql-buffer-pool-de-yi-xie-yi-wen-ji-lu/" target="_self">
+          Mysql Buffer Pool 的一些疑问记录
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/16/mysql-buffer-pool-de-yi-xie-yi-wen-ji-lu/" target="_self">
+        <div>
+          这是我在看 Mysql Buffer Pool 时的一个疑问，先说说 Buffer Pool，为了提高性能，Mysql 为读写操作添加了一层缓存，这样就可以直接从内存中操作，速度相比操作硬盘要快很多，只要之后再将内存中的数据定期写入到磁盘中即可保证数据一致。但是这样就产生了一个问题：如果在内存写入到磁盘之前，Mysql 进程挂掉了，这样岂不是就丢失数据了？ 通过网上查阅资料，了解了 Mysql 对
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-03-16 23:00" pubdate>
+              2022-03-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/mysql/">#mysql</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/03/10/go-slice-append-de-keng-cun-yi/" target="_self">
+          Go slice append 的坑 [存疑]
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/10/go-slice-append-de-keng-cun-yi/" target="_self">
+        <div>
+          引子使用过 Go 的小伙伴应该都遇到过这样一个坑：当使用 slice 作为参数传递时，如果调用方函数内部发生了 append 操作，那么对应的改变不会在实参处体现出来，比如： 1234567891011121314package mainimport &quot;fmt&quot;func main() &#123;	slice := make([]int, 0, 0)	slice = fn(sl
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-03-10 14:31" pubdate>
+              2022-03-10
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/02/15/cao-zuo-xi-tong-mian-shi-ti/" target="_self">
+          操作系统面试题
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/02/15/cao-zuo-xi-tong-mian-shi-ti/" target="_self">
+        <div>
+          页的概念线程怎么调度的进程间通信有哪几种方式，哪种方式最快？1.无名管道( pipe )：管道是一种半双工的通信方式，数据只能单向流动，而且只能在具有亲缘关系的进程间使用。进程的亲缘关系通常是指父子进程关系。 2.高级管道(popen)：将另一个程序当做一个新的进程在当前程序进程中启动，则它算是当前程序的子进程，这种方式我们成为高级管道方式。 3.有名管道 (named pipe) ： 有名管道也
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-02-15 01:28" pubdate>
+              2022-02-15
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">#操作系统</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/02/14/mvcc-yu-shi-wu-ge-chi/" target="_self">
+          MVCC 与事务隔离
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/02/14/mvcc-yu-shi-wu-ge-chi/" target="_self">
+        <div>
+          申明：以下内容来自网上的博客、课程，通过自己的理解进行一下转述，可能存在一些错误和纰漏  介绍MySQL 的 可重复读 和 读已提交 是基于 MVCC 实现的，它的最大优点是读不加锁，因此读写不冲突，并发性能好，其实现主要基于以下技术及数据结构： 首先，InnoDB 里面每个事务有一个唯一的事务 ID，叫作 transaction id。它是在事务开始的时候向 InnoDB 的事务系统申请的，
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-02-14 16:01" pubdate>
+              2022-02-14
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/mysql/">#mysql</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2022/02/10/so_reuseaddr-he-so_reuseport-shi-jian/" target="_self">
           SO_REUSEADDR 和 SO_REUSEPORT 实践
         </a>
@@ -293,7 +446,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2022/02/02/close_wait-he-fin_wait_2/" target="_self">
         <div>
-          问题记录最近写了一个普通的 tcp demo，发现 server 的状态处于 CLOSE_WAIT，而 client 的状态处于 FIN_WAIT_2，为了排查这个问题，特此写了这篇文章作为记录，这也 没有 close 的服务端： 1234567891011121314151617181920212223242526272829303132333435363738394041424344packa
+          问题记录最近写了一个普通的 tcp demo，发现 server 的状态处于 CLOSE_WAIT，而 client 的状态处于 FIN_WAIT_2，为了排查这个问题，特此写了这篇文章作为记录。 没有 close 的服务端： 1234567891011121314151617181920212223242526272829303132333435363738394041424344package
         </div>
       </a>
 
@@ -355,49 +508,7 @@
             
               <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
             
-              <a href="/tags/%E9%9D%A2%E7%BB%8F/">#面经</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/01/26/gmp-mian-shi-ti/" target="_self">
-          GMP 面试题
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/01/26/gmp-mian-shi-ti/" target="_self">
-        <div>
-          Goroutine 阻塞的话，是不是对应的 M 也会阻塞如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M,则 P 和与其绑定并继续执行其他的 G;如果没有空闲的 M,但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P,如果没有可用的 P,那么
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-01-26 11:42" pubdate>
-              2022-01-26
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/go/">#go</a>
-            
-              <a href="/tags/%E9%9D%A2%E7%BB%8F/">#面经</a>
+              <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/">#面试题</a>
             
           </div>
         
@@ -529,135 +640,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/10/04/zhuan-zai-jin-cheng-de-xu-ni-di-zhi-kong-jian-fen-bu/" target="_self">
-          [转载] 进程的虚拟地址空间分布
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/10/04/zhuan-zai-jin-cheng-de-xu-ni-di-zhi-kong-jian-fen-bu/" target="_self">
-        <div>
-          https://www.cnblogs.com/Joezzz/p/9803344.html
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-10-04 11:57" pubdate>
-              2021-10-04
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">#操作系统</a>
-            
-              <a href="/tags/%E8%BD%AC%E8%BD%BD/">#转载</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/10/04/mac-tong-guo-dosbox-da-jian-hui-bian-huan-jing-fu-bian-yi-lian-jie-zhi-xing-diao-shi-xiang-xi-guo-cheng/" target="_self">
-          [转载] Mac 通过DOSBox搭建汇编环境（附编译、链接、执行、调试详细过程）
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/10/04/mac-tong-guo-dosbox-da-jian-hui-bian-huan-jing-fu-bian-yi-lian-jie-zhi-xing-diao-shi-xiang-xi-guo-cheng/" target="_self">
-        <div>
-          https://blog.csdn.net/qq_41855420/article/details/103746234
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-10-04 11:57" pubdate>
-              2021-10-04
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E8%BD%AC%E8%BD%BD/">#转载</a>
-            
-              <a href="/tags/%E6%B1%87%E7%BC%96/">#汇编</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/09/25/39-zu-he-zong-he/" target="_self">
-          39. 组合总和
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/09/25/39-zu-he-zong-he/" target="_self">
-        <div>
-          给定一个无重复元素的正整数数组 candidates 和一个正整数 target ，找出 candidates 中所有可以使数字和为目标数 target 的唯一组合。 candidates 中的数字可以无限制重复被选取。如果至少一个所选数字数量不同，则两种组合是唯一的。  对于给定的输入，保证和为 target 的唯一组合数少于 150 个。 示例 1：输入: candidates &#x3D;
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-09-25 22:27" pubdate>
-              2021-09-25
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%9B%9E%E6%BA%AF%E6%B3%95/">#回溯法</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/7/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/#board">6</a><a class="page-number" href="/page/7/#board">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/#board">9</a><a class="page-number" href="/page/10/#board">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/#board">16</a><a class="extend next" rel="next" href="/page/9/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/7/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/#board">6</a><a class="page-number" href="/page/7/#board">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/#board">9</a><a class="page-number" href="/page/10/#board">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/#board">17</a><a class="extend next" rel="next" href="/page/9/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

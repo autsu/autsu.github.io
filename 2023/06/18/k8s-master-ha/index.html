@@ -24,7 +24,7 @@
 <meta property="og:description" content="什么是控制节点高可用控制节点，也可以叫做 k8s master 节点，负责管理和控制整个集群的运行。控制节点上运行着 k8s 控制平面组件，其中包括了负责集群内外通信的超核心的组件  —— api-server，这代表着如果控制节点挂掉了，那么整个集群都会因为 ”群龙无首“ 而不可用，所以在实际的生产环境中，k8s 集群一定会部署多个控制节点，这样可以保证某个节点挂掉后，其他节点还能继续提供服务，">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-06-18T06:03:23.000Z">
-<meta property="article:modified_time" content="2023-07-01T04:05:07.277Z">
+<meta property="article:modified_time" content="2023-08-09T11:10:23.361Z">
 <meta property="article:author" content="void">
 <meta property="article:tag" content="k8s">
 <meta name="twitter:card" content="summary_large_image">
@@ -445,7 +445,7 @@
           </div>
 
 <h2 id="部署-K8s"><a href="#部署-K8s" class="headerlink" title="部署 K8s"></a>部署 K8s</h2><p>至此已经部署好了 Keepalived 和 HAproxy 这两个高可用相关的组件，接下来就可以部署 k8s 集群了，因为部署 k8s 不是本文的重点，所以这里不会详细记录部署过程，只简单记录一下如何部署高可用。</p>
-<p>网上查了一下，似乎大部分工具部署高可用集群，都是通过一个名为 controlPlaneEndpoint 的参数实现的，比如我使用的部署工具kubesphere，其部署高可用集群只需要在部署配置文件中提供 controlPlaneEndpoint 下的相关信息即可，类似这样：</p>
+<p>网上查了一下，似乎大部分工具部署高可用集群，都是通过一个名为 controlPlaneEndpoint 的参数实现的，比如我使用的部署工具 kubesphere，其部署高可用集群只需要在部署配置文件中提供 controlPlaneEndpoint 下的相关信息即可，类似这样：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">controlPlaneEndpoint:</span><br>    <span class="hljs-attr">domain:</span> <span class="hljs-string">lb.kubesphere.local</span><br>    <span class="hljs-attr">address:</span> <span class="hljs-number">172.16</span><span class="hljs-number">.0</span><span class="hljs-number">.10</span>   <span class="hljs-comment"># The VIP address</span><br>    <span class="hljs-attr">port:</span> <span class="hljs-number">6443</span><br></code></pre></td></tr></table></figure>
 
 <p>然后我又看了一下 kubeadm 的高可用部署，貌似也是在 kubeadm-config.yaml 配置文件中指定 controlPlaneEndpoint 的值，不过我这边就没有实践了。</p>

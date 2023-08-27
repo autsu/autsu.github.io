@@ -16,21 +16,21 @@
   <meta name="author" content="void">
   <meta name="keywords" content="">
   
-    <meta name="description" content="表锁语法：  加锁：   加读锁  LOCK TABLES [tablename] READ;     加写锁  LOCK TABLES [tablename] WRITE;    释放锁：UNLOCK TABLES;   加锁后会阻塞其他线程的部分操作，同时也会对加锁线程进行一些限制，直到加锁的线程释放锁。 读锁和写锁的区别：当加 读锁 后，其他线程的 SELECT 语句不会被阻塞，但是 INS">
+    <meta name="description" content="表级锁表锁语法：  加锁：   加读锁  LOCK TABLES [tablename] READ;     加写锁  LOCK TABLES [tablename] WRITE;    释放锁：UNLOCK TABLES;   加锁后会阻塞其他线程的部分操作，同时也会对加锁线程进行一些限制，直到加锁的线程释放锁。 读锁和写锁的区别：当加 读锁 后，其他线程的 SELECT 语句不会被阻塞，但是">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MySQL 锁">
 <meta property="og:url" content="https://autsu.github.io/2021/08/29/mysql-suo/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="表锁语法：  加锁：   加读锁  LOCK TABLES [tablename] READ;     加写锁  LOCK TABLES [tablename] WRITE;    释放锁：UNLOCK TABLES;   加锁后会阻塞其他线程的部分操作，同时也会对加锁线程进行一些限制，直到加锁的线程释放锁。 读锁和写锁的区别：当加 读锁 后，其他线程的 SELECT 语句不会被阻塞，但是 INS">
+<meta property="og:description" content="表级锁表锁语法：  加锁：   加读锁  LOCK TABLES [tablename] READ;     加写锁  LOCK TABLES [tablename] WRITE;    释放锁：UNLOCK TABLES;   加锁后会阻塞其他线程的部分操作，同时也会对加锁线程进行一些限制，直到加锁的线程释放锁。 读锁和写锁的区别：当加 读锁 后，其他线程的 SELECT 语句不会被阻塞，但是">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://youseebiggirl.github.io/post-images/1630250653743.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1630250653743.webp">
 <meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1648548013859.webp">
 <meta property="article:published_time" content="2021-08-29T02:55:13.000Z">
-<meta property="article:modified_time" content="2023-06-05T11:57:02.252Z">
+<meta property="article:modified_time" content="2023-08-09T11:10:23.375Z">
 <meta property="article:author" content="void">
 <meta property="article:tag" content="mysql">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://youseebiggirl.github.io/post-images/1630250653743.webp">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1630250653743.webp">
   
   
   
@@ -244,7 +244,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.6k 字
+          3.7k 字
         
       </span>
     
@@ -255,7 +255,7 @@
         
         
         
-          31 分钟
+          32 分钟
         
       </span>
     
@@ -306,7 +306,7 @@
             
               <div class="markdown-body">
                 
-                <h1 id="表锁"><a href="#表锁" class="headerlink" title="表锁"></a>表锁</h1><p>语法：</p>
+                <h1 id="表级锁"><a href="#表级锁" class="headerlink" title="表级锁"></a>表级锁</h1><h2 id="表锁"><a href="#表锁" class="headerlink" title="表锁"></a>表锁</h2><p>语法：</p>
 <ul>
 <li><p>加锁：</p>
 <p>  加读锁<br>  <code>LOCK TABLES [tablename] READ;</code>  </p>
@@ -328,17 +328,17 @@
 <li><p>读写锁之间、写锁之间是互斥的，用来保证变更表结构操作的安全性。因此，如果有两个线程要同时给一个表加字段，其中一个要等另一个执行完才能开始执行。</p>
 </li>
 </ul>
-<p>虽然 <code>MDL</code> 锁是系统默认会加的，但却是你不能忽略的一个机制。比如下面这个例子，我经常看到有人掉到这个坑里：给一个小表加个字段，导致整个库挂了。<br><img src="https://youseebiggirl.github.io/post-images/1630250653743.webp" srcset="/img/loading.gif" lazyload></p>
-<p>我们可以看到 <code>session A</code> 先启动，这时候会对表 t 加一个 MDL 读锁。由于 <code>session B </code>需要的也是MDL 读锁，因此可以正常执行。</p>
-<p>之后 <code>session C</code> 会被blocked，是因为 <code>session A</code> 的 MDL 读锁还没有释放，而 <code>session C</code> 需要MDL 写锁，因此只能被阻塞。</p>
-<p>如果只有 <code>session C</code> 自己被阻塞还没什么关系，但是之后<strong>所有要在表t上新申请MDL读锁的请求</strong>也会被 <code>session C</code> <strong>阻塞</strong>。前面我们说了，所有对表的增删改查操作都需要先申请 MDL 读锁，就都被锁住，等于这个表现在完全不可读写了。</p>
+<p>虽然 <code>MDL</code> 锁是系统默认会加的，但却是你不能忽略的一个机制。比如下面这个例子，我经常看到有人掉到这个坑里：给一个小表加个字段，导致整个库挂了。<br><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1630250653743.webp" srcset="/img/loading.gif" lazyload></p>
+<p>我们可以看到 <code>session A</code> 先启动，这时候会对表 t 加一个 MDL 读锁。由于 <code>session B </code> 需要的也是 MDL 读锁，因此可以正常执行。</p>
+<p>之后 <code>session C</code> 会被 blocked，是因为 <code>session A</code> 的 MDL 读锁还没有释放，而 <code>session C</code> 需要 MDL 写锁，因此只能被阻塞。</p>
+<p>如果只有 <code>session C</code> 自己被阻塞还没什么关系，但是之后 <strong>所有要在表 t 上新申请 MDL 读锁的请求</strong> 也会被 <code>session C</code> <strong>阻塞</strong>。前面我们说了，所有对表的增删改查操作都需要先申请 MDL 读锁，就都被锁住，等于这个表现在完全不可读写了。</p>
 <p>如果某个表上的查询语句频繁，而且客户端有重试机制，也就是说超时后会再起一个新 session 再请求的话，这个库的线程很快就会爆满。</p>
-<p>你现在应该知道了，事务中的 MDL 锁，在语句执行开始时申请，但是语句结束后并不会马上释放，而会等到<strong>整个事务提交后再释放</strong>。</p>
+<p>你现在应该知道了，事务中的 MDL 锁，在语句执行开始时申请，但是语句结束后并不会马上释放，而会等到 <strong>整个事务提交后再释放</strong>。</p>
 <blockquote>
-<p>划重点：一旦出现写锁等待，不但当前操作会被阻塞，同时还会阻塞后续该表的所有操作。事务一旦申请<br>到 MDL 锁后，直到事务执行完才会将锁释放。</p>
+<p>划重点：一旦出现写锁等待，不但当前操作会被阻塞，同时还会阻塞后续该表的所有操作。事务一旦申请到 MDL 锁后，直到事务执行完才会将锁释放。</p>
 </blockquote>
 <p>基于上面的分析，我们来讨论一个问题，如何安全地给小表加字段？</p>
-<p>首先我们要解决长事务，事务不提交，就会一直占着 <code>MDL</code> 锁。在 <code>MySQL</code> 的 <code>information_schema </code>库的 <code>innodb_trx</code> 表中，你可以查到当前执行中的事务。如果你要做 DDL 变更的表刚好有长事务在执行，要考虑先暂停 <code>DDL</code>，或者 <code>kill</code> 掉这个长事务。</p>
+<p>首先我们要解决长事务，事务不提交，就会一直占着 <code>MDL</code> 锁。在 <code>MySQL</code> 的 <code>information_schema </code> 库的 <code>innodb_trx</code>  表中，你可以查到当前执行中的事务。如果你要做 DDL 变更的表刚好有长事务在执行，要考虑先暂停 <code>DDL</code>，或者 <code>kill</code> 掉这个长事务。</p>
 <p>但考虑一下这个场景。如果你要变更的表是一个热点表，虽然数据量不大，但是上面的请求很频繁，而你不得不加个字段，你该怎么做呢？</p>
 <p>这时候 <code>kill</code> 可能未必管用，因为新的请求马上就来了。比较理想的机制是，在 <code>alter table</code> 语句里面<strong>设定等待时间</strong>，如果在这个指定的等待时间里面能够拿到 <code>MDL写锁</code> 最好，<strong>拿不到也不要阻塞后面的业务语句</strong>，先放弃。之后开发人员或者 DBA 再通过重试命令重复这个过程。</p>
 <p><code>MariaDB</code> 已经合并了 <code>AliSQL</code> 的这个功能，所以这两个开源分支目前都支持 <code>DDL NOWAIT/WAIT n</code> 这个语法。</p>
@@ -346,9 +346,12 @@
 
 
 
-<h1 id="2-全局锁"><a href="#2-全局锁" class="headerlink" title="2. 全局锁"></a>2. 全局锁</h1><p>顾名思义，全局锁就是对整个数据库实例加锁。<code>MySQL</code> 提供了一个加全局读锁的方法，命令是 <code>Flush tables with read lock (FTWRL)</code>。当你需要让整个库处于只读状态的时候，可以使用这个命令，之后其他线程的以下语句会被阻塞：<strong>数据更新语句（数据的增删改）</strong>、<strong>数据定义语句（包括建表、修改表结构等）</strong> 和<strong>更新类事务的提交语句</strong>。</p>
+<h1 id="全局锁"><a href="#全局锁" class="headerlink" title="全局锁"></a>全局锁</h1><p>顾名思义，全局锁就是对整个数据库实例加锁。<code>MySQL</code> 提供了一个加全局读锁的方法，命令是 <code>Flush tables with read lock (FTWRL)</code>。当你需要让整个库处于只读状态的时候，可以使用这个命令，之后其他线程的以下语句会被阻塞：<strong>数据更新语句（数据的增删改）</strong>、<strong>数据定义语句（包括建表、修改表结构等）</strong> 和 <strong>更新类事务的提交语句</strong>。</p>
+<p>如果要释放全局锁，则要执行这条命令：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">unlock tables<br></code></pre></td></tr></table></figure>
+
 <p><strong>全局锁的典型使用场景是，做全库逻辑备份</strong>，也就是把整库每个表都 <code>select</code> 出来存成文本。</p>
-<h1 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h1><h1 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h1><p>用数据版本（Version）记录机制实现，这是乐观锁最常用的一种实现方式。何谓数据版本？即为数据增加一个版本标识，一般是通过为数据库表增加一个数字类型的 “version” 字段来实现。当读取数据时，将version 字段的值一同读出，数据每更新一次，对此version值加 1。当我们提交更新的时候，判断数据库表对应记录的当前版本信息与第一次取出来的version值进行比对，如果数据库表当前版本号与第一次取出来的version值相等，则予以更新，否则认为是过期数据。</p>
+<h1 id="记录锁-x2F-行锁"><a href="#记录锁-x2F-行锁" class="headerlink" title="记录锁&#x2F;行锁"></a>记录锁&#x2F;行锁</h1><h1 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h1><h1 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h1><p>用数据版本（Version）记录机制实现，这是乐观锁最常用的一种实现方式。何谓数据版本？即为数据增加一个版本标识，一般是通过为数据库表增加一个数字类型的 “version” 字段来实现。当读取数据时，将version 字段的值一同读出，数据每更新一次，对此version值加 1。当我们提交更新的时候，判断数据库表对应记录的当前版本信息与第一次取出来的version值进行比对，如果数据库表当前版本号与第一次取出来的version值相等，则予以更新，否则认为是过期数据。</p>
 <p>举例</p>
 <p>1、数据库表设计</p>
 <p>三个字段，分别是id, value, version</p>
@@ -385,24 +388,24 @@
 </tr>
 </tbody></table>
 <h1 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h1><p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1648548013859.webp" srcset="/img/loading.gif" lazyload><br>这时候，事务A在等待事务B释放id&#x3D;2的行锁，而事务B在等待事务A释放id&#x3D;1的行锁。 事务A和事务B在互相等待对方的资源释放，就是进入了死锁状态。</p>
-<h1 id="for-update-加行锁还是表锁？"><a href="#for-update-加行锁还是表锁？" class="headerlink" title="for update 加行锁还是表锁？"></a>for update 加行锁还是表锁？</h1><p>实验：<br>有如下表：</p>
+<h1 id="间隙锁"><a href="#间隙锁" class="headerlink" title="间隙锁"></a>间隙锁</h1><h1 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h1><h2 id="for-update-加行锁还是表锁？"><a href="#for-update-加行锁还是表锁？" class="headerlink" title="for update 加行锁还是表锁？"></a>for update 加行锁还是表锁？</h2><p>实验：<br>有如下表：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">create</span> for_update_is_lock_row_or_lock_table(<br>    id <span class="hljs-type">int</span> <span class="hljs-keyword">primary</span> key auto_increment,<br>    d <span class="hljs-type">int</span>,<br>    c <span class="hljs-type">int</span>,<br>    key(c)c<br>);<br><br><span class="hljs-keyword">insert</span> <span class="hljs-keyword">into</span> for_update_is_lock_row_or_lock_table(d, c) <span class="hljs-keyword">values</span>(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>)<br><span class="hljs-keyword">insert</span> <span class="hljs-keyword">into</span> for_update_is_lock_row_or_lock_table(d, c) <span class="hljs-keyword">values</span>(<span class="hljs-number">2</span>, <span class="hljs-number">2</span>)<br><span class="hljs-keyword">insert</span> <span class="hljs-keyword">into</span> for_update_is_lock_row_or_lock_table(d, c) <span class="hljs-keyword">values</span>(<span class="hljs-number">3</span>, <span class="hljs-number">3</span>)<br></code></pre></td></tr></table></figure>
-<h2 id="实验-1-使用索引列作为条件查询"><a href="#实验-1-使用索引列作为条件查询" class="headerlink" title="实验 1 使用索引列作为条件查询"></a>实验 1 使用索引列作为条件查询</h2><p>事务1：</p>
+<h3 id="实验-1-使用索引列作为条件查询"><a href="#实验-1-使用索引列作为条件查询" class="headerlink" title="实验 1 使用索引列作为条件查询"></a>实验 1 使用索引列作为条件查询</h3><p>事务1：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">update</span> for_update_is_lock_row_or_lock_table <span class="hljs-keyword">set</span> d<span class="hljs-operator">=</span><span class="hljs-number">11</span> <span class="hljs-keyword">where</span> c<span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br></code></pre></td></tr></table></figure>
 
-<p>事务2：<br>更新同一列数据</p>
+<p>事务2，更新同一列数据：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">update</span> for_update_is_lock_row_or_lock_table <span class="hljs-keyword">set</span> d<span class="hljs-operator">=</span><span class="hljs-number">1</span> <span class="hljs-keyword">where</span> c<span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br></code></pre></td></tr></table></figure>
-<p>上面的语句被被阻塞</p>
+<p>结果上面（事务 2）的语句被阻塞</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">update</span> for_update_is_lock_row_or_lock_table <span class="hljs-keyword">set</span> d<span class="hljs-operator">=</span><span class="hljs-number">22</span> <span class="hljs-keyword">where</span> c<span class="hljs-operator">=</span> <span class="hljs-number">2</span>;<br></code></pre></td></tr></table></figure>
-<p>但是这条语句不会被阻塞，说明此时加的是行锁</p>
-<h2 id="实验2-使用非索引列作为条件查询"><a href="#实验2-使用非索引列作为条件查询" class="headerlink" title="实验2 使用非索引列作为条件查询"></a>实验2 使用非索引列作为条件查询</h2><p>事务1：</p>
+<p>但是这条语句不会被阻塞，说明此时加的是行锁。</p>
+<h3 id="实验2-使用非索引列作为条件查询"><a href="#实验2-使用非索引列作为条件查询" class="headerlink" title="实验2 使用非索引列作为条件查询"></a>实验2 使用非索引列作为条件查询</h3><p>事务1：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">update</span> for_update_is_lock_row_or_lock_table <span class="hljs-keyword">set</span> c<span class="hljs-operator">=</span><span class="hljs-number">11</span> <span class="hljs-keyword">where</span> d<span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br></code></pre></td></tr></table></figure>
 
 <p>事务2:</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">update</span> for_update_is_lock_row_or_lock_table <span class="hljs-keyword">set</span> c<span class="hljs-operator">=</span><span class="hljs-number">22</span> <span class="hljs-keyword">where</span> d<span class="hljs-operator">=</span><span class="hljs-number">2</span>;<br></code></pre></td></tr></table></figure>
-<p>被阻塞，此时不是同一行但却被阻塞，说明此时加的是表锁</p>
-<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>如果查询条件用了索引&#x2F;主键，那么select ….. for update就会进行行锁。</p>
-<p>如果是普通字段(没有索引&#x2F;主键)，那么select ….. for update就会进行锁表。</p>
+<p>被阻塞，此时不是同一行但却被阻塞，说明此时加的是表锁。</p>
+<h3 id="TODO：如果是范围更新呢？"><a href="#TODO：如果是范围更新呢？" class="headerlink" title="TODO：如果是范围更新呢？"></a>TODO：如果是范围更新呢？</h3><h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>如果查询条件涉及的列用了索引（或者是主键，主键当然也存在索引），那么 select ….. for update 就会加行锁。</p>
+<p>如果是查询条件是普通字段（即没有索引&#x2F;不是主键），那么 select ….. for update 就会加表锁。</p>
 
                 
               </div>

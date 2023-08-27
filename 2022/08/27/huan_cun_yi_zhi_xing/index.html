@@ -16,15 +16,15 @@
   <meta name="author" content="void">
   <meta name="keywords" content="">
   
-    <meta name="description" content="一道高频面试题：如何保证缓存和数据库的一致性 先更新数据库，再更新缓存存在的问题：  更新数据库成功，更新缓存失败  并发情况下可能会存在问题，如下（纵轴代表时间线）：    A B    更新 DB x &#x3D; 1     更新 DB，x &#x3D; 2    更新缓存，x &#x3D; 2   更新缓存，x &#x3D; 1    可以看到因为并发操作导致 A 把 B 的更新缓存结果给">
+    <meta name="description" content="一道高频面试题：如何保证缓存和数据库的一致性 通常情况下，容易想到以下几种策略： 先更新数据库，再更新缓存存在的问题：  更新数据库成功，更新缓存失败  并发情况下可能会存在问题，如下（纵轴代表时间线）：    A B    更新 DB x &#x3D; 1     更新 DB，x &#x3D; 2    更新缓存，x &#x3D; 2   更新缓存，x &#x3D; 1    可以看到因为并发操">
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何保证缓存和数据库的一致性">
 <meta property="og:url" content="https://autsu.github.io/2022/08/27/huan_cun_yi_zhi_xing/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="一道高频面试题：如何保证缓存和数据库的一致性 先更新数据库，再更新缓存存在的问题：  更新数据库成功，更新缓存失败  并发情况下可能会存在问题，如下（纵轴代表时间线）：    A B    更新 DB x &#x3D; 1     更新 DB，x &#x3D; 2    更新缓存，x &#x3D; 2   更新缓存，x &#x3D; 1    可以看到因为并发操作导致 A 把 B 的更新缓存结果给">
+<meta property="og:description" content="一道高频面试题：如何保证缓存和数据库的一致性 通常情况下，容易想到以下几种策略： 先更新数据库，再更新缓存存在的问题：  更新数据库成功，更新缓存失败  并发情况下可能会存在问题，如下（纵轴代表时间线）：    A B    更新 DB x &#x3D; 1     更新 DB，x &#x3D; 2    更新缓存，x &#x3D; 2   更新缓存，x &#x3D; 1    可以看到因为并发操">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-08-27T15:49:10.000Z">
-<meta property="article:modified_time" content="2023-06-06T14:47:00.243Z">
+<meta property="article:modified_time" content="2023-08-09T11:10:23.355Z">
 <meta property="article:author" content="void">
 <meta property="article:tag" content="缓存">
 <meta property="article:tag" content="设计">
@@ -242,7 +242,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          941 字
+          1.5k 字
         
       </span>
     
@@ -253,7 +253,7 @@
         
         
         
-          8 分钟
+          13 分钟
         
       </span>
     
@@ -305,6 +305,7 @@
               <div class="markdown-body">
                 
                 <p>一道高频面试题：如何保证缓存和数据库的一致性</p>
+<p>通常情况下，容易想到以下几种策略：</p>
 <h1 id="先更新数据库，再更新缓存"><a href="#先更新数据库，再更新缓存" class="headerlink" title="先更新数据库，再更新缓存"></a>先更新数据库，再更新缓存</h1><p>存在的问题：</p>
 <ol>
 <li><p>更新数据库成功，更新缓存失败</p>
@@ -419,8 +420,52 @@
 </li>
 </ol>
 <p>此时数据库中的 x &#x3D; 2，但缓存中 x &#x3D; 1，存在不一致</p>
-<p>但是这种情况发生的概率非常低，因为缓存的写入速度大概率是要快于数据库的写入速度的（上表中就是因为更新数据库操作快于缓存写入操作，才导致最终不一致）</p>
-<h1 id="延迟双删"><a href="#延迟双删" class="headerlink" title="延迟双删"></a>延迟双删</h1><p>基于 <strong>先删缓存，再更新数据库</strong></p>
+<p>但是这种情况发生的概率不高，因为缓存的写入速度大概率是要快于数据库的写入速度的（上表中就是因为更新数据库操作快于缓存写入操作，才导致最终不一致），所以多数情况下，都能保证缓存被删除，也就是下面的流程：</p>
+<table>
+<thead>
+<tr>
+<th align="center">A</th>
+<th align="center">B</th>
+<th align="center">C</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">读缓存，miss</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">读 DB，x &#x3D; 1</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">写入缓存，x &#x3D; 1（缓存的写入速度快于 DB 的写入速度）</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">更新 DB，x &#x3D; 2</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">删除缓存（旧的缓存已经被删掉了）</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">读缓存，miss</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">读 DB，x &#x3D; 2，并写入缓存，此时一致</td>
+</tr>
+</tbody></table>
+<h1 id="延迟双删"><a href="#延迟双删" class="headerlink" title="延迟双删"></a>延迟双删</h1><p>该策略基于之前的 <strong>先删缓存，再更新数据库</strong> 策略</p>
 <table>
 <thead>
 <tr>
@@ -455,7 +500,7 @@
 <td align="center"></td>
 </tr>
 <tr>
-<td align="center">延迟一会，删除缓存</td>
+<td align="center">延迟一会，再删除缓存</td>
 <td align="center"></td>
 <td align="center"></td>
 </tr>
@@ -487,24 +532,107 @@
 <td align="center">读 DB，x &#x3D; 1</td>
 </tr>
 <tr>
+<td align="center">更新 db，x &#x3D; 2</td>
 <td align="center"></td>
+</tr>
+<tr>
+<td align="center">立马删除缓存（删早了）</td>
 <td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">写入缓存，x &#x3D; 1（此时写入的是旧值）</td>
+</tr>
+</tbody></table>
+<p>最终 db 中的 x &#x3D; 2，而缓存中的 x &#x3D; 1，二者又不一致了。如果让 A 延迟一会，等到 B 写完缓存后再删，就不会出现上面的问题了。</p>
+<table>
+<thead>
+<tr>
+<th align="center">A</th>
+<th align="center">B</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">删缓存</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">读缓存，miss</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">读 DB，x &#x3D; 1</td>
 </tr>
 <tr>
 <td align="center">更新 db，x &#x3D; 2</td>
 <td align="center"></td>
 </tr>
 <tr>
-<td align="center">立马删除缓存</td>
+<td align="center">延迟一会再删除缓存</td>
 <td align="center"></td>
 </tr>
 <tr>
 <td align="center"></td>
 <td align="center">写入缓存，x &#x3D; 1</td>
 </tr>
+<tr>
+<td align="center">删掉缓存（将缓存中 x &#x3D; 1 的旧值删掉了）</td>
+<td align="center"></td>
+</tr>
 </tbody></table>
-<p>最终 db 中的 x &#x3D; 2，而缓存中的 x &#x3D; 1，二者又不一致了。如果让 A 延迟一会，等到 B 写完缓存后再删，就不会出现上面的问题了。</p>
 <p>但问题来了，需要延迟多长时间才能达到前面所说的效果呢？毕竟 B 什么时候能写完缓存可是不可预料的，而且如果延迟时间设置的过长，也会导致系统的延迟变高。</p>
+<h1 id="共同的问题"><a href="#共同的问题" class="headerlink" title="共同的问题"></a>共同的问题</h1><p>上面这些方法中都还存在一个共同的问题，就是它们这一整个操作实际都是由多个小操作构成的，比如上面的延迟双删，它就是由更新数据库和删除缓存两个操作共同组成的，这就必然会涉及到原子性的问题，比如一个操作执行成功了，另一个操作却执行失败了，那么此时依然会导致结果不正确，比如：</p>
+<table>
+<thead>
+<tr>
+<th align="center">A</th>
+<th align="center">B</th>
+<th align="center">C</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">删缓存</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">读缓存，miss</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">读 DB，x &#x3D; 1</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">更新 db，x &#x3D; 2</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">延迟一会再删除缓存</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">写入缓存，x &#x3D; 1</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">删掉缓存（网络异常，删除失败了）</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">读到的缓存依旧是 x &#x3D; 1</td>
+</tr>
+</tbody></table>
+<p>我们可以给缓存加上过期时间来一定程度上规避这个问题，但是根本的问题还是没有解决，如何保证多个操作都能执行成功？</p>
 
                 
               </div>
@@ -586,8 +714,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2022/08/18/mian_shi_ti_shou_ji1/" title="面试题收集 1">
-                        <span class="hidden-mobile">面试题收集 1</span>
+                      <a href="/2022/08/18/go-mian_shi_ti/" title="Go 面试题">
+                        <span class="hidden-mobile">Go 面试题</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

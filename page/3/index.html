@@ -245,6 +245,168 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2022/10/03/kubebuilder/" target="_self">
+          kubebuilder 实践
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/10/03/kubebuilder/" target="_self">
+        <div>
+          快速入门下载 kubebuiler123456$ os=$(go env GOOS)$ arch=$(go env GOARCH)$ curl -L -o kubebuilder https://go.kubebuilder.io/dl/latest/$&#123;os&#125;/$&#123;arch&#125;$ chmod +x kubebuilder$ sudo mv ./kubebui
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-10-03 22:08" pubdate>
+              2022-10-03
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/k8s/">#k8s</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/09/29/docker-tag/" target="_self">
+          docker tag 的用处
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/29/docker-tag/" target="_self">
+        <div>
+          docker tag 相当于对镜像做一次备份，将当前的镜像（比如 tag:latest）备份出去一份（比如 tag: v1），然后如果开发了新的镜像，可以直接覆盖掉当前的（tag:latest），然后再给 latest 打个标签：tag:v2，相当于又备份了一份，现在就有了 v1，v2，latest 三个镜像，使用 tag 不仅可以备份镜像，还可以对镜像做标注区分。 详细可以看下面的例子：  12
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-09-29 00:14" pubdate>
+              2022-09-29
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/docker/">#docker</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/09/11/k8s-statefulset/" target="_self">
+          k8s StatefulSet
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/11/k8s-statefulset/" target="_self">
+        <div>
+          有状态与无状态无状态应用，指的是在运行时不需要维护或跟踪任何特定状态的应用程序。例如，Web 服务器或 API 服务器通常可以处理来自客户端的请求，而无需了解以前的请求或客户端状态。这些应用程序可以很容易地水平扩展，因为它们不需要共享状态，所以可以在任何节点上运行。像 Deployment 也是一个典型的“无状态应用”，它会按照事先声明的模板创建出 pod，这表示每个 pod 的定义将会是一模一样
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-09-11 23:43" pubdate>
+              2022-09-11
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/k8s/">#k8s</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/09/10/ubuntu-arm64-an-zhuang-docker/" target="_self">
+          ubuntu arm64 使用 apt-get 安装 docker，以及 snap 的一些问题记录
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/10/ubuntu-arm64-an-zhuang-docker/" target="_self">
+        <div>
+          使用 snap 可以比较方便的安装 docker，但是有一次出现了 k8s pod 无法拉取镜像的问题，看了下 pod describe，发现是因为走代理的问题（我使用的是 ubuntu 虚拟机，连接宿主机的 clashx 进行代理），连接的代理是宿主机的老地址 192.168.2.5，但是因为重启过路由器，所以宿主机的地址变更为了 192.168.2.3，代理不通自然也拉取不了镜像了，报错： 1
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-09-10 19:41" pubdate>
+              2022-09-10
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/docker/">#docker</a>
+            
+              <a href="/tags/issue/">#issue</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2022/09/08/jetbrain_crash/" target="_self">
           GoLand/Idea 启动闪退，报错 NSInternalInconsistencyException 的解决方法
         </a>
@@ -485,175 +647,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/08/31/gu_er_jin_cheng_he_jiang_shi_jin_cheng/" target="_self">
-          孤儿进程与僵尸进程
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/31/gu_er_jin_cheng_he_jiang_shi_jin_cheng/" target="_self">
-        <div>
-          来源：https://www.cnblogs.com/Anker/p/3271773.html  基本概念孤儿进程：一个父进程退出，而它的一个或多个子进程还在运行，那么那些子进程将成为孤儿进程。孤儿进程将被 init 进程(进程号为 1 )所收养，并由 init 进程对它们完成状态收集工作。 僵尸进程：一个进程使用 fork 创建子进程，如果子进程退出，而父进程并没有调用 wait 或 wait
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-08-31 00:59" pubdate>
-              2022-08-31
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/linux/">#linux</a>
-            
-              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">#操作系统</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/08/27/huan_cun_yi_zhi_xing/" target="_self">
-          如何保证缓存和数据库的一致性
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/27/huan_cun_yi_zhi_xing/" target="_self">
-        <div>
-          一道高频面试题：如何保证缓存和数据库的一致性 先更新数据库，再更新缓存存在的问题：  更新数据库成功，更新缓存失败  并发情况下可能会存在问题，如下（纵轴代表时间线）：    A B    更新 DB x &#x3D; 1     更新 DB，x &#x3D; 2    更新缓存，x &#x3D; 2   更新缓存，x &#x3D; 1    可以看到因为并发操作导致 A 把 B 的更新缓存结果给
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-08-27 23:49" pubdate>
-              2022-08-27
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E7%BC%93%E5%AD%98/">#缓存</a>
-            
-              <a href="/tags/%E8%AE%BE%E8%AE%A1/">#设计</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/08/18/mian_shi_ti_shou_ji1/" target="_self">
-          面试题收集 1
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/18/mian_shi_ti_shou_ji1/" target="_self">
-        <div>
-          Go相关map、channel、slice 的底层实现mapmap 使用的是拉链法，用哈希桶来保存键值对，每个桶可以保存 8 个键值对，它会用哈希算法计算出 key 的 hash 值，然后用这个哈希值的高 8 位作为 tophash，用于在一个桶中区别出 key，然后桶的数量是 2^b ，用低 b 位来决定这个 key 放到哪个桶。每个桶还会连接一个溢出桶，如果一个桶已经满了，但是依然有 key
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-08-18 22:12" pubdate>
-              2022-08-18
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E9%9D%A2%E7%BB%8F/">#面经</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/08/17/leetcode_347_and_692/" target="_self">
-          两个类似的堆问题：leetcode 347 前 K 个高频元素 和 692. 前 K 个高频单词 
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/17/leetcode_347_and_692/" target="_self">
-        <div>
-          首先先来看一下这两个问题： 347. 前 K 个高频元素 给你一个整数数组 nums 和一个整数 k ，请你返回其中出现频率前 k 高的元素。你可以按 任意顺序 返回答案。 示例 1: 输入: nums &#x3D; [1,1,1,2,2,3], k &#x3D; 2输出: [1,2] 示例 2: 输入: nums &#x3D; [1], k &#x3D; 1输出: [1] 提示： 1 &lt;&
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-08-17 23:02" pubdate>
-              2022-08-17
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%A0%86/">#堆</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/2/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/#board">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/#board">4</a><a class="page-number" href="/page/5/#board">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/#board">16</a><a class="extend next" rel="next" href="/page/4/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/2/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/#board">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/#board">4</a><a class="page-number" href="/page/5/#board">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/#board">17</a><a class="extend next" rel="next" href="/page/4/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

@@ -24,7 +24,7 @@
 <meta property="og:description" content="127.0.0.1127.0.0.1 是 回环地址，当报文的目的地址是回环地址时，依然会走一遍网络协议栈，但是不会经过物理网卡，而是经过一个名为 lo 的虚拟网卡（mac 上交 lo0），具体的流程是： 从应用层到传输层再到网络层，到了网络层，系统会根据目的IP，在路由表中获取对应的路由信息，而这其中就包含选择哪个网卡把消息发出。 当发现 目标IP是外网IP 时，会从”真网卡”发出。 当发现 目标">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-06-24T12:50:11.000Z">
-<meta property="article:modified_time" content="2023-05-26T14:08:58.014Z">
+<meta property="article:modified_time" content="2023-08-09T11:10:23.337Z">
 <meta property="article:author" content="void">
 <meta property="article:tag" content="计算机网络">
 <meta name="twitter:card" content="summary_large_image">

@@ -24,7 +24,7 @@
 <meta property="og:description" content="引子定义一个全局变量 chan，然后创建两个 main goroutine，一个往全局 chan 里发送数据，一个从全局 chan 里读取数据，会发生什么？ 这个奇葩问题是我在写一个 server 项目时遇到的，当时的情景是：想为 server 添加一个心跳检测功能，客户端每隔一段时间就向服务端发送一个心跳包，服务端这边维持一个定时器，如果收到心跳包则重置，如果定时器到时则认为客户端已断开，关闭">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-08-08T13:09:50.000Z">
-<meta property="article:modified_time" content="2023-03-18T13:37:15.204Z">
+<meta property="article:modified_time" content="2023-08-09T11:10:23.367Z">
 <meta property="article:author" content="void">
 <meta property="article:tag" content="issues">
 <meta property="article:tag" content="go">

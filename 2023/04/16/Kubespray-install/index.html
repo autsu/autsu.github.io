@@ -16,22 +16,22 @@
   <meta name="author" content="void">
   <meta name="keywords" content="">
   
-    <meta name="description" content="⚠️  安装前最好确保你的主机够干净，我的虚拟机就因为之前自行用二进制搭建过，导致使用 kubespray 安装出现各种奇奇怪怪的错误，最后删除重新创建了一台，一次就安装成功了  初始化1234567891011121314151617181920212223apt install pip# ssh 登录要用，不然报错 &quot;to use the &amp;#x27;ssh&amp;#x27; conne">
+    <meta name="description" content="⚠️  安装前最好确保你的主机够干净，我的虚拟机就因为之前自行用二进制搭建过，导致使用 kubespray 安装出现各种奇奇怪怪的错误，最后删除重新创建了一台，一次就安装成功了             初始化1234567891011121314151617181920212223apt install pip# ssh 登录要用，不然报错 &quot;to use th">
 <meta property="og:type" content="article">
-<meta property="og:title" content="通过 Kubespray 搭建 k8s 集群">
+<meta property="og:title" content="使用 Kubespray 搭建 k8s 集群">
 <meta property="og:url" content="https://autsu.github.io/2023/04/16/Kubespray-install/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="⚠️  安装前最好确保你的主机够干净，我的虚拟机就因为之前自行用二进制搭建过，导致使用 kubespray 安装出现各种奇奇怪怪的错误，最后删除重新创建了一台，一次就安装成功了  初始化1234567891011121314151617181920212223apt install pip# ssh 登录要用，不然报错 &quot;to use the &amp;#x27;ssh&amp;#x27; conne">
+<meta property="og:description" content="⚠️  安装前最好确保你的主机够干净，我的虚拟机就因为之前自行用二进制搭建过，导致使用 kubespray 安装出现各种奇奇怪怪的错误，最后删除重新创建了一台，一次就安装成功了             初始化1234567891011121314151617181920212223apt install pip# ssh 登录要用，不然报错 &quot;to use th">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-04-16T06:05:14.000Z">
-<meta property="article:modified_time" content="2023-04-18T13:14:13.660Z">
+<meta property="article:modified_time" content="2023-08-09T11:10:23.344Z">
 <meta property="article:author" content="void">
 <meta property="article:tag" content="k8s">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>通过 Kubespray 搭建 k8s 集群 - Hexo</title>
+  <title>使用 Kubespray 搭建 k8s 集群 - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -218,7 +218,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="通过 Kubespray 搭建 k8s 集群"></span>
+            <span id="subtitle" data-typed-text="使用 Kubespray 搭建 k8s 集群"></span>
           
         </div>
 
@@ -298,20 +298,21 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">通过 Kubespray 搭建 k8s 集群</h1>
+            <h1 style="display: none">使用 Kubespray 搭建 k8s 集群</h1>
             
             
               <div class="markdown-body">
                 
-                <blockquote>
-<p>⚠️  安装前最好确保你的主机够干净，我的虚拟机就因为之前自行用二进制搭建过，导致使用 kubespray 安装出现各种奇奇怪怪的错误，最后删除重新创建了一台，一次就安装成功了</p>
-</blockquote>
-<h1 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs shell">apt install pip<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">ssh 登录要用，不然报错 <span class="hljs-string">&quot;to use the &#x27;ssh&#x27; connection type with passwords or pkcs11_provider, you must install the sshpass program</span></span><br>apt install sshpass<br><br>pip install netaddr # 不确定这玩意的必要性，最好还是装了吧<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-string">不要手动安装下面这些东西，手动安装的 ansible 可能与 Kubespray 要求的版本不匹配</span></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-string">pip install --upgrade jinja2</span></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-string">apt install ansible</span></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-string">不要 clone 这个，可能有问题</span></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-string">git clone https://github.com/kubernetes-incubator/kubespray.git</span></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-string">从 release 里下载</span></span><br>wget https://github.com/kubernetes-sigs/kubespray/archive/refs/tags/v2.21.0.tar.gz<br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-string">解压上面下载下来的压缩包</span></span><br>tar -C . -xvf v2.21.0.tar.gz<br><br>cd kubespray-2.21.0<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-string">安装符合版本的依赖，这里会安装 ansible</span></span><br>pip install -U -r requirements.txt<br></code></pre></td></tr></table></figure>
+                <div class="note note-warning">
+            <p>⚠️  安装前最好确保你的主机够干净，我的虚拟机就因为之前自行用二进制搭建过，导致使用 kubespray 安装出现各种奇奇怪怪的错误，最后删除重新创建了一台，一次就安装成功了</p>
+          </div>
+
+<h1 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs shell">apt install pip<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">ssh 登录要用，不然报错 <span class="hljs-string">&quot;to use the &#x27;ssh&#x27; connection type with passwords or pkcs11_provider, you must install the sshpass program</span></span><br>apt install sshpass<br><br>pip install netaddr # 不确定这玩意的必要性，最好还是装了吧<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-string">不要手动安装下面这些东西，手动安装的 ansible 可能与 Kubespray 要求的版本不匹配</span></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-string">pip install --upgrade jinja2</span></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-string">apt install ansible</span></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-string">不要 clone 这个，可能有问题</span></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash"><span class="hljs-string">git clone https://github.com/kubernetes-incubator/kubespray.git</span></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-string">从 kubespray github release 里下载，版本任意选择</span></span><br>wget https://github.com/kubernetes-sigs/kubespray/archive/refs/tags/v2.21.0.tar.gz<br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-string">解压上面下载下来的压缩包</span></span><br>tar -C . -xvf v2.21.0.tar.gz<br><br>cd kubespray-2.21.0<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-string">安装符合版本的依赖，这里会安装对应版本的 ansible</span></span><br>pip install -U -r requirements.txt<br></code></pre></td></tr></table></figure>
 
 <h1 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">cd kubespray-2.21.0<br><span class="hljs-meta prompt_"># </span><span class="language-bash">复制一份配置进行修改</span><br>cp -rfp inventory/sample inventory/k8s<br>vim inventory/k8s/inventory.ini<br></code></pre></td></tr></table></figure>
 
-<p>配置如下，保证 IP 正确，其中 master 节点要指定 etcd_member_name，worker 节点该值置为空</p>
-<p>同理，[kube_control_plane] 和 [etcd] 里写 master 节点，[kube_node] 里写 worker 节点</p>
+<p>配置如下，注意要确保 IP 正确，另外如果是 master 节点要额外指定 <code>etcd_member_name</code> 参数。</p>
+<p>同理，[kube_control_plane] 和 [etcd] 里填写 master 节点，[kube_node] 里填写 worker 节点。</p>
 <figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs toml"><span class="hljs-comment"># ## Configure &#x27;ip&#x27; variable to bind kubernetes services on a</span><br><span class="hljs-comment"># ## different ip than the default iface</span><br><span class="hljs-section">[all]</span><br>k8s-master <span class="hljs-attr">ansible_host</span>=<span class="hljs-number">192.168</span>.<span class="hljs-number">223.128</span> ip=<span class="hljs-number">192.168</span>.<span class="hljs-number">223.128</span> ansible_ssh_user=root ansible_ssh_pass=root etcd_member_name=k8s-master<br>k8s-worker1 <span class="hljs-attr">ansible_host</span>=<span class="hljs-number">192.168</span>.<span class="hljs-number">223.129</span> ip=<span class="hljs-number">192.168</span>.<span class="hljs-number">223.129</span> etcd_member_name=<span class="hljs-string">&quot;&quot;</span><br>k8s-worker2 <span class="hljs-attr">ansible_host</span>=<span class="hljs-number">192.168</span>.<span class="hljs-number">223.130</span> ip=<span class="hljs-number">192.168</span>.<span class="hljs-number">223.130</span> etcd_member_name=<span class="hljs-string">&quot;&quot;</span><br><span class="hljs-comment"># node1 ansible_host=95.54.0.12  # ip=10.3.0.1 etcd_member_name=etcd1</span><br><span class="hljs-comment"># node2 ansible_host=95.54.0.13  # ip=10.3.0.2 etcd_member_name=etcd2</span><br><span class="hljs-comment"># node3 ansible_host=95.54.0.14  # ip=10.3.0.3 etcd_member_name=etcd3</span><br><span class="hljs-comment"># node4 ansible_host=95.54.0.15  # ip=10.3.0.4 etcd_member_name=etcd4</span><br><span class="hljs-comment"># node5 ansible_host=95.54.0.16  # ip=10.3.0.5 etcd_member_name=etcd5</span><br><span class="hljs-comment"># node6 ansible_host=95.54.0.17  # ip=10.3.0.6 etcd_member_name=etcd6</span><br><br><span class="hljs-comment"># ## configure a bastion host if your nodes are not directly reachable</span><br><span class="hljs-comment"># [bastion]</span><br><span class="hljs-comment"># bastion ansible_host=x.x.x.x ansible_user=some_user</span><br><br><span class="hljs-section">[kube_control_plane]</span><br>k8s-master<br><span class="hljs-comment"># node1</span><br><span class="hljs-comment"># node2</span><br><span class="hljs-comment"># node3</span><br><br><span class="hljs-section">[etcd]</span><br>k8s-master<br><span class="hljs-comment"># node1</span><br><span class="hljs-comment"># node2</span><br><span class="hljs-comment"># node3</span><br><br><span class="hljs-section">[kube_node]</span><br>k8s-worker1<br>k8s-worker2<br><span class="hljs-comment"># node2</span><br><span class="hljs-comment"># node3</span><br><span class="hljs-comment"># node4</span><br><span class="hljs-comment"># node5</span><br><span class="hljs-comment"># node6</span><br><br><span class="hljs-section">[calico_rr]</span><br><br><span class="hljs-section">[k8s_cluster:children]</span><br>kube_control_plane<br>kube_node<br>calico_rr<br></code></pre></td></tr></table></figure>
 
 <h1 id="开始部署"><a href="#开始部署" class="headerlink" title="开始部署"></a>开始部署</h1><p>执行下面的命令进行部署，中间可能需要等待 10 分钟左右。</p>
@@ -326,9 +327,9 @@
 <p><del>执行 python3 -m pip install –upgrade –user ansible 后还是报错，发现是版本又太高了：</del></p>
 <p><del>ansible –version</del><br><del>ansible [core 2.14.4]</del></p>
 <h2 id="2"><a href="#2" class="headerlink" title="2"></a>2</h2><p>报错 the output has been hidden due to the fact that ‘no_log: true’ was specified for this result</p>
-<p>vim inventory&#x2F;k8s&#x2F;group_vars&#x2F;all&#x2F;all.yml</p>
+<p><code>vim inventory/k8s/group_vars/all/all.yml</code></p>
 <p>修改下面这行为 true</p>
-<p>unsafe_show_logs: true</p>
+<p><code>unsafe_show_logs: true</code></p>
 <h2 id="3"><a href="#3" class="headerlink" title="3"></a>3</h2><p>报错：</p>
 <p>The checksum for &#x2F;tmp&#x2F;releases&#x2F;calico-v3.25.1-kdd-crds&#x2F;v3.25.1.tar.gz did not match 361b0e0e6d64156f0e1b2fbfd18d13217d188eee614eec5de6b05ac0deaab372; it was 4d6b6653499f24f80a85a0a7dac28d9571cabfa25356b08f3b438fd97e322e2d.</p>
 <p>尝试手动下载</p>
@@ -368,7 +369,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>通过 Kubespray 搭建 k8s 集群</div>
+      <div>使用 Kubespray 搭建 k8s 集群</div>
       <div>https://autsu.github.io/2023/04/16/Kubespray-install/</div>
     </div>
     <div class="license-meta">

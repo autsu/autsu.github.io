@@ -1,0 +1,884 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="基础map、channel、slice 的底层实现mapmap 使用的是拉链法，用哈希桶来保存键值对，每个桶可以保存 8 个键值对，它会用哈希算法计算出 key 的 hash 值，然后用这个哈希值的高 8 位作为 tophash，用于在一个桶中区别出 key；然后桶的数量是 2^b ，用低 b 位来决定这个 key 放到哪个桶。每个桶还会连接一个溢出桶，如果一个桶已经满了，但是依然有 key 落入">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go 面试题">
+<meta property="og:url" content="https://autsu.github.io/2022/08/18/go-mian_shi_ti/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="基础map、channel、slice 的底层实现mapmap 使用的是拉链法，用哈希桶来保存键值对，每个桶可以保存 8 个键值对，它会用哈希算法计算出 key 的 hash 值，然后用这个哈希值的高 8 位作为 tophash，用于在一个桶中区别出 key；然后桶的数量是 2^b ，用低 b 位来决定这个 key 放到哪个桶。每个桶还会连接一个溢出桶，如果一个桶已经满了，但是依然有 key 落入">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/go_sync_map.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/gmp_g_block_sync.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/gmp_g_block_net.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/gmp_g_block_net1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/gmp_g_block_syscall.png">
+<meta property="article:published_time" content="2022-08-18T14:12:52.000Z">
+<meta property="article:modified_time" content="2023-08-24T17:25:48.486Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="面试题">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/go_sync_map.webp">
+  
+  
+  
+  <title>Go 面试题 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Go 面试题"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-08-18 22:12" pubdate>
+          2022年8月18日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          103 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Go 面试题</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h1><h2 id="map、channel、slice-的底层实现"><a href="#map、channel、slice-的底层实现" class="headerlink" title="map、channel、slice 的底层实现"></a>map、channel、slice 的底层实现</h2><h3 id="map"><a href="#map" class="headerlink" title="map"></a>map</h3><p>map 使用的是拉链法，用哈希桶来保存键值对，每个桶可以保存 8 个键值对，它会用哈希算法计算出 key 的 hash 值，然后用这个哈希值的高 8 位作为 tophash，用于在一个桶中区别出 key；然后桶的数量是 2^b ，用低 b 位来决定这个 key 放到哪个桶。每个桶还会连接一个溢出桶，如果一个桶已经满了，但是依然有 key 落入到这个桶，那么就会将其放到溢出桶中。</p>
+<p>map 的默认负载因子是 6.5，负载因子表示的是当前键值对的数量 &#x2F; 当前桶的数量，如果 map 的负载因子达到了 6.5，那么就说明此时可能所有桶都快装满了，如果再添加键值对，大概率会放到溢出桶中，所以此时就需要进行扩容了，对应的扩容策略是：创建数量是之前桶的 2 倍的新桶，然后将旧桶中的值迁移到新桶中（迁移的策略是怎样的？rehash，例如，原来 B &#x3D; 5，计算出 key 的哈希后，只用看它的低 5 位，就能决定它落在哪个 bucket。扩容后，B 变成了 6，因此需要多看一位，它的低 6 位决定 key 落在哪个 bucket。这称为 <code>rehash</code>。），还有一种情况是溢出桶的数量过多，可能的原因是键值对数量少，但过于分散，导致桶的数量多，解决办法是创建同样数量（不包含溢出桶吗？）的新桶，将旧桶中的数据迁移到这些新桶中，使整体键值对的排布更紧凑。</p>
+<p>此外 Go map 扩容采用的渐进式扩容，当执行插入、更新、删除操作时进行小部分扩容，而不是一次性将所有桶进行迁移，这样可以减少搬迁操作对性能的影响。</p>
+<h3 id="channel"><a href="#channel" class="headerlink" title="channel"></a>channel</h3><p>channel 底层主要由一个发送阻塞队列和一个接收阻塞队列，以及一把互斥锁组成，发送阻塞队列存储的是因为发送操作而被阻塞的 goroutine，接收阻塞队列同理，这里面存储的都是被挂起的 goroutine，当执行发送操作时，会先检查接收阻塞队列里有没有值，有的话从队头取出，并将这个 goroutine 唤醒，并将数据拷贝给它，执行接收操作同理。互斥锁用来保证 chan 的线程安全。此外如果是有缓冲的 chan，还会存在一个环形数组，</p>
+<h3 id="slice"><a href="#slice" class="headerlink" title="slice"></a>slice</h3><p>扩容策略：</p>
+<p>1.18 开始的新策略：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">grow</span><span class="hljs-params">(oldCap <span class="hljs-type">int</span>, <span class="hljs-built_in">cap</span> <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">int</span> &#123;<br>	newcap := oldCap<br>	doublecap := newcap + newcap<br><br>  <span class="hljs-comment">// 直接使用当前的期望容量，因为超过了旧容量的2倍</span><br>	<span class="hljs-keyword">if</span> <span class="hljs-built_in">cap</span> &gt; doublecap &#123;<br>		newcap = <span class="hljs-built_in">cap</span><br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		<span class="hljs-keyword">const</span> threshold = <span class="hljs-number">256</span><br>		<span class="hljs-keyword">if</span> oldCap &lt; threshold &#123;<br>      <span class="hljs-comment">// 小切片容量翻倍</span><br>			newcap = doublecap<br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>      <span class="hljs-comment">// 除了每次增加 25 % 容量，还额外多加 192</span><br>			<span class="hljs-keyword">for</span> <span class="hljs-number">0</span> &lt; newcap &amp;&amp; newcap &lt; <span class="hljs-built_in">cap</span> &#123;<br>				newcap += (newcap + <span class="hljs-number">3</span>*threshold) / <span class="hljs-number">4</span><br>        <span class="hljs-comment">// newcap += (newcap)/4</span><br>        <span class="hljs-comment">// newcap += 192</span><br>			&#125;<br>			<span class="hljs-keyword">if</span> newcap &lt;= <span class="hljs-number">0</span> &#123;<br>				newcap = <span class="hljs-built_in">cap</span><br>			&#125;<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-keyword">return</span> newcap<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>1.18 之前的策略：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">grow</span><span class="hljs-params">(oldCap <span class="hljs-type">int</span>, <span class="hljs-built_in">cap</span> <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">int</span> &#123;<br>	newcap := oldCap<br>	doublecap := newcap + newcap<br><br>	<span class="hljs-comment">// 直接使用当前的期望容量，因为超过了旧容量的 2 倍</span><br>  <span class="hljs-keyword">if</span> <span class="hljs-built_in">cap</span> &gt; doublecap &#123;<br>		newcap = <span class="hljs-built_in">cap</span><br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>    <span class="hljs-comment">// 没有超过旧容量的两倍</span><br>		<span class="hljs-keyword">if</span> oldCap &lt; <span class="hljs-number">1024</span> &#123;<br>      <span class="hljs-comment">// 小切片 容量翻倍</span><br>			newcap = doublecap<br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>      <span class="hljs-comment">// 每次增加 25% 容量，直到新容量大于期望容量</span><br>			<span class="hljs-keyword">for</span> <span class="hljs-number">0</span> &lt; newcap &amp;&amp; newcap &lt; <span class="hljs-built_in">cap</span> &#123;<br>				newcap += newcap / <span class="hljs-number">4</span><br>			&#125;<br>			<span class="hljs-keyword">if</span> newcap &lt;= <span class="hljs-number">0</span> &#123;<br>				newcap = <span class="hljs-built_in">cap</span><br>			&#125;<br>		&#125;<br>	&#125;<br>	<span class="hljs-keyword">return</span> newcap<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="sync-map、sync-pool、sync-Once-的原理"><a href="#sync-map、sync-pool、sync-Once-的原理" class="headerlink" title="sync.map、sync.pool、sync.Once 的原理"></a>sync.map、sync.pool、sync.Once 的原理</h2><h2 id="sync-map"><a href="#sync-map" class="headerlink" title="sync.map"></a>sync.map</h2><p><code>sync.Map</code> 的实现原理可概括为：</p>
+<ul>
+<li>通过 read 和 dirty 两个字段将读写分离，read 负责并发读以及更新操作（已存在元素写） ，dirty 负责读写</li>
+<li>读取时会先查询 read，不存在再查询 dirty，写入时则只写入 dirty</li>
+<li>读取 read 并不需要加锁（原子操作），而读或写 dirty 都需要加锁</li>
+<li>另外有 misses 字段来统计 read 被穿透的次数（被穿透指需要读 dirty 的情况），超过一定次数则将 dirty 提升为 read，即将 dirty 的数据拷贝到 read，然后清空 dirty</li>
+<li>对于删除数据则直接通过标记来延迟删除</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/go_sync_map.webp" srcset="/img/loading.gif" lazyload></p>
+<h2 id="netpoller-的原理"><a href="#netpoller-的原理" class="headerlink" title="netpoller 的原理"></a>netpoller 的原理</h2><blockquote>
+<p>netpoller 可以直接看 <a target="_blank" rel="noopener" href="https://strikefreedom.top/archives/go-netpoll-io-multiplexing-reactor#toc-head-8">这篇文章</a>，写的非常棒</p>
+</blockquote>
+<p>Go netpoller 通过在底层对 epoll&#x2F;kqueue&#x2F;iocp 的封装，从而实现了使用同步编程模式达到异步执行的效果。总结来说，所有的网络操作都以网络描述符 netFD 为中心实现。netFD 与底层 PollDesc 结构绑定，当在一个 netFD 上读写遇到 EAGAIN 错误时（socket 都会设置为非阻塞，这样可以避免陷入系统调用，因为陷入系统调用会使得 g 对应的 m 也被阻塞），就将当前 goroutine 存储到这个 netFD 对应的 PollDesc 中，同时调用 gopark 把当前 goroutine 给 park 住，直到这个 netFD 上再次发生读写事件，才将此 goroutine 给 ready 激活重新运行。显然，在底层通知 goroutine 再次发生读写等事件的方式就是 epoll&#x2F;kqueue&#x2F;iocp 等事件驱动机制。</p>
+<p>在 epoll 实现中，会将 PollDesc 存储到 epollevent.data 里面，这是一个 uintptr，然后调用 epoll_ctl 将这个 epollevent 注册到 epoll，代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">netpollopen</span><span class="hljs-params">(fd <span class="hljs-type">uintptr</span>, pd *pollDesc)</span></span> <span class="hljs-type">uintptr</span> &#123;<br>	<span class="hljs-keyword">var</span> ev syscall.EpollEvent<br>	ev.Events = syscall.EPOLLIN | syscall.EPOLLOUT | syscall.EPOLLRDHUP | syscall.EPOLLET<br>	tp := taggedPointerPack(unsafe.Pointer(pd), pd.fdseq.Load())<br>	*(*taggedPointer)(unsafe.Pointer(&amp;ev.Data)) = tp<br>	<span class="hljs-keyword">return</span> syscall.EpollCtl(epfd, syscall.EPOLL_CTL_ADD, <span class="hljs-type">int32</span>(fd), &amp;ev)<br>&#125;<br><br><span class="hljs-keyword">type</span> EpollEvent <span class="hljs-keyword">struct</span> &#123;<br>	Events <span class="hljs-type">uint32</span><br>	Data   [<span class="hljs-number">8</span>]<span class="hljs-type">byte</span> <span class="hljs-comment">// unaligned uintptr</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>在执行 accept、connect 等函数时，会调用上面的函数，将这个 socket 的 fd 注册到 epoll</p>
+<p>然后会有一个 netpoll 函数，其内部实际就是调用了 epoll_wait，获取已经就绪的 epollevent，然后我们可以从这个就绪 epollevent.data 里拿到我们之前设置的 PollDesc，然后又可以进一步从 PollDesc 的 rg&#x2F;wg （分别保存的是 读阻塞&#x2F;写阻塞 的 goroutine）中拿到 g（gmp 中的 g），从而将这个 g 唤醒。</p>
+<p>唤醒的过程也比较复杂，涉及到 gmp 调度相关，貌似是会把待唤醒的 g 扔到一个队列，然后调度器会在某个时刻拿出来进行唤醒。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">netpoll</span><span class="hljs-params">(delay <span class="hljs-type">int64</span>)</span></span> gList &#123;<br><span class="hljs-comment">// 省略 ...</span><br>	<span class="hljs-keyword">var</span> events [<span class="hljs-number">128</span>]syscall.EpollEvent<br>retry:<br>    <span class="hljs-comment">// 阻塞等待，直到有就绪的 event</span><br>	n, errno := syscall.EpollWait(epfd, events[:], <span class="hljs-type">int32</span>(<span class="hljs-built_in">len</span>(events)), waitms)<br>	<span class="hljs-comment">// 省略 ...</span><br>    <span class="hljs-keyword">var</span> toRun gList<br>	<span class="hljs-keyword">for</span> i := <span class="hljs-type">int32</span>(<span class="hljs-number">0</span>); i &lt; n; i++ &#123;<br>        <span class="hljs-comment">// 拿到就绪的 event</span><br>		ev := events[i]<br>        <span class="hljs-comment">// 省略 ...</span><br>		<span class="hljs-keyword">var</span> mode <span class="hljs-type">int32</span><br>        <span class="hljs-comment">// 判断被唤醒的事件是读阻塞还是写阻塞，然后设置 mod，然后 PollDesc 根据 mod，选择从 rg 或者 wg 拿到 goroutine</span><br>		<span class="hljs-keyword">if</span> ev.Events&amp;(syscall.EPOLLIN|syscall.EPOLLRDHUP|syscall.EPOLLHUP|syscall.EPOLLERR) != <span class="hljs-number">0</span> &#123;<br>			mode += <span class="hljs-string">&#x27;r&#x27;</span><br>		&#125;<br>		<span class="hljs-keyword">if</span> ev.Events&amp;(syscall.EPOLLOUT|syscall.EPOLLHUP|syscall.EPOLLERR) != <span class="hljs-number">0</span> &#123;<br>			mode += <span class="hljs-string">&#x27;w&#x27;</span><br>		&#125;<br>		<span class="hljs-keyword">if</span> mode != <span class="hljs-number">0</span> &#123;<br>            <span class="hljs-comment">// 从 epollevent.data 中拿到 pollDesc</span><br>			tp := *(*taggedPointer)(unsafe.Pointer(&amp;ev.Data))<br>			pd := (*pollDesc)(tp.pointer())<br>			tag := tp.tag()<br>			<span class="hljs-keyword">if</span> pd.fdseq.Load() == tag &#123;<br>				pd.setEventErr(ev.Events == syscall.EPOLLERR, tag)<br>                <span class="hljs-comment">// 调用这里对 g 进行唤醒</span><br>				netpollready(&amp;toRun, pd, mode)<br>			&#125;<br>		&#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">netpollready</span><span class="hljs-params">(toRun *gList, pd *pollDesc, mode <span class="hljs-type">int32</span>)</span></span> &#123;<br>	<span class="hljs-keyword">var</span> rg, wg *g<br>	<span class="hljs-keyword">if</span> mode == <span class="hljs-string">&#x27;r&#x27;</span> || mode == <span class="hljs-string">&#x27;r&#x27;</span>+<span class="hljs-string">&#x27;w&#x27;</span> &#123;<br>		rg = netpollunblock(pd, <span class="hljs-string">&#x27;r&#x27;</span>, <span class="hljs-literal">true</span>)<br>	&#125;<br>	<span class="hljs-keyword">if</span> mode == <span class="hljs-string">&#x27;w&#x27;</span> || mode == <span class="hljs-string">&#x27;r&#x27;</span>+<span class="hljs-string">&#x27;w&#x27;</span> &#123;<br>		wg = netpollunblock(pd, <span class="hljs-string">&#x27;w&#x27;</span>, <span class="hljs-literal">true</span>)<br>	&#125;<br>	<span class="hljs-keyword">if</span> rg != <span class="hljs-literal">nil</span> &#123;<br>        <span class="hljs-comment">// 貌似是把 g 扔到 gList 队列</span><br>		toRun.push(rg)<br>	&#125;<br>	<span class="hljs-keyword">if</span> wg != <span class="hljs-literal">nil</span> &#123;<br>		toRun.push(wg)<br>	&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">netpollunblock</span><span class="hljs-params">(pd *pollDesc, mode <span class="hljs-type">int32</span>, ioready <span class="hljs-type">bool</span>)</span></span> *g &#123;<br>    <span class="hljs-comment">// 根据 mod 选择拿 rg 还是 wg</span><br>	gpp := &amp;pd.rg<br>	<span class="hljs-keyword">if</span> mode == <span class="hljs-string">&#x27;w&#x27;</span> &#123;<br>		gpp = &amp;pd.wg<br>	&#125;<br><br>	<span class="hljs-keyword">for</span> &#123;<br>		old := gpp.Load()<br>		<span class="hljs-keyword">if</span> old == pdReady &#123;<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>		&#125;<br>		<span class="hljs-keyword">if</span> old == pdNil &amp;&amp; !ioready &#123;<br>			<span class="hljs-comment">// Only set pdReady for ioready. runtime_pollWait</span><br>			<span class="hljs-comment">// will check for timeout/cancel before waiting.</span><br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>		&#125;<br>		<span class="hljs-keyword">var</span> <span class="hljs-built_in">new</span> <span class="hljs-type">uintptr</span><br>		<span class="hljs-keyword">if</span> ioready &#123;<br>			<span class="hljs-built_in">new</span> = pdReady<br>		&#125;<br>		<span class="hljs-keyword">if</span> gpp.CompareAndSwap(old, <span class="hljs-built_in">new</span>) &#123;<br>			<span class="hljs-keyword">if</span> old == pdWait &#123;<br>				old = pdNil<br>			&#125;<br>            <span class="hljs-comment">// 最终将 rg/wg 转换为 g，也就是 goroutine</span><br>			<span class="hljs-keyword">return</span> (*g)(unsafe.Pointer(old))<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="GC-的过程、写屏障的含义及作用"><a href="#GC-的过程、写屏障的含义及作用" class="headerlink" title="GC 的过程、写屏障的含义及作用"></a>GC 的过程、写屏障的含义及作用</h2><h2 id="GMP-模型，触发-Goroutine-切换的原因有哪些？for-死循环会怎么样？全局-goroutine-里面存储什么？"><a href="#GMP-模型，触发-Goroutine-切换的原因有哪些？for-死循环会怎么样？全局-goroutine-里面存储什么？" class="headerlink" title="GMP 模型，触发 Goroutine 切换的原因有哪些？for 死循环会怎么样？全局 goroutine 里面存储什么？"></a>GMP 模型，触发 Goroutine 切换的原因有哪些？for 死循环会怎么样？全局 goroutine 里面存储什么？</h2><h2 id="interface-的底层实现，怎么判空？"><a href="#interface-的底层实现，怎么判空？" class="headerlink" title="interface 的底层实现，怎么判空？"></a>interface 的底层实现，怎么判空？</h2><h2 id="reflect-的使用"><a href="#reflect-的使用" class="headerlink" title="reflect 的使用"></a>reflect 的使用</h2><h2 id="逃逸分析"><a href="#逃逸分析" class="headerlink" title="逃逸分析"></a>逃逸分析</h2><h2 id="context-的使用"><a href="#context-的使用" class="headerlink" title="context 的使用"></a>context 的使用</h2><h2 id="Go-性能问题的定位过程（pprof-的使用）"><a href="#Go-性能问题的定位过程（pprof-的使用）" class="headerlink" title="Go 性能问题的定位过程（pprof 的使用）"></a>Go 性能问题的定位过程（pprof 的使用）</h2><h2 id="协程池的使用"><a href="#协程池的使用" class="headerlink" title="协程池的使用"></a>协程池的使用</h2><p>Go 协程池的实现比较简单，看了一些库，大致逻辑都是把用户调用的 func 封装成一个 task，然后把 task 存到一个队列（用 chan 或者链表啥的都可以），然后开启指定数量的 goroutine，每个 goroutine 里面写一个死循环，持续从这些队列中消费，这样就达到了限制 goroutine 数量的目的。</p>
+<p>比如字节的 <a target="_blank" rel="noopener" href="https://github.com/bytedance/gopkg/tree/develop/util/gopool">gopkg</a> 库里面就实现了一个 gopool，代码很精短，就是把用户执行的 func 封装成一个 task，然后扔到 pool 的链表里面，然后运行指定数量的 worker，每个 worker 实际就是一个 goroutine，并且还绑定了 pool，然后去持续消费 pool 的链表里面的 task，如果 task 消费完了则退出。</p>
+<h2 id="go-的-panic-一定能被-recover-恢复吗"><a href="#go-的-panic-一定能被-recover-恢复吗" class="headerlink" title="go 的 panic 一定能被 recover 恢复吗"></a>go 的 panic 一定能被 recover 恢复吗</h2><p>不一定，首先 recover 只能恢复本协程的 panic，比如下面的例子中，fn1 中的 recover 无法恢复 fn2 协程中发生的 panic</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">fn1</span><span class="hljs-params">(num <span class="hljs-type">int</span>)</span></span> &#123;<br>	<span class="hljs-keyword">defer</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>		<span class="hljs-keyword">if</span> err := <span class="hljs-built_in">recover</span>(); err != <span class="hljs-literal">nil</span> &#123;<br>			fmt.Printf(<span class="hljs-string">&quot;%s\n&quot;</span>, err)<br>		&#125;<br>	&#125;()<br>	<span class="hljs-keyword">if</span> num%<span class="hljs-number">5</span> == <span class="hljs-number">0</span> &#123;<br>		<span class="hljs-built_in">panic</span>(<span class="hljs-string">&quot;fn1 error&quot;</span>)<br>	&#125;<br>	<span class="hljs-keyword">go</span> fn2(num)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">fn2</span><span class="hljs-params">(num <span class="hljs-type">int</span>)</span></span> &#123;<br>	<span class="hljs-keyword">if</span> num%<span class="hljs-number">4</span> == <span class="hljs-number">0</span> &#123;<br>		<span class="hljs-built_in">panic</span>(<span class="hljs-string">&quot;fn2 error&quot;</span>)<br>	&#125;<br>	fmt.Printf(<span class="hljs-string">&quot;%d\n&quot;</span>, num)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>还有一些 runtime 级别的 panic 无法被恢复，比如 map 并发读写的 panic，死锁等</p>
+<h1 id="GMP-相关"><a href="#GMP-相关" class="headerlink" title="GMP 相关"></a>GMP 相关</h1><blockquote>
+<p>GMP 文章：</p>
+<p><a target="_blank" rel="noopener" href="https://zboya.github.io/post/go_scheduler/#ggoroutine">深入golang runtime的调度</a></p>
+</blockquote>
+<h2 id="说一下-GMP-模型"><a href="#说一下-GMP-模型" class="headerlink" title="说一下 GMP 模型"></a>说一下 GMP 模型</h2><h2 id="GMP-模型，为什么要有-P？"><a href="#GMP-模型，为什么要有-P？" class="headerlink" title="GMP 模型，为什么要有 P？"></a>GMP 模型，为什么要有 P？</h2><h2 id="Goroutine-阻塞的话，是不是对应的-M-也会阻塞"><a href="#Goroutine-阻塞的话，是不是对应的-M-也会阻塞" class="headerlink" title="Goroutine 阻塞的话，是不是对应的 M 也会阻塞"></a>Goroutine 阻塞的话，是不是对应的 M 也会阻塞</h2><p><del>如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M，则 P 和与其绑定并继续执行其他的 G；如果没有空闲的 M，但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P，如果没有可用的 P，那么这个 G 会被标记为 <code>runnable</code> 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。</del></p>
+<p>出处：<a target="_blank" rel="noopener" href="https://www.zbpblog.com/blog-242.html">https://www.zbpblog.com/blog-242.html</a></p>
+<p>G 阻塞分为以下 4 种情况：</p>
+<p><strong>1. 由于原子、互斥量或通道操作调用导致 Goroutine 阻塞</strong></p>
+<p><strong>调度器将把当前阻塞的 Goroutine 切换出去（<del>相当于调用了runtime.Goexit，把当前的goroutine从运行中的状态换成Grunnable状态并放入可运行G队列中</del> 感觉这里说的不对？Goexit 不是退出 goroutine 吗，应该是 Gosched 吧），当前 M 会换其他的 goroutine 运行。</strong></p>
+<p>该情况的 G 阻塞不会阻塞内核线程 M，因此不会导致 M 的上下文切换而只涉及到 G 的切换。</p>
+<p>如下图：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/gmp_g_block_sync.png" srcset="/img/loading.gif" lazyload></p>
+<p>（这里 G1 添加到队尾的操作没太搞明白，想表达的意思是被阻塞的 G 在就绪后会回到之前所在的 P 吗？貌似就是这个意思）</p>
+<p>如果 G1 是被 chan 阻塞住的话，情况会和上图中的有所不同，G1 不会回到当前 P 的可运行 G 队列，而是被挂在了 chan 的 recvq 和 sendq 这两个队列中。</p>
+<p><strong>2. 由于网络请求和文件IO 操作导致 Goroutine 阻塞</strong></p>
+<p>之前说过 Go 的网络 IO 其实用的是异步非阻塞的系统调用结合多路复用器的事件监听机制，所以当前 G 会由于 IO 事件未就绪而被切换，但是不会阻塞 M。另外，Go 的文件 IO 其实也是使用的异步的系统调用和多路复用的事件监听优化。</p>
+<p>该情况的 G 阻塞不会阻塞内核线程 M，因此不会导致 M 的上下文切换而只涉及到 G 的切换。</p>
+<p>如下图：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/gmp_g_block_net.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/gmp_g_block_net1.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>3. 由于调用阻塞的系统调用时导致的 goroutine 阻塞</strong></p>
+<p>这种情况会导致当前 M 阻塞，内核会进行 M 的切换。而与当前 M 关联的当前 P 不会等待 M 的阻塞，因为这意味当前 P 下的所有 G 都无法执行，所以此时 P 会与当前 M 解除关联，转而关联到另一个内核线程 M2，M2 可能是新创建的内核线程，也可能是之前空闲的内核线程被唤醒来执行 P 的 G<br>如下图：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/gmp_g_block_syscall.png" srcset="/img/loading.gif" lazyload></p>
+<p>如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M，则 P 和与其绑定并继续执行其他的 G；如果没有空闲的 M，但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P，如果没有可用的 P，那么这个 G 会被标记为 <code>runnable</code> 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。</p>
+<h2 id="GMP-当一个-G-阻塞时，G、M、P-会发生什么"><a href="#GMP-当一个-G-阻塞时，G、M、P-会发生什么" class="headerlink" title="GMP 当一个 G 阻塞时，G、M、P 会发生什么"></a>GMP 当一个 G 阻塞时，G、M、P 会发生什么</h2><blockquote>
+<p><strong>Tips：其实可以参考上一个问题，这两比较类似</strong></p>
+</blockquote>
+<p><strong>用户态阻塞</strong></p>
+<p>当 goroutine 因为 channel 操作或者 network I&#x2F;O 而阻塞时（实际上 golang 已经用 netpoller 实现了 goroutine 网络 I&#x2F;O 阻塞不会导致 M 被阻塞，仅阻塞 G ），对应的 G 会被放置到某个 wait 队列（如 channel 的 waitq ），该 G 的状态由 _Gruning 变为 _Gwaitting，而 M 会跳过该 G 尝试获取并执行下一个 G，如果此时没有 runnable 的 G 供 M 运行，那么 M 将解绑 P，并进入 sleep 状态；当阻塞的 G 被另一端的 G2 唤醒时（比如 channel 的可读&#x2F;写通知），G 被标记为 runnable，尝试加入 G2 所在 P 的 runnext，然后再是 P 的 Local 队列和 Global  队列。</p>
+<p><strong>系统调用阻塞</strong></p>
+<p>当 G 被阻塞在某个系统调用上时，此时 G 会阻塞在 _Gsyscall 状态，M 也处于 block on syscall 状态，此时的 M 可被抢占调度：执行该 G 的 M 会与 P 解绑，而 P 则尝试与其它 idle 的 M 绑定，继续执行其它 G。如果没有其它idle 的 M，但 P 的 Local 队列中仍然有 G 需要执行，则创建一个新的 M；当系统调用完成后，G 会重新尝试获取一个 idle 的 P 进入它的 Local 队列恢复执行，如果没有 idle 的 P，G 会被标记为 runnable 加入到 Global 队列。</p>
+<h2 id="P-和-M-数量可以无限扩增的吗？"><a href="#P-和-M-数量可以无限扩增的吗？" class="headerlink" title="P 和 M 数量可以无限扩增的吗？"></a>P 和 M 数量可以无限扩增的吗？</h2><p>不是无线扩增的。</p>
+<p>P 的数量：由启动时环境变量 <code>$GOMAXPROCS</code> 或者是由 <code>runtime</code> 的方法 <code>GOMAXPROCS()</code> 决定。</p>
+<p>M 的数量：goroutine 程序启动时，会设置 M 的最大数量，默认10000。但是内核很难创建出如此多的线程，因此默认情况下 M 的最大数量取决于内核。也可以调用 runtime&#x2F;debug 中的 SetMaxThreads 函数，手动设置 M 的最大数量。</p>
+<h2 id="P-的调度逻辑"><a href="#P-的调度逻辑" class="headerlink" title="P 的调度逻辑"></a>P 的调度逻辑</h2><p>先从本地 runq 获取待执行的 G，如果没有，再从全局 runq 获取待执行的 G，还没有的话，就从别的 P 中拿（偷）走一半的 G</p>
+<h2 id="如果一个-G-运行时间过长，导致队列中后续-G-都无法运行呢？"><a href="#如果一个-G-运行时间过长，导致队列中后续-G-都无法运行呢？" class="headerlink" title="如果一个 G 运行时间过长，导致队列中后续 G 都无法运行呢？"></a>如果一个 G 运行时间过长，导致队列中后续 G 都无法运行呢？</h2><p>内容出处：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1zT4y1F7XF?spm_id_from=333.999.0.0%EF%BC%8C%E9%87%8C%E9%9D%A2%E6%9C%89%E9%9D%9E%E5%B8%B8%E8%AF%A6%E7%BB%86%E7%9A%84%E4%BB%8B%E7%BB%8D">https://www.bilibili.com/video/BV1zT4y1F7XF?spm_id_from=333.999.0.0，里面有非常详细的介绍</a></p>
+<p>这涉及到 GMP 的抢占，在 main goroutine 启动时，会创建一个 <strong>sysmon goroutine</strong>，这是一个特殊的协程，其不依赖 P，也不由 GMP 调度，他会本着<strong>公平调度的原则，对运行时间过长的 P，实行抢占操作</strong>，就是告诉那些运行时间超过阈值的 P 该让出了，那么怎么知道运行时间过长了呢？P 里面有一个 <code>schedtick</code> 字段，每当调度执行一个新的 G，并且不继承上个 G 的时间片时（这里不懂），就会把它自增 1，还有一个 <code>sysmontick.schedwhen</code> 记录的是上次调度的时间，监测协程如果检测到 <code>sysmontick.schedtick</code> 不等于 <code>p.schedtick</code>，说明这个 P 又发生了新的调度，就会同步 <code>schedwhen</code> 和 <code>schedtick</code>，但如果相等，则说明子 <code>schedwhen</code> 这个时间点之后，这个 P 并未发生了新的调度，或者沿用了之前 G 的时间片，所以可以通过当前时间与 <code>schedwhen</code> 的差值，(sysmontick.schedwhen + forcePreemptNS &lt; now)，来判断当前 P 上的 G 是否运行时间过长了，如果运行时间过长，那么就要通知该 P 让出了。</p>
+<p>如何通知 P 呢？使用的是 <strong>栈增长</strong> 的方式。除了对协程栈没什么消耗的函数调用，Go 语言编译器都会在函数头部插入栈增长检测相关代码，会根据栈帧大小来插入不同的代码，<code>SP</code> 表示当前的栈使用到了哪个位置，<code>stackguard0</code> 表示协程栈的空间下界，当栈的消耗达到或超过 <code>stackguard0</code> 时，就需要进行栈增长，会根据超出大小的多少来使用不同的增长代码（这个具体看视频里的说明，一共 3 种策略），如果调度器希望当前 P 让出，那么就会将 <code>stackguard0</code> 设置为 <code>stackPreempt</code>，这是一个非常大的值，真正的栈指针不可能指向这个位置，所以可以安全的用作特殊标识，此外因为该值足够大，那么 3 种策略都会满足条件，从而 goto 到 <code>morestack</code> 处，<code>morestack</code> 会调用 <code>runtime.newstack</code> 函数，负责栈增长工作，但是在增长前，会先判断 <code>stackguard0</code> 是否等于 <code>stackPreempt</code>，如果等于就不进行栈增长了，而是执行一次协程调度，从而达到抢占的目的。</p>
+<p>不过这种抢占方式的缺陷就是过于依赖栈增长代码，如果来个 for{}，因为不涉及到函数调用，所以与栈增长无关，也就无法通过上面的方式来实现抢占，这一问题在 go1.14 中得到了解决，因为它实现了异步抢占，是通过信号（signal）实现的，当要抢占时，会向协程关联的 M 发送一个 <code>sigPreempt</code> 信号（好像底层是 SIGURG），目标线程（M）收到信号后会被中断，转去执行 <code>sigHandler</code>，该函数检测到信号为 <code>sigPreempt</code> 后，会调用 <code>runtime.doSigPreempt</code> 函数，它会向当前被打断的协程上下文中，注入一个异步抢占函数调用，之后返回，被打断的协程恢复，立刻执行被注入的异步抢占函数，该函数最终会调用 runtime 中的调度逻辑，从而实现让出。</p>
+<h2 id="G-陷入系统调用会发生什么"><a href="#G-陷入系统调用会发生什么" class="headerlink" title="G 陷入系统调用会发生什么"></a>G 陷入系统调用会发生什么</h2><p><strong>Tips：和第一个问题类似</strong></p>
+<p>一个协程要执行系统调用，就要切换到 g0 栈（为什么要切换到 g0 栈），在系统调用过程中，G 和 M 会一直绑定在一起，不能被分开，也就用不到 P 了，所以在陷入系统调用前，当前 M 会让出 P，解除 m.P 与当前 P 的强关联，并且记录到 m.oldp 中。但是这个 P 如果放着不管就有点浪费了，还是需要将其关联到其他 M，继续执行工作，当之前的 M 结束系统调用后，会先检查之前的 P（m.oldp）是否被占用，没有的话就继续使用，否则就重新申请一个，没申请到的话（什么情况下会申请不到？），就把当前 G 放到全局 runq 中，然后 M 就进入睡眠。</p>
+<h2 id="如果当前-M-没有绑定-P，那么如何获取-G"><a href="#如果当前-M-没有绑定-P，那么如何获取-G" class="headerlink" title="如果当前 M 没有绑定 P，那么如何获取 G"></a>如果当前 M 没有绑定 P，那么如何获取 G</h2><h2 id="GMP-的几个队列"><a href="#GMP-的几个队列" class="headerlink" title="GMP 的几个队列"></a>GMP 的几个队列</h2><p>貌似 GMP 里的全局队列有两种类型，一种就是单纯保存用作记录的（比如记录当前有哪些 G），还有一种是调度器的全局队列，里面保存的是空闲状态的 G&#x2F;M&#x2F;P</p>
+<p><strong>调度器的可运行 G 队列</strong></p>
+<p>存放等待执行的 G，新创建的 G 会先尝试保存到当前 G （这个 G 就是新创建 G 的父 goroutine）对应的 p 的本地队列，如果本地队列已满（256个），就会把 G 放到全局队列中。</p>
+<p>该队列有容量限制吗？</p>
+<p>该队列里的 G 什么时候被消费？</p>
+<p>如果某个 p 的本地 g 队列为空，则会从全局队列里获取</p>
+<p><strong>全局 M 队列</strong></p>
+<ul>
+<li>作用：</li>
+</ul>
+<ol>
+<li>获取所有 M 的信息 	</li>
+<li>防止 M 被当作垃圾回收掉</li>
+</ol>
+<p><strong>调度器的空闲 M 队列</strong></p>
+<p>运行时系统在停止 M 时，会把它放入调度器的空闲 M 队列</p>
+<ul>
+<li>什么时候被消费</li>
+</ul>
+<p>当 G 陷入系统调用时，与其关联的 M 也会被阻塞，而与之关联的 P 会被分离，使得这个 P 中剩余的 G 可以被执行，此时 P 就会去全局 M 队列里查找，如果有的话</p>
+<p><strong>全局 P 队列</strong></p>
+<p>保存了当前 runtime 创建的所有 P，runtime 会把这些 p 中的可运行 g 全部取出，并放入调度器的可运行 g 队列中，被转移的这些 g，会在以后经由调度再次放入某个 p 的可运行 g 队列</p>
+<p><strong>调度器的空闲 P 队列</strong></p>
+<p>当一个 p 不与任何 m 关联时，runtime 就会把它放入该列表，当 runtime 需要一个空闲的 p 来关联某个 m 时，就会从该队列获取。此外，p 进入空闲队列的一个重要条件是，本地队列里没有可运行的 g</p>
+<p><strong>P 的 G 队列</strong></p>
+<p>保存的是可运行的 g，新创建的 g 会先尝试放到这里，最大容量为 256。</p>
+<p><strong>P 的自由 G 队列，调度器的自由 G 列表</strong></p>
+<p>自由 g 表示的是已经运行完成的 g，主要是为了提高复用率，避免频繁创建 g，因为 g 本质也是一个对象。</p>
+<p>运行完成的 g 会先放到对应的 p 的自由 g 队列里，如果太多了，就会转移一部分到调度器的自由 g 列表</p>
+<p>当创建一个 goroutine 时，会先尝试从 p 的自由 g 队列中获取一个现成的 g，如果没有或者太少，会从调度器的自由 g 队列中拿一部分，如果调度器中也没有，才会新创建一个 g</p>
+<h2 id="g0，m0-是什么"><a href="#g0，m0-是什么" class="headerlink" title="g0，m0 是什么"></a>g0，m0 是什么</h2><blockquote>
+<p>网上的文章东抄西抄</p>
+</blockquote>
+<h3 id="g0"><a href="#g0" class="headerlink" title="g0"></a>g0</h3><p>Go 使用 <code>GOMAXPROCES</code> 变量控制运行的系统线程个数，这就意味着 Go 必须在每个运行着的系统线程上调度和管理 goroutine。这个调度工作被委托给一个特殊的goroutine，也就是 <code>g0</code>。调度过程中 <code>g0</code> 会把就绪状态的 goroutine 调度到系统线程上运行。因此 <code>g0</code> 是每个 os 线程创建的第一个 goroutine。</p>
+<p>G0 代表系统栈的 Goroutine，它是一种特殊类型的 Goroutine，用于运行调度器自身的代码。G0 主要负责调度和管理任务，例如 Goroutine 的创建、销毁和调度。</p>
+<p><strong>调度 g</strong>：G0 仅用于负责调度其他的 G（M 可能会有很多的 G，然后 G0 用来保持调度栈的信息)，当一个 M 从 G1 切换到 G2，首先应该切换到 G0，通过 G0 把 G1干掉，再切换到 G2</p>
+<p>将一个运行中的 Goroutine 切换到另一个的过程涉及到两个切换：</p>
+<ul>
+<li>将运行中的 <code>g</code> 切换到 <code>g0</code></li>
+<li>将 <code>g0</code> 切换到下一个将要运行的 <code>g</code>：</li>
+</ul>
+<h3 id="m0"><a href="#m0" class="headerlink" title="m0"></a>m0</h3><p>m0 是 Go runtime 创建的第一个系统线程（主线程），一个 Go 进程只有一个 m0。</p>
+<p><strong>数据结构</strong>：从数据结构上看 m0 和其他 m 没有区别，同属于 m 结构体， m0 的定义是 var m0 m。</p>
+<p><strong>创建</strong>：m0 是进程在启动时由汇编创建 m0 的，而其他的 m 是 Go 运行时创建，m0 在全局变量 runtime.m0 中，不需要在 heap 上分配。</p>
+<p><strong>作用</strong>：负责执行初始化操作和启动第一个 G，启动第一个 G 后，M0 就和其他的一样了</p>
+<h2 id="程序题"><a href="#程序题" class="headerlink" title="程序题"></a>程序题</h2><p>以下程序的运行结果是什么？</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>        <span class="hljs-string">&quot;fmt&quot;</span><br>        <span class="hljs-string">&quot;sync&quot;</span><br>        <span class="hljs-string">&quot;runtime&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>        runtime.GOMAXPROCS(<span class="hljs-number">1</span>)<br><br>        <span class="hljs-keyword">var</span> wg sync.WaitGroup<br>        wg.Add(<span class="hljs-number">3</span>)<br><br>  			<span class="hljs-comment">// goroutine1</span><br>        <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(n <span class="hljs-type">int</span>)</span></span> &#123;<br>                fmt.Println(n)<br>                wg.Done()<br>        &#125;(<span class="hljs-number">1</span>)<br><br>  			<span class="hljs-comment">// goroutine2</span><br>        <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(n <span class="hljs-type">int</span>)</span></span> &#123;<br>                fmt.Println(n)<br>                wg.Done()<br>        &#125;(<span class="hljs-number">2</span>)<br><br>  			<span class="hljs-comment">// goroutine3</span><br>        <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(n <span class="hljs-type">int</span>)</span></span> &#123;<br>                fmt.Println(n)<br>                wg.Done()<br>        &#125;(<span class="hljs-number">3</span>)<br><br>        wg.Wait()<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>结果：3 1 2</p>
+<p>P 有一个 runnext 字段，保存的是下一个要运行的 g，当创建一个新的 g 时，会调用 runqput 将其添加到 P 的 runq 中，如果当前 P 的 runq 中已经有 g 了，则会将其挤走，被挤走的那个进入 P 的本地 runq。runnext 的优先度比 runq 高，会先执行 runnext 的 g，再按顺序执行 runq 中的 g。</p>
+<p>在上面的程序中，因为设置了 runtime.GOMAXPROCS(1)，所以整个 runtime 中只有 1 个 P，也就是说上面的 3 个goroutine 都共用这一个 P，首先，goroutine1（简称 g1） 先放到 runnext，之后 g2 进来把 g1 挤走，g1 放到 runq，再之后，g3 把 g2 挤走，g2 放到 runq，此时 runnext 保存的是 g3，runq 中是 g1，g2，所以输出结果是 3，1，2</p>
+<h2 id="Goroutine-的调度时机有哪些"><a href="#Goroutine-的调度时机有哪些" class="headerlink" title="Goroutine 的调度时机有哪些"></a>Goroutine 的调度时机有哪些</h2><p>在四种情形下，goroutine 可能会发生调度，但也并不一定会发生，只是说 Go scheduler 有机会进行调度。</p>
+<table>
+<thead>
+<tr>
+<th>情形</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>使用关键字 <code>go</code></td>
+<td>go 创建一个新的 goroutine，Go scheduler 会考虑调度</td>
+</tr>
+<tr>
+<td>GC</td>
+<td>由于进行 GC 的 goroutine 也需要在 M 上运行，因此肯定会发生调度。当然，Go scheduler 还会做很多其他的调度，例如调度不涉及堆访问的 goroutine 来运行。GC 不管栈上的内存，只会回收堆上的内存</td>
+</tr>
+<tr>
+<td>系统调用</td>
+<td>当 goroutine 进行系统调用时，会阻塞 M，所以它会被调度走，同时一个新的 goroutine 会被调度上来</td>
+</tr>
+<tr>
+<td>内存同步访问</td>
+<td>atomic，mutex，channel 操作等会使 goroutine 阻塞，因此会被调度走。等条件满足后（例如其他 goroutine 解锁了）还会被调度上来继续运行</td>
+</tr>
+</tbody></table>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/go/">#go</a>
+      
+        <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/">#面试题</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Go 面试题</div>
+      <div>https://autsu.github.io/2022/08/18/go-mian_shi_ti/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年8月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/08/27/huan_cun_yi_zhi_xing/" title="如何保证缓存和数据库的一致性">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">如何保证缓存和数据库的一致性</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/08/17/leetcode_347_and_692/" title="两个类似的堆问题：leetcode 347 前 K 个高频元素 和 692. 前 K 个高频单词 ">
+                        <span class="hidden-mobile">两个类似的堆问题：leetcode 347 前 K 个高频元素 和 692. 前 K 个高频单词 </span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
