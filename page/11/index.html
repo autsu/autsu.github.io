@@ -62,7 +62,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -245,15 +245,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/08/03/niu-ke-teng-xun-2020-bi-shi-ti-di-er-ti-guang-jie/" target="_self">
-          [牛客][腾讯2020笔试题] 第二题. 逛街
+        <a href="/2021/08/31/mac-xia-gou-jian-ji-yu-c-de-grpc/" target="_self">
+          Mac 下构建基于 C++ 的 gRPC
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/03/niu-ke-teng-xun-2020-bi-shi-ti-di-er-ti-guang-jie/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/31/mac-xia-gou-jian-ji-yu-c-de-grpc/" target="_self">
         <div>
-          小Q在周末的时候和他的小伙伴来到大城市逛街，一条步行街上有很多高楼，共有n座高楼排成一行。小Q从第一栋一直走到了最后一栋，小Q从来都没有见到这么多的楼，所以他想知道他在每栋楼的位置处能看到多少栋楼呢？（当前面的楼的高度大于等于后面的楼时，后面的楼将被挡住）  输入例子1:[5,3,8,3,2,5] 输出例子1:[3,3,5,4,4,4] 例子说明1:当小Q处于位置3时，他可以向前看到位置2,1处
+          来源于官方文档（https://grpc.io/docs/languages/cpp/quickstart/），但是其中有一些坑，特此记录，系统为 macOS 11.0.1 (20B29)： 1. 设置目录（很重要，必须执行该步骤）选择一个目录来保存本地安装的软件包。此页面假定环境变量MY_INSTALL_DIR包含此目录路径。例如： 123export MY_INSTALL_DIR=$HOME/
         </div>
       </a>
 
@@ -261,8 +261,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-08-03 22:53" pubdate>
-              2021-08-03
+            <time datetime="2021-08-31 17:16" pubdate>
+              2021-08-31
             </time>
           </div>
         
@@ -271,9 +271,9 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E6%A0%88/">#栈</a>
+              <a href="/tags/c/">#c++</a>
             
-              <a href="/tags/%E7%AC%94%E8%AF%95%E9%A2%98/">#笔试题</a>
+              <a href="/tags/grpc/">#grpc</a>
             
           </div>
         
@@ -287,15 +287,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/08/03/teng-xun-2020-bi-shi-ti-ya-suo-suan-fa/" target="_self">
-          [牛客][腾讯2020笔试题] 第一题. 压缩算法
+        <a href="/2021/08/29/mysql-suo/" target="_self">
+          MySQL 锁
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/03/teng-xun-2020-bi-shi-ti-ya-suo-suan-fa/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/29/mysql-suo/" target="_self">
         <div>
-          说明：该题出自牛客 —— 腾讯2020校园招聘-后台   时间限制：C&#x2F;C++ 1秒，其他语言2秒 空间限制：C&#x2F;C++ 256M，其他语言512M 小Q想要给他的朋友发送一个神秘字符串，但是他发现字符串的过于长了，于是小Q发明了一种压缩算法对字符串中重复的部分进行了压缩，对于字符串中连续的m个相同字符串S将会压缩为[m|S](m为一个整数且1&lt;&#x3D;m&lt;&
+          表级锁表锁语法：  加锁：   加读锁  LOCK TABLES [tablename] READ;     加写锁  LOCK TABLES [tablename] WRITE;    释放锁：UNLOCK TABLES;   加锁后会阻塞其他线程的部分操作，同时也会对加锁线程进行一些限制，直到加锁的线程释放锁。 读锁和写锁的区别：当加 读锁 后，其他线程的 SELECT 语句不会被阻塞，但是
         </div>
       </a>
 
@@ -303,8 +303,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-08-03 21:38" pubdate>
-              2021-08-03
+            <time datetime="2021-08-29 10:55" pubdate>
+              2021-08-29
             </time>
           </div>
         
@@ -312,254 +312,6 @@
         
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/">#字符串</a>
-            
-              <a href="/tags/%E7%AC%94%E8%AF%95%E9%A2%98/">#笔试题</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/08/02/redis-chi-jiu-hua-zhi-aof-yu-rdb/" target="_self">
-          Redis 持久化之 AOF 与 RDB
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/02/redis-chi-jiu-hua-zhi-aof-yu-rdb/" target="_self">
-        <div>
-          RDBRDB 可以将某个时间点上的数据库状态保存到一个 RDB 文件中（该文件的文件名可以在 redis.conf 中的 dbfilename 进行配置，默认为 dump.rdb），该文件是一个经过压缩的二进制文件，里面保存了数据库中的键值对，通过该文件可以还原生成 RDB 文件的数据库状态。  如何使用使用 SAVE 或者 BGSAVE 来生成 RDB 文件，二者的区别是 SAVE 会阻塞进程直
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-08-02 12:03" pubdate>
-              2021-08-02
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Redis/">#Redis</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/07/30/ke-kao-chuan-shu-de-shi-xian-ji-zhi-ting-zhi-deng-dai-xie-yi-swstop-and-wait/" target="_self">
-          可靠传输的实现机制 —— 停止-等待协议SW（Stop-and-Wait）
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/07/30/ke-kao-chuan-shu-de-shi-xian-ji-zhi-ting-zhi-deng-dai-xie-yi-swstop-and-wait/" target="_self">
-        <div>
-          何为停等协议首先假设有这样一个简单的可靠传输协议，主机 A 发送数据分组给 主机 B，由于网络传输过程中可能会出现数据损坏，所以主机 B会进行校验和检测，如果数据完整则发送 ACK，否则发送 NAK，如果收到 ACK，则可以继续发送下一个数据分组（如果有），收到 NAK 则重新发送当前数据分组。 在收到 主机 B 的回复之前，主机 A 不会进行任何操作，这便是停等协议，类似于串行操作。  存在的问
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-30 18:16" pubdate>
-              2021-07-30
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/07/29/go-map-yuan-ma-yue-du/" target="_self">
-          go map 源码阅读
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/07/29/go-map-yuan-ma-yue-du/" target="_self">
-        <div>
-          看看 map 这个重要数据结构在 go 中是如何实现的
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-29 20:37" pubdate>
-              2021-07-29
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/go/">#go</a>
-            
-              <a href="/tags/%E6%BA%90%E7%A0%81/">#源码</a>
-            
-              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">#数据结构</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/07/29/leetcode-25-k-ge-yi-zu-fan-zhuan-lian-biao/" target="_self">
-          leetcode 25. K 个一组翻转链表
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/07/29/leetcode-25-k-ge-yi-zu-fan-zhuan-lian-biao/" target="_self">
-        <div>
-          给你一个链表，每 k 个节点一组进行翻转，请你返回翻转后的链表。 k 是一个正整数，它的值小于或等于链表的长度。 如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。 进阶： 你可以设计一个只使用常数额外空间的算法来解决此问题吗？你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。 示例 1： 输入：head &#x3D; [1,2,3,4,5], k &#x3D; 2输
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-29 10:05" pubdate>
-              2021-07-29
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E9%93%BE%E8%A1%A8/">#链表</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/07/28/bian-cheng-ti-er-cha-shu-de-xia-yi-ge-jie-dian/" target="_self">
-          [编程题]二叉树的下一个结点
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/07/28/bian-cheng-ti-er-cha-shu-de-xia-yi-ge-jie-dian/" target="_self">
-        <div>
-          给定二叉树其中的一个结点，请找出其中序遍历顺序的下一个结点并且返回。 注意，树中的结点不仅包含左右子结点，而且包含指向父结点的指针。 示例:输入:{8,6,10,5,7,9,11},8返回:9解析:这个组装传入的子树根节点，其实就是整颗树，中序遍历{5,6,7,8,9,10,11}，根节点8的下一个节点就是9，应该返回{9,10,11}，后台只打印子树的下一个节点，所以只会打印9，如下图，其实都
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-28 18:19" pubdate>
-              2021-07-28
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E7%AE%97%E6%B3%95/">#算法</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/07/25/mysql-mian-jing/" target="_self">
-          MySQL 面试题
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/07/25/mysql-mian-jing/" target="_self">
-        <div>
-          1. char 和 varchar 的区别char 是固定长度，varchar 长度可变，存储时，前者不管实际存储数据的长度，直接规定 char 规定的长度分配存储空间；而后者会根据实际存储的数据分配最终的存储空间。 以char(32)和varchar(32)举例：（这里的 32 表示字符数）     char(32) varchar(32)    占用空间 固定32字符（如果数据长度不够32将用
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-25 10:04" pubdate>
-              2021-07-25
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/">#面试题</a>
             
               <a href="/tags/mysql/">#mysql</a>
             
@@ -575,15 +327,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/07/25/redis-mian-jing/" target="_self">
-          Redis 面试题
+        <a href="/2021/08/27/mysql-de-shi-wu-ge-chi-ji-bie/" target="_self">
+          MySQL 的事务隔离级别
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/07/25/redis-mian-jing/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/27/mysql-de-shi-wu-ge-chi-ji-bie/" target="_self">
         <div>
-          Redis 的数据类型以及日常的应用PS：这里说的数据类型指的是 value 的类型，Redis 是一个 kv 数据库，它的 key 都是 string 类型的，但是 value 可以是多种类型。 string 字符串类型缓存对象这个没啥好说的，就是存一些字符串，这些字符串可以是各种各样的值，比如可以是常规的 “name”: “zhang3”，也可以是一个序列化为 JSON 的对象 {“XXX”:
+          1. 未提交读（脏读）事务的修改，即使没有提交，对其他事务也是可见的。事务可以读取未提交的数据，称之为 脏读。它存在 4 个常见问题（脏读、不可重复读、幻读、丢失更新）。 2. 提交读（不可重复读）就是一个事务要等另一个事务提交后才能读取数据。 它解决了脏读问题，存在 3 个常见问题（不可重复读、幻读、丢失更新）。 新的问题：更新丢失（提交覆盖） 新的问题：不可重复读 新的问题：回滚丢失（回滚覆盖
         </div>
       </a>
 
@@ -591,8 +343,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-25 10:04" pubdate>
-              2021-07-25
+            <time datetime="2021-08-27 23:17" pubdate>
+              2021-08-27
             </time>
           </div>
         
@@ -601,9 +353,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/Redis/">#Redis</a>
-            
-              <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/">#面试题</a>
+              <a href="/tags/mysql/">#mysql</a>
             
           </div>
         
@@ -617,15 +367,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/07/23/epoll-de-lt-he-et/" target="_self">
-          epoll 的 LT 和 ET
+        <a href="/2021/08/21/niu-ke-bi-shi-ti-tu-zi-fan-yan/" target="_self">
+          [牛客][笔试题] 兔子繁衍
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/07/23/epoll-de-lt-he-et/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/21/niu-ke-bi-shi-ti-tu-zi-fan-yan/" target="_self">
         <div>
-          Linux epoll 的 条件触发( Level Trigger )和 边缘触发 ( Edge Trigger ) 实践 LT 效果演示一个简单的小 demo，从标准输入 stdin 读入数据，并输出到标准输出 stdout，这里设置了每次读取的 BUF_SIZE 为 2。 1234567891011121314151617181920212223242526272829#include &lt
+          有一对兔子，从出生后的第五个月起每月生出一对小兔子（即满4月就开始生小兔），小兔子也会出生从第五个月起每月生一对小免子。假如兔子不会死，第n个月时，兔群有多少对兔子。 输入描述:第n月（n为自然数，n&lt;101） 输出描述:第 n 个月时，兔子的对数（免群的兔子有多少对兔子）。示例 1输入5输出2说明第五个月时，有两对兔子 方法1 动态规划ACM 模式 12345678910111213141
         </div>
       </a>
 
@@ -633,8 +383,41 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-23 19:25" pubdate>
-              2021-07-23
+            <time datetime="2021-08-21 19:18" pubdate>
+              2021-08-21
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/17/redis-zset-yuan-ma-yue-du/" target="_self">
+          Redis zset 源码阅读
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/17/redis-zset-yuan-ma-yue-du/" target="_self">
+        <div>
+          typeszskiplistNode12345678910typedef struct zskiplistNode &#123;    sds ele;    // 成员    double score;   // 分值    struct zskiplistNode *backward; // 后退指针    // 层    struct zskiplistLevel &#123;
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-17 11:50" pubdate>
+              2021-08-17
             </time>
           </div>
         
@@ -643,9 +426,213 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/epoll/">#epoll</a>
+              <a href="/tags/Redis/">#Redis</a>
             
-              <a href="/tags/%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/">#多路复用</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">#数据结构</a>
+            
+              <a href="/tags/%E8%B7%B3%E8%A1%A8/">#跳表</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/12/leetcode-1493-shan-diao-yi-ge-yuan-su-yi-hou-quan-wei-1-de-zui-chang-zi-shu-zu/" target="_self">
+          leetcode 1493. 删掉一个元素以后全为 1 的最长子数组
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/12/leetcode-1493-shan-diao-yi-ge-yuan-su-yi-hou-quan-wei-1-de-zui-chang-zi-shu-zu/" target="_self">
+        <div>
+          给你一个二进制数组 nums ，你需要从中删掉一个元素。 请你在删掉元素的结果数组中，返回最长的且只包含 1 的非空子数组的长度。 如果不存在这样的子数组，请返回 0 。 提示 1： 输入：nums &#x3D; [1,1,0,1]输出：3解释：删掉位置 2 的数后，[1,1,1] 包含 3 个 1 。示例 2： 输入：nums &#x3D; [0,1,1,1,0,1,1,0,1]输出：5解释：
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-12 23:10" pubdate>
+              2021-08-12
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/">#滑动窗口</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/11/git-clone-su-du-man/" target="_self">
+          git clone 速度慢的解决方法
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/11/git-clone-su-du-man/" target="_self">
+        <div>
+          使用国内镜像，目前已知Github国内镜像网站有 github.com.cnpmjs.org 和 git.sdut.me&#x2F; 。速度根据各地情况而定，在clone某个项目的时候将 github.com 替换为 github.com.cnpmjs.org 即可。 来源：https://blog.csdn.net/hzlarm/article/details/115415038
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-11 12:37" pubdate>
+              2021-08-11
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Git/">#Git</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/11/git-push-error-remote-fatal-error-in-commit_refs/" target="_self">
+          git push error: remote: fatal error in commit_refs
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/11/git-push-error-remote-fatal-error-in-commit_refs/" target="_self">
+        <div>
+          在一如既往地执行 git push 到 Github 时，出现了一个从未遇到过的错误： 1234remote: fatal error in commit_refsTo https://github.com/xxx ! [remote rejected] master -&gt; master (failure)error: failed to push some refs to &#x27;ht
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-11 00:28" pubdate>
+              2021-08-11
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/issues/">#issues</a>
+            
+              <a href="/tags/Git/">#Git</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/07/mysql-zui-zuo-qian-zhui-yuan-ze-shi-xiao/" target="_self">
+          Mysql 最左前缀原则失效
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/07/mysql-zui-zuo-qian-zhui-yuan-ze-shi-xiao/" target="_self">
+        <div>
+          引子（以后 mysql 的输出还是截图好一些，复制粘贴格式会很难看 凑合看就完事了） 有如下表，结构如下，注意其还拥有一个名为 idx_name_age 的，内容为 (name, age) 的联合索引。 1234567+-------+-------------+------+-----+---------+----------------+| Field | Type        | Null
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-07 11:17" pubdate>
+              2021-08-07
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/mysql/">#mysql</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/06/jin-cheng-jian-tong-xin-de-fang-shi/" target="_self">
+          进程间通信的方式
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/06/jin-cheng-jian-tong-xin-de-fang-shi/" target="_self">
+        <div>
+          这是一道面试高频题 无名管道无名管道只能用于父子进程之间的通信，代码如下： 12345678910111213141516171819202122232425262728293031323334353637383940414243444546//// Created by zz on 2021/3/5.//#include &quot;../lib/apue.h&quot;// 无名管道：只能在父
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-06 21:44" pubdate>
+              2021-08-06
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">#操作系统</a>
             
           </div>
         
@@ -657,7 +644,7 @@
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/10/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/#board">9</a><a class="page-number" href="/page/10/#board">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/#board">12</a><a class="page-number" href="/page/13/#board">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/#board">17</a><a class="extend next" rel="next" href="/page/12/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/10/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/#board">9</a><a class="page-number" href="/page/10/#board">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/#board">12</a><a class="page-number" href="/page/13/#board">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/#board">18</a><a class="extend next" rel="next" href="/page/12/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

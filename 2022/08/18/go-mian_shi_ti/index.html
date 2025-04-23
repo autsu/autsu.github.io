@@ -29,7 +29,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/gmp_g_block_net1.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/gmp_g_block_syscall.png">
 <meta property="article:published_time" content="2022-08-18T14:12:52.000Z">
-<meta property="article:modified_time" content="2023-08-24T17:25:48.486Z">
+<meta property="article:modified_time" content="2025-04-14T16:03:36.234Z">
 <meta property="article:author" content="void">
 <meta property="article:tag" content="go">
 <meta property="article:tag" content="面试题">
@@ -80,7 +80,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -248,7 +248,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          12k 字
+          15k 字
         
       </span>
     
@@ -259,7 +259,7 @@
         
         
         
-          103 分钟
+          122 分钟
         
       </span>
     
@@ -360,7 +360,14 @@
 <p>GMP 文章：</p>
 <p><a target="_blank" rel="noopener" href="https://zboya.github.io/post/go_scheduler/#ggoroutine">深入golang runtime的调度</a></p>
 </blockquote>
-<h2 id="说一下-GMP-模型"><a href="#说一下-GMP-模型" class="headerlink" title="说一下 GMP 模型"></a>说一下 GMP 模型</h2><h2 id="GMP-模型，为什么要有-P？"><a href="#GMP-模型，为什么要有-P？" class="headerlink" title="GMP 模型，为什么要有 P？"></a>GMP 模型，为什么要有 P？</h2><h2 id="Goroutine-阻塞的话，是不是对应的-M-也会阻塞"><a href="#Goroutine-阻塞的话，是不是对应的-M-也会阻塞" class="headerlink" title="Goroutine 阻塞的话，是不是对应的 M 也会阻塞"></a>Goroutine 阻塞的话，是不是对应的 M 也会阻塞</h2><p><del>如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M，则 P 和与其绑定并继续执行其他的 G；如果没有空闲的 M，但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P，如果没有可用的 P，那么这个 G 会被标记为 <code>runnable</code> 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。</del></p>
+<h2 id="说一下-GMP-模型"><a href="#说一下-GMP-模型" class="headerlink" title="说一下 GMP 模型"></a>说一下 GMP 模型</h2><p>GMP 是 Go 的协程调度模型，其中：</p>
+<p>G 是 go 关键字执行的函数<br>G 的调度完全由 Go runtime 实现，相比物理线程不需要内核参与，减少了上下文切换</p>
+<p>M 是实际的物理线程，M 只能通过 P 来获取 G 执行任务</p>
+<p>P 类似一个队列，P 的数量默认情况下和 CPU 核的数量相同，G 会放到 P 中，然后 M 从 P 中拿到 G 并执行</p>
+<h2 id="GMP-模型，为什么要有-P？"><a href="#GMP-模型，为什么要有-P？" class="headerlink" title="GMP 模型，为什么要有 P？"></a>GMP 模型，为什么要有 P？</h2><p>如果所有 G 都在一个全局队列中，由所有的 M 争抢，会导致全局锁竞争严重。有了 P 以后，可以把 G 分开存放在多个 P 队列中，每个 M 从自己绑定的 P 队列中获取 G，可以减少争抢。</p>
+<p>P 可以起到负载均衡的作用，每个 P 队列首先会从全局 G 队列获取 G，如果还没拿到就会从别的 P 队列中窃取，保证每个 P 中的 G 数量相对均衡。</p>
+<p>P 还可以存储一些东西，比如 sync.Pool 就会在 P 中存储临时对象达到复用的效果</p>
+<h2 id="Goroutine-阻塞的话，是不是对应的-M-也会阻塞"><a href="#Goroutine-阻塞的话，是不是对应的-M-也会阻塞" class="headerlink" title="Goroutine 阻塞的话，是不是对应的 M 也会阻塞"></a>Goroutine 阻塞的话，是不是对应的 M 也会阻塞</h2><p><del>如果 G 被阻塞在某个系统调用上，那么不仅仅 G 会阻塞，执行 G 的 M 也会解绑 P，与 G 一起进入挂起状态。如果此时有空闲的 M，则 P 和与其绑定并继续执行其他的 G；如果没有空闲的 M，但还是有其他 G 需要去执行，那么会创建一个新 M。当系统调用返回后，阻塞在该系统调用上的 G 会尝试获取一个可用的 P，如果没有可用的 P，那么这个 G 会被标记为 <code>runnable</code> 并把它放入全局的 runqueue 中等待调度，之前的那个挂起的 M 将再次进入挂起状态。</del></p>
 <p>出处：<a target="_blank" rel="noopener" href="https://www.zbpblog.com/blog-242.html">https://www.zbpblog.com/blog-242.html</a></p>
 <p>G 阻塞分为以下 4 种情况：</p>
 <p><strong>1. 由于原子、互斥量或通道操作调用导致 Goroutine 阻塞</strong></p>
@@ -396,8 +403,60 @@
 <p>如何通知 P 呢？使用的是 <strong>栈增长</strong> 的方式。除了对协程栈没什么消耗的函数调用，Go 语言编译器都会在函数头部插入栈增长检测相关代码，会根据栈帧大小来插入不同的代码，<code>SP</code> 表示当前的栈使用到了哪个位置，<code>stackguard0</code> 表示协程栈的空间下界，当栈的消耗达到或超过 <code>stackguard0</code> 时，就需要进行栈增长，会根据超出大小的多少来使用不同的增长代码（这个具体看视频里的说明，一共 3 种策略），如果调度器希望当前 P 让出，那么就会将 <code>stackguard0</code> 设置为 <code>stackPreempt</code>，这是一个非常大的值，真正的栈指针不可能指向这个位置，所以可以安全的用作特殊标识，此外因为该值足够大，那么 3 种策略都会满足条件，从而 goto 到 <code>morestack</code> 处，<code>morestack</code> 会调用 <code>runtime.newstack</code> 函数，负责栈增长工作，但是在增长前，会先判断 <code>stackguard0</code> 是否等于 <code>stackPreempt</code>，如果等于就不进行栈增长了，而是执行一次协程调度，从而达到抢占的目的。</p>
 <p>不过这种抢占方式的缺陷就是过于依赖栈增长代码，如果来个 for{}，因为不涉及到函数调用，所以与栈增长无关，也就无法通过上面的方式来实现抢占，这一问题在 go1.14 中得到了解决，因为它实现了异步抢占，是通过信号（signal）实现的，当要抢占时，会向协程关联的 M 发送一个 <code>sigPreempt</code> 信号（好像底层是 SIGURG），目标线程（M）收到信号后会被中断，转去执行 <code>sigHandler</code>，该函数检测到信号为 <code>sigPreempt</code> 后，会调用 <code>runtime.doSigPreempt</code> 函数，它会向当前被打断的协程上下文中，注入一个异步抢占函数调用，之后返回，被打断的协程恢复，立刻执行被注入的异步抢占函数，该函数最终会调用 runtime 中的调度逻辑，从而实现让出。</p>
 <h2 id="G-陷入系统调用会发生什么"><a href="#G-陷入系统调用会发生什么" class="headerlink" title="G 陷入系统调用会发生什么"></a>G 陷入系统调用会发生什么</h2><p><strong>Tips：和第一个问题类似</strong></p>
-<p>一个协程要执行系统调用，就要切换到 g0 栈（为什么要切换到 g0 栈），在系统调用过程中，G 和 M 会一直绑定在一起，不能被分开，也就用不到 P 了，所以在陷入系统调用前，当前 M 会让出 P，解除 m.P 与当前 P 的强关联，并且记录到 m.oldp 中。但是这个 P 如果放着不管就有点浪费了，还是需要将其关联到其他 M，继续执行工作，当之前的 M 结束系统调用后，会先检查之前的 P（m.oldp）是否被占用，没有的话就继续使用，否则就重新申请一个，没申请到的话（什么情况下会申请不到？），就把当前 G 放到全局 runq 中，然后 M 就进入睡眠。</p>
-<h2 id="如果当前-M-没有绑定-P，那么如何获取-G"><a href="#如果当前-M-没有绑定-P，那么如何获取-G" class="headerlink" title="如果当前 M 没有绑定 P，那么如何获取 G"></a>如果当前 M 没有绑定 P，那么如何获取 G</h2><h2 id="GMP-的几个队列"><a href="#GMP-的几个队列" class="headerlink" title="GMP 的几个队列"></a>GMP 的几个队列</h2><p>貌似 GMP 里的全局队列有两种类型，一种就是单纯保存用作记录的（比如记录当前有哪些 G），还有一种是调度器的全局队列，里面保存的是空闲状态的 G&#x2F;M&#x2F;P</p>
+<p>一个协程要执行系统调用，就要切换到 g0 栈（为什么要切换到 g0 栈），在系统调用过程中，G 和 M 会一直绑定在一起，不能被分开，也就用不到 P 了，所以在陷入系统调用前，当前 M 会让出 P，解除 m.P 与当前 P 的强关联，并且记录到 m.oldp 中。但是这个 P 如果放着不管就有点浪费了，还是需要将其关联到其他 M，继续执行工作，当之前的 M 结束系统调用后，会先检查之前的 P（m.oldp）是否被占用，没有的话就继续使用（绑定之前的 P，否则就重新申请一个，没申请到的话（什么情况下会申请不到？），就把当前 G 放到全局 runq 中，然后 M 就进入睡眠。</p>
+<ul>
+<li><p><strong>为什么优先绑定到之前的 P (m.oldp)？</strong></p>
+<ul>
+<li><p><strong>亲和性 (Affinity) 和局部性 (Locality)：</strong> 这是最主要的原因。</p>
+<ul>
+<li><p><strong>数据局部性：</strong> 刚刚执行系统调用的那个 G（它现在需要继续执行）很可能其相关数据仍然在当前 M 运行的 CPU 核心的缓存 (L1&#x2F;L2 Cache) 中。如果能继续使用原来的 P，G 就能在同一个 M 上恢复执行，从而最大化利用 CPU 缓存，提高性能。</p>
+</li>
+<li><p><strong>P 本地队列：</strong> P 的本地运行队列可能仍然包含与刚完成系统调用的 G 相关或逻辑上接近的其他 G。保持 M 和 P 的关联有助于维护这种任务的局部性。</p>
+</li>
+<li><p><strong>内存分配器缓存 (mcache)：</strong> P 还关联了一个内存分配器的本地缓存 (mcache)。如果 M 能重新绑定到原来的 P，它可以继续使用这个热缓存，提高内存分配效率。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>简单高效：</strong> 直接检查 m.oldp 是最快的尝试路径。如果成功，可以避免搜索全局空闲 P 列表或参与更复杂的调度逻辑。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="如果当前-M-没有绑定-P，那么如何获取-G"><a href="#如果当前-M-没有绑定-P，那么如何获取-G" class="headerlink" title="如果当前 M 没有绑定 P，那么如何获取 G"></a>如果当前 M 没有绑定 P，那么如何获取 G</h2><p>好的，这是一个非常好的问题，它触及了 GMP 调度模型的细节。</p>
+<p>如果一个 M (操作系统线程) 当前没有绑定 P (逻辑处理器)，它**不能直接获取并执行 G (Goroutine)**。因为执行 Go 代码需要 P 提供的上下文环境（如内存分配器 <code>mcache</code>、调度信息等）。</p>
+<p>因此，一个没有 P 的 M 的<strong>首要任务是尝试获取一个 P</strong>。这个过程大致如下：</p>
+<ol>
+<li><p><strong>检查全局空闲 P 列表 (<code>sched.pidle</code>)</strong>:</p>
+<ul>
+<li>调度器维护一个全局的空闲 P 列表。M 会首先尝试从这个列表中获取一个 P。</li>
+<li>如果找到了一个空闲的 P，M 就会与这个 P 绑定。</li>
+</ul>
+</li>
+<li><p><strong>如果找不到空闲 P</strong>:</p>
+<ul>
+<li>这意味着所有 P 都正忙于被其他 M 绑定并执行 G。</li>
+<li>在这种情况下，这个 M 通常会进入**休眠状态 (park)**，将自己放入一个全局的空闲 M 列表 (<code>sched.midle</code>) 中，等待被唤醒。它不会主动去“抢”一个正在被使用的 P。</li>
+</ul>
+</li>
+</ol>
+<p><strong>一旦 M 成功获取并绑定了一个 P，它才会开始寻找 G 来执行。</strong> 获取 G 的过程遵循标准的优先级顺序：</p>
+<ol>
+<li><strong>检查绑定的 P 的本地运行队列 (LRQ - Local Run Queue):</strong> 这是最高效的方式，因为访问本地队列不需要加锁或只需要轻量级锁。</li>
+<li><strong>检查全局运行队列 (GRQ - Global Run Queue):</strong> 如果 LRQ 为空，M 会尝试从全局队列获取 G。访问 GRQ 需要加锁，会有一定的开销。调度器会定期（例如每进行 61 次调度）检查一次全局队列，以确保全局队列中的 G 不会“饿死”。</li>
+<li><strong>网络轮询器 (Netpoller):</strong> 检查是否有因网络 I&#x2F;O 完成而准备就绪的 G。</li>
+<li><strong>工作窃取 (Work Stealing):</strong> 如果以上都没有找到 G，M 会尝试从<strong>其他随机选择的 P</strong> 的 LRQ 中“窃取”一半的 G 到自己的 LRQ 中来执行。这也是需要加锁的操作。</li>
+<li><strong>再次检查全局队列和 Netpoller (可能):</strong> 在窃取失败后，可能会再次尝试检查这些地方。</li>
+<li><strong>如果仍然找不到 G:</strong> 如果尝试了所有方法都找不到可运行的 G，这个 M 可能会<strong>释放它绑定的 P</strong> (将 P 放回全局空闲 P 列表)，然后 M 自己再次进入**休眠状态 (park)**。</li>
+</ol>
+<p><strong>总结:</strong></p>
+<p>一个没有 P 的 M <strong>不能直接获取 G</strong>。它的流程是：</p>
+<ol>
+<li><strong>先尝试获取一个空闲的 P</strong>。</li>
+<li>如果获取失败，M 就<strong>休眠</strong>。</li>
+<li>如果获取成功，<strong>M 与 P 绑定</strong>。</li>
+<li><strong>然后</strong>，这个绑定了 P 的 M 才开始按照 <strong>LRQ -&gt; GRQ -&gt; Netpoller -&gt; Work Stealing</strong> 的顺序去寻找 G 来执行。</li>
+</ol>
+<h2 id="GMP-的几个队列"><a href="#GMP-的几个队列" class="headerlink" title="GMP 的几个队列"></a>GMP 的几个队列</h2><p>貌似 GMP 里的全局队列有两种类型，一种就是单纯保存用作记录的（比如记录当前有哪些 G），还有一种是调度器的全局队列，里面保存的是空闲状态的 G&#x2F;M&#x2F;P</p>
 <p><strong>调度器的可运行 G 队列</strong></p>
 <p>存放等待执行的 G，新创建的 G 会先尝试保存到当前 G （这个 G 就是新创建 G 的父 goroutine）对应的 p 的本地队列，如果本地队列已满（256个），就会把 G 放到全局队列中。</p>
 <p>该队列有容量限制吗？</p>
@@ -473,6 +532,14 @@
 <td>atomic，mutex，channel 操作等会使 goroutine 阻塞，因此会被调度走。等条件满足后（例如其他 goroutine 解锁了）还会被调度上来继续运行</td>
 </tr>
 </tbody></table>
+<h1 id="GC-相关"><a href="#GC-相关" class="headerlink" title="GC 相关"></a>GC 相关</h1><h2 id="GC-的原理"><a href="#GC-的原理" class="headerlink" title="GC 的原理"></a>GC 的原理</h2><p>三色标记法+混合写屏障</p>
+<p>三色标记法：首先所有对象都是白色，然后先从根节点开始遍历，当前遍历的节点会置为灰色，放到灰色队列中。然后 GC 会不断从灰色队列中取出灰色对象，把它标记为黑色，同时把它引用的对象（白色）标记为灰色，放到灰色队列中，就这样循环往复，直到灰色队列为空。此时还是白色的对象说明就是可以被清理的对象。</p>
+<p>根节点：全局对象，以及栈对象</p>
+<p>灰色代表：该对象已被 GC 发现（即它是可达的，不会是垃圾），但它的子对象<strong>尚未</strong>被完全扫描处理。灰色对象代表了标记过程正在推进的<strong>前沿</strong>或<strong>工作列表</strong>。灰色明确地区分了“已发现但待处理子节点”和“已发现且子节点已处理完毕”这两种状态。</p>
+<p>在标记过程中需要进入 STW 阶段，也就是暂停所有的线程，让 GC 能够不受干扰的进行标记。否则可能会造成混乱，比如一个已经标记为黑色（这代表本轮 GC 不会再扫描它引用的对象）的对象，在 GC 标记过程中，又被其他线程修改，让它指向一个白色对象，这就会导致这个白色对象被错误的清理掉。</p>
+<p>但是 STW 势必会造成程序的暂停，对于一些性能敏感的应用显然无法接受。为了允许普通线程和 GC 线程能够同时并发执行，Go GC 引入了写屏障功能来解决。</p>
+<p>写屏障是一小段由编译器插入的代码，它会在<strong>用户 Goroutine 修改指针</strong>时执行。比如当用户协程尝试将一个黑色对象指向一个白色对象时，写屏障会把这个白色对象修改为灰色对象，这样就可以让这个对象被 GC 扫描到，从而避免被错误的清理。</p>
+<p>问题：为什么要引入一个灰色状态？不引入会有什么问题？</p>
 
                 
               </div>

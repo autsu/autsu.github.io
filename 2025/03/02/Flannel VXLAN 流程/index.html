@@ -1,0 +1,863 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="流程image.png 直接参考这张图也可以  假设现在位于 Node1 的 container-1 想要和位于 Node2 的 container-2 进行通信（图中有颜色的线）。 下面是我自己总结的， 信息 Worker1：  节点 IP 192.168.247.8，podCIDR: 10.244.1.0&#x2F;24   Worker2：  节点 IP 192.168.247.7，podC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flannel VXLAN 流程">
+<meta property="og:url" content="https://autsu.github.io/2025/03/02/Flannel%20VXLAN%20%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="流程image.png 直接参考这张图也可以  假设现在位于 Node1 的 container-1 想要和位于 Node2 的 container-2 进行通信（图中有颜色的线）。 下面是我自己总结的， 信息 Worker1：  节点 IP 192.168.247.8，podCIDR: 10.244.1.0&#x2F;24   Worker2：  节点 IP 192.168.247.7，podC">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250316000302.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250306142338.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250306143941.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250306135547.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250306150158.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250306151811.png">
+<meta property="article:published_time" content="2025-03-02T14:37:45.000Z">
+<meta property="article:modified_time" content="2025-04-23T16:18:57.825Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="计算机网络">
+<meta property="article:tag" content="k8s">
+<meta property="article:tag" content="k8s网络">
+<meta property="article:tag" content="needSyncToBlog">
+<meta property="article:tag" content="Flannel">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250316000302.png">
+  
+  
+  
+  <title>Flannel VXLAN 流程 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Flannel VXLAN 流程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-03-02 22:37" pubdate>
+          2025年3月2日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          35 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Flannel VXLAN 流程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><p><del><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250302213305.png">image.png</a></del></p>
+<p>直接参考这张图也可以</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250316000302.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p><del>假设现在位于 <code>Node1</code> 的 <code>container-1</code> 想要和位于 <code>Node2</code> 的 <code>container-2</code> 进行通信（图中有颜色的线）。</del></p>
+<p>下面是我自己总结的，</p>
+<h2 id="信息"><a href="#信息" class="headerlink" title="信息"></a>信息</h2><ul>
+<li><p>Worker1：</p>
+<ul>
+<li>节点 IP 192.168.247.8，podCIDR: 10.244.1.0&#x2F;24</li>
+</ul>
+</li>
+<li><p>Worker2：</p>
+<ul>
+<li>节点 IP 192.168.247.7，podCIDR: 10.244.2.0&#x2F;24</li>
+</ul>
+</li>
+<li><p>container-1：运行在 Node1，eth0 10.244.1.4&#x2F;24</p>
+</li>
+<li><p>container-2：运行在 Node2，eth0 10.244.2.5&#x2F;24</p>
+</li>
+<li><p>flannel.1 in Node1：IP 10.244.1.0&#x2F;32</p>
+</li>
+<li><p>flannel.1 in Node2：IP 10.244.2.0&#x2F;32</p>
+</li>
+</ul>
+<p>现在，在 container-2 中 curl container-1 的 IP 10.244.1.4。</p>
+<p>流程如下：</p>
+<h2 id="Flannel-VXLAN-数据包转发详细流程"><a href="#Flannel-VXLAN-数据包转发详细流程" class="headerlink" title="Flannel VXLAN 数据包转发详细流程"></a>Flannel VXLAN 数据包转发详细流程</h2><h3 id="container-gt-cni0"><a href="#container-gt-cni0" class="headerlink" title="container -&gt; cni0"></a>container -&gt; cni0</h3><p>container-2 的 eth0 准备发出，它开始构建报文，其中目标 IP 是目标容器 IP 10.244.1.4，然后它查找路由表，看对应目标 IP 的路由规则：</p>
+<p>在 container-2 中执行 <code>ip r</code> 查看：</p>
+<p><code>10.244.0.0/16 via 10.244.2.1 dev eth0</code></p>
+<p>得知下一跳是 10.244.2.1，由 eth0 发出，这代表源 IP，源 MAC 是 eth0 的，而目标 MAC 是 10.244.2.1 设备对应的 MAC。</p>
+<p>可以在容器的宿主机 Node2 上看一下这是什么设备：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">cni0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UP group default qlen 1000<br>    <span class="hljs-built_in">link</span>/ether da:23:59:ec:67:b8 brd ff:ff:ff:ff:ff:ff<br>    inet 10.244.2.1/24 brd 10.244.2.255 scope global cni0<br></code></pre></td></tr></table></figure>
+
+<p>正是 cni0 网桥。</p>
+<p>然后就可以通过 ARP 来获取 cni0 的 MAC 地址，最终报文构建完成，发送给 cni0。</p>
+<p>PS：可以在容器内执行 <code>tcpdump -i eth0 -nn -e</code>，通过抓包查看流程。</p>
+<p>抓包分析：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250306142338.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<blockquote>
+<p>[!error]</p>
+<p>因为重启，导致实验用的 Pod IP 发生了变化，所以抓包里的一些数据和文字记录的有出入，但是不关键，主要是为了了解报文里字段的结构</p>
+</blockquote>
+<h3 id="cni0-gt-flannel-1"><a href="#cni0-gt-flannel-1" class="headerlink" title="cni0 -&gt; flannel.1"></a>cni0 -&gt; flannel.1</h3><p>cni0 收到包后，查询路由表，发现匹配的是这条规则：</p>
+<p><code>10.244.1.0/24 via 10.244.1.0 dev flannel.1 onlink</code></p>
+<p>它会由 flannel.1 发出，下一跳地址是 10.244.1.0。 这个地址正是 Node1 上 flannel.1 的地址。</p>
+<p>所以 cni0 会：</p>
+<p>获取 10.244.1.0 的 MAC 地址（通过ARP）</p>
+<p>在 ARP 表中已经存在对应的记录了，该记录由 flanneld 维护。</p>
+<blockquote>
+<p>[!info] 🤔<br>问题：为什么要由 flanneld 维护？如果不维护，通过自学习可以吗？</p>
+<p>不可以，Overlay 网络同一个网段可能在物理上是分布在不同的二层，ARP 请求无法正常工作，无法填充 ARP 表。</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">ip neigh<br><br>10.244.1.0 dev flannel.1 lladdr 5a:9b:51:5a:29:be PERMANENT<br></code></pre></td></tr></table></figure>
+
+<p>重新构建报文的二层，源 MAC 是 Node2 上 flannel.1 的 MAC，因为根据路由表，它将通过 flannel.1 发送。</p>
+<p>而目标 MAC 就是上面我们通过 ARP 查出来的 10.244.1.0的 MAC，也就是 Node1 上的 flannel.1 的 MAC 地址。</p>
+<blockquote>
+<p>[!info]<br>PS：Linux 网桥有三层的功能，所以可以通过路由表转发</p>
+<p>来自 Claude 3.5-Sonnect</p>
+<p>当 cni0 收到包时：</p>
+<ol>
+<li><p>检查目标 MAC</p>
+</li>
+<li><p>如果是自己的 MAC：</p>
+<ul>
+<li>不做二层转发</li>
+<li>将包交给 Linux 网络协议栈处理</li>
+<li>这就是”上送到三层处理”</li>
+</ul>
+</li>
+<li><p>如果不是自己的 MAC：</p>
+<ul>
+<li>进行二层转发</li>
+<li>查找 FDB 表</li>
+<li>转发到对应端口</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<p>没抓到 cni0 发给 flannel.1 的包，不知道为啥，问 GPT 说是直接在内核处理了，所以不会构建包，不知道对不对。</p>
+<h3 id="Node2-flannel-1-gt-Node1-flannel-1"><a href="#Node2-flannel-1-gt-Node1-flannel-1" class="headerlink" title="Node2 flannel.1 -&gt; Node1 flannel.1"></a>Node2 flannel.1 -&gt; Node1 flannel.1</h3><p>数据包通过 cni0 到达 Node2 上的 flannel.1，接下来，它开始进行封包操作，首先在已有的报文前面添加一个 VXLAN header（VNI 是创建 VXLAN 时指定的），然后把这整个包作为传输层的 payload，放到一个 UDP 报文中。</p>
+<p>接下来需要构建三层和二层报文。这个包最终要发给的是 Node1 上的 flannel.1，也就是“隧道”的出口，所以对于三层而言，它的 Dst IP 应该是 Node1 的 IP，而二层的 Dst MAC 自然就是 Node1 的 MAC 了，这样这个报文就会发送到 Node1 上。</p>
+<p>但是如何拿到 Node1 的 IP 呢？通过 FDB 表可以，这张表里面记录了 MAC 对应的 IP 地址。FDB 表由 Flanneld 进行维护。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh">bridge fdb show<br>5a:9b:51:5a:29:be dev flannel.1 dst 192.168.247.8 self permanent<br></code></pre></td></tr></table></figure>
+
+<p>因为 Node2 和 Node1 是通的，所以它们的二层 MAC 自然也是维护好的，直接通过 ARP 拿到即可。</p>
+<p>flannel 收到的报文如下：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250306143941.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>然后 flannel.1 会进行封包操作，最后由 Node1 的 eth0 发出。</p>
+<p>通过抓包 Node2 上的 eth0 分析一下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">tcpdump -i eth0 -nn -vv -X <span class="hljs-string">&#x27;host 192.168.247.8&#x27;</span> -w vxlan.pcap<br></code></pre></td></tr></table></figure>
+
+<p>结果如下：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250306135547.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>内层即原始报文，外层是 flannel.1 封装的外层报文。外层报文用于将包发送给 Node1，然后 Node1 上的 flannel.1 收到后，会拆出内部的原始报文，最终让数据流转到 Node1 的 container 上。</p>
+<h3 id="Node1-eth0-收到包"><a href="#Node1-eth0-收到包" class="headerlink" title="Node1 eth0 收到包"></a>Node1 eth0 收到包</h3><p>抓包看一下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">tcpdump -i eth0 -nn -vv -X <span class="hljs-string">&#x27;host 192.168.247.8&#x27;</span> -w node1_eth0.pcap<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250306150158.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>抓包 Node1 上的 flannel.1 看一下：</p>
+<p>分别看一下收到的包和发出的包。</p>
+<p>收到的包：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">tcpdump -i flannel.1 -nn -vv -X <span class="hljs-string">&#x27;host 10.244.1.5&#x27;</span> -Q <span class="hljs-keyword">in</span> -w node1_flannel1_in.pcap<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250306151811.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>可以看到收到的已经是内部的原始包了，所以拆包操作实际发生在系统内核，而不是由 flannel.1 来完成。内核会根据包中的 VNI，将其发送到对应的 VTEP 设备。（疑问：那内层包的 MAC 地址还有啥用呢？内核直接根据 VNI 发送到对应的 VTEP 了，难道仅仅是为了做个校验吗？校验包的目标 MAC 必须和自身的 MAC 相同？）</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><strong>vtep 如何知道对方 vtep 的 IP？</strong></p>
+<p>由 Flanneld 维护路由表，在路由表的 via 中指定了对端 vtep 的 IP。比如：<code>ip route add $NODE2_CONTAINER_CIDR via 10.244.2.0 dev $VXLAN_DEVICE onlink</code>，10.244.2.0 就是对端 vtep 的 IP。</p>
+<p><strong>vtep 如何知道对方 vtep 的 MAC？</strong></p>
+<p>上个问题说明了如何拿到 IP，而根据 IP 拿到 MAC 自然由 ARP 来解决。Flanneld 会维护 ARP 表，可以直接拿到 MAC 地址。</p>
+<p><strong>FDB 表的作用</strong></p>
+<p>通过目标 MAC 拿到目标 VTEP 设备所在节点的 IP，这样才能把包发出去。</p>
+<p>所以综上：</p>
+<p>VTEP 设备要想和另一个 VTEP 设备组成隧道，需要知道两个东西：<strong>对端 VTEP 的 MAC 地址</strong>，用于填充内部包的二层目的 MAC；<strong>对端 VTEP 所在节点的 IP</strong>，用于填充外部包的三层目的 IP。</p>
+<p>要拿到 MAC，首先需要知道 VTEP 的 IP，这个 IP 由 flannel 写入到路由表的 via。知道了 IP 就可以通过 ARP 表拿到对应的 MAC，ARP 同样由 Flannel 写入。最后可以通过 VTEP 的 MAC，从 FDB 表中拿到对方所在节点的 IP，这个同样由 Flannel 维护。</p>
+<p><del>&#x2F;&#x2F; 以下废弃</del></p>
+<p><del>按照上图来说，匹配的路由规则应该会指示下一跳为 <code>10.1.16.0</code>。然后通过 ARP，发现 ARP 表中有一条 <code>10.1.16.0 dev flannel.1 lladdr 5a:9b:51:5a:29:be PERMANENT</code>，发现对应的 MAC 地址是 flannel.1 的，那么就用这个地址作为目标 MAC 地址。</del></p>
+<p><del>然后这个包到达网桥。网桥根据报文的目标 MAC 地址，查找 FDB 表，看具体要转发给它连接的哪个设备，按照规则，应该会转发到 VETP，也就是 flannel.1。</del></p>
+<p><del>flannel.1 拿到包后，它去掉其中的二层，因为接下来，这个包要发给的是对端的 flannel.1，所以需要填上它的 MAC 地址。这个 MAC 地址</del></p>
+<p><del>接下来需要构建三层和二层。</del></p>
+<ol>
+<li><del>首先 <code>Container1</code> 构建报文的 <strong>数据部分</strong> 和 <strong>内部 IP 报头</strong>（ Dst IP 就是 Container2 的 IP，即目标容器的 IP）。</del></li>
+<li><del>接着需要构建 <strong>内部以太网报头</strong> ，根据流程图所示，这个报文期望发送到 <code>Node2</code> 的 <code>flannel.1</code> 设备，通过 ARP 可以拿到对应的 Mac 地址。</del></li>
+<li><del>接着构建 <strong>VXLAN Header</strong>，这里指定了 <strong>VNI</strong>，即虚拟子网的标号。</del></li>
+<li><del>最后把上面所有部分作为一个 UDP Data，然后加上一个 UDP Header，至此，一个报文的传输层部分就构建完成了。</del></li>
+<li><del>然后就是报文剩余的网络层和数据链路层了，网络层 IP Header 就是 Node2 eth0 的 IP，Mac 也是 eth0 的 Mac。</del></li>
+<li><del>然后这个报文发送到了 Node2 的 eth0，Node2 内核检查该报文，发现里面有 VXLAN Header，于是就拿到里面的 VNI，然后解析出这个报文内部的报文，将这个报文发送到本节点对应 VNI 的 VETP 设备（flannel.1）。</del></li>
+<li><del>flannel.1 进行拆包，拿到包裹在报文内部的原始报文，最终发给 docker0，然后再由 docker0 发给 container-2</del></li>
+</ol>
+<h2 id="VXLAN-的概念"><a href="#VXLAN-的概念" class="headerlink" title="VXLAN 的概念"></a><del>VXLAN 的概念</del></h2><p><del>看这里 [[Prog&#x2F;Network&#x2F;VXLAN&#x2F;Sample|Sample]]</del></p>
+<p><del>VTEP 设备由 Flanneld 进行创建。</del></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
+      
+        <a href="/tags/k8s/">#k8s</a>
+      
+        <a href="/tags/k8s%E7%BD%91%E7%BB%9C/">#k8s网络</a>
+      
+        <a href="/tags/needSyncToBlog/">#needSyncToBlog</a>
+      
+        <a href="/tags/Flannel/">#Flannel</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Flannel VXLAN 流程</div>
+      <div>https://autsu.github.io/2025/03/02/Flannel VXLAN 流程/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年3月2日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/03/03/flannel%20%E9%83%A8%E7%BD%B2%E5%AE%9E%E8%B7%B5%EF%BC%88kind%EF%BC%89/" title="flannel 部署实践（kind）">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">flannel 部署实践（kind）</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/02/24/Flannel%20Host-gw/" title="Flannel Host-gw">
+                        <span class="hidden-mobile">Flannel Host-gw</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,820 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="k8s patch 操作允许对资源进行部分更新。 Patch 类型patch 操作有以下几种类型： JSON PatchJSON Patch 的详细说明可以阅读对应的 RFC 文档 。 JSON Patch 通过如下格式来对资源进行操作： 12345678[     &amp;#123; &quot;op&quot;: &quot;test&quot;, &quot;path&quot;: &quot;&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k8s patch">
+<meta property="og:url" content="https://autsu.github.io/2023/10/29/k8s-patch-md/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="k8s patch 操作允许对资源进行部分更新。 Patch 类型patch 操作有以下几种类型： JSON PatchJSON Patch 的详细说明可以阅读对应的 RFC 文档 。 JSON Patch 通过如下格式来对资源进行操作： 12345678[     &amp;#123; &quot;op&quot;: &quot;test&quot;, &quot;path&quot;: &quot;&#x2F;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/k8s_update.png">
+<meta property="article:published_time" content="2023-10-28T16:55:40.000Z">
+<meta property="article:modified_time" content="2023-10-29T01:28:07.795Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="k8s">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/k8s_update.png">
+  
+  
+  
+  <title>k8s patch - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="k8s patch"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-10-29 00:55" pubdate>
+          2023年10月29日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          11k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          90 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">k8s patch</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>k8s patch 操作允许对资源进行部分更新。</p>
+<h1 id="Patch-类型"><a href="#Patch-类型" class="headerlink" title="Patch 类型"></a>Patch 类型</h1><p>patch 操作有以下几种类型：</p>
+<h2 id="JSON-Patch"><a href="#JSON-Patch" class="headerlink" title="JSON Patch"></a>JSON Patch</h2><p>JSON Patch 的详细说明可以阅读对应的 <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc6902.html">RFC 文档</a> 。</p>
+<p>JSON Patch 通过如下格式来对资源进行操作：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">[</span><br>     <span class="hljs-punctuation">&#123;</span> <span class="hljs-attr">&quot;op&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;test&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;path&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;/a/b/c&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;value&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;foo&quot;</span> <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>     <span class="hljs-punctuation">&#123;</span> <span class="hljs-attr">&quot;op&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;remove&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;path&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;/a/b/c&quot;</span> <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>     <span class="hljs-punctuation">&#123;</span> <span class="hljs-attr">&quot;op&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;add&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;path&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;/a/b/c&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;value&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span> <span class="hljs-string">&quot;foo&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;bar&quot;</span> <span class="hljs-punctuation">]</span> <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>     <span class="hljs-punctuation">&#123;</span> <span class="hljs-attr">&quot;op&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;replace&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;path&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;/a/b/c&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;value&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">42</span> <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>     <span class="hljs-punctuation">&#123;</span> <span class="hljs-attr">&quot;op&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;move&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;from&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;/a/b/c&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;path&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;/a/b/d&quot;</span> <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>     <span class="hljs-punctuation">&#123;</span> <span class="hljs-attr">&quot;op&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;copy&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;from&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;/a/b/d&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;path&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;/a/b/e&quot;</span> <span class="hljs-punctuation">&#125;</span><br> <span class="hljs-punctuation">]</span><br></code></pre></td></tr></table></figure>
+
+<p>可以看到在上面的示例中，每个 json 对象都包含了 op，path 这 2 个字段，其中，op 代表的就是具体的操作，比如 replace 代表的就是替换；path 则是 json 文档中要操作的字段所在的位置，然后对于不同的 op 还会有一些不同的特殊字段，比如 move 和 copy 会有一个 from 字段，而 add，remove 和 test 会有一个 value 字段，这些字段通过名字就可以很容易的了解到它们的用处，这里就不再赘述了。</p>
+<p>总的来说，这种 patch 类型还是比较好理解的，下面摘录了 RFC 文档中给出的一些示例，通过这些示例就可以很容易的了解这种 patch 的使用方式（可以在 RFC 文档中阅读完整的示例来进一步理解）：</p>
+<table>
+<thead>
+<tr>
+<th>原始 JSON 文档</th>
+<th>Patch</th>
+<th>Patch 后的 JSON 文档</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>{ “foo”: “bar”}</td>
+<td>[  <br/>    { “op”: “add”, “path”: “&#x2F;baz”, “value”: “qux” }   <br/> ]</td>
+<td>{<br/>     “baz”: “qux”,<br/>     “foo”: “bar”<br/>   }</td>
+</tr>
+<tr>
+<td>{ “foo”: [ “bar”, “baz” ] }</td>
+<td>[<br/>     { “op”: “add”, “path”: “&#x2F;foo&#x2F;1”, “value”: “qux” }<br/>   ]</td>
+<td>{ “foo”: [ “bar”, “qux”, “baz” ] }</td>
+</tr>
+<tr>
+<td>{<br/>     “foo”: {<br/>       “bar”: “baz”,<br/>       “waldo”: “fred”<br/>     },<br/>     “qux”: {<br/>       “corge”: “grault”<br/>     }<br/>   }</td>
+<td>[<br/>     { “op”: “move”, “from”: “&#x2F;foo&#x2F;waldo”, “path”: “&#x2F;qux&#x2F;thud” }<br/>   ]</td>
+<td>{<br/>     “foo”: {<br/>       “bar”: “baz”<br/>     },<br/>     “qux”: {<br/>       “corge”: “grault”,<br/>       “thud”: “fred”<br/>     }<br/>   }</td>
+</tr>
+</tbody></table>
+<p>需要注意的一点是，如果你想操作的 path 是一个数组类型，那么你需要额外指定一下要操作的数组的 index，比如第二个例子中，path 指定为了 &#x2F;foo&#x2F;1，代表要将 value 添加到 foo 的第二个位置（index 从 0 开始算起）。</p>
+<h2 id="JSON-Merge-Patch"><a href="#JSON-Merge-Patch" class="headerlink" title="JSON Merge Patch"></a>JSON Merge Patch</h2><p>JSON Merge Patch 的详细说明可以阅读对应的 <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc7396.html">RFC 文档</a> 。</p>
+<p>JSON Merge Patch 是一系列差异的集合。差异就是指 原始 Json 文件 和 目标 Json 文件 的不同。</p>
+<p>如果是删除某个字段，则需要将字段置为 null，如果是修改某个字段，则需要将新的 value 值写在对应的 key 上。</p>
+<p>作为一个简单的例子（<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc7386#section-1">取自 RFC</a>），如果我们有以下文档：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs css">&#123;<br>	&quot;<span class="hljs-selector-tag">a</span>&quot;: <span class="hljs-string">&quot;b&quot;</span>,<br>	<span class="hljs-string">&quot;c&quot;</span>: &#123;<br>		&quot;d&quot;: <span class="hljs-string">&quot;e&quot;</span>,<br>		<span class="hljs-string">&quot;f&quot;</span>: <span class="hljs-string">&quot;g&quot;</span><br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>然后我们可以在其上运行以下 patch：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>	<span class="hljs-attr">&quot;a&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;z&quot;</span><span class="hljs-punctuation">,</span><br>	<span class="hljs-attr">&quot;c&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>		<span class="hljs-attr">&quot;f&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">null</span></span><br>	<span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>这将更改 <code>&quot;a&quot;</code> 的值为 <code>&quot;z&quot;</code> 并删除 <code>&quot;f&quot;</code> 这个 key。</p>
+<p>这种 patch 的方式也比较容易理解，相比 JSON Patch，这种方式的弊端在于：</p>
+<ul>
+<li>删除某个键值，需要在 patch 文件中将对应的值置成 null，但是如果我们就是要把某个值设置成 null，那就几乎无解了，因为对于 JSON Merge Patch 而言，它无法分辨 patch 到底是要删除还是赋值。</li>
+<li>如果想向数组添加一个元素，或改变其中任何元素，都必须将整个数组包含在 patch 中，即使实际更改的部分很少。</li>
+<li>不会报错，无论什么情况，都会 patch 成功。在真实使用场景下，还需要做额外的校验。</li>
+</ul>
+<h2 id="Strategic-Merge-Patch"><a href="#Strategic-Merge-Patch" class="headerlink" title="Strategic Merge Patch"></a>Strategic Merge Patch</h2><p>这种方式称为策略合并，它是 k8s 特有的一种 patch 方式，顾名思义，它是通过指定的策略去执行对应的 patch 操作，是合并还是覆盖，都取决于具体的策略，那策略在哪里定义呢？</p>
+<p>实际上，这些策略定义在了 k8s 源码中资源 struct 的 tag 里面，比如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> PodSpec <span class="hljs-keyword">struct</span> &#123;<br>  ...<br>  Containers []Container <span class="hljs-string">`json:&quot;containers&quot; patchStrategy:&quot;merge&quot; patchMergeKey:&quot;name&quot; ...`</span><br>  ...<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>（也可以在 <a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#podspec-v1-core">Kubernetes API 文档</a> 中看到 patch 策略。）</p>
+<p>可以看到其中有两个关键信息：patchStrategy:”merge” patchMergeKey:”name” 。这就代表了，containers 列表使用 strategic merge patch 策略更新时，会执行合并策略，并且会把下面每个元素中的 name 字段看作 key。</p>
+<p>简单来说，在我们 patch 更新 containers 不再需要指定下标序号了（JSON Patch 的方式需要指定 index），而是指定 name 来修改，K8s 会把 name 作为 key 来计算 merge。比如针对以下的 patch 操作：</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli">kubectl <span class="hljs-keyword">patch</span> deployment/foo -p \<br>  &#x27;&#123;<span class="hljs-string">&quot;spec&quot;</span>:&#123;<span class="hljs-string">&quot;template&quot;</span>:&#123;<span class="hljs-string">&quot;spec&quot;</span>:&#123;<span class="hljs-string">&quot;containers&quot;</span>:[&#123;<span class="hljs-string">&quot;name&quot;</span>:<span class="hljs-string">&quot;nginx&quot;</span>,<span class="hljs-string">&quot;image&quot;</span>:<span class="hljs-string">&quot;nginx:mainline&quot;</span>&#125;]&#125;&#125;&#125;&#125;&#x27;<br></code></pre></td></tr></table></figure>
+
+<p>如果 K8s 发现当前 containers 中已经有名字为 nginx 的容器，则只会把 image 更新上去；而如果当前 containers 中没有 nginx 容器，K8s 会把这个容器插入 containers 列表。</p>
+<p>如果 tag 中没有 <code>patchStrategy</code> 键，那么执行的将会是覆盖策略，比如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> PodSpec <span class="hljs-keyword">struct</span> &#123;<br>  ...<br>  Tolerations []Toleration <span class="hljs-string">`json:&quot;tolerations,omitempty&quot; protobuf:&quot;bytes,22,opt,name=tolerations&quot;`</span><br>  ...<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>如果 patch 中包含了对 Tolertions 的修改，那么执行的将会是替换操作，而不是 Containers 的合并操作。</p>
+<blockquote>
+<p>此外还要说明的是，目前 strategic 策略只能用于原生 K8s 资源以及 Aggregated API 方式的自定义资源，对于 CRD 定义的资源对象，是无法使用的。这很好理解，因为 kube-apiserver 无法得知 CRD 资源的结构和 merge 策略。如果用 kubectl patch 命令更新一个 CR，则默认会采用 merge patch 的策略来操作。</p>
+</blockquote>
+<h2 id="代码实践"><a href="#代码实践" class="headerlink" title="代码实践"></a>代码实践</h2><p>在 Clientset 中为每个资源都提供了一个 Patch 方法，通过这个方法就可以对具体的资源执行 Patch 操作，代码类似下面这样：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">patchDeploy, err := clientset.AppsV1().Deployments(metav1.NamespaceDefault).Patch(context.TODO(), deploy.Name, types.StrategicMergePatchType, patchData, metav1.PatchOptions&#123;&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>其中，第三个参数指定的是 Patch 的类型，第四个参数则是 Patch 的内容，是一个 []byte。</p>
+<p>在 client-go 中，定义了以下几种 Patch 类型：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> PatchType <span class="hljs-type">string</span><br><br><span class="hljs-keyword">const</span> (<br>	JSONPatchType           PatchType = <span class="hljs-string">&quot;application/json-patch+json&quot;</span><br>	MergePatchType          PatchType = <span class="hljs-string">&quot;application/merge-patch+json&quot;</span><br>	StrategicMergePatchType PatchType = <span class="hljs-string">&quot;application/strategic-merge-patch+json&quot;</span><br>	ApplyPatchType          PatchType = <span class="hljs-string">&quot;application/apply-patch+yaml&quot;</span><br>)<br></code></pre></td></tr></table></figure>
+
+<p>可以看到里面包含了我们上面提到的那 3 种类型，此外还多了一种 Apply Patch，这个暂时还没太去了解。</p>
+<p>完整代码可以在 <a target="_blank" rel="noopener" href="https://github.com/autsu/kubemisc/tree/master/clientgo/patch">https://github.com/autsu/kubemisc/tree/master/clientgo/patch</a> 下获得。</p>
+<h3 id="Strategic-Merge-Patch-1"><a href="#Strategic-Merge-Patch-1" class="headerlink" title="Strategic Merge Patch"></a>Strategic Merge Patch</h3><p>k8s.io&#x2F;apimachinery&#x2F;pkg&#x2F;util 下提供了一个 strategicpatch 包，里面包含了一些相关的方法。</p>
+<p>比如下面这个例子中，使用了 strategicpatch.CreateTwoWayMergePatch ，通过原始对象和修改后对象之间的差异获得对应的 Patch，然后我们就可以将这个 Patch 作为参数传递给 Patch()，从而进行资源的 Patch 操作了。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// StrategicMergePatch2K8sUseCreateTwoWayMergePatch 调用 strategicpatch.CreateTwoWayMergePatch 获取两个 obj 之间的 patch，</span><br><span class="hljs-comment">// 然后再用这个 patch 对对象执行 Patch 操作</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">StrategicMergePatch2K8sUseCreateTwoWayMergePatch</span><span class="hljs-params">()</span></span> &#123;<br>	deploy, dropFunc := initTestResource(<span class="hljs-literal">true</span>)<br>	<span class="hljs-keyword">if</span> dropFunc != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">defer</span> dropFunc()<br>	&#125;<br>	fmt.Printf(<span class="hljs-string">&quot;before patch: \n\n&quot;</span>)<br>	printhelper.ObjJSON(deploy.Spec.Template.Spec.Containers)<br>	printhelper.ObjJSON(deploy.Spec.Template.Spec.Tolerations)<br><br>	newDeploy := deploy.DeepCopy()<br>	newDeploy.Spec.Template.Spec.Containers = <span class="hljs-built_in">append</span>(deploy.Spec.Template.Spec.Containers, corev1.Container&#123;<br>		Name:  <span class="hljs-string">&quot;patch-demo-ctr-2&quot;</span>,<br>		Image: <span class="hljs-string">&quot;redis&quot;</span>,<br>	&#125;)<br>	newDeploy.Spec.Template.Spec.Tolerations = newDeploy.Spec.Template.Spec.Tolerations[:<span class="hljs-number">0</span>]<br>	newDeploy.Spec.Template.Spec.Tolerations = <span class="hljs-built_in">append</span>(newDeploy.Spec.Template.Spec.Tolerations, corev1.Toleration&#123;<br>		Key:               <span class="hljs-string">&quot;disktype&quot;</span>,<br>		Operator:          <span class="hljs-string">&quot;&quot;</span>,<br>		Value:             <span class="hljs-string">&quot;ssd&quot;</span>,<br>		Effect:            <span class="hljs-string">&quot;NoSchedule&quot;</span>,<br>		TolerationSeconds: <span class="hljs-literal">nil</span>,<br>	&#125;)<br><br>	origin, err := json.Marshal(deploy)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-built_in">panic</span>(err)<br>	&#125;<br><br>	mod, err := json.Marshal(newDeploy)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-built_in">panic</span>(err)<br>	&#125;<br><br>	patchData, err := strategicpatch.CreateTwoWayMergePatch(origin, mod, &amp;appsv1.Deployment&#123;&#125;)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-built_in">panic</span>(err)<br>	&#125;<br>	fmt.Println(<span class="hljs-string">&quot;patch data: &quot;</span>, <span class="hljs-type">string</span>(patchData))<br><br>	cli := helper.NewClientSetOrDie()<br><br>	patchDeploy, err := cli.AppsV1().Deployments(metav1.NamespaceDefault).Patch(<br>		context.TODO(), deploy.Name, types.StrategicMergePatchType, patchData, metav1.PatchOptions&#123;&#125;)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-built_in">panic</span>(err)<br>	&#125;<br>	<span class="hljs-comment">//fmt.Println(patchDeploy.Labels)</span><br>	fmt.Println(<span class="hljs-string">&quot;after patch: &quot;</span>)<br>	printhelper.ObjJSON(patchDeploy.Spec.Template.Spec.Containers)<br>	printhelper.ObjJSON(patchDeploy.Spec.Template.Spec.Tolerations)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="JSON-Patch-1"><a href="#JSON-Patch-1" class="headerlink" title="JSON Patch"></a>JSON Patch</h3><p>对于 JSON Patch 的话，似乎没有包能够像上面那样，通过两个对象计算出对应的 Patch，只能自行手动编写 Patch：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">JsonPatch2K8s</span><span class="hljs-params">()</span></span> &#123;<br>    deploy, dropFunc := initTestResource(<span class="hljs-literal">true</span>)<br>    <span class="hljs-keyword">if</span> dropFunc != <span class="hljs-literal">nil</span> &#123;<br>       <span class="hljs-keyword">defer</span> dropFunc()<br>    &#125;<br><br>    fmt.Println(<span class="hljs-string">&quot;before patch: &quot;</span>)<br>    printhelper.ObjJSON(deploy.Spec.Template.Spec.Containers)<br>    printhelper.ObjJSON(deploy.Spec.Template.Spec.Tolerations)<br><br>    cli := helper.NewClientSetOrDie()<br>    patchData := []<span class="hljs-type">byte</span>(<span class="hljs-string">`</span><br><span class="hljs-string">[</span><br><span class="hljs-string">  &#123;</span><br><span class="hljs-string">    &quot;op&quot;: &quot;add&quot;,</span><br><span class="hljs-string">    &quot;path&quot;: &quot;/metadata/labels&quot;,</span><br><span class="hljs-string">    &quot;value&quot;: &#123;</span><br><span class="hljs-string">       &quot;new-labels&quot;: &quot;new-value&quot;,</span><br><span class="hljs-string">       &quot;patch&quot;: &quot;true&quot;</span><br><span class="hljs-string">    &#125;</span><br><span class="hljs-string">  &#125;,</span><br><span class="hljs-string">  &#123;</span><br><span class="hljs-string">    &quot;op&quot;: &quot;add&quot;,</span><br><span class="hljs-string">    &quot;path&quot;: &quot;/spec/template/spec/containers/1&quot;,</span><br><span class="hljs-string">    &quot;value&quot;: </span><br><span class="hljs-string">      &#123;</span><br><span class="hljs-string">        &quot;name&quot;: &quot;patch-demo-ctr-2&quot;,</span><br><span class="hljs-string">        &quot;image&quot;: &quot;redis&quot;</span><br><span class="hljs-string">      &#125;</span><br><span class="hljs-string">  &#125;,</span><br><span class="hljs-string">  &#123;</span><br><span class="hljs-string">    &quot;op&quot;: &quot;add&quot;,</span><br><span class="hljs-string">    &quot;path&quot;: &quot;/spec/template/spec/tolerations&quot;,</span><br><span class="hljs-string">    &quot;value&quot;: [</span><br><span class="hljs-string">      &#123;</span><br><span class="hljs-string">        &quot;effect&quot;: &quot;NoSchedule&quot;,</span><br><span class="hljs-string">        &quot;key&quot;: &quot;disktype&quot;,</span><br><span class="hljs-string">        &quot;value&quot;: &quot;ssd&quot;</span><br><span class="hljs-string">      &#125;</span><br><span class="hljs-string">    ]</span><br><span class="hljs-string">  &#125;</span><br><span class="hljs-string">]</span><br><span class="hljs-string"></span><br><span class="hljs-string">`</span>)<br>    patchDeploy, err := cli.AppsV1().Deployments(<br>       metav1.NamespaceDefault).Patch(context.TODO(), deploy.Name, types.JSONPatchType, patchData, metav1.PatchOptions&#123;&#125;)<br>    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>       <span class="hljs-built_in">panic</span>(err)<br>    &#125;<br>    fmt.Println(<span class="hljs-string">&quot;after patch: &quot;</span>)<br>    printhelper.ObjJSON(patchDeploy.Spec.Template.Spec.Containers)<br>    printhelper.ObjJSON(patchDeploy.Spec.Template.Spec.Tolerations)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="Merge-Patch"><a href="#Merge-Patch" class="headerlink" title="Merge Patch"></a>Merge Patch</h3><p>Merge Patch 的话可以通过 jsonpatch.CreateMergePatch 计算出 Patch。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">MergePatch2K8sUseCreateMergePatch</span><span class="hljs-params">()</span></span> &#123;<br>	deploy, dropFunc := initTestResource(<span class="hljs-literal">true</span>)<br>	<span class="hljs-keyword">if</span> dropFunc != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">defer</span> dropFunc()<br>	&#125;<br><br>	fmt.Println(<span class="hljs-string">&quot;before patch: &quot;</span>)<br>	printhelper.ObjJSON(deploy.Spec.Template.Spec.Containers)<br>	printhelper.ObjJSON(deploy.Spec.Template.Spec.Tolerations)<br><br>	newDeploy := deploy.DeepCopy()<br>	newDeploy.Spec.Template.Spec.Containers = <span class="hljs-built_in">append</span>(deploy.Spec.Template.Spec.Containers, corev1.Container&#123;<br>		Name:  <span class="hljs-string">&quot;patch-demo-ctr-2&quot;</span>,<br>		Image: <span class="hljs-string">&quot;redis&quot;</span>,<br>	&#125;)<br>	newDeploy.Spec.Template.Spec.Tolerations = newDeploy.Spec.Template.Spec.Tolerations[:<span class="hljs-number">0</span>]<br>	newDeploy.Spec.Template.Spec.Tolerations = <span class="hljs-built_in">append</span>(newDeploy.Spec.Template.Spec.Tolerations, corev1.Toleration&#123;<br>		Key:               <span class="hljs-string">&quot;disktype&quot;</span>,<br>		Operator:          <span class="hljs-string">&quot;&quot;</span>,<br>		Value:             <span class="hljs-string">&quot;ssd&quot;</span>,<br>		Effect:            <span class="hljs-string">&quot;NoSchedule&quot;</span>,<br>		TolerationSeconds: <span class="hljs-literal">nil</span>,<br>	&#125;)<br><br>	origin, err := json.Marshal(deploy)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-built_in">panic</span>(err)<br>	&#125;<br><br>	mod, err := json.Marshal(newDeploy)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-built_in">panic</span>(err)<br>	&#125;<br><br>	cli := helper.NewClientSetOrDie()<br><br>	<span class="hljs-comment">// patchData 根据 origin 和 mod 生成 patch</span><br>	patchData, err := jsonpatch.CreateMergePatch(origin, mod)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-built_in">panic</span>(err)<br>	&#125;<br>	fmt.Println(<span class="hljs-string">&quot;patch data: &quot;</span>, <span class="hljs-type">string</span>(patchData))<br><br>	patchDeploy, err := cli.AppsV1().Deployments(<br>		metav1.NamespaceDefault).Patch(context.TODO(), deploy.Name, types.MergePatchType, patchData, metav1.PatchOptions&#123;&#125;)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-built_in">panic</span>(err)<br>	&#125;<br>	fmt.Println(<span class="hljs-string">&quot;after patch: &quot;</span>)<br>	printhelper.ObjJSON(patchDeploy.Spec.Template.Spec.Containers)<br>	printhelper.ObjJSON(patchDeploy.Spec.Template.Spec.Tolerations)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="Apply-Patch"><a href="#Apply-Patch" class="headerlink" title="Apply Patch"></a>Apply Patch</h3><p>这种方式貌似网上找不到什么资料，先搁置</p>
+<h1 id="Patch-和-Update-的区别"><a href="#Patch-和-Update-的区别" class="headerlink" title="Patch 和 Update 的区别"></a>Patch 和 Update 的区别</h1><h3 id="Update-机制"><a href="#Update-机制" class="headerlink" title="Update 机制"></a>Update 机制</h3><p>Kubernetes 中的所有资源对象，都有一个全局唯一的版本号（metadata.resourceVersion）。每个资源对象从创建开始就会有一个版本号，而后每次被修改（不管是 update 还是 patch 修改），版本号都会发生变化。</p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/jWH7jVxj20bmc60_C-w9wQ">官方文档 </a> 告诉我们，这个版本号是一个 K8s 的内部机制，用户不应该假设它是一个数字或者通过比较两个版本号大小来确定资源对象的新旧，唯一能做的就是通过比较版本号相等来确定对象是否是同一个版本（即是否发生了变化）。而 resourceVersion 一个重要的用处，就是来做 update 请求的版本控制。</p>
+<p>K8s 要求用户 update 请求中提交的对象必须带有 resourceVersion，也就是说我们提交 update 的数据必须先来源于 K8s 中已经存在的对象。因此，一次完整的 update 操作流程是：</p>
+<ol>
+<li>首先，从 K8s 中拿到一个已经存在的对象（可以选择直接从 K8s 中查询；如果在客户端做了 list watch，推荐从本地 informer 中获取）；</li>
+<li>然后，基于这个取出来的对象做一些修改，比如将 Deployment 中的 replicas 做增减，或是将 image 字段修改为一个新版本的镜像；</li>
+<li>最后，将修改后的对象通过 update 请求提交给 K8s；</li>
+<li>此时，kube-apiserver 会校验用户 update 请求提交对象中的 resourceVersion 一定要和当前 K8s 中这个对象最新的 resourceVersion 一致，才能接受本次 update。否则，K8s 会拒绝请求，并告诉用户发生了版本冲突（Conflict）。</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/k8s_update.png" srcset="/img/loading.gif" lazyload></p>
+<p>上图展示了多个用户同时 update 某一个资源对象时会发生的事情。而如果如果发生了 Conflict 冲突，对于 User A 而言应该做的就是做一次重试，再次获取到最新版本的对象，修改后重新提交 update。</p>
+<h3 id="Patch-机制"><a href="#Patch-机制" class="headerlink" title="Patch 机制"></a>Patch 机制</h3><p>相比于 update 的版本控制，K8s 的 patch 机制则显得更加简单。</p>
+<p>当用户对某个资源对象提交一个 patch 请求时，kube-apiserver 不会考虑版本问题，而是“无脑”地接受用户的请求（只要请求发送的 patch 内容合法），也就是将 patch 打到对象上、同时更新版本号。</p>
+<h1 id="参考-x2F-抄袭"><a href="#参考-x2F-抄袭" class="headerlink" title="参考&#x2F;抄袭"></a>参考&#x2F;抄袭</h1><p>&#x2F;&#x2F; +Patch 类型相关</p>
+<p><a target="_blank" rel="noopener" href="https://fafucoder.github.io/2020/09/09/kubernetes-update-patch/">kubernetes update跟patch区别</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/8eb47409bc6d">k8s patch 的几种方式</a></p>
+<p><a target="_blank" rel="noopener" href="https://erosb.github.io/post/json-patch-vs-merge-patch/">JSON Patch and JSON Merge Patch</a>	&#x2F;&#x2F; +介绍了两种方式的区别</p>
+<p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/">使用 kubectl patch 更新 API 对象</a></p>
+<p>&#x2F;&#x2F; +Patch 和 Update 的区别</p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/jWH7jVxj20bmc60_C-w9wQ">理解 K8s 资源更新机制，从一个 OpenKruise 用户疑问开始</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/k8s/">#k8s</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>k8s patch</div>
+      <div>https://autsu.github.io/2023/10/29/k8s-patch-md/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年10月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/05/04/kube-proxy%20%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/" title="kube-proxy 源码阅读">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">kube-proxy 源码阅读</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/09/30/go-http-transport/" title="Go net/http Transport 源码阅读">
+                        <span class="hidden-mobile">Go net/http Transport 源码阅读</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -62,7 +62,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -245,15 +245,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/16/jian-zhi-offer-18-shan-chu-lian-biao-de-jie-dian/" target="_self">
-          剑指 Offer 18. 删除链表的节点
+        <a href="/2021/04/16/2021-3-13-ctcl-0106-compress-string/" target="_self">
+          面试题 01.06. 字符串压缩
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/jian-zhi-offer-18-shan-chu-lian-biao-de-jie-dian/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-13-ctcl-0106-compress-string/" target="_self">
         <div>
-          题目描述 给定单向链表的头指针和一个要删除的节点的值，定义一个函数删除该节点。 返回删除后的链表的头节点。 注意：此题对比原题有改动 示例 1: 输入: head &#x3D; [4,5,1,9], val &#x3D; 5输出: [4,1,9]解释: 给定你链表中值为 5 的第二个节点，那么在调用了你的函数之后，该链表应变为 4 -&gt; 1 -&gt; 9.示例 2: 输入: head &#
+          题目描述 字符串压缩。利用字符重复出现的次数，编写一种方法，实现基本的字符串压缩功能。比如，字符串aabcccccaaa会变为a2b1c5a3。若“压缩”后的字符串没有变短，则返回原先的字符串。你可以假设字符串中只包含大小写英文字母（a至z）。 示例1: 输入：”aabcccccaaa” 输出：”a2b1c5a3”示例2: 输入：”abbccd” 输出：”abbccd” 解释：”abbccd”压缩
         </div>
       </a>
 
@@ -261,7 +261,7 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 15:42" pubdate>
+            <time datetime="2021-04-16 19:41" pubdate>
               2021-04-16
             </time>
           </div>
@@ -271,11 +271,9 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
+              <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98%E9%9D%A2%E8%AF%95%E9%87%91%E5%85%B8/">#程序员面试金典</a>
             
-              <a href="/tags/%E9%93%BE%E8%A1%A8/">#链表</a>
-            
-              <a href="/tags/%E7%AE%97%E6%B3%95/">#算法</a>
+              <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/">#字符串</a>
             
           </div>
         
@@ -289,15 +287,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/16/jian-zhi-offer-03-shu-zu-zhong-chong-fu-de-shu-zi/" target="_self">
-          剑指 Offer 03. 数组中重复的数字
+        <a href="/2021/04/16/2021-3-17-offer-53-search-sort-array1/" target="_self">
+          剑指 Offer 53 - I. 在排序数组中查找数字 I
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/jian-zhi-offer-03-shu-zu-zhong-chong-fu-de-shu-zi/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-17-offer-53-search-sort-array1/" target="_self">
         <div>
-          题目描述 找出数组中重复的数字。 在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。 示例 1： 输入：[2, 3, 1, 0, 2, 5, 3]输出：2 或 3  限制： 2 &lt;&#x3D; n &lt;&#x3D; 100000  方法1：哈希表看到这
+          题目描述 统计一个数字在排序数组中出现的次数。 示例 1: 输入: nums &#x3D; [5,7,7,8,8,10], target &#x3D; 8输出: 2示例 2: 输入: nums &#x3D; [5,7,7,8,8,10], target &#x3D; 6输出: 0 限制： 0 &lt;&#x3D; 数组长度 &lt;&#x3D; 50000  方法1：二分查找这道题最简单粗暴的方法
         </div>
       </a>
 
@@ -305,7 +303,7 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 15:38" pubdate>
+            <time datetime="2021-04-16 19:41" pubdate>
               2021-04-16
             </time>
           </div>
@@ -319,9 +317,7 @@
             
               <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
             
-              <a href="/tags/%E7%AE%97%E6%B3%95/">#算法</a>
-            
-              <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/">#哈希表</a>
+              <a href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">#二分查找</a>
             
           </div>
         
@@ -335,15 +331,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/16/leetcode146lru-huan-cun-ji-zhi/" target="_self">
-          LeetCode146.LRU 缓存机制
+        <a href="/2021/04/16/2021-3-23-offer-52-get-intersection-node/" target="_self">
+          剑指 Offer 52. 两个链表的第一个公共节点
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/leetcode146lru-huan-cun-ji-zhi/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-23-offer-52-get-intersection-node/" target="_self">
         <div>
-          题目描述 运用你所掌握的数据结构，设计和实现一个  LRU (最近最少使用) 缓存机制。它应该支持以下操作： 获取数据 get 和 写入数据 put 。 获取数据 get(key) - 如果关键字 (key) 存在于缓存中，则获取关键字的值（总是正数），否则返回 -1。写入数据 put(key, value) - 如果关键字已经存在，则变更其数据值；如果关键字不存在，则插入该组「关键字&#x2F;
+          题目描述 输入两个链表，找出它们的第一个公共节点。	编写一个程序，找到两个单链表相交的起始节点。 如下面的两个链表：    a1 -&gt; a2 ↘                     		c1 -&gt; c2 -&gt; c3     b1 -&gt; b2 -&gt; b3 ↗   在节点 c1 开始相交。   示例 1：           4 -&gt; 1 ↘
         </div>
       </a>
 
@@ -351,7 +347,301 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 14:45" pubdate>
+            <time datetime="2021-04-16 19:39" pubdate>
+              2021-04-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E9%93%BE%E8%A1%A8/">#链表</a>
+            
+              <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/16/2021-3-24-leet-15-three-sum/" target="_self">
+          leetcode 15. 三数之和
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-24-leet-15-three-sum/" target="_self">
+        <div>
+          题目描述 给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c &#x3D; 0请你找出所有和为 0 且不重复的三元组。 注意：答案中不可以包含重复的三元组。  示例 1： 输入：nums &#x3D; [-1,0,1,2,-1,-4]输出：[[-1,-1,2],[-1,0,1]]示例 2： 输入：nums &#x3D; []输出：[
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-16 19:38" pubdate>
+              2021-04-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/">#双指针</a>
+            
+              <a href="/tags/%E6%95%B0%E7%BB%84/">#数组</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/16/2021-3-26-leet-56-merge-interval/" target="_self">
+          LeetCode 56. 合并区间
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-26-leet-56-merge-interval/" target="_self">
+        <div>
+          题目描述 以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] &#x3D; [starti, endi] 。请你合并所有重叠的区间，并返回一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间。 示例 1： 输入：intervals &#x3D; [[1,3],[2,6],[8,10],[15,18]]输出：[[1,6],[8,10],[15,18]]解释：
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-16 19:35" pubdate>
+              2021-04-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%95%B0%E7%BB%84/">#数组</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/16/2021-3-27-find-binaryTree-root-to-node-path/" target="_self">
+          求二叉树根节点到指定节点的路径
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-27-find-binaryTree-root-to-node-path/" target="_self">
+        <div>
+          算法描述这不是一道力扣或者剑指上的原题，但却是二叉树问题的一个基础核心算法，适用于许多二叉树类型的题目，比如 剑指 Offer 68 - II. 二叉树的最近公共祖先，因为这里有必要记录一下，大致的说明如下： 例如如下一颗二叉树：  当指定节点为 4 时，输出 [3,5,2,4] 方法1 回溯，有返回值代码如下，参考 1234567891011121314151617181920212223242
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-16 19:34" pubdate>
+              2021-04-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/">#二叉树</a>
+            
+              <a href="/tags/%E7%AE%97%E6%B3%95/">#算法</a>
+            
+              <a href="/tags/%E5%9B%9E%E6%BA%AF%E6%B3%95/">#回溯法</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/16/2021-3-5-leet-165-compare-version-numbers/" target="_self">
+          LeetCode165.比较版本号
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-5-leet-165-compare-version-numbers/" target="_self">
+        <div>
+          题目描述 给你两个版本号 version1 和 version2 ，请你比较它们。 版本号由一个或多个修订号组成，各修订号由一个 ‘.’ 连接。每个修订号由 多位数字 组成，可能包含 前导零 。每个版本号至少包含一个字符。修订号从左到右编号，下标从 0 开始，最左边的修订号下标为 0 ，下一个修订号下标为 1 ，以此类推。例如，2.5.33 和 0.1 都是有效的版本号。 比较版本号时，请按从左到
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-16 19:32" pubdate>
+              2021-04-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/">#字符串</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/16/2021-3-6-offer-11-retate-array-min-num/" target="_self">
+          剑指 Offer 11. 旋转数组的最小数字
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-6-offer-11-retate-array-min-num/" target="_self">
+        <div>
+          题目描述 把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。输入一个递增排序的数组的一个旋转，输出旋转数组的最小元素。例如，数组 [3,4,5,1,2] 为 [1,2,3,4,5] 的一个旋转，该数组的最小值为1。   示例 1： 输入：[3,4,5,1,2]输出：1示例 2： 输入：[2,2,2,0,1]输出：0  图片来源：https://leetcode-cn.com/pro
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-16 19:28" pubdate>
+              2021-04-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
+            
+              <a href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">#二分查找</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/16/2021-4-3-offer-68-lowest-common-ancestor/" target="_self">
+          剑指 Offer 68 - II. 二叉树的最近公共祖先
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-4-3-offer-68-lowest-common-ancestor/" target="_self">
+        <div>
+          题目描述 给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。 百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。” 例如，给定如下二叉树:root &#x3D; [3,5,1,6,2,0,8,null,null,7,4] 示例 1: 输入: root &#x3
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-16 19:27" pubdate>
+              2021-04-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
+            
+              <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/">#二叉树</a>
+            
+              <a href="/tags/%E9%80%92%E5%BD%92/">#递归</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/16/2021-4-6-leet-46-quan-pai-lie/" target="_self">
+          leetcode 46.全排列【未完】
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-4-6-leet-46-quan-pai-lie/" target="_self">
+        <div>
+          题目描述算法设计方法1 回溯法，使用 bool 数组记录每个数是否被访问（比较抽象的一张图，是我第一次学习全排列时边学边画的，当时对递归这个东西还完全理解不了，不过通过画这张图总算是理解一些了，感觉学算法画画图还是挺有助于理解的）  cpp 版本： 12345678910111213141516171819202122232425262728293031class Solution &#123;p
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-16 19:26" pubdate>
               2021-04-16
             </time>
           </div>
@@ -363,293 +653,9 @@
             
               <a href="/tags/%E7%AE%97%E6%B3%95/">#算法</a>
             
-              <a href="/tags/lru/">#lru</a>
+              <a href="/tags/%E5%9B%9E%E6%BA%AF%E6%B3%95/">#回溯法</a>
             
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/11/06/2020-11-7-docker-redis-config/" target="_self">
-          docker 下的 redis 如何挂载外部配置和数据
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2020/11/06/2020-11-7-docker-redis-config/" target="_self">
-        <div>
-          使用docker安装redis，挂载外部配置和数据 mkdir &#x2F;docker  mkdir &#x2F;docker&#x2F;redis  mkdir &#x2F;docker&#x2F;redis&#x2F;conf  mkdir &#x2F;docker&#x2F;redis&#x2F;data  创建redis.conf配置文件  touch &#x2F;docker&#x2F
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-11-06 00:00" pubdate>
-              2020-11-06
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/docker/">#docker</a>
-            
-              <a href="/tags/Redis/">#Redis</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/11/06/2020-11-6-docker-etcd/" target="_self">
-          docker 安装 etcd
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2020/11/06/2020-11-6-docker-etcd/" target="_self">
-        <div>
-          docker 安装 etcd 创建一个 sh 文件  粘贴下面内容 12345678910111213141516171819rm -rf /tmp/etcd-data.tmp &amp;&amp; mkdir -p /tmp/etcd-data.tmp &amp;&amp; \#  docker rmi quay.io/coreos/etcd:v3.3.13 || true &amp;&amp;
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-11-06 00:00" pubdate>
-              2020-11-06
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/docker/">#docker</a>
-            
-              <a href="/tags/etcd/">#etcd</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/04/15/2021-4-15-cpp_func_return_reference/" target="_self">
-          c++：如何理解函数返回一个引用
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2020/04/15/2021-4-15-cpp_func_return_reference/" target="_self">
-        <div>
-          初学 c++ 时遇到了一个疑问，记录一下  疑问有如下函数，其返回值是一个引用类型，内部逻辑也很简单，只是简单的把参数返回： 123int &amp;ret_val(int &amp;a) &#123;    return a;&#125;  另一个函数用来接收返回的引用： 123456789101112131415// 接收一个引用返回void receive_refer() &#123;
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-04-15 00:00" pubdate>
-              2020-04-15
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/c/">#c++</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/02/24/2021-2-24-go-container-list-source-code/" target="_self">
-          go container/list 源码分析【未完】
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2020/02/24/2021-2-24-go-container-list-source-code/" target="_self">
-        <div>
-          List1234567// List代表一个双向链表。List零值为一个空的、可用的链表。type List struct &#123;  // 哨兵节点，连接链表的头节点和尾结点，root.next 连接的是第一个结点，root.prev 连接的是最后一	// 个结点  root Element   // 当前列表长度，不包括哨兵节点	len  int     &#125;      初始化12
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-02-24 00:00" pubdate>
-              2020-02-24
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/go/">#go</a>
-            
-              <a href="/tags/%E6%BA%90%E7%A0%81/">#源码</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/02/24/2021-2-24-go-container-list-swap/" target="_self">
-          go 交换 container/list 的值
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2020/02/24/2021-2-24-go-container-list-swap/" target="_self">
-        <div>
-          场景在 LeetCode 255.用队列实现栈 这道题里，需要用到两个队列来实现一个栈，并且在算法流程中，需要交换这两个队列的内容，例如：队列 A  &#x3D;&gt; [1, 2, 3]，队列 B &#x3D;&gt; [555]，交换后：A &#x3D;&gt; [555]，B &#x3D;&gt; [1, 2, 3]。 go 标准库中并没有提供队列的实现，但是提供了 container&#
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-02-24 00:00" pubdate>
-              2020-02-24
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/go/">#go</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/01/24/2021-1-24-go-post-request/" target="_self">
-          go 发送 post 请求
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2020/01/24/2021-1-24-go-post-request/" target="_self">
-        <div>
-          go 基础之使用原生 http 库发送 post 请求
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-01-24 00:00" pubdate>
-              2020-01-24
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/go/">#go</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/01/11/2021-1-11-reference_c++/" target="_self">
-          c++ 引用：如何理解&#34;引用被初始化后，不能再指向其他对象&#34;
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2020/01/11/2021-1-11-reference_c++/" target="_self">
-        <div>
-          在 c++ 的引用规则中，有这么一条：一旦初始化完成 ，引用将和它的初始值对象一直绑定在一起（即不能再指向其他对象）。抱着初学者的好奇心态，我尝试改变引用的指向，写出了如下代码： 123456789101112131415// 定义两个 string 变量std::string s = &quot;123&quot;;std::string s2 = &quot;456&quot;;// 让 s1
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-01-11 00:00" pubdate>
-              2020-01-11
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/c/">#c++</a>
+              <a href="/tags/%E5%85%A8%E6%8E%92%E5%88%97/">#全排列</a>
             
           </div>
         
@@ -661,7 +667,7 @@
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/15/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/#board">14</a><a class="page-number" href="/page/15/#board">15</a><span class="page-number current">16</span><a class="page-number" href="/page/17/#board">17</a><a class="extend next" rel="next" href="/page/17/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/15/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/#board">14</a><a class="page-number" href="/page/15/#board">15</a><span class="page-number current">16</span><a class="page-number" href="/page/17/#board">17</a><a class="page-number" href="/page/18/#board">18</a><a class="extend next" rel="next" href="/page/17/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

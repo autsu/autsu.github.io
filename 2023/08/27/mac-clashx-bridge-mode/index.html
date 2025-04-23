@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx7.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx8.png">
 <meta property="article:published_time" content="2023-08-27T15:01:37.000Z">
-<meta property="article:modified_time" content="2023-08-27T16:51:46.616Z">
+<meta property="article:modified_time" content="2025-03-30T12:59:28.071Z">
 <meta property="article:author" content="void">
 <meta property="article:tag" content="misc">
 <meta name="twitter:card" content="summary_large_image">
@@ -82,7 +82,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -250,7 +250,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.6k 字
+          1.5k 字
         
       </span>
     
@@ -261,7 +261,7 @@
         
         
         
-          14 分钟
+          13 分钟
         
       </span>
     
@@ -315,7 +315,7 @@
                 <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>前段时间搞了台台式当服务器用，用的是 Windows + Linux 虚拟机的方式，然后 Windows 装上 Clash for windows 并且开启 Tun 模式，这样虚拟机也可以享受 Clash 的代理，但是使用过程中发现一个问题，就是这些虚拟机虽然能科学上网了，但是速度相比宿主机非常慢， 同样的一个 Github 上的包，在 Windows 上下载有几 m&#x2F;s 的速度，到了虚拟机这边只有 10k&#x2F;m，导致使用起来的体验非常差，也不知道是不是 Clash for windows 这个狗屎玩意的原因，为了解决这个问题，我在网上看到了一种使用旁路由的方法，大概意思就是让一台设备使用软件科学上网，然后将这台设备作为一个旁路由，让其他设备去连接它，连上以后直接就拥有了翻墙的能力，设备本身无需安装和配置任何工具，相当于是走了透明代理，非常方便，我手里刚好还有一台 Macbook，可以用这台来实验一下。</p>
 <h1 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h1><p>首先 Mac 上需要安装好 Clashx Pro，注意是 Pro 而不是普通的 Clashx，因为只有 Pro 才有增强模式，装好以后配置好你的机场，然后开启 <strong>设置为系统代理</strong> 和 <strong>增强模式</strong> 这两个选项（允许局域网连接不开貌似也没影响），这些基本操作没什么好说的，效果如下：</p>
 <p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx1.jpg" srcset="/img/loading.gif" lazyload></p>
-<p>然后需要将 Mac 设置为静态 IP，在 【设置 - 网络 - Wi-Fi - 详细信息 - TCP&#x2F;IP】里，将 【配置 IPv4 】改为手动，然后设置你的 IP 地址，子网掩码等信息，IP 地址只要和路由器 IP 在同一网段即可（这里涉及一些网络相关的知识，本文就不细说了），大概像下面这样：</p>
+<p>然后需要将 Mac 设置为静态 IP，在 【设置 - 网络 - Wi-Fi - 详细信息 - TCP&#x2F;IP】里，将 【配置 IPv4 】改为手动，然后设置你的 IP 地址，子网掩码等信息，IP 地址只要和路由器 IP 在同一网段即可，大概像下面这样：</p>
 <p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/clashx2.jpg" srcset="/img/loading.gif" lazyload></p>
 <p>我这里的路由器 IP 是 192.168.31.1，然后子网掩码是 255.255.255.0，代表 192.168.31 这部分是网络号，那我们设置的静态 IP 就只需要改最后一部分即可，比如我改成了 192.168.31.254。</p>
 <p>然后还需要注意一下这里的 DNS，这个 DNS 貌似是 Clashx 的 DNS，这个地方不需要改，而且后面其他设备连接时需要用到：</p>
@@ -404,6 +404,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2023/09/30/go-http-transport/" title="Go net/http Transport 源码阅读">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Go net/http Transport 源码阅读</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">

@@ -1,0 +1,757 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="集群 yaml 如下： 12345678910# cluster.yamlkind: ClusterapiVersion: kind.x-k8s.io&#x2F;v1alpha4networking:  disableDefaultCNI: true  # 禁用默认的 CNI  podSubnet: &quot;10.244.0.0&#x2F;16&quot;  # Flannel 默认使用的网段nodes:- ro">
+<meta property="og:type" content="article">
+<meta property="og:title" content="flannel 部署实践（kind）">
+<meta property="og:url" content="https://autsu.github.io/2025/03/03/flannel%20%E9%83%A8%E7%BD%B2%E5%AE%9E%E8%B7%B5%EF%BC%88kind%EF%BC%89/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="集群 yaml 如下： 12345678910# cluster.yamlkind: ClusterapiVersion: kind.x-k8s.io&#x2F;v1alpha4networking:  disableDefaultCNI: true  # 禁用默认的 CNI  podSubnet: &quot;10.244.0.0&#x2F;16&quot;  # Flannel 默认使用的网段nodes:- ro">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-03T11:26:43.000Z">
+<meta property="article:modified_time" content="2025-04-23T16:18:57.829Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="计算机网络">
+<meta property="article:tag" content="k8s">
+<meta property="article:tag" content="k8s网络">
+<meta property="article:tag" content="needSyncToBlog">
+<meta property="article:tag" content="Flannel">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>flannel 部署实践（kind） - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="flannel 部署实践（kind）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-03-03 19:26" pubdate>
+          2025年3月3日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          30 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">flannel 部署实践（kind）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>集群 yaml 如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># cluster.yaml</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">Cluster</span><br><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">kind.x-k8s.io/v1alpha4</span><br><span class="hljs-attr">networking:</span><br>  <span class="hljs-attr">disableDefaultCNI:</span> <span class="hljs-literal">true</span>  <span class="hljs-comment"># 禁用默认的 CNI</span><br>  <span class="hljs-attr">podSubnet:</span> <span class="hljs-string">&quot;10.244.0.0/16&quot;</span>  <span class="hljs-comment"># Flannel 默认使用的网段</span><br><span class="hljs-attr">nodes:</span><br><span class="hljs-bullet">-</span> <span class="hljs-attr">role:</span> <span class="hljs-string">control-plane</span><br><span class="hljs-bullet">-</span> <span class="hljs-attr">role:</span> <span class="hljs-string">worker</span><br><span class="hljs-bullet">-</span> <span class="hljs-attr">role:</span> <span class="hljs-string">worker</span><br></code></pre></td></tr></table></figure>
+
+<p>创建集群：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">kind create cluster --name flanneltest --config kind-without-cni-config.yaml<br></code></pre></td></tr></table></figure>
+
+<p>启动以后，会发现 Node 全部处于 NotReady 状态，报错：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">KubeletNotReady              container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized<br></code></pre></td></tr></table></figure>
+
+<p>而且你还会发现一些 Pod 也异常了，当然，CNI 还没安装，它们拿不到 IP，节点也全部处于 NotReady 状态，无法被调度。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs sh">k get po -A -owide<br>NAMESPACE            NAME                                                READY   STATUS    RESTARTS   AGE   IP              NODE                        NOMINATED NODE   READINESS GATES<br>kube-system          coredns-565d847f94-57qhk                            0/1     Pending   0          17m   &lt;none&gt;          &lt;none&gt;                      &lt;none&gt;           &lt;none&gt;<br>kube-system          coredns-565d847f94-8nvpw                            0/1     Pending   0          17m   &lt;none&gt;          &lt;none&gt;                      &lt;none&gt;           &lt;none&gt;<br>kube-system          etcd-flanneltest-control-plane                      1/1     Running   0          17m   192.168.247.6   flanneltest-control-plane   &lt;none&gt;           &lt;none&gt;<br>kube-system          kube-apiserver-flanneltest-control-plane            1/1     Running   0          17m   192.168.247.6   flanneltest-control-plane   &lt;none&gt;           &lt;none&gt;<br>kube-system          kube-controller-manager-flanneltest-control-plane   1/1     Running   0          17m   192.168.247.6   flanneltest-control-plane   &lt;none&gt;           &lt;none&gt;<br>kube-system          kube-proxy-5kts9                                    1/1     Running   0          17m   192.168.247.8   flanneltest-worker          &lt;none&gt;           &lt;none&gt;<br>kube-system          kube-proxy-95mtz                                    1/1     Running   0          17m   192.168.247.7   flanneltest-worker2         &lt;none&gt;           &lt;none&gt;<br>kube-system          kube-proxy-mkxkh                                    1/1     Running   0          17m   192.168.247.6   flanneltest-control-plane   &lt;none&gt;           &lt;none&gt;<br>kube-system          kube-scheduler-flanneltest-control-plane            1/1     Running   0          17m   192.168.247.6   flanneltest-control-plane   &lt;none&gt;           &lt;none&gt;<br>local-path-storage   local-path-provisioner-684f458cdd-n8qdj             0/1     Pending   0          17m   &lt;none&gt;          &lt;none&gt;                      &lt;none&gt;           &lt;none&gt;<br></code></pre></td></tr></table></figure>
+
+<p>但是为什么有些 Pod 拿到 IP 了并且处于 Running 状态？</p>
+<p>因为它们是 <strong>静态 Pod</strong>，关于此，参考 [[静态 Pod]]</p>
+<p>执行 yaml：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml<br></code></pre></td></tr></table></figure>
+
+<p>执行完后，发现 Node 都变成 Ready 了，但是 Pod 卡在创建状态，查看事件：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">Warning  FailedCreatePodSandBox  4m30s                  kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = failed to setup network <span class="hljs-keyword">for</span> sandbox <span class="hljs-string">&quot;f7711fed8f024a3b5562ce244a567e1ed77bbcecb73ce5a0a0ececab6916b062&quot;</span>: plugin <span class="hljs-built_in">type</span>=<span class="hljs-string">&quot;flannel&quot;</span> failed (add): failed to delegate add: failed to find plugin <span class="hljs-string">&quot;bridge&quot;</span> <span class="hljs-keyword">in</span> path [/opt/cni/bin]<br></code></pre></td></tr></table></figure>
+
+<p>看报错是节点的 cni 目录缺少 <code>bridge</code> 这个二进制文件。</p>
+<p>这个文件似乎是由 <a target="_blank" rel="noopener" href="https://github.com/containernetworking/plugins">containernetworking&#x2F;plugins</a> 提供的，flannel 只提供它本身的二进制可执行文件 flannel。</p>
+<p>写了一个脚本，来为 Kind 的每个节点安装标准网络插件，你需要按需修改前三个变量。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 设置 CNI 插件版本和架构</span><br>CNI_VERSION=<span class="hljs-string">&quot;v1.6.2&quot;</span>  <span class="hljs-comment"># 您可以根据需要更改版本</span><br>CNI_ARCH=<span class="hljs-string">&quot;arm64&quot;</span>      <span class="hljs-comment"># 根据您的系统架构选择</span><br>KIND_CLUSTER_CONTEXT=<span class="hljs-string">&quot;flanneltest&quot;</span><br><br><span class="hljs-comment"># 下载 CNI 插件</span><br>url=<span class="hljs-string">&quot;https://github.com/containernetworking/plugins/releases/download/<span class="hljs-variable">$&#123;CNI_VERSION&#125;</span>/cni-plugins-linux-<span class="hljs-variable">$&#123;CNI_ARCH&#125;</span>-<span class="hljs-variable">$&#123;CNI_VERSION&#125;</span>.tgz&quot;</span> <br><br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;下载地址：<span class="hljs-variable">$&#123;url&#125;</span>&quot;</span><br><br>curl -L <span class="hljs-variable">$&#123;url&#125;</span> -o cni-plugins.tgz<br><br><span class="hljs-comment"># 获取节点列表</span><br><span class="hljs-keyword">if</span> [ -n <span class="hljs-string">&quot;<span class="hljs-variable">$KIND_CLUSTER_CONTEXT</span>&quot;</span> ]; <span class="hljs-keyword">then</span><br>    NODES=$(kind get nodes -n <span class="hljs-variable">$KIND_CLUSTER_CONTEXT</span>)<br><span class="hljs-keyword">else</span><br>    NODES=$(kind get nodes)<br><span class="hljs-keyword">fi</span><br><br><span class="hljs-comment"># 安装 CNI 插件到每个节点</span><br><span class="hljs-keyword">for</span> node <span class="hljs-keyword">in</span> <span class="hljs-variable">$NODES</span>; <span class="hljs-keyword">do</span><br>    docker <span class="hljs-built_in">cp</span> cni-plugins.tgz <span class="hljs-variable">$&#123;node&#125;</span>:/<br>    docker <span class="hljs-built_in">exec</span> <span class="hljs-variable">$&#123;node&#125;</span> <span class="hljs-built_in">mkdir</span> -p /opt/cni/bin<br>    docker <span class="hljs-built_in">exec</span> <span class="hljs-variable">$&#123;node&#125;</span> tar -xzf /cni-plugins.tgz -C /opt/cni/bin<br><span class="hljs-keyword">done</span><br><br><span class="hljs-comment"># 清理临时文件</span><br><span class="hljs-built_in">rm</span> cni-plugins.tgz<br><br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;清理完成&quot;</span><br><br></code></pre></td></tr></table></figure>
+
+<p>执行完成后，每个节点的 &#x2F;opt&#x2F;cni&#x2F;bin 目录如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">ls</span><br>LICENSE    bridge  firewall     host-local  macvlan  sbr     tuning<br>README.md  dhcp    flannel      ipvlan      portmap  static  vlan<br>bandwidth  dummy   host-device  loopback    ptp      tap     vrf<br></code></pre></td></tr></table></figure>
+
+<p>现在再看看，发现之前的 Pod 都已经成功运行了，也都分配到了 IP。</p>
+<p>测试一下跨节点 Pod 的通信：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">k create deploy nginx --image=nginx --replicas=3<br></code></pre></td></tr></table></figure>
+
+<p>懒得写了，反正没有问题</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
+      
+        <a href="/tags/k8s/">#k8s</a>
+      
+        <a href="/tags/k8s%E7%BD%91%E7%BB%9C/">#k8s网络</a>
+      
+        <a href="/tags/needSyncToBlog/">#needSyncToBlog</a>
+      
+        <a href="/tags/Flannel/">#Flannel</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>flannel 部署实践（kind）</div>
+      <div>https://autsu.github.io/2025/03/03/flannel 部署实践（kind）/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年3月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/03/05/VXLAN%E5%AE%9E%E8%B7%B5/" title="VXLAN 实践">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">VXLAN 实践</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/03/02/Flannel%20VXLAN%20%E6%B5%81%E7%A8%8B/" title="Flannel VXLAN 流程">
+                        <span class="hidden-mobile">Flannel VXLAN 流程</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

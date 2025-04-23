@@ -62,7 +62,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -245,15 +245,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/07/14/url_dao_xian_shi_wang_ye_fa_shen_le_shen_me/" target="_self">
-          输入 url 到浏览器显示网页，期间发生了什么？
+        <a href="/2022/09/06/Veth%20%E8%AE%BE%E5%A4%87/" target="_self">
+          Linux 虚拟网络设备 Veth-Pair
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/07/14/url_dao_xian_shi_wang_ye_fa_shen_le_shen_me/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/06/Veth%20%E8%AE%BE%E5%A4%87/" target="_self">
         <div>
-          1. 解析 URL 并构建请求报文首先浏览器做的第一步工作就是要对 URL 进行解析，从而构建出发送给 Web 服务器的请求报文。 URL 由三部分组成：协议类型，服务器地址和资源文件路径。比如 http://www.server.com/dir1/file1.html 这个 URL，它的协议类型是 http，服务器地址（域名）是 www.server.com，dir1/file1.html 就是
+          介绍Veth-Pair 是什么顾名思义，Veth-Pair 就是一对的虚拟设备接口，它总是以两张虚拟网卡（Veth Peer）成对出现，每个 Veth 都有两端，其中一端连着网络协议栈，另一端连接另一个 Veth。比如下图所示，该 Veth-Pair 有两张虚拟网卡 veth0 和 veth1，它们彼此相连，此外每个虚拟网卡都还连接着网络协议栈。 比如创建了一对 Veth，其中一个放到 names
         </div>
       </a>
 
@@ -261,8 +261,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-07-14 14:30" pubdate>
-              2022-07-14
+            <time datetime="2022-09-06 22:37" pubdate>
+              2022-09-06
             </time>
           </div>
         
@@ -272,6 +272,304 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
+            
+              <a href="/tags/linux/">#linux</a>
+            
+              <a href="/tags/k8s/">#k8s</a>
+            
+              <a href="/tags/k8s%E7%BD%91%E7%BB%9C/">#k8s网络</a>
+            
+              <a href="/tags/needSyncToBlog/">#needSyncToBlog</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/09/06/EOF_cuo_wu/" target="_self">
+          一个 EOF 引发的低级错误
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/06/EOF_cuo_wu/" target="_self">
+        <div>
+          今天更新了一下之前写的 tcp server，结果测试的时候发现了一个十分诡异的 BUG：客户端这边发送完数据，进程都已经退出了，但是服务端却依然源源不断的接收到客户端发来的数据，而且数据包的大小都为 0，这个 BUG 花费了我大半天的时间，终于找到了问题所在，特此记录。 问题关键就是对 io.EOF 的判断逻辑出了问题，以下是部分代码： 错误： 1234567891011121314151617
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-09-06 02:28" pubdate>
+              2022-09-06
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/go/">#go</a>
+            
+              <a href="/tags/issue/">#issue</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/09/05/go_nil_pointer/" target="_self">
+          一个 go nil pointer 错误记录
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/05/go_nil_pointer/" target="_self">
+        <div>
+          看看下面这段代码的运行结果是什么？ 123456789101112131415161718package mainimport (	&quot;fmt&quot;	&quot;net&quot;)func main() &#123;	lis, err := net.Listen(&quot;tcp&quot;, &quot;:7788&quot;)	assert(err, &quot;listen
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-09-05 00:51" pubdate>
+              2022-09-05
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/go/">#go</a>
+            
+              <a href="/tags/issue/">#issue</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/09/05/tcp_zhan_bao/" target="_self">
+          TCP 粘包/拆包问题
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/05/tcp_zhan_bao/" target="_self">
+        <div>
+          简介TCP 的粘包拆包也属于老生常谈的问题了，虽然不少人都鄙夷的认为粘包是一个错误的说法，因为 TCP 是面向流传输的，但无论如何，粘包这个词都已经算得上是深入人心了。 TCP 的流式传输，简单的说就是没有消息边界记录，比如发送端为了将多个发往接收端的包，更有效的发到对方，使用了优化方法（Nagle算法），将多次间隔较小、数据量小的数据包，合并成一个大的数据包发送(把发送端的缓冲区填满一次性发送。
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-09-05 00:51" pubdate>
+              2022-09-05
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/TCP/">#TCP</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/09/02/epoll_zhong_duan/" target="_self">
+          epoll 打断/唤醒
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/02/epoll_zhong_duan/" target="_self">
+        <div>
+          写这篇文章是因为最近在看 go netpoll 的源码，里面有一部分代码是创建一个管道，一开始没有搞懂用意何在，后来查阅了网上的文章，有说法是这个管道是为了打断 epoll_wait 的等待，将这个管道的 fd 添加到 epoll 中，如果想主动打断 epoll_wait，那么就往管道中写入数据，然后在 epoll_wait 处就会产生事件，终止阻塞。 搜索 epoll 打断，发现资料非常少，go
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-09-02 12:32" pubdate>
+              2022-09-02
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/epoll/">#epoll</a>
+            
+              <a href="/tags/%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/">#多路复用</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/08/31/gu_er_jin_cheng_he_jiang_shi_jin_cheng/" target="_self">
+          孤儿进程与僵尸进程
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/31/gu_er_jin_cheng_he_jiang_shi_jin_cheng/" target="_self">
+        <div>
+          来源：https://www.cnblogs.com/Anker/p/3271773.html  基本概念孤儿进程：一个父进程退出，而它的一个或多个子进程还在运行，那么那些子进程将成为孤儿进程。孤儿进程将被 init 进程(进程号为 1 )所收养，并由 init 进程对它们完成状态收集工作。 僵尸进程：一个进程使用 fork 创建子进程，如果子进程退出，而父进程并没有调用 wait 或 wait
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-08-31 00:59" pubdate>
+              2022-08-31
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/linux/">#linux</a>
+            
+              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">#操作系统</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/08/27/huan_cun_yi_zhi_xing/" target="_self">
+          如何保证缓存和数据库的一致性
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/27/huan_cun_yi_zhi_xing/" target="_self">
+        <div>
+          一道高频面试题：如何保证缓存和数据库的一致性 通常情况下，容易想到以下几种策略： 先更新数据库，再更新缓存存在的问题：  更新数据库成功，更新缓存失败  并发情况下可能会存在问题，如下（纵轴代表时间线）：    A B    更新 DB x &#x3D; 1     更新 DB，x &#x3D; 2    更新缓存，x &#x3D; 2   更新缓存，x &#x3D; 1    可以看到因为并发操
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-08-27 23:49" pubdate>
+              2022-08-27
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E7%BC%93%E5%AD%98/">#缓存</a>
+            
+              <a href="/tags/%E8%AE%BE%E8%AE%A1/">#设计</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/08/18/go-mian_shi_ti/" target="_self">
+          Go 面试题
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/18/go-mian_shi_ti/" target="_self">
+        <div>
+          基础map、channel、slice 的底层实现mapmap 使用的是拉链法，用哈希桶来保存键值对，每个桶可以保存 8 个键值对，它会用哈希算法计算出 key 的 hash 值，然后用这个哈希值的高 8 位作为 tophash，用于在一个桶中区别出 key；然后桶的数量是 2^b ，用低 b 位来决定这个 key 放到哪个桶。每个桶还会连接一个溢出桶，如果一个桶已经满了，但是依然有 key 落入
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-08-18 22:12" pubdate>
+              2022-08-18
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/go/">#go</a>
             
               <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/">#面试题</a>
             
@@ -287,15 +585,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/07/12/go-mutex-yuan-ma/" target="_self">
-          go mutex 原理
+        <a href="/2022/08/17/leetcode_347_and_692/" target="_self">
+          两个类似的堆问题：leetcode 347 前 K 个高频元素 和 692. 前 K 个高频单词 
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/07/12/go-mutex-yuan-ma/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/17/leetcode_347_and_692/" target="_self">
         <div>
-          参考：https://www.bilibili.com/video/BV15V411n7fM?p=2&amp;spm_id_from=pageDriver&amp;vd_source=2ff613424b86c58a71ba91b7304ffe9b  总览mutex 的数据结构： 1234type Mutex struct &#123;	state int32	sema  uint32&#125
+          首先先来看一下这两个问题： 347. 前 K 个高频元素 给你一个整数数组 nums 和一个整数 k ，请你返回其中出现频率前 k 高的元素。你可以按 任意顺序 返回答案。 示例 1: 输入: nums &#x3D; [1,1,1,2,2,3], k &#x3D; 2输出: [1,2] 示例 2: 输入: nums &#x3D; [1], k &#x3D; 1输出: [1] 提示： 1 &lt;&
         </div>
       </a>
 
@@ -303,8 +601,48 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-07-12 22:09" pubdate>
-              2022-07-12
+            <time datetime="2022-08-17 23:02" pubdate>
+              2022-08-17
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%A0%86/">#堆</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/08/08/go_binary/" target="_self">
+          go binary 使用指南 
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/08/go_binary/" target="_self">
+        <div>
+          一个示例 demo： 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950package mainimport (	&quot;bytes&quot;	&quot;encoding/binary&quot;	&quot;fmt&quot;	&quot;io&quot;)
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-08-08 20:35" pubdate>
+              2022-08-08
             </time>
           </div>
         
@@ -314,336 +652,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/go/">#go</a>
-            
-              <a href="/tags/%E6%BA%90%E7%A0%81/">#源码</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/06/26/go-chan-yuan-ma/" target="_self">
-          go chan 原理（人话版）
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/06/26/go-chan-yuan-ma/" target="_self">
-        <div>
-          chan 原理（人话版） 说明：这里只是用大白话来阐述 chan 的大致原理，不保证严谨性，也不考虑一些繁枝细节（比如 sudog，gopark，goready），仅作为一个简单的参考理解，如果想深入理解 chan 的底层实现，请自行参阅其他博客  chan 底层有两个队列：sendq 和 recvq，这两个队列保存的都是被阻塞的 goroutine（简称 g），顾名思义，sendq 里面保存的是
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-06-26 20:51" pubdate>
-              2022-06-26
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/go/">#go</a>
-            
-              <a href="/tags/%E6%BA%90%E7%A0%81/">#源码</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/06/24/127.0.0.1_localhost_0.0.0.0/" target="_self">
-          127.0.0.1，localhost，0.0.0.0 的区别（包含虚拟网卡相关操作）
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/06/24/127.0.0.1_localhost_0.0.0.0/" target="_self">
-        <div>
-          127.0.0.1127.0.0.1 是 回环地址，当报文的目的地址是回环地址时，依然会走一遍网络协议栈，但是不会经过物理网卡，而是经过一个名为 lo 的虚拟网卡（mac 上交 lo0），具体的流程是： 从应用层到传输层再到网络层，到了网络层，系统会根据目的IP，在路由表中获取对应的路由信息，而这其中就包含选择哪个网卡把消息发出。 当发现 目标IP是外网IP 时，会从”真网卡”发出。 当发现 目标
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-06-24 20:50" pubdate>
-              2022-06-24
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/06/11/gobreaker/" target="_self">
-          go 熔断器 gobreaker 源码阅读
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/06/11/gobreaker/" target="_self">
-        <div>
-          该文章仅作为本人笔记，不具备太大的参考价值 该文章着重记录源码，没有对熔断器这一概念做过多理念上的说明解释 该文章排版、思路较为混乱，后续可能会进行修改  示例官方示例官方示例有点太简单了，完全无法体会到 熔断 这一概念 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-06-11 20:40" pubdate>
-              2022-06-11
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/go/">#go</a>
-            
-              <a href="/tags/%E6%BA%90%E7%A0%81/">#源码</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/06/08/go_seek/" target="_self">
-          go 文件操作的&#34;坑&#34;之 Seek()
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/06/08/go_seek/" target="_self">
-        <div>
-          引子最近买了块机械硬盘作为仓库盘，用硬盘盒连接到 mac，但是这块硬盘貌似有休眠机制（不确定），如果一段时间没有读写操作就会停转，等到需要操作时才会唤醒，唤醒会有比较明显的磁盘启动声音，并且需要等待 5s 左右才能使用。 但蛋疼的是不知道是系统原因还是什么，每次硬盘休眠后即便我没有对其进行操作仍然会自行唤醒，导致我总是能频繁听到硬盘的启停声，我还专门观察了一下，就算我躺在床上玩手机，完全不碰电脑，
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-06-08 01:03" pubdate>
-              2022-06-08
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/go/">#go</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/06/07/k8s-configmap/" target="_self">
-          k8s ConfigMap
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/06/07/k8s-configmap/" target="_self">
-        <div>
-          说明：文章的部分地方会用 cm 来指代 ConfigMap  引子做过开发的同学都遇到过给程序进行配置的场景，比如非常常见的配置文件，将 Mysql 的地址、端口、用户名、密码等信息写到一个配置文件里，然后程序内部通过读取这个配置文件来获取信息，防止了硬编码信息到程序内部，这样如果发生变动只需要修改配置文件即可，无需重新编译整个程序；另一种常见的方式是运行程序时指定参数来进行配置，比如 Go 标
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-06-07 19:17" pubdate>
-              2022-06-07
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/k8s/">#k8s</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/06/01/go-gc/" target="_self">
-          go GC 白话版
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/06/01/go-gc/" target="_self">
-        <div>
-          主流的垃圾回收算法引用计数法根据对象自身的引用计数来回收，当引用计数归零时进行回收，但是计数频繁更新会带来更多开销，且无法解决循环引用的问题。  优点：简单直接，回收速度快 缺点：需要额外的空间存放计数，无法处理循环引用的情况；  标记清除法标记出所有不需要回收的对象，在标记完成后统一回收掉所有未被标记的对象。  优点：简单直接，速度快，适合可回收对象不多的场景 缺点：会造成不连续的内存空间（内存
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-06-01 22:15" pubdate>
-              2022-06-01
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/go/">#go</a>
-            
-              <a href="/tags/GC/">#GC</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/05/31/k8s-namespace/" target="_self">
-          k8s namespace
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/31/k8s-namespace/" target="_self">
-        <div>
-          简介Namespace 是对一组资源和对象的抽象集合，比如可以用来将系统内部的对象划分为不同的项目组或用户组。常见的 pods, services, replication controllers 和 deployments 等都是属于某一个 namespace 的（默认是default），而 node, persistentVolumes 等则不属于任何 namespace。 Namespace
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-05-31 11:31" pubdate>
-              2022-05-31
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/k8s/">#k8s</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/05/28/errgroup/" target="_self">
-          Go errgroup 使用
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/28/errgroup/" target="_self">
-        <div>
-          简介errgroup 是 WaitGroup 的强化版，其在 WaitGroup 的基础上添加了错误处理的功能：如果一组 goroutine 中的某一个发生了错误，那么后续的所有 gorouine 都不会被执行。 示例示例 1一共开启 10 个 goroutine 执行任务，其中第三个 goroutine 会出错，使用 errgroup 可以保证第三个之后的所有 goroutine 都不会执行 1
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-05-28 23:55" pubdate>
-              2022-05-28
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/go/">#go</a>
-            
-              <a href="/tags/%E6%BA%90%E7%A0%81/">#源码</a>
             
           </div>
         
@@ -655,7 +663,7 @@
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/4/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/#board">3</a><a class="page-number" href="/page/4/#board">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/#board">6</a><a class="page-number" href="/page/7/#board">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/#board">17</a><a class="extend next" rel="next" href="/page/6/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/4/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/#board">3</a><a class="page-number" href="/page/4/#board">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/#board">6</a><a class="page-number" href="/page/7/#board">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/#board">18</a><a class="extend next" rel="next" href="/page/6/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

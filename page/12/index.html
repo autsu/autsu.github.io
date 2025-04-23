@@ -62,7 +62,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -245,15 +245,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/07/22/go-containerheap-yuan-ma-yue-du/" target="_self">
-          go container/heap 源码阅读
+        <a href="/2021/08/06/leetcode-153-xun-zhao-xuan-zhuan-pai-xu-shu-zu-zhong-de-zui-xiao-zhi/" target="_self">
+          leetcode 153. 寻找旋转排序数组中的最小值
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/07/22/go-containerheap-yuan-ma-yue-du/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/06/leetcode-153-xun-zhao-xuan-zhuan-pai-xu-shu-zu-zhong-de-zui-xiao-zhi/" target="_self">
         <div>
-          heap（堆），是一个用数组表示的完全二叉树，常用于构建优先队列，排序和快速找出一个集合中的最小值（或者最大值）。在 go 标准库下的 container 包中提供了这种数据结构。
+          已知一个长度为 n 的数组，预先按照升序排列，经由 1 到 n 次 旋转 后，得到输入数组。例如，原数组 nums &#x3D; [0,1,2,4,5,6,7] 在变化后可能得到：若旋转 4 次，则可以得到 [4,5,6,7,0,1,2]若旋转 7 次，则可以得到 [0,1,2,4,5,6,7]注意，数组 [a[0], a[1], a[2], …, a[n-1]] 旋转一次 的结果为数组 [a[
         </div>
       </a>
 
@@ -261,8 +261,338 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-22 14:16" pubdate>
-              2021-07-22
+            <time datetime="2021-08-06 00:38" pubdate>
+              2021-08-06
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">#二分查找</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/05/duo-ji-ye-biao/" target="_self">
+          多级页表为什么节省内存
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/05/duo-ji-ye-biao/" target="_self">
+        <div>
+          首先明确几个概念逻辑地址：是程序编译后，生成的目标模块进行编址时都是从0号单元开始编址，称之为目标模块的相对地址，即为逻辑地址。 页：将虚拟内存划分的块，对应的大小就叫页面大小。 页框：将物理内存划分的块。 页和页框二者一一对应，一个页放入一个页框，（理论上）页的大小和页框的大小相等。 页表：就是一个页和页框一一对应的关系表。【存放在内存中】 关系表只是起到一个索引的作用，说白了就是能根据关系表能
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-05 18:09" pubdate>
+              2021-08-05
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">#操作系统</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/04/leetcode-225-yong-dui-lie-shi-xian-zhan/" target="_self">
+          leetcode 225. 用队列实现栈
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/04/leetcode-225-yong-dui-lie-shi-xian-zhan/" target="_self">
+        <div>
+          请你仅使用两个队列实现一个后入先出（LIFO）的栈，并支持普通栈的全部四种操作（push、top、pop 和 empty）。 实现 MyStack 类： void push(int x) 将元素 x 压入栈顶。int pop() 移除并返回栈顶元素。int top() 返回栈顶元素。boolean empty() 如果栈是空的，返回 true ；否则，返回 false 。 注意： 你只能使用队列
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-04 20:20" pubdate>
+              2021-08-04
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%AE%BE%E8%AE%A1/">#设计</a>
+            
+              <a href="/tags/%E6%A0%88/">#栈</a>
+            
+              <a href="/tags/%E9%98%9F%E5%88%97/">#队列</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/04/leetcode-155-zui-xiao-zhan/" target="_self">
+          leetcode 155. 最小栈
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/04/leetcode-155-zui-xiao-zhan/" target="_self">
+        <div>
+          设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈。  push(x) —— 将元素 x 推入栈中。 pop() —— 删除栈顶的元素。 top() —— 获取栈顶元素。 getMin() —— 检索栈中的最小元素。  示例: 输入：[“MinStack”,”push”,”push”,”push”,”getMin”,”pop”,”top”,”getMin”][[
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-04 12:08" pubdate>
+              2021-08-04
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%AE%BE%E8%AE%A1/">#设计</a>
+            
+              <a href="/tags/%E6%A0%88/">#栈</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/03/niu-ke-teng-xun-2020-bi-shi-ti-di-er-ti-guang-jie/" target="_self">
+          [牛客][腾讯2020笔试题] 第二题. 逛街
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/03/niu-ke-teng-xun-2020-bi-shi-ti-di-er-ti-guang-jie/" target="_self">
+        <div>
+          小Q在周末的时候和他的小伙伴来到大城市逛街，一条步行街上有很多高楼，共有n座高楼排成一行。小Q从第一栋一直走到了最后一栋，小Q从来都没有见到这么多的楼，所以他想知道他在每栋楼的位置处能看到多少栋楼呢？（当前面的楼的高度大于等于后面的楼时，后面的楼将被挡住）  输入例子1:[5,3,8,3,2,5] 输出例子1:[3,3,5,4,4,4] 例子说明1:当小Q处于位置3时，他可以向前看到位置2,1处
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-03 22:53" pubdate>
+              2021-08-03
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%A0%88/">#栈</a>
+            
+              <a href="/tags/%E7%AC%94%E8%AF%95%E9%A2%98/">#笔试题</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/03/teng-xun-2020-bi-shi-ti-ya-suo-suan-fa/" target="_self">
+          [牛客][腾讯2020笔试题] 第一题. 压缩算法
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/03/teng-xun-2020-bi-shi-ti-ya-suo-suan-fa/" target="_self">
+        <div>
+          说明：该题出自牛客 —— 腾讯2020校园招聘-后台   时间限制：C&#x2F;C++ 1秒，其他语言2秒 空间限制：C&#x2F;C++ 256M，其他语言512M 小Q想要给他的朋友发送一个神秘字符串，但是他发现字符串的过于长了，于是小Q发明了一种压缩算法对字符串中重复的部分进行了压缩，对于字符串中连续的m个相同字符串S将会压缩为[m|S](m为一个整数且1&lt;&#x3D;m&lt;&
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-03 21:38" pubdate>
+              2021-08-03
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/">#字符串</a>
+            
+              <a href="/tags/%E7%AC%94%E8%AF%95%E9%A2%98/">#笔试题</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/08/02/redis-chi-jiu-hua-zhi-aof-yu-rdb/" target="_self">
+          Redis 持久化之 AOF 与 RDB
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/02/redis-chi-jiu-hua-zhi-aof-yu-rdb/" target="_self">
+        <div>
+          RDBRDB 可以将某个时间点上的数据库状态保存到一个 RDB 文件中（该文件的文件名可以在 redis.conf 中的 dbfilename 进行配置，默认为 dump.rdb），该文件是一个经过压缩的二进制文件，里面保存了数据库中的键值对，通过该文件可以还原生成 RDB 文件的数据库状态。  如何使用使用 SAVE 或者 BGSAVE 来生成 RDB 文件，二者的区别是 SAVE 会阻塞进程直
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-02 12:03" pubdate>
+              2021-08-02
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis/">#Redis</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/07/30/ke-kao-chuan-shu-de-shi-xian-ji-zhi-ting-zhi-deng-dai-xie-yi-swstop-and-wait/" target="_self">
+          可靠传输的实现机制 —— 停止-等待协议SW（Stop-and-Wait）
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/07/30/ke-kao-chuan-shu-de-shi-xian-ji-zhi-ting-zhi-deng-dai-xie-yi-swstop-and-wait/" target="_self">
+        <div>
+          何为停等协议首先假设有这样一个简单的可靠传输协议，主机 A 发送数据分组给 主机 B，由于网络传输过程中可能会出现数据损坏，所以主机 B会进行校验和检测，如果数据完整则发送 ACK，否则发送 NAK，如果收到 ACK，则可以继续发送下一个数据分组（如果有），收到 NAK 则重新发送当前数据分组。 在收到 主机 B 的回复之前，主机 A 不会进行任何操作，这便是停等协议，类似于串行操作。  存在的问
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-07-30 18:16" pubdate>
+              2021-07-30
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/07/29/go-map-yuan-ma-yue-du/" target="_self">
+          go map 源码阅读
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/07/29/go-map-yuan-ma-yue-du/" target="_self">
+        <div>
+          看看 map 这个重要数据结构在 go 中是如何实现的
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-07-29 20:37" pubdate>
+              2021-07-29
             </time>
           </div>
         
@@ -277,8 +607,6 @@
             
               <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">#数据结构</a>
             
-              <a href="/tags/%E5%A0%86/">#堆</a>
-            
           </div>
         
       </div>
@@ -291,15 +619,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/07/21/jian-zhi-offer-40-zui-xiao-de-k-ge-shu/" target="_self">
-          剑指 Offer 40. 最小的 k 个数
+        <a href="/2021/07/29/leetcode-25-k-ge-yi-zu-fan-zhuan-lian-biao/" target="_self">
+          leetcode 25. K 个一组翻转链表
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/07/21/jian-zhi-offer-40-zui-xiao-de-k-ge-shu/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/07/29/leetcode-25-k-ge-yi-zu-fan-zhuan-lian-biao/" target="_self">
         <div>
-          输入整数数组 arr ，找出其中最小的 k 个数
+          给你一个链表，每 k 个节点一组进行翻转，请你返回翻转后的链表。 k 是一个正整数，它的值小于或等于链表的长度。 如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。 进阶： 你可以设计一个只使用常数额外空间的算法来解决此问题吗？你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。 示例 1： 输入：head &#x3D; [1,2,3,4,5], k &#x3D; 2输
         </div>
       </a>
 
@@ -307,54 +635,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-21 21:07" pubdate>
-              2021-07-21
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
-            
-              <a href="/tags/%E5%A0%86/">#堆</a>
-            
-              <a href="/tags/topK/">#topK</a>
-            
-              <a href="/tags/%E6%8E%92%E5%BA%8F/">#排序</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/07/20/leetcode-92-fan-zhuan-lian-biao-ii/" target="_self">
-          LeetCode 92. 反转链表 II
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/07/20/leetcode-92-fan-zhuan-lian-biao-ii/" target="_self">
-        <div>
-          反转链表的指定部分
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-20 12:13" pubdate>
-              2021-07-20
+            <time datetime="2021-07-29 10:05" pubdate>
+              2021-07-29
             </time>
           </div>
         
@@ -371,295 +653,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/07/18/linux-select-de-cuo-wu-shi-yong-an-li/" target="_self">
-          linux select 的错误使用案例
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/07/18/linux-select-de-cuo-wu-shi-yong-an-li/" target="_self">
-        <div>
-          select 错误使用记录，加深对 select 的理解
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-18 17:54" pubdate>
-              2021-07-18
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/">#多路复用</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/07/01/leetcode-516-zui-chang-hui-wen-zi-xu-lie/" target="_self">
-          LeetCode 516. 最长回文子序列
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/07/01/leetcode-516-zui-chang-hui-wen-zi-xu-lie/" target="_self">
-        <div>
-          给定一个字符串 s ，找到其中最长的回文子序列，并返回该序列的长度
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-07-01 09:42" pubdate>
-              2021-07-01
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">#动态规划</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/06/29/leetcode-5-zui-chang-hui-wen-zi-chuan/" target="_self">
-          LeetCode 5. 最长回文子串
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/06/29/leetcode-5-zui-chang-hui-wen-zi-chuan/" target="_self">
-        <div>
-          给你一个字符串 s，找到 s 中最长的回文子串。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-06-29 21:43" pubdate>
-              2021-06-29
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">#动态规划</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/06/23/leetcode-43-zi-fu-chuan-xiang-cheng/" target="_self">
-          LeetCode 43. 字符串相乘
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/06/23/leetcode-43-zi-fu-chuan-xiang-cheng/" target="_self">
-        <div>
-          给定两个以字符串形式表示的非负整数 num1 和 num2，返回 num1 和 num2 的乘积，它们的乘积也表示为字符串形式。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-06-23 11:18" pubdate>
-              2021-06-23
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/">#字符串</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/06/16/leetcode-460-lfu-huan-cun/" target="_self">
-          LeetCode 460. LFU 缓存
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/06/16/leetcode-460-lfu-huan-cun/" target="_self">
-        <div>
-          最不经常使用（LFU）缓存算法
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-06-16 21:52" pubdate>
-              2021-06-16
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/LFU/">#LFU</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/06/15/25-pi-ma-de-jiao-zhu/" target="_self">
-          25匹马的角逐
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/06/15/25-pi-ma-de-jiao-zhu/" target="_self">
-        <div>
-          25 匹马，5条跑道，每个跑道最多能有 1 匹马进行比赛，（就是说最多同时可以有 5 匹马一起比赛），不能使用计时器，且每匹马的速度都很稳定（意思是在上一场比赛中 A 马比 B 马快，则下一场比赛中A马依然比 B 马快），问最少比多少次能比出前3名和前5名？  前 3 名首先将 25 匹马分成 5 组，每组 5 匹马。 1 - 5 次每组分别进行比赛，选出每组的第一名，假设总体比赛情况为：
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-06-15 11:18" pubdate>
-              2021-06-15
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E6%99%BA%E5%8A%9B%E9%A2%98/">#智力题</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/06/04/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/" target="_self">
-          【两万字长文带你深入Go语言GC源码——腾讯技术工程】阅读笔记
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/06/04/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/" target="_self">
-        <div>
-          作者：luozhiyun博客：https://www.luozhiyun.com/archives/475本文使用的 Go 的源码1.15.7  原文地址：https://www.luozhiyun.com/archives/475 1. 三色标记法1.1 三种颜色 黑色：该对象已经被标记过了，且该对象下的属性【这里不是很明白，是指该对象引用的对象？？】也全部都被标记过了（程序所需要的对象）
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-06-04 21:29" pubdate>
-              2021-06-04
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/go/">#go</a>
-            
-              <a href="/tags/gc/">#gc</a>
-            
-              <a href="/tags/%E7%AC%94%E8%AE%B0/">#笔记</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/11/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/#board">10</a><a class="page-number" href="/page/11/#board">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/#board">13</a><a class="page-number" href="/page/14/#board">14</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/#board">17</a><a class="extend next" rel="next" href="/page/13/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/11/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/#board">10</a><a class="page-number" href="/page/11/#board">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/#board">13</a><a class="page-number" href="/page/14/#board">14</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/#board">18</a><a class="extend next" rel="next" href="/page/13/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

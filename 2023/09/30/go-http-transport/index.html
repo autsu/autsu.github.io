@@ -1,0 +1,745 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="涉及到的内容非常多 关键的 struct transferWriter：负责将 Request 或 Response 的内容写入到 http 底层的 TCP 连接（更准确的说法是根据 go http 库里面的 Request 和 Response 这两个 struct 的信息，构建出相应的 http 请求和响应报文，然后写入到连接）  Request：  persistConn：   暂时不关注的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go net&#x2F;http Transport 源码阅读">
+<meta property="og:url" content="https://autsu.github.io/2023/09/30/go-http-transport/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="涉及到的内容非常多 关键的 struct transferWriter：负责将 Request 或 Response 的内容写入到 http 底层的 TCP 连接（更准确的说法是根据 go http 库里面的 Request 和 Response 这两个 struct 的信息，构建出相应的 http 请求和响应报文，然后写入到连接）  Request：  persistConn：   暂时不关注的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-30T14:36:41.000Z">
+<meta property="article:modified_time" content="2023-10-06T09:37:59.118Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="go">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Go net/http Transport 源码阅读 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Go net/http Transport 源码阅读"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-09-30 22:36" pubdate>
+          2023年9月30日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          11k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          91 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Go net/http Transport 源码阅读</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>涉及到的内容非常多</p>
+<h1 id="关键的-struct"><a href="#关键的-struct" class="headerlink" title="关键的 struct"></a>关键的 struct</h1><ul>
+<li><p>transferWriter：负责将 Request 或 Response 的内容写入到 http 底层的 TCP 连接（更准确的说法是根据 go http 库里面的 Request 和 Response 这两个 struct 的信息，构建出相应的 http 请求和响应报文，然后写入到连接）</p>
+</li>
+<li><p>Request：</p>
+</li>
+<li><p>persistConn：</p>
+</li>
+</ul>
+<h1 id="暂时不关注的地方"><a href="#暂时不关注的地方" class="headerlink" title="暂时不关注的地方"></a>暂时不关注的地方</h1><ol>
+<li>proxy 相关</li>
+<li>TLS 相关</li>
+<li>HTTP2 相关</li>
+<li>http trace 相关</li>
+</ol>
+<h1 id="transferWriter"><a href="#transferWriter" class="headerlink" title="transferWriter"></a>transferWriter</h1><h2 id="writeHeader"><a href="#writeHeader" class="headerlink" title="writeHeader"></a>writeHeader</h2><p>根据 t 的信息，构建出 http request 的 header 部分，并写入到 w</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 根据 t 的信息，构建出 http request 的 header 部分，并写入到 w</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(t *transferWriter)</span></span> writeHeader(w io.Writer, trace *httptrace.ClientTrace) <span class="hljs-type">error</span> &#123;<br>	<span class="hljs-keyword">if</span> t.Close &amp;&amp; !hasToken(t.Header.get(<span class="hljs-string">&quot;Connection&quot;</span>), <span class="hljs-string">&quot;close&quot;</span>) &#123;<br>		<span class="hljs-keyword">if</span> _, err := io.WriteString(w, <span class="hljs-string">&quot;Connection: close\r\n&quot;</span>); err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">return</span> err<br>		&#125;<br>		<span class="hljs-keyword">if</span> trace != <span class="hljs-literal">nil</span> &amp;&amp; trace.WroteHeaderField != <span class="hljs-literal">nil</span> &#123;<br>			trace.WroteHeaderField(<span class="hljs-string">&quot;Connection&quot;</span>, []<span class="hljs-type">string</span>&#123;<span class="hljs-string">&quot;close&quot;</span>&#125;)<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-comment">// Write Content-Length and/or Transfer-Encoding whose values are a</span><br>	<span class="hljs-comment">// function of the sanitized field triple (Body, ContentLength,</span><br>	<span class="hljs-comment">// TransferEncoding)</span><br>	<span class="hljs-comment">// 下面就是根据 t 的信息去填充一些请求头，比如 Content-Length and/or Transfer-Encoding </span><br>	<br>	<span class="hljs-comment">// 判断请求头是否需要携带 Content-Length</span><br>	<span class="hljs-keyword">if</span> t.shouldSendContentLength() &#123;<br>		<span class="hljs-keyword">if</span> _, err := io.WriteString(w, <span class="hljs-string">&quot;Content-Length: &quot;</span>); err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">return</span> err<br>		&#125;<br>		<span class="hljs-keyword">if</span> _, err := io.WriteString(w, strconv.FormatInt(t.ContentLength, <span class="hljs-number">10</span>)+<span class="hljs-string">&quot;\r\n&quot;</span>); err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">return</span> err<br>		&#125;<br>		<span class="hljs-keyword">if</span> trace != <span class="hljs-literal">nil</span> &amp;&amp; trace.WroteHeaderField != <span class="hljs-literal">nil</span> &#123;<br>			trace.WroteHeaderField(<span class="hljs-string">&quot;Content-Length&quot;</span>, []<span class="hljs-type">string</span>&#123;strconv.FormatInt(t.ContentLength, <span class="hljs-number">10</span>)&#125;)<br>		&#125;<br>	&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> chunked(t.TransferEncoding) &#123;<br>		<span class="hljs-keyword">if</span> _, err := io.WriteString(w, <span class="hljs-string">&quot;Transfer-Encoding: chunked\r\n&quot;</span>); err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">return</span> err<br>		&#125;<br>		<span class="hljs-keyword">if</span> trace != <span class="hljs-literal">nil</span> &amp;&amp; trace.WroteHeaderField != <span class="hljs-literal">nil</span> &#123;<br>			trace.WroteHeaderField(<span class="hljs-string">&quot;Transfer-Encoding&quot;</span>, []<span class="hljs-type">string</span>&#123;<span class="hljs-string">&quot;chunked&quot;</span>&#125;)<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-comment">// Write Trailer header</span><br>	<span class="hljs-comment">// http trailer header，这个具体可以查一下，大致是得配合 http chunckd 使用，在发送完 body 后（也就是发送 0\r\n）</span><br>	<span class="hljs-comment">// 可以再接着发送 trailer 里面设置的 header</span><br>	<span class="hljs-comment">// 具体可以看这篇博客：https://github.com/ma6174/blog/issues/22</span><br>	<span class="hljs-keyword">if</span> t.Trailer != <span class="hljs-literal">nil</span> &#123;<br>		keys := <span class="hljs-built_in">make</span>([]<span class="hljs-type">string</span>, <span class="hljs-number">0</span>, <span class="hljs-built_in">len</span>(t.Trailer))<br>		<span class="hljs-keyword">for</span> k := <span class="hljs-keyword">range</span> t.Trailer &#123;<br>			k = CanonicalHeaderKey(k)<br>			<span class="hljs-keyword">switch</span> k &#123;<br>			<span class="hljs-keyword">case</span> <span class="hljs-string">&quot;Transfer-Encoding&quot;</span>, <span class="hljs-string">&quot;Trailer&quot;</span>, <span class="hljs-string">&quot;Content-Length&quot;</span>:<br>				<span class="hljs-keyword">return</span> badStringError(<span class="hljs-string">&quot;invalid Trailer key&quot;</span>, k)<br>			&#125;<br>			keys = <span class="hljs-built_in">append</span>(keys, k)<br>		&#125;<br>		<span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(keys) &gt; <span class="hljs-number">0</span> &#123;<br>			sort.Strings(keys)<br>			<span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> could do better allocation-wise here, but trailers are rare,</span><br>			<span class="hljs-comment">// so being lazy for now.</span><br>			<span class="hljs-keyword">if</span> _, err := io.WriteString(w, <span class="hljs-string">&quot;Trailer: &quot;</span>+strings.Join(keys, <span class="hljs-string">&quot;,&quot;</span>)+<span class="hljs-string">&quot;\r\n&quot;</span>); err != <span class="hljs-literal">nil</span> &#123;<br>				<span class="hljs-keyword">return</span> err<br>			&#125;<br>			<span class="hljs-keyword">if</span> trace != <span class="hljs-literal">nil</span> &amp;&amp; trace.WroteHeaderField != <span class="hljs-literal">nil</span> &#123;<br>				trace.WroteHeaderField(<span class="hljs-string">&quot;Trailer&quot;</span>, keys)<br>			&#125;<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br><br><br><span class="hljs-comment">// 判断请求头是否需要携带 Content-Length</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(t *transferWriter)</span></span> shouldSendContentLength() <span class="hljs-type">bool</span> &#123;<br>	<span class="hljs-comment">// 使用 Transfer-Encoding: chunked 头部来分块传输请求主体，而不需要提前知道主体的总长度。这时不需要发送 Content-Length 头部</span><br>	<span class="hljs-keyword">if</span> chunked(t.TransferEncoding) &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span><br>	&#125;<br>	<span class="hljs-keyword">if</span> t.ContentLength &gt; <span class="hljs-number">0</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span><br>	&#125;<br>	<span class="hljs-keyword">if</span> t.ContentLength &lt; <span class="hljs-number">0</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span><br>	&#125;<br>	<span class="hljs-comment">// Many servers expect a Content-Length for these methods</span><br>	<span class="hljs-keyword">if</span> t.Method == <span class="hljs-string">&quot;POST&quot;</span> || t.Method == <span class="hljs-string">&quot;PUT&quot;</span> || t.Method == <span class="hljs-string">&quot;PATCH&quot;</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span><br>	&#125;<br>	<span class="hljs-comment">// Transfer-Encoding: identity 表示消息主体没有经过任何编码，它是原始的、未经压缩或分块处理的数据。</span><br>	<span class="hljs-keyword">if</span> t.ContentLength == <span class="hljs-number">0</span> &amp;&amp; isIdentity(t.TransferEncoding) &#123;<br>		<span class="hljs-keyword">if</span> t.Method == <span class="hljs-string">&quot;GET&quot;</span> || t.Method == <span class="hljs-string">&quot;HEAD&quot;</span> &#123;<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span><br>		&#125;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span><br>	&#125;<br><br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="Transport"><a href="#Transport" class="headerlink" title="Transport"></a>Transport</h1><h2 id="连接池相关"><a href="#连接池相关" class="headerlink" title="连接池相关"></a>连接池相关</h2><h3 id="tryPutIdleConn"><a href="#tryPutIdleConn" class="headerlink" title="tryPutIdleConn"></a>tryPutIdleConn</h3><h3 id="queueForIdleConn"><a href="#queueForIdleConn" class="headerlink" title="queueForIdleConn"></a>queueForIdleConn</h3><h3 id="dialConn"><a href="#dialConn" class="headerlink" title="dialConn"></a>dialConn</h3><h2 id="roundTrip"><a href="#roundTrip" class="headerlink" title="roundTrip"></a>roundTrip</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// roundTrip implements a RoundTripper over HTTP.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(t *Transport)</span></span> roundTrip(req *Request) (*Response, <span class="hljs-type">error</span>) &#123;<br>	t.nextProtoOnce.Do(t.onceSetNextProtoDefaults)<br>	ctx := req.Context()<br>	trace := httptrace.ContextClientTrace(ctx)<br><br>	<span class="hljs-keyword">if</span> req.URL == <span class="hljs-literal">nil</span> &#123;<br>		req.closeBody()<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, errors.New(<span class="hljs-string">&quot;http: nil Request.URL&quot;</span>)<br>	&#125;<br>	<span class="hljs-keyword">if</span> req.Header == <span class="hljs-literal">nil</span> &#123;<br>		req.closeBody()<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, errors.New(<span class="hljs-string">&quot;http: nil Request.Header&quot;</span>)<br>	&#125;<br>	scheme := req.URL.Scheme<br>	isHTTP := scheme == <span class="hljs-string">&quot;http&quot;</span> || scheme == <span class="hljs-string">&quot;https&quot;</span><br>  <span class="hljs-comment">// 如果 req.scheme 是 http，那么需要校验请求头 key/value 的有效性，即是否符合 http 规范</span><br>	<span class="hljs-keyword">if</span> isHTTP &#123;<br>		<span class="hljs-keyword">for</span> k, vv := <span class="hljs-keyword">range</span> req.Header &#123;<br>			<span class="hljs-keyword">if</span> !httpguts.ValidHeaderFieldName(k) &#123;<br>				req.closeBody()<br>				<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, fmt.Errorf(<span class="hljs-string">&quot;net/http: invalid header field name %q&quot;</span>, k)<br>			&#125;<br>			<span class="hljs-keyword">for</span> _, v := <span class="hljs-keyword">range</span> vv &#123;<br>				<span class="hljs-keyword">if</span> !httpguts.ValidHeaderFieldValue(v) &#123;<br>					req.closeBody()<br>					<span class="hljs-comment">// Don&#x27;t include the value in the error, because it may be sensitive.</span><br>					<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, fmt.Errorf(<span class="hljs-string">&quot;net/http: invalid header field value for %q&quot;</span>, k)<br>				&#125;<br>			&#125;<br>		&#125;<br>	&#125;<br><br>	origReq := req<br>	cancelKey := cancelKey&#123;origReq&#125;<br>  <span class="hljs-comment">// 没搞明白 setupRewindBody 这个函数的作用，先不管了</span><br>	req = setupRewindBody(req)<br><br>  <span class="hljs-comment">// 判断是否使用注册的 RoundTrip 来处理对应的 scheme</span><br>  <span class="hljs-comment">// 关于这块这里可以移步 RegisterProtocol 这一节，简单的说，就是 transport 提供了一个 RegisterProtocol 方法，可以</span><br>  <span class="hljs-comment">// 让用户自行设定 scheme 对应的 RoundTrip，然后下面这段逻辑就是判断是否当前 req 的 scheme 是否需要走用户自行设定的</span><br>  <span class="hljs-comment">// RoundTrip 的，不过里面还有一些细节处理，比如如果 scheme 是 https，或者是 websocket 升级的请求（即 header 里拥有 </span><br>  <span class="hljs-comment">// Connection: Upgrade 和 Upgrade: websocket 这两个 kv 的请求）是不会走自定义 RoundTrip 的</span><br>  <span class="hljs-comment">// （为啥 websocket 升级请求不走 RounTrip？）</span><br>	<span class="hljs-keyword">if</span> altRT := t.alternateRoundTripper(req); altRT != <span class="hljs-literal">nil</span> &#123;<br>    <span class="hljs-comment">// 有的话，调用自定义的 RoundTrip() 对 req 进行处理，并且返回 resp</span><br>		<span class="hljs-keyword">if</span> resp, err := altRT.RoundTrip(req); err != ErrSkipAltProtocol &#123;<br>			<span class="hljs-keyword">return</span> resp, err<br>		&#125;<br>		<span class="hljs-keyword">var</span> err <span class="hljs-type">error</span><br>		req, err = rewindBody(req)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>		&#125;<br>	&#125;<br>  <span class="hljs-comment">// 后续仅处理 URL scheme 为 http 或 https 的连接</span><br>	<span class="hljs-keyword">if</span> !isHTTP &#123;<br>		req.closeBody()<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, badStringError(<span class="hljs-string">&quot;unsupported protocol scheme&quot;</span>, scheme)<br>	&#125;<br>  <span class="hljs-comment">// 做一些校验，不多赘述</span><br>	<span class="hljs-keyword">if</span> req.Method != <span class="hljs-string">&quot;&quot;</span> &amp;&amp; !validMethod(req.Method) &#123;<br>		req.closeBody()<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, fmt.Errorf(<span class="hljs-string">&quot;net/http: invalid method %q&quot;</span>, req.Method)<br>	&#125;<br>	<span class="hljs-keyword">if</span> req.URL.Host == <span class="hljs-string">&quot;&quot;</span> &#123;<br>		req.closeBody()<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, errors.New(<span class="hljs-string">&quot;http: no Host in request URL&quot;</span>)<br>	&#125;<br><br>	<span class="hljs-keyword">for</span> &#123;<br>		<span class="hljs-keyword">select</span> &#123;<br>		<span class="hljs-keyword">case</span> &lt;-ctx.Done():<br>			req.closeBody()<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, ctx.Err()<br>		<span class="hljs-keyword">default</span>:<br>		&#125;<br><br>		<span class="hljs-comment">// treq gets modified by roundTrip, so we need to recreate for each retry.</span><br>		treq := &amp;transportRequest&#123;Request: req, trace: trace, cancelKey: cancelKey&#125;<br>		cm, err := t.connectMethodForRequest(treq)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			req.closeBody()<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>		&#125;<br><br>		<span class="hljs-comment">// Get the cached or newly-created connection to either the</span><br>		<span class="hljs-comment">// host (for http or https), the http proxy, or the http proxy</span><br>		<span class="hljs-comment">// pre-CONNECTed to https server. In any case, we&#x27;ll be ready</span><br>		<span class="hljs-comment">// to send it requests.</span><br>		pconn, err := t.getConn(treq, cm)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			t.setReqCanceler(cancelKey, <span class="hljs-literal">nil</span>)<br>			req.closeBody()<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>		&#125;<br><br>		<span class="hljs-keyword">var</span> resp *Response<br>		<span class="hljs-keyword">if</span> pconn.alt != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-comment">// HTTP/2 path.</span><br>			t.setReqCanceler(cancelKey, <span class="hljs-literal">nil</span>) <span class="hljs-comment">// not cancelable with CancelRequest</span><br>			resp, err = pconn.alt.RoundTrip(req)<br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>			resp, err = pconn.roundTrip(treq)<br>		&#125;<br>		<span class="hljs-keyword">if</span> err == <span class="hljs-literal">nil</span> &#123;<br>			resp.Request = origReq<br>			<span class="hljs-keyword">return</span> resp, <span class="hljs-literal">nil</span><br>		&#125;<br><br>		<span class="hljs-comment">// Failed. Clean up and determine whether to retry.</span><br>		<span class="hljs-keyword">if</span> http2isNoCachedConnError(err) &#123;<br>			<span class="hljs-keyword">if</span> t.removeIdleConn(pconn) &#123;<br>				t.decConnsPerHost(pconn.cacheKey)<br>			&#125;<br>		&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> !pconn.shouldRetryRequest(req, err) &#123;<br>			<span class="hljs-comment">// Issue 16465: return underlying net.Conn.Read error from peek,</span><br>			<span class="hljs-comment">// as we&#x27;ve historically done.</span><br>			<span class="hljs-keyword">if</span> e, ok := err.(nothingWrittenError); ok &#123;<br>				err = e.<span class="hljs-type">error</span><br>			&#125;<br>			<span class="hljs-keyword">if</span> e, ok := err.(transportReadFromServerError); ok &#123;<br>				err = e.err<br>			&#125;<br>			<span class="hljs-keyword">if</span> b, ok := req.Body.(*readTrackingBody); ok &amp;&amp; !b.didClose &#123;<br>				<span class="hljs-comment">// Issue 49621: Close the request body if pconn.roundTrip</span><br>				<span class="hljs-comment">// didn&#x27;t do so already. This can happen if the pconn</span><br>				<span class="hljs-comment">// write loop exits without reading the write request.</span><br>				req.closeBody()<br>			&#125;<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>		&#125;<br>		testHookRoundTripRetried()<br><br>		<span class="hljs-comment">// Rewind the body if we&#x27;re able to.</span><br>		req, err = rewindBody(req)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="getConn"><a href="#getConn" class="headerlink" title="getConn"></a>getConn</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// getConn dials and creates a new persistConn to the target as</span><br><span class="hljs-comment">// specified in the connectMethod. This includes doing a proxy CONNECT</span><br><span class="hljs-comment">// and/or setting up TLS.  If this doesn&#x27;t return an error, the persistConn</span><br><span class="hljs-comment">// is ready to write requests to.</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(t *Transport)</span></span> getConn(treq *transportRequest, cm connectMethod) (pc *persistConn, err <span class="hljs-type">error</span>) &#123;<br>	req := treq.Request<br>	trace := treq.trace<br>	ctx := req.Context()<br>	<span class="hljs-keyword">if</span> trace != <span class="hljs-literal">nil</span> &amp;&amp; trace.GetConn != <span class="hljs-literal">nil</span> &#123;<br>		trace.GetConn(cm.addr())<br>	&#125;<br><br>	w := &amp;wantConn&#123;<br>		cm:         cm,<br>		key:        cm.key(),<br>		ctx:        ctx,<br>		ready:      <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-keyword">struct</span>&#123;&#125;, <span class="hljs-number">1</span>),<br>		beforeDial: testHookPrePendingDial,<br>		afterDial:  testHookPostPendingDial,<br>	&#125;<br>	<span class="hljs-keyword">defer</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			w.cancel(t, err)<br>		&#125;<br>	&#125;()<br><br>	<span class="hljs-comment">// Queue for idle connection.</span><br>	<span class="hljs-keyword">if</span> delivered := t.queueForIdleConn(w); delivered &#123;<br>		pc := w.pc<br>		<span class="hljs-comment">// Trace only for HTTP/1.</span><br>		<span class="hljs-comment">// HTTP/2 calls trace.GotConn itself.</span><br>		<span class="hljs-keyword">if</span> pc.alt == <span class="hljs-literal">nil</span> &amp;&amp; trace != <span class="hljs-literal">nil</span> &amp;&amp; trace.GotConn != <span class="hljs-literal">nil</span> &#123;<br>			trace.GotConn(pc.gotIdleConnTrace(pc.idleAt))<br>		&#125;<br>		<span class="hljs-comment">// set request canceler to some non-nil function so we</span><br>		<span class="hljs-comment">// can detect whether it was cleared between now and when</span><br>		<span class="hljs-comment">// we enter roundTrip</span><br>		t.setReqCanceler(treq.cancelKey, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(<span class="hljs-type">error</span>)</span></span> &#123;&#125;)<br>		<span class="hljs-keyword">return</span> pc, <span class="hljs-literal">nil</span><br>	&#125;<br><br>	cancelc := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-type">error</span>, <span class="hljs-number">1</span>)<br>	t.setReqCanceler(treq.cancelKey, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(err <span class="hljs-type">error</span>)</span></span> &#123; cancelc &lt;- err &#125;)<br><br>	<span class="hljs-comment">// Queue for permission to dial.</span><br>	t.queueForDial(w)<br><br>	<span class="hljs-comment">// Wait for completion or cancellation.</span><br>	<span class="hljs-keyword">select</span> &#123;<br>	<span class="hljs-keyword">case</span> &lt;-w.ready:<br>		<span class="hljs-comment">// Trace success but only for HTTP/1.</span><br>		<span class="hljs-comment">// HTTP/2 calls trace.GotConn itself.</span><br>		<span class="hljs-keyword">if</span> w.pc != <span class="hljs-literal">nil</span> &amp;&amp; w.pc.alt == <span class="hljs-literal">nil</span> &amp;&amp; trace != <span class="hljs-literal">nil</span> &amp;&amp; trace.GotConn != <span class="hljs-literal">nil</span> &#123;<br>			trace.GotConn(httptrace.GotConnInfo&#123;Conn: w.pc.conn, Reused: w.pc.isReused()&#125;)<br>		&#125;<br>		<span class="hljs-keyword">if</span> w.err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-comment">// If the request has been canceled, that&#x27;s probably</span><br>			<span class="hljs-comment">// what caused w.err; if so, prefer to return the</span><br>			<span class="hljs-comment">// cancellation error (see golang.org/issue/16049).</span><br>			<span class="hljs-keyword">select</span> &#123;<br>			<span class="hljs-keyword">case</span> &lt;-req.Cancel:<br>				<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, errRequestCanceledConn<br>			<span class="hljs-keyword">case</span> &lt;-req.Context().Done():<br>				<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, req.Context().Err()<br>			<span class="hljs-keyword">case</span> err := &lt;-cancelc:<br>				<span class="hljs-keyword">if</span> err == errRequestCanceled &#123;<br>					err = errRequestCanceledConn<br>				&#125;<br>				<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>			<span class="hljs-keyword">default</span>:<br>				<span class="hljs-comment">// return below</span><br>			&#125;<br>		&#125;<br>		<span class="hljs-keyword">return</span> w.pc, w.err<br>	<span class="hljs-keyword">case</span> &lt;-req.Cancel:<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, errRequestCanceledConn<br>	<span class="hljs-keyword">case</span> &lt;-req.Context().Done():<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, req.Context().Err()<br>	<span class="hljs-keyword">case</span> err := &lt;-cancelc:<br>		<span class="hljs-keyword">if</span> err == errRequestCanceled &#123;<br>			err = errRequestCanceledConn<br>		&#125;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="persistConn"><a href="#persistConn" class="headerlink" title="persistConn"></a>persistConn</h1><h2 id="readLoop"><a href="#readLoop" class="headerlink" title="readLoop"></a>readLoop</h2><h2 id="writeLoop"><a href="#writeLoop" class="headerlink" title="writeLoop"></a>writeLoop</h2><h2 id="roundTrip-1"><a href="#roundTrip-1" class="headerlink" title="roundTrip"></a>roundTrip</h2><p>一个 http 事务的流程，接收一个 request，返回一个 response</p>
+<h1 id="wantConnQueue"><a href="#wantConnQueue" class="headerlink" title="wantConnQueue"></a>wantConnQueue</h1><h1 id="wantConn"><a href="#wantConn" class="headerlink" title="wantConn"></a>wantConn</h1><h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><h2 id="RegisterProtocol"><a href="#RegisterProtocol" class="headerlink" title="RegisterProtocol"></a>RegisterProtocol</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;io&quot;</span><br>	<span class="hljs-string">&quot;net/http&quot;</span><br>	<span class="hljs-string">&quot;strings&quot;</span><br>)<br><br><span class="hljs-keyword">type</span> fooProto <span class="hljs-keyword">struct</span>&#123;&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(fooProto)</span></span> RoundTrip(req *http.Request) (*http.Response, <span class="hljs-type">error</span>) &#123;<br>	res := &amp;http.Response&#123;<br>		Status:     <span class="hljs-string">&quot;200 OK&quot;</span>,<br>		StatusCode: <span class="hljs-number">200</span>,<br>		Header:     <span class="hljs-built_in">make</span>(http.Header),<br>		Body:       io.NopCloser(strings.NewReader(<span class="hljs-string">&quot;You wanted &quot;</span> + req.URL.String())),<br>	&#125;<br>	<span class="hljs-keyword">return</span> res, <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	tr := &amp;http.Transport&#123;&#125;<br>	c := &amp;http.Client&#123;Transport: tr&#125;<br>	<span class="hljs-comment">// 注册一个新的协议 foo 到 transport，并且用 fooProto 这个 RoundTripper 来处理该协议</span><br>	tr.RegisterProtocol(<span class="hljs-string">&quot;foo&quot;</span>, fooProto&#123;&#125;)<br>	<span class="hljs-comment">// 请求的 url scheme 为 foo，这样就会走我们自定义的 RoundTripper 了</span><br>	res, err := c.Get(<span class="hljs-string">&quot;foo://bar.com/path&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-built_in">panic</span>(err)<br>	&#125;<br>	bodyb, err := io.ReadAll(res.Body)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-built_in">panic</span>(err)<br>	&#125;<br>	body := <span class="hljs-type">string</span>(bodyb)<br>	<span class="hljs-keyword">if</span> e := <span class="hljs-string">&quot;You wanted foo://bar.com/path&quot;</span>; body != e &#123;<br>		fmt.Errorf(<span class="hljs-string">&quot;got response %q, want %q&quot;</span>, body, e)<br>	&#125;<br>	fmt.Println(body)<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/go/">#go</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Go net/http Transport 源码阅读</div>
+      <div>https://autsu.github.io/2023/09/30/go-http-transport/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年9月30日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/10/29/k8s-patch-md/" title="k8s patch">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">k8s patch</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/08/27/mac-clashx-bridge-mode/" title="Mac + Clashx Pro 构建网关旁路由">
+                        <span class="hidden-mobile">Mac + Clashx Pro 构建网关旁路由</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -62,7 +62,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -245,15 +245,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/17/goiocopy-de-keng/" target="_self">
-          go：http.Request.Body 第二次读取为空 
+        <a href="/2021/06/23/leetcode-43-zi-fu-chuan-xiang-cheng/" target="_self">
+          LeetCode 43. 字符串相乘
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/17/goiocopy-de-keng/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/06/23/leetcode-43-zi-fu-chuan-xiang-cheng/" target="_self">
         <div>
-          有如下代码，先使用 io.Copy 将 request.Body copy 到 stdout 标准输出，再使用 io.ReadAll 再次读取 request.Body： 1234567891011121314151617181920212223242526package mainimport (	&quot;fmt&quot;	&quot;net/http&quot;	&quot;io&quot
+          给定两个以字符串形式表示的非负整数 num1 和 num2，返回 num1 和 num2 的乘积，它们的乘积也表示为字符串形式。
         </div>
       </a>
 
@@ -261,8 +261,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-17 13:01" pubdate>
-              2021-04-17
+            <time datetime="2021-06-23 11:18" pubdate>
+              2021-06-23
             </time>
           </div>
         
@@ -270,254 +270,6 @@
         
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/issues/">#issues</a>
-            
-              <a href="/tags/go/">#go</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/04/16/goioutilreadall-yin-fa-de-out-of-memory/" target="_self">
-          go：ioutil.ReadAll() 引发的 out of memory 
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/goioutilreadall-yin-fa-de-out-of-memory/" target="_self">
-        <div>
-          情景某天突发奇想，写了一个在线阅读的 http 小程序，当访问某一路由时会读取电子书文件，并写入到 response 中，其中封装了一个读取文件的函数： 1234567891011121314func ReadFile(src string) ([]byte, error) &#123;	file, err := os.Open(src)	if err != nil &#123;		return
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 22:01" pubdate>
-              2021-04-16
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/issues/">#issues</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/04/16/2021-3-13-byte-array/" target="_self">
-          go 字节数组错误：\u0001
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-13-byte-array/" target="_self">
-        <div>
-          在做 压缩字符串 这道题时，提交的输出结果十分诡异，如下： 输入： [“a”,”a”,”b”,”b”,”c”,”c”,”c”] 输出： [“a”,”\u0002”,”b”,”\u0002”,”c”,”\u0003”] 预期： [“a”,”2”,”b”,”2”,”c”,”3”] 可以看到结果中的数字部分是对的，但是多了 \u000 这部分，这个结果令我百思不得其解，在 ide 中运行时正常的，但在力
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 19:48" pubdate>
-              2021-04-16
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/issues/">#issues</a>
-            
-              <a href="/tags/go/">#go</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/04/16/2021-4-10-golang-gdb/" target="_self">
-          Golang GDB 调试提示 No symbol table is loaded. Use the &#34;file&#34; command
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-4-10-golang-gdb/" target="_self">
-        <div>
-          背景：  本地 MacOS 上通过 GDB 调试 golang 程序，结果提示 No symbol table is loaded. Use the “file”command.  解决方法：  打包时加上 -ldflags&#x3D;-compressdwarf&#x3D;false 参数即可 比如在作者本地就是 go build -gcflags “-N -l”-ldflags&#x3D;-c
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 19:48" pubdate>
-              2021-04-16
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/gdb/">#gdb</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/04/16/2021-4-14-whats-different-in-cpp-iterator-var/" target="_self">
-          c++：iterator.begin() 和 *iterator.begin() 的区别
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-4-14-whats-different-in-cpp-iterator-var/" target="_self">
-        <div>
-          情景描述有如下 c++ 代码： 123456789101112131415161718192021#include &lt;iostream&gt;#include &lt;vector&gt;int main() &#123;    std::vector&lt;int&gt; vec&#123;1, 2, 3, 4, 5&#125;;    auto b = vec.begin();    *
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 19:48" pubdate>
-              2021-04-16
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/c/">#c++</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/04/16/2020-10-17-etcd-error/" target="_self">
-          etcd 错误：context deadline exceeded
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2020-10-17-etcd-error/" target="_self">
-        <div>
-          etcd 远程操作失败：Error: context deadline exceeded在服务器启动 etcd，并在本地机器通过 etcdctl –endpoints&#x3D;http://ip:2379 put name “123” 命令，在服务器的 etcd 中创建一对键值对， 如下图所示：  服务端 etcd 的启动命令如下：  但是在执行 etcdctl 命令后发生了错误：  经过网上查
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 19:46" pubdate>
-              2021-04-16
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/issues/">#issues</a>
-            
-              <a href="/tags/etcd/">#etcd</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/04/16/2021-3-13-ctcl-0106-compress-string/" target="_self">
-          面试题 01.06. 字符串压缩
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-13-ctcl-0106-compress-string/" target="_self">
-        <div>
-          题目描述 字符串压缩。利用字符重复出现的次数，编写一种方法，实现基本的字符串压缩功能。比如，字符串aabcccccaaa会变为a2b1c5a3。若“压缩”后的字符串没有变短，则返回原先的字符串。你可以假设字符串中只包含大小写英文字母（a至z）。 示例1: 输入：”aabcccccaaa” 输出：”a2b1c5a3”示例2: 输入：”abbccd” 输出：”abbccd” 解释：”abbccd”压缩
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 19:41" pubdate>
-              2021-04-16
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%91%98%E9%9D%A2%E8%AF%95%E9%87%91%E5%85%B8/">#程序员面试金典</a>
             
               <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/">#字符串</a>
             
@@ -533,15 +285,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/16/2021-3-17-offer-53-search-sort-array1/" target="_self">
-          剑指 Offer 53 - I. 在排序数组中查找数字 I
+        <a href="/2021/06/16/leetcode-460-lfu-huan-cun/" target="_self">
+          LeetCode 460. LFU 缓存
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-17-offer-53-search-sort-array1/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/06/16/leetcode-460-lfu-huan-cun/" target="_self">
         <div>
-          题目描述 统计一个数字在排序数组中出现的次数。 示例 1: 输入: nums &#x3D; [5,7,7,8,8,10], target &#x3D; 8输出: 2示例 2: 输入: nums &#x3D; [5,7,7,8,8,10], target &#x3D; 6输出: 0 限制： 0 &lt;&#x3D; 数组长度 &lt;&#x3D; 50000  方法1：二分查找这道题最简单粗暴的方法
+          最不经常使用（LFU）缓存算法
         </div>
       </a>
 
@@ -549,8 +301,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 19:41" pubdate>
-              2021-04-16
+            <time datetime="2021-06-16 21:52" pubdate>
+              2021-06-16
             </time>
           </div>
         
@@ -559,11 +311,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E6%95%B0%E7%BB%84/">#数组</a>
-            
-              <a href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">#二分查找</a>
-            
-              <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
+              <a href="/tags/LFU/">#LFU</a>
             
           </div>
         
@@ -577,15 +325,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/16/2021-3-23-offer-52-get-intersection-node/" target="_self">
-          剑指 Offer 52. 两个链表的第一个公共节点
+        <a href="/2021/06/15/25-pi-ma-de-jiao-zhu/" target="_self">
+          25匹马的角逐
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-23-offer-52-get-intersection-node/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/06/15/25-pi-ma-de-jiao-zhu/" target="_self">
         <div>
-          题目描述 输入两个链表，找出它们的第一个公共节点。	编写一个程序，找到两个单链表相交的起始节点。 如下面的两个链表：    a1 -&gt; a2 ↘                     		c1 -&gt; c2 -&gt; c3     b1 -&gt; b2 -&gt; b3 ↗   在节点 c1 开始相交。   示例 1：           4 -&gt; 1 ↘
+          25 匹马，5条跑道，每个跑道最多能有 1 匹马进行比赛，（就是说最多同时可以有 5 匹马一起比赛），不能使用计时器，且每匹马的速度都很稳定（意思是在上一场比赛中 A 马比 B 马快，则下一场比赛中A马依然比 B 马快），问最少比多少次能比出前3名和前5名？  前 3 名首先将 25 匹马分成 5 组，每组 5 匹马。 1 - 5 次每组分别进行比赛，选出每组的第一名，假设总体比赛情况为：
         </div>
       </a>
 
@@ -593,8 +341,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 19:39" pubdate>
-              2021-04-16
+            <time datetime="2021-06-15 11:18" pubdate>
+              2021-06-15
             </time>
           </div>
         
@@ -603,9 +351,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
-            
-              <a href="/tags/%E9%93%BE%E8%A1%A8/">#链表</a>
+              <a href="/tags/%E6%99%BA%E5%8A%9B%E9%A2%98/">#智力题</a>
             
           </div>
         
@@ -619,15 +365,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/16/2021-3-24-leet-15-three-sum/" target="_self">
-          leetcode 15. 三数之和
+        <a href="/2021/06/04/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/" target="_self">
+          【两万字长文带你深入Go语言GC源码——腾讯技术工程】阅读笔记
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-24-leet-15-three-sum/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/06/04/liang-wan-zi-chang-wen-dai-ni-shen-ru-go-yu-yan-gc-yuan-ma-teng-xun-ji-zhu-gong-cheng-yue-du-bi-ji/" target="_self">
         <div>
-          题目描述 给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c &#x3D; 0请你找出所有和为 0 且不重复的三元组。 注意：答案中不可以包含重复的三元组。  示例 1： 输入：nums &#x3D; [-1,0,1,2,-1,-4]输出：[[-1,-1,2],[-1,0,1]]示例 2： 输入：nums &#x3D; []输出：[
+          作者：luozhiyun博客：https://www.luozhiyun.com/archives/475本文使用的 Go 的源码1.15.7  原文地址：https://www.luozhiyun.com/archives/475 1. 三色标记法1.1 三种颜色 黑色：该对象已经被标记过了，且该对象下的属性【这里不是很明白，是指该对象引用的对象？？】也全部都被标记过了（程序所需要的对象）
         </div>
       </a>
 
@@ -635,8 +381,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 19:38" pubdate>
-              2021-04-16
+            <time datetime="2021-06-04 21:29" pubdate>
+              2021-06-04
             </time>
           </div>
         
@@ -645,9 +391,261 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E6%95%B0%E7%BB%84/">#数组</a>
+              <a href="/tags/go/">#go</a>
             
-              <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/">#双指针</a>
+              <a href="/tags/gc/">#gc</a>
+            
+              <a href="/tags/%E7%AC%94%E8%AE%B0/">#笔记</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/06/03/leetcode-78-zi-ji/" target="_self">
+          leetcode 78. 子集
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/06/03/leetcode-78-zi-ji/" target="_self">
+        <div>
+          给你一个整数数组 nums ，数组中的元素 互不相同 。返回该数组所有可能的子集（幂集）。 解集不能包含重复的子集。你可以按 任意顺序 返回解集。 示例 1： 输入：nums &#x3D; [1,2,3]输出：[[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]] 示例 2： 输入：nums &#x3D; [0]输出：[[],[0]] 提示： 1 &lt;&#x3D
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-06-03 17:43" pubdate>
+              2021-06-03
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%9B%9E%E6%BA%AF%E6%B3%95/">#回溯法</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/05/29/linux-gao-xing-neng-fu-wu-qi-bian-cheng-yue-du-bi-ji-di-wu-zhang-linux-wang-luo-bian-cheng-ji-chu-api/" target="_self">
+          【Linux 高性能服务器编程】阅读笔记 第五章 -- Linux 网络编程基础 api
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/05/29/linux-gao-xing-neng-fu-wu-qi-bian-cheng-yue-du-bi-ji-di-wu-zhang-linux-wang-luo-bian-cheng-ji-chu-api/" target="_self">
+        <div>
+          1. 字节序字节序：内存中存储多个字节的方式。 例如一个 16 进制数，它由两个字节组成，内存中存储这两个字节有两种方式，分别为大端字节序和小端 字节序。 大端：高位字节存放在低地址，低位字节存放在高地址。 小端：高位字节存放在高地址，低位字节存放在低地址。 如何区分字节的高低位和地址的高低位？ 0x12            0x34高位字节     低位字节          ← 字节增长方向
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-05-29 19:27" pubdate>
+              2021-05-29
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/linux/">#linux</a>
+            
+              <a href="/tags/%E7%AC%94%E8%AE%B0/">#笔记</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/05/09/jian-zhi-offer-68-i-er-cha-sou-suo-shu-de-zui-jin-gong-gong-zu-xian/" target="_self">
+          剑指 Offer 68 - I. 二叉搜索树的最近公共祖先
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/05/09/jian-zhi-offer-68-i-er-cha-sou-suo-shu-de-zui-jin-gong-gong-zu-xian/" target="_self">
+        <div>
+          给定一个二叉搜索树, 找到该树中两个指定节点的最近公共祖先。 百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。” 例如，给定如下二叉搜索树:  root &#x3D; [6,2,8,0,4,7,9,null,null,3,5]  示例 1: 输入: root
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-05-09 11:22" pubdate>
+              2021-05-09
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
+            
+              <a href="/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/">#二叉搜索树</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/05/04/jian-zhi-offer-57-ii-he-wei-s-de-lian-xu-zheng-shu-xu-lie/" target="_self">
+          剑指 Offer 57 - II. 和为s的连续正数序列
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/05/04/jian-zhi-offer-57-ii-he-wei-s-de-lian-xu-zheng-shu-xu-lie/" target="_self">
+        <div>
+          输入一个正整数 target ，输出所有和为 target 的连续正整数序列（至少含有两个数）。 序列内的数字由小到大排列，不同序列按照首个数字从小到大排列。 示例 1： 输入：target &#x3D; 9输出：[[2,3,4],[4,5]] 示例 2： 输入：target &#x3D; 15输出：[[1,2,3,4,5],[4,5,6],[7,8]] 限制： 1 &lt;&#x3D; tar
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-05-04 11:52" pubdate>
+              2021-05-04
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
+            
+              <a href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/">#滑动窗口</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/05/02/leetcode-690-yuan-gong-de-chong-yao-xing/" target="_self">
+          LeetCode 690. 员工的重要性
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/05/02/leetcode-690-yuan-gong-de-chong-yao-xing/" target="_self">
+        <div>
+          给定一个保存员工信息的数据结构，它包含了员工 唯一的 id ，重要度 和 直系下属的 id 比如，员工 1 是员工 2 的领导，员工 2 是员工 3 的领导。他们相应的重要度为 15 , 10 , 5 。那么员工 1 的数据结构是 [1, 15, [2]] ，员工 2的 数据结构是 [2, 10, [3]] ，员工 3 的数据结构是[3, 5, []] 。注意虽然员工 3 也是员工 1 的一个下
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-05-02 10:02" pubdate>
+              2021-05-02
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/">#哈希表</a>
+            
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/">#深度优先搜索</a>
+            
+              <a href="/tags/%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/">#广度优先搜索</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/05/01/parallels-desktop-16-wang-luo-chu-shi-hua-shi-bai-he-bu-neng-lian-jie-usb-she-bei-jie-jue-fang-fa/" target="_self">
+          Parallels Desktop 16 网络初始化失败和不能连接USB设备解决方法
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/05/01/parallels-desktop-16-wang-luo-chu-shi-hua-shi-bai-he-bu-neng-lian-jie-usb-she-bei-jie-jue-fang-fa/" target="_self">
+        <div>
+          Parallels Desktop 16 在最新的macOS Big Sur 11.0系统上无法联网，并且无法连接USB设备。之前解决联网的办法是在终端通过命令启动parallels desktop的方法解决联网的问题，但是相对比较麻烦，而且还是无法解决Parallels Desktop 16 不能连接USB设备的问题。 今天小编为大家提供一个更好的方法解决Parallels Desktop 16
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-05-01 11:52" pubdate>
+              2021-05-01
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/issues/">#issues</a>
             
           </div>
         
@@ -659,7 +657,7 @@
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/13/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/#board">12</a><a class="page-number" href="/page/13/#board">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/#board">15</a><a class="page-number" href="/page/16/#board">16</a><a class="page-number" href="/page/17/#board">17</a><a class="extend next" rel="next" href="/page/15/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/13/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/#board">12</a><a class="page-number" href="/page/13/#board">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/#board">15</a><a class="page-number" href="/page/16/#board">16</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/#board">18</a><a class="extend next" rel="next" href="/page/15/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

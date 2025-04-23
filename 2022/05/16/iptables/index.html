@@ -16,18 +16,26 @@
   <meta name="author" content="void">
   <meta name="keywords" content="">
   
-    <meta name="description" content="文档状态：Draft   链，表和规则规则顾名思义，规则就是针对网络包的不同 行为，做出对应的 处理操作，比如如果我收到的网络包的 IP 是 xx.xx.xx.xx，那么我就将其丢弃；如果我收到的包的端口是 8080，我就将其转发给 XXX 之类的，也可以说，规则就是匹配条件 + 处理操作。 匹配条件 示例  阻止特定的 ip 地址 在我们继续进行其他示例之前，如果您想阻止特定的 ip 地址，您">
+    <meta name="description" content="文档状态：Draft   链，表和规则规则顾名思义，规则就是针对网络包的不同 行为，做出对应的 处理操作，比如如果我收到的网络包的 IP 是 xx.xx.xx.xx，那么我就将其丢弃；如果我收到的包的端口是 8080，我就将其转发给 XXX 之类的，也可以说，规则就是匹配条件 + 处理操作。 动作包括：  ACCEPT - 允许数据包通过。 DROP - 丢弃数据包，不对发送者进行任何回应。 R">
 <meta property="og:type" content="article">
 <meta property="og:title" content="linux iptables">
 <meta property="og:url" content="https://autsu.github.io/2022/05/16/iptables/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="文档状态：Draft   链，表和规则规则顾名思义，规则就是针对网络包的不同 行为，做出对应的 处理操作，比如如果我收到的网络包的 IP 是 xx.xx.xx.xx，那么我就将其丢弃；如果我收到的包的端口是 8080，我就将其转发给 XXX 之类的，也可以说，规则就是匹配条件 + 处理操作。 匹配条件 示例  阻止特定的 ip 地址 在我们继续进行其他示例之前，如果您想阻止特定的 ip 地址，您">
+<meta property="og:description" content="文档状态：Draft   链，表和规则规则顾名思义，规则就是针对网络包的不同 行为，做出对应的 处理操作，比如如果我收到的网络包的 IP 是 xx.xx.xx.xx，那么我就将其丢弃；如果我收到的包的端口是 8080，我就将其转发给 XXX 之类的，也可以说，规则就是匹配条件 + 处理操作。 动作包括：  ACCEPT - 允许数据包通过。 DROP - 丢弃数据包，不对发送者进行任何回应。 R">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20240502190742.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20240430164119.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20240502193931.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20240430164119.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20240502222733.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20240502222646.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20240502222733.png">
 <meta property="article:published_time" content="2022-05-16T02:53:35.000Z">
-<meta property="article:modified_time" content="2023-08-09T11:10:23.355Z">
+<meta property="article:modified_time" content="2025-04-19T16:44:56.988Z">
 <meta property="article:author" content="void">
 <meta property="article:tag" content="linux">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20240502190742.png">
   
   
   
@@ -73,7 +81,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -241,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5.9k 字
+          9.2k 字
         
       </span>
     
@@ -252,7 +260,7 @@
         
         
         
-          50 分钟
+          77 分钟
         
       </span>
     
@@ -308,28 +316,103 @@
 </blockquote>
 <hr>
 <h1 id="链，表和规则"><a href="#链，表和规则" class="headerlink" title="链，表和规则"></a>链，表和规则</h1><h2 id="规则"><a href="#规则" class="headerlink" title="规则"></a>规则</h2><p>顾名思义，规则就是针对网络包的不同 <strong>行为</strong>，做出对应的 <strong>处理操作</strong>，比如如果我收到的网络包的 IP 是 xx.xx.xx.xx，那么我就将其丢弃；如果我收到的包的端口是 8080，我就将其转发给 XXX 之类的，也可以说，<strong>规则就是匹配条件 + 处理操作</strong>。</p>
-<p><strong>匹配条件</strong></p>
-<p><strong>示例</strong></p>
+<p>动作包括：</p>
+<ol>
+<li><strong>ACCEPT</strong> - 允许数据包通过。</li>
+<li><strong>DROP</strong> - 丢弃数据包，不对发送者进行任何回应。</li>
+<li><strong>REJECT</strong> - 拒绝数据包并向发送者发送错误响应。</li>
+<li><strong>LOG</strong> - 在日志中记录数据包的详细信息（通常是 <code>/var/log/messages</code>），然后数据包继续其他规则的检查。</li>
+<li><strong>RETURN</strong> - 在链中停止当前规则集的处理，并返回到上一规则或链的处理中。</li>
+<li><strong>SNAT</strong> - 源地址转换（Source NAT），用于改变发出数据包的源IP地址。</li>
+<li><strong>DNAT</strong> - 目的地址转换（Destination NAT），用于改变到达数据包的目标IP地址。</li>
+<li><strong>MASQUERADE</strong> - 一种特殊的SNAT，主要用于动态的IP地址，比如拨号或移动的连接。</li>
+<li><strong>REDIRECT</strong> - 将数据包导向本机的另一个端口。</li>
+</ol>
+<h3 id="匹配条件"><a href="#匹配条件" class="headerlink" title="匹配条件"></a>匹配条件</h3><p>匹配条件分为基本匹配条件与扩展匹配条件</p>
+<p><strong>基本匹配条件：</strong></p>
+<p>源地址Source IP，目标地址 Destination IP</p>
+<p>上述内容都可以作为基本匹配条件。</p>
+<p><strong>扩展匹配条件：</strong></p>
+<p>除了上述的条件可以用于匹配，还有很多其他的条件可以用于匹配，这些条件泛称为扩展条件，这些扩展条件其实也是netfilter中的一部分，只是以模块的形式存在，如果想要使用这些条件，则需要依赖对应的扩展模块。</p>
+<p>源端口Source Port, 目标端口Destination Port</p>
+<p>上述内容都可以作为扩展匹配条件</p>
+<h2 id="链"><a href="#链" class="headerlink" title="链"></a>链</h2><p>链是多个规则的集合。</p>
+<p>当报文到达时，它会与这条链上所有的规则逐条进行匹配，看是否满足条件，然后 <strong>执行第一个满足条件</strong> 的规则对应的动作。</p>
+<p>比如 OUTPUT 链上有 a, b, c 三条规则，报文到达时，就会分别和这三条进行匹配，假如其中 a,b 满足，那么只执行 a 对应的动作，而不会执行 b 的动作。</p>
+<p>为什么要这么做？比如我在一条链上设置了两条规则，第一条是拒绝来自 1.1.1.1 的报文，第二条是接收来自 1.1.1.1 的报文，这个时候肯定不能两条都执行，所以按照顺序，只会执行第一条，也就是拒绝操作。</p>
+<blockquote>
+<p>参考：<a target="_blank" rel="noopener" href="https://www.zsythink.net/archives/1517">https://www.zsythink.net/archives/1517</a></p>
+</blockquote>
+<p>所以规则的顺序很重要</p>
+<blockquote>
+<p><del>实验：</del></p>
+<p><del>可以在一台机器上运行 3 个 tcp server，分别监听在 8080, 9090, 9091，每个 server 都会向连接写入不同的内容用于辨别。</del></p>
+<p><del>然后设置 iptables，将请求为 8080 和 9090 的 tcp 重定向到 9091</del></p>
+<p><del>iptables -t nat -I OUTPUT -p tcp -s 198.19.249.224 –dport 9090 -j DNAT –to-destination 198.19.249.224:9091</del></p>
+<p><del>iptables -t nat -I OUTPUT -p tcp -s 198.19.249.224 –dport 8080 -j DNAT –to-destination 198.19.249.224:9091</del></p>
+<p><del>然后 nc 198.19.249.224 9090 和 nc 198.19.249.224 8080 看看，它们都会返回 9091 的结果</del></p>
+</blockquote>
+<p>iptables 定义了以下几种链：</p>
 <ul>
-<li><p>阻止特定的 ip 地址</p>
-<p>在我们继续进行其他示例之前，如果您想阻止特定的 ip 地址，您应该首先执行如下所示的操作。将下面示例中的“xxxx”更改为您要阻止的特定IP地址。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">BLOCK_THIS_IP=&quot;xxxx&quot;<br>iptables -A INPUT -s &quot;$BLOCK_THIS_IP&quot; -j DROP<br></code></pre></td></tr></table></figure></li>
+<li><strong>INPUT链</strong>：处理到达本机的数据包。</li>
+<li><strong>OUTPUT链</strong>：处理本机产生的向外发送的数据包。</li>
+<li><strong>FORWARD链</strong>：处理需要穿过本机转发给其他设备的数据包。</li>
+<li><strong>PREROUTING链</strong> 和 <strong>POSTROUTING链</strong>：主要在 nat 表中使用，分别用于处理目标地址转换之前和之后的数据包。</li>
 </ul>
-<p>相互之间的关系如下：</p>
-<p>一条链上可以有多条规则。</p>
-<p>一张表里可以存多条相同种类的规则</p>
-<h1 id="规则相关命令"><a href="#规则相关命令" class="headerlink" title="规则相关命令"></a>规则相关命令</h1><h2 id="查看规则"><a href="#查看规则" class="headerlink" title="查看规则"></a>查看规则</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">查看 filter 表的所有规则，-t 后面跟表名</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t filter -L</span> <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看 raw 表的所有规则</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t raw -L</span>    <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看 filter 表（-t 缺省时，默认为 filter 表）的 INPUT 链上的所有规则</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -L INPUT</span>     <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">加 -v 可以输出更详细的信息</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -vL INPUT</span>    <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">加 -n 会直接输出 IP 地址，不加的话会继续转换，比如 0.0.0.0 会转换为 anywhere</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -nL INPUT</span>    <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">为输出的规则列表添加序号</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables --line -L INPUT</span> <br></code></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/20240502190742.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<h2 id="表"><a href="#表" class="headerlink" title="表"></a>表</h2><p>链上可以有多条规则，而表可以对这条链上的这些规则进行分类。</p>
+<p>iptables 已经为我们定义了 4 种表，每种表对应了不同的功能，我们自定义的所有规则都存在于这 4 张表中（用户不能自定义新的表）。</p>
+<ul>
+<li><strong>filter表</strong>：这是默认表，用于决定数据包的基本处理动作（如允许、拒绝或丢弃）。它主要关注数据包的访问控制。</li>
+<li><strong>nat表</strong>：用于网络地址转换（NAT）的设置，如端口转发、地址重写等。</li>
+<li><strong>mangle表</strong>：用于特殊的数据包修改操作，如更改TTL（生存时间）、分片设置等。</li>
+<li><strong>raw表</strong>：用于决定数据包是否被状态跟踪机制处理。</li>
+</ul>
+<p>下面这张图有助于理解：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/20240430164119.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<h2 id="表和链的关系"><a href="#表和链的关系" class="headerlink" title="表和链的关系"></a>表和链的关系</h2><p>每张表可以拥有的链的种类都是规定好的（或者反过来说，每个链可以拥有的表的种类是规定好的）。</p>
+<p>比如上面那张图，它的意思是说，prerouting 链只拥有 nat 表、raw 表和 mangle 表所对应的功能，所以，prerouting 中的规则只能存放于 nat表、raw 表和 mangle 表中。</p>
+<p>如果我尝试给 filter 表添加 PREROUTING 链，会报错：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t filter -I PREROUTING -s 192.168.64.1 -j DROP</span><br>iptables: No chain/target/match by that name.<br></code></pre></td></tr></table></figure>
 
+<p>表链关系有点迷惑的地方是，有的图是以表为参照物的，而有的图又是以链为参照物的，</p>
+<p>比如这张图就是以表为参照物的，它列出了哪些表拥有哪些链：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/20240502193931.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>然后这张图又是以链为参照物的，它列出了 prerouting 这条链可以拥有哪些表：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/20240430164119.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>其实都一样，不过基于 iptables 的命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">iptables -t filter -I PREROUTING -s 192.168.64.1 -j DROP<br></code></pre></td></tr></table></figure>
 
+<p>似乎是以表为参照物更通用一些。</p>
+<p>更新：直接看下面这张图就行了</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/20240502222733.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总结一下表链关系：</p>
+<p><strong>以链为参照物</strong></p>
+<p>PREROUTING    的规则可以存在于：raw表，mangle表，nat表。</p>
+<p>INPUT      的规则可以存在于：mangle表，filter表，（centos7中还有nat表，centos6中没有）。</p>
+<p>FORWARD     的规则可以存在于：mangle表，filter表。</p>
+<p>OUTPUT     的规则可以存在于：raw表mangle表，nat表，filter表。</p>
+<p>POSTROUTING    的规则可以存在于：mangle表，nat表。</p>
+<p><strong>以表为参照物</strong></p>
+<p>raw   表中的规则可以被哪些链使用：PREROUTING，OUTPUT</p>
+<p>mangle  表中的规则可以被哪些链使用：PREROUTING，INPUT，FORWARD，OUTPUT，POSTROUTING</p>
+<p>nat   表中的规则可以被哪些链使用：PREROUTING，OUTPUT，POSTROUTING（centos7中还有INPUT，centos6中没有）</p>
+<p>filter  表中的规则可以被哪些链使用：INPUT，FORWARD，OUTPUT</p>
+<h3 id="优先级"><a href="#优先级" class="headerlink" title="优先级"></a>优先级</h3><p>iptables为我们定义了4张”表”,当他们处于同一条”链”时，执行的优先级如下。</p>
+<p>优先级次序（由高而低）：</p>
+<p>raw –&gt; mangle –&gt; nat –&gt; filter</p>
+<p>比如：</p>
+<p>prerouting链中的规则存放于三张表中，而这三张表中的规则执行的优先级如下：</p>
+<p>raw –&gt; mangle –&gt; nat</p>
+<h1 id="相关命令"><a href="#相关命令" class="headerlink" title="相关命令"></a>相关命令</h1><h2 id="查看"><a href="#查看" class="headerlink" title="查看"></a>查看</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">查看 filter 表的所有规则，-t 后面跟表名</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t filter -L</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看 filter 表的 INPUT 链的所有规则</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t filter -L INPUT</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看 raw 表的所有规则</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t raw -L</span>    <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看 filter 表（-t 缺省时，默认为 filter 表）的 INPUT 链上的所有规则</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -L INPUT</span>     <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">加 -v 可以输出更详细的信息</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -vL INPUT</span>    <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">加 -n 会直接输出 IP 地址，不加的话会继续转换，比如 0.0.0.0 会转换为 anywhere</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -nL INPUT</span>    <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">为输出的规则列表添加序号</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables --line -L INPUT</span> <br></code></pre></td></tr></table></figure>
 
-<h2 id="操作规则"><a href="#操作规则" class="headerlink" title="操作规则"></a>操作规则</h2><h3 id="清空规则"><a href="#清空规则" class="headerlink" title="清空规则"></a>清空规则</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">清空 filter 表 INPUT 链中的规则</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -F INPUT</span><br></code></pre></td></tr></table></figure>
-
-<h3 id="添加规则"><a href="#添加规则" class="headerlink" title="添加规则"></a>添加规则</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t filter -I INPUT -s 192.168.64.1 -j DROP</span><br></code></pre></td></tr></table></figure>
+<h2 id="添加"><a href="#添加" class="headerlink" title="添加"></a>添加</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">iptables -t filter -I INPUT -s 192.168.64.1 -j DROP<br></code></pre></td></tr></table></figure>
 
 <p>上面的命令表示：在 filter 表的 INPUT 链中添加一条规则：丢弃（DROP）源地址为 192.168.64.1 的报文</p>
 <p>每个参数的意思：</p>
 <p>-t：指定要操作的表，此处指定了操作 filter 表，不使用 -t 选项指定表时，默认为操作 filter 表</p>
-<p>-I：指明将 ”规则” 插入至哪个链中，即添加规则</p>
+<p>-I：指明将 ”规则” 插入至哪个链中，即添加规则，是插入到头部（也就是第一条）</p>
+<p>-A：也是插入规则，不过是插入到尾部</p>
 <p>-s：指明“匹配条件”中的”源地址”，如果报文的源地址属于-s对应的地址，那么报文则满足匹配条件</p>
 <p>-j：指明当”匹配条件”被满足时，所对应的动作</p>
 <p>测试：</p>
@@ -340,7 +423,7 @@
 <p>添加规则的同时可以指定其插入的位置，不同的位置会影响规则的执行。具体的例子可以参考 <a target="_blank" rel="noopener" href="https://www.zsythink.net/archives/1517%EF%BC%8C%E5%A4%A7%E8%87%B4%E6%B5%81%E7%A8%8B%E6%98%AF%EF%BC%9A%E5%B7%B2%E7%BB%8F%E8%AE%BE%E7%BD%AE%E4%BA%86%E4%B8%80%E6%9D%A1">https://www.zsythink.net/archives/1517，大致流程是：已经设置了一条</a> drop 规则，如果追加一条相同 ip，但是 accept 的规则，发现依然无法 ping 通，因为 drop 在前 accept 在后；但是如果将 accept 插入到头部，那么 INPUT 链会先执行 accept 规则，数据包就会被放行，因为报文已经被放行了，所以，即使第二条 drop 规则能够匹配到刚才”放行”的报文，也没有机会再对刚才的报文进行丢弃操作了。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">-A 追加一条规则（append），也就是添加到末尾</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -A INPUT -s 192.168.64.1 -j ACCEPT</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">-I 添加到头部</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -I INPUT -s 192.168.64.1 -j ACCEPT</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">插入到规则的下标 2 处</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -I INPUT 2 -s 192.168.64.1 -j ACCEPT</span><br></code></pre></td></tr></table></figure>
 
-<h3 id="删除规则"><a href="#删除规则" class="headerlink" title="删除规则"></a>删除规则</h3><p><strong>根据规则编号删除</strong>（指定 –line ）</p>
+<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><p><strong>根据规则编号删除</strong>（如果想查看编号，需要在查询时指定 –line 参数，比如 <code>iptables -t filter -L INPUT --line</code>）</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t filter -D INPUT 3</span><br></code></pre></td></tr></table></figure>
 
 <p>上面的命令会删除 filter 表的 INPUT 链的第 3 条规则</p>
@@ -357,6 +440,7 @@
 
 
 <h1 id="自定义链"><a href="#自定义链" class="headerlink" title="自定义链"></a>自定义链</h1><p>自定义链用于对规则的管理，这里我有一个疑问，iptables 的 <strong>表</strong> 已经是对规则的一种分类管理了，为什么还需要自定义链呢？我暂时的理解是，虽然表已经进行了分类，但是粒度还是比较粗，比如 filter 表只是负责过滤功能，但是过滤功能可能还需要进行进一步分类，比如有针对 HTTP 的过滤规则，有针对 SSH 的过滤规则，</p>
+<p>自定义链不能直接使用，只能被某个默认的链当做动作去调用</p>
 <h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><p>实验的两台机器 IP 为：192.168.1.110 和 192.168.1.103，在 110 上设置一条自定义链，规则是阻止 103 这台机器来访问 8080 端口，8080 运行了一个 web 程序，访问会返回 “Hello”</p>
 <p>首先创建一条名为 IN_WEB 的自定义链</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t filter -N IN_WEB</span><br></code></pre></td></tr></table></figure>
@@ -381,20 +465,29 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">curl 192.168.1.110:9090</span><br><span class="hljs-meta prompt_">Hello%</span><br></code></pre></td></tr></table></figure>
 
 <p>9090 可以正常访问，说明拦截规则成功。</p>
-<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><p>删除自定义链需要满足两个条件</p>
+<h2 id="删除-1"><a href="#删除-1" class="headerlink" title="删除"></a>删除</h2><p>删除自定义链需要满足两个条件</p>
 <p>1、自定义链没有被引用</p>
 <p>2、自定义链中没有任何规则</p>
 <p>自定义链被放置在 INPUT 上，首先查看 INPUT 的所有规则，并删除属于自定义链的规则</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -nvL INPUT <span class="hljs-comment"># 查看 INPUT 链上的所有规则</span></span><br>Chain INPUT (policy ACCEPT 4397 packets, 972K bytes)<br> pkts bytes target     prot opt in     out     source               destination<br>    0     0 IN_WEB     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:80<br> 7753 1508K KUBE-ROUTER-INPUT  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kube-router netpol - 4IA2OSFRMVNDXBVV */<br>    0     0 IN_WEB     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:80<br>    1    64 IN_WEB     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:5555<br>    <br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -D INPUT 7 <span class="hljs-comment"># 删除规则，数字是上面列表的序号，根据自己的实际情况来指定</span></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables --line-number -vL INPUT <span class="hljs-comment"># 使用 --line-numbers 可以显示规则的编号，这样删除起来更方便</span></span><br>Chain INPUT (policy ACCEPT 2702 packets, 895K bytes)<br>num   pkts bytes target     prot opt in     out     source               destination<br>1     5865 1470K KUBE-ROUTER-INPUT  all  --  any    any     anywhere             anywhere             /* kube-router netpol - 4IA2OSFRMVNDXBVV */<br>2     2702  895K KUBE-FIREWALL  all  --  any    any     anywhere             anywhere<br>3     2702  895K KUBE-NODEPORTS  all  --  any    any     anywhere             anywhere             /* kubernetes health check service ports */<br>4        0     0 KUBE-EXTERNAL-SERVICES  all  --  any    any     anywhere             anywhere             ctstate NEW /* kubernetes externally-visible service portals */<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -F IN_WEB <span class="hljs-comment"># 清空 filter 表上的 IN_WEB 链上的所有规则（不指定 -t 时默认为 filter 表）</span></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -X IN_WEB <span class="hljs-comment"># 删除链</span></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t filter --line -nvL IN_WEB <span class="hljs-comment"># 再次查看该链，发现已经无法输出信息了，说明删除成功</span></span><br>iptables v1.8.7 (nf_tables): chain `IN_WEB&#x27; in table `filter&#x27; is incompatible, use &#x27;nft&#x27; tool.<br></code></pre></td></tr></table></figure>
 
-
-
-<h1 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h1><p><a target="_blank" rel="noopener" href="https://vflong.github.io/sre/network/2020/02/23/turning-iptables-into-a-tcp-load-balancer.html">https://vflong.github.io/sre/network/2020/02/23/turning-iptables-into-a-tcp-load-balancer.html</a></p>
+<h1 id="数据包处理流程"><a href="#数据包处理流程" class="headerlink" title="数据包处理流程"></a>数据包处理流程</h1><p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/20240502222646.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/20240502222733.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<blockquote>
+<p>我设置了这样两条规则：</p>
+<p>iptables -t nat -I PREROUTING -p tcp -s 198.19.249.224 –dport 9090 -j DNAT –to-destination 198.19.249.224:8080<br>iptables -t nat -I PREROUTING -p tcp -s 198.19.249.224 –dport 8080 -j DNAT –to-destination 198.19.249.224:9090 </p>
+<p>198.19.249.224 就是本机 ip，也就是说我的想法是通过 iptables，让尝试访问本机 8080 端口的连接转而访问 9090，尝试访问 9090 的转而访问 8080，这两个端口都监听了程序，访问 8080 会返回 You Visit 8080，访问 9090 会返回 You Visit 9090 但是现在我执行 nc 198.19.249.224 9090 依然会显示 You Visit 9090，为什么？</p>
+<p>🤖</p>
+<p>当您在同一台机器上设置「iptables」规则时，它不会对本地生成的数据包产生影响。因此，在同一台机器上执行的「nc 198.19.249.224 9090」命令，事实上根本不经过「PREROUTING」链，它直接进入到「INPUT」链。</p>
+<p>如果您想要使这种转发规则对本地生成的数据包产生影响，您需要在「OUTPUT」链中添加相似的规则。但是，很重要的一点是，您需要保证这种设置不会导致无限循环。在这个特定的情况下，将「端口 9090」的流量转发到「端口 8080」，然后又把「端口 8080」的流量再转发回「端口 9090」会导致无限转发循环。</p>
+<p>一个可能的解决方式是使用不同的源地址或其他标准来区分两种不同的转发规则，以防止转发循环的发生。但是，这需要进一步的网络设计和规划，您应该根据具体的需求和网络环境来决定最佳做法。</p>
+<p>PS：试了一下，改成 OUTPUT 链确实可以</p>
+</blockquote>
 <h1 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h1><h2 id="DNT-转发"><a href="#DNT-转发" class="headerlink" title="DNT 转发"></a>DNT 转发</h2><p>流程：有两台机器 192.168.64.4 （简称 4）和 192.168.64.1（简称 1），4 上的 8080 和 9090 端口运行了两个 tcp 程序，连接到 8080 时会返回消息： ”8080“，连接到 9090 时会返回消息 ”9090“，这里通过 iptables 设置 nat 转发，将访问 8080 的连接转发到 9090，也就是 DNAT（D 代表 dst，目标），修改报文的目标地址。</p>
-<p>添加规则：</p>
+<p>在 1 上添加规则：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t nat -A PREROUTING -p tcp -d 192.168.64.4 --dport 8080 -j DNAT --to 192.168.64.4:9090</span><br></code></pre></td></tr></table></figure>
 
-<p>在 nat 表的 PREROUTING 链中添加一条规则，将目标地址为 192.168.64.4，协议为 tcp 的请求转发（DNAT）到 192.168.64.4 （本机）的 9090 端口</p>
+<p>上面命令的意思是，在 nat 表的 PREROUTING 链中添加一条规则，将目标地址为 192.168.64.4，协议为 tcp 的请求转发（DNAT）到 192.168.64.4 （本机）的 9090 端口</p>
 <p>查看规则：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">iptables -t nat -nL PREROUTING</span><br>DNAT       tcp  --  0.0.0.0/0            192.168.64.4         tcp dpt:8080 to:192.168.64.4:9090<br></code></pre></td></tr></table></figure>
 
@@ -405,7 +498,7 @@
 <p>这两个程序还会记录访问的 IP 地址，查看日志：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">cat</span> 8080</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">cat</span> 9090</span><br>2022/05/19 15:41:44 192.168.64.1:63310<br></code></pre></td></tr></table></figure>
 
-<p>8080 的日志为空，说明该请求被 iptables <strong>拦截</strong> 后转发给了 9090</p>
+<p>8080 的日志为空，说明该请求被 iptables <strong>拦截</strong> 后直接转发给了 9090，而不是让 8080 代理访问 9090。</p>
 <p>附代码：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>        <span class="hljs-string">&quot;net&quot;</span><br>        <span class="hljs-string">&quot;log&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>        l, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;:8080&quot;</span>)<br>        assert(err)<br><br>        <span class="hljs-keyword">for</span> &#123;<br>                conn, err := l.Accept()<br>                assert(err)<br>                log.Println(conn.RemoteAddr())<br>                conn.Write([]<span class="hljs-type">byte</span>(<span class="hljs-string">&quot;8080&quot;</span>))<br>        &#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">assert</span><span class="hljs-params">(err <span class="hljs-type">error</span>)</span></span> &#123;<br>        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>                <span class="hljs-built_in">panic</span>(err)<br>        &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
@@ -416,6 +509,7 @@
 
 
 
+<h2 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h2><p><a target="_blank" rel="noopener" href="https://vflong.github.io/sre/network/2020/02/23/turning-iptables-into-a-tcp-load-balancer.html">https://vflong.github.io/sre/network/2020/02/23/turning-iptables-into-a-tcp-load-balancer.html</a></p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2">https://www.zsythink.net/archives/category/%e8%bf%90%e7%bb%b4%e7%9b%b8%e5%85%b3/iptables/page/2</a></p>
 
                 

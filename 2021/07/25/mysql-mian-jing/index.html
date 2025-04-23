@@ -24,12 +24,12 @@
 <meta property="og:description" content="1. char 和 varchar 的区别char 是固定长度，varchar 长度可变，存储时，前者不管实际存储数据的长度，直接规定 char 规定的长度分配存储空间；而后者会根据实际存储的数据分配最终的存储空间。 以char(32)和varchar(32)举例：（这里的 32 表示字符数）     char(32) varchar(32)    占用空间 固定32字符（如果数据长度不够32将用">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/redolog.webp">
-<meta property="og:image" content="https://camo.githubusercontent.com/d318aaf4eefb0297e8d605f69c76d95094effe92bcb7bd98fb07e203b1930e95/68747470733a2f2f7374617469633030312e6765656b62616e672e6f72672f7265736f757263652f696d6167652f30642f64392f30643230373065386638346334383031616462666130336264613166393864392e706e67">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250417150253.png">
 <meta property="article:published_time" content="2021-07-25T02:04:25.000Z">
-<meta property="article:modified_time" content="2023-08-24T14:49:52.707Z">
+<meta property="article:modified_time" content="2025-04-18T11:02:57.222Z">
 <meta property="article:author" content="void">
-<meta property="article:tag" content="面试题">
 <meta property="article:tag" content="mysql">
+<meta property="article:tag" content="面试题">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/redolog.webp">
   
@@ -77,7 +77,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -245,7 +245,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          8k 字
+          24k 字
         
       </span>
     
@@ -256,7 +256,7 @@
         
         
         
-          67 分钟
+          201 分钟
         
       </span>
     
@@ -373,20 +373,696 @@
 <p>1.如果当前的 SQL 模式为宽松模式，那么将会按照从前往后的顺序，对字符串进行截断，并提示一个警告；</p>
 <p>2.如果当前的 SQL 模式为严格模式，那么将会报出一个错误。</p>
 <h1 id="MYSQL-事务的-ACID"><a href="#MYSQL-事务的-ACID" class="headerlink" title="MYSQL 事务的 ACID"></a>MYSQL 事务的 ACID</h1><ul>
-<li>A：原子性，保证事务要不全部执行成功，要不全部失败</li>
-<li>C：一致性，保证事务从一个正确的状态转换到另一个正确的状态</li>
-<li>I：隔离性，事务和事务之间是隔离的，并且有不同的隔离级别</li>
-<li>D：持久性，事务最终会保存到硬盘上，对数据库的更改是永久性的</li>
+<li><p><strong>1. 原子性 (Atomicity)</strong></p>
+</li>
+<li><p><strong>含义：</strong> 一个事务被视为一个不可分割的、最小的工作单元。事务中的所有操作<strong>要么全部成功执行，要么全部不执行（回滚）</strong>。绝对不会出现事务只执行了一部分的情况。</p>
+</li>
+<li><p><strong>类比：</strong> 就像原子是物质的最小不可分割单位一样，事务是数据库操作的最小逻辑单元。</p>
+</li>
+<li><p><strong>目的：</strong> 保证数据的完整性。例如，在一个银行转账事务中，包含两个操作：从账户 A 扣款，给账户 B 存款。原子性确保这两个操作要么都完成，要么如果中间任何一步失败（比如 B 账户不存在或系统崩溃），已经执行的扣款操作也会被撤销（回滚），数据库状态将恢复到事务开始之前的样子，避免了钱凭空消失或产生的情况。</p>
+</li>
+<li><p><strong>实现机制：</strong> MySQL 主要通过 <strong>Undo Log（回滚日志）</strong> 来实现原子性。在执行数据修改操作之前，会先将原始数据记录到 Undo Log 中。如果事务需要回滚，数据库可以利用 Undo Log 中的信息将数据恢复到事务开始时的状态。</p>
+</li>
 </ul>
-<h1 id="MySQL-原子性怎么保证"><a href="#MySQL-原子性怎么保证" class="headerlink" title="MySQL 原子性怎么保证"></a>MySQL 原子性怎么保证</h1><p>通过 undo log（回滚日志），</p>
+<p><strong>2. 一致性 (Consistency)</strong></p>
+<ul>
+<li><p><strong>含义：</strong> 事务的执行必须使数据库从一个<strong>一致性状态</strong>转变到另一个<strong>一致性状态</strong>。一致性状态意味着数据库中的数据满足所有的预定约束（如主键约束、外键约束、唯一性约束、数据类型约束以及业务规则定义的约束）。</p>
+</li>
+<li><p><strong>关键点：</strong></p>
+<ul>
+<li><p><strong>事务开始前</strong>，数据库处于一致状态。</p>
+</li>
+<li><p><strong>事务结束后</strong>，无论事务是成功提交还是失败回滚，数据库<strong>也必须</strong>处于一致状态。</p>
+</li>
+<li><p><strong>事务执行过程中</strong>，数据可能暂时处于不一致状态（例如转账过程中，一个账户已扣款但另一个账户还未收款），但这是中间状态，最终结果必须是一致的。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>目的：</strong> 维护数据的正确性和业务规则的有效性。确保不会因为事务的执行而产生无效或矛盾的数据。</p>
+</li>
+<li><p><strong>实现机制：</strong> 一致性是 ACID 的最终目标，它依赖于其他三个属性（原子性、隔离性、持久性）以及数据库自身的约束机制（如约束检查、触发器等）共同保证。原子性保证了操作的完整性，隔离性防止了并发事务间的干扰，持久性确保了结果的永久性，这些都是实现一致性的基础。数据库还会执行约束检查，确保插入或更新的数据符合规则。</p>
+</li>
+</ul>
+<blockquote>
+<p>PS: 一致性不太好理解，简单的说，就是其他三个特性确保了一致性。</p>
+</blockquote>
+<p><strong>3. 隔离性 (Isolation)</strong></p>
+<ul>
+<li><p><strong>含义：</strong> 数据库允许多个事务<strong>并发</strong>执行，但一个事务的执行<strong>不应被其他并发执行的事务所干扰</strong>。即，并发执行的事务之间应该相互隔离，使得每个事务都感觉像是在独立地操作数据库。</p>
+</li>
+<li><p><strong>目的：</strong> 防止并发环境下可能出现的数据问题，如：</p>
+<ul>
+<li><p><strong>脏读 (Dirty Read):</strong> 一个事务读取了另一个事务尚未提交的修改数据。如果那个事务最终回滚，那么读取到的就是无效的“脏”数据。</p>
+</li>
+<li><p><strong>不可重复读 (Non-repeatable Read):</strong> 一个事务在同一次执行中，对同一数据进行多次读取，但由于其他事务在此期间修改了该数据并提交，导致两次读取的结果不一致。</p>
+</li>
+<li><p><strong>幻读 (Phantom Read):</strong> 一个事务在同一次执行中，按相同条件多次查询，但由于其他事务在此期间插入或删除了符合条件的数据并提交，导致两次查询返回的记录<strong>行数</strong>不一致，好像出现了“幻影”行。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>实现机制：</strong> MySQL 通过<strong>锁机制 (Locking)</strong> 和 <strong>多版本并发控制 (MVCC - Multi-Version Concurrency Control)</strong> 来实现隔离性。</p>
+<ul>
+<li><p><strong>锁机制：</strong> 通过对数据行、表等加锁，阻止其他事务进行冲突的操作。</p>
+</li>
+<li><p><strong>MVCC:</strong> 在 InnoDB 存储引擎中广泛使用。为每一行数据维护多个版本（通过隐藏的版本号和 Undo Log 实现），使得读操作（通常）不需要加锁，可以读取到事务开始时的一个一致性快照，从而避免了读写冲突，提高了并发性能。</p>
+</li>
+<li><p><strong>隔离级别 (Isolation Levels):</strong> MySQL 提供了四种隔离级别（读未提交 Read Uncommitted, 读已提交 Read Committed, 可重复读 Repeatable Read (默认), 串行化 Serializable），允许用户根据应用需求在并发性能和数据一致性之间进行权衡。不同的隔离级别能解决不同程度的并发问题。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>4. 持久性 (Durability)</strong></p>
+<ul>
+<li><p><strong>含义：</strong> 一旦事务成功<strong>提交 (Commit)<strong>，它对数据库所做的更改就应该是</strong>永久性</strong>的。即使后续发生系统崩溃、断电等故障，这些已提交的更改也<strong>不能丢失</strong>。</p>
+</li>
+<li><p><strong>目的：</strong> 保证数据的可靠性。用户的操作结果（只要事务成功提交）是值得信赖的，不会因为意外情况而消失。</p>
+</li>
+<li><p><strong>实现机制：</strong> MySQL 主要通过 <strong>Redo Log（重做日志）</strong> 来实现持久性。</p>
+<ul>
+<li><p>当事务提交时，其所做的修改会先被写入到 Redo Log 文件中（通常是顺序写入，速度很快）。</p>
+</li>
+<li><p>只有当 Redo Log 写入成功后，事务才算真正提交。</p>
+</li>
+<li><p>数据页（Data Page）的修改可能会稍后才被刷新（Flush）到磁盘上的数据文件中（为了性能）。</p>
+</li>
+<li><p>如果在数据页刷新到磁盘前系统崩溃，数据库在重启后可以通过 Redo Log 中的记录，重新执行那些已提交但未完全落盘的事务操作，将数据库恢复到崩溃前的最后一个一致状态，从而保证了已提交事务的持久性。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="MySQL-原子性怎么保证"><a href="#MySQL-原子性怎么保证" class="headerlink" title="MySQL 原子性怎么保证"></a>MySQL 原子性怎么保证</h1><p>MySQL (特别是使用 <strong>InnoDB</strong> 存储引擎时，因为像 MyISAM 这样的引擎不支持事务) 主要通过 <strong>Undo Log (回滚日志)</strong> 来保证事务的原子性（Atomicity）。</p>
+<p>以下是详细的保证机制：</p>
+<ol>
+<li><p><strong>记录反向操作信息 (Undo Log):</strong></p>
+<ul>
+<li><p>当一个事务开始对数据进行修改（如 INSERT, UPDATE, DELETE）时，在<strong>实际修改数据页 (Data Page) 之前</strong>，InnoDB 会先将用于<strong>撤销</strong>这些操作所需的信息记录到 Undo Log 中。</p>
+</li>
+<li><p><strong>对于 INSERT 操作：</strong> Undo Log 会记录下新插入数据的主键或其他唯一标识，以便在回滚时可以根据这个标识删除这条记录。</p>
+</li>
+<li><p><strong>对于 UPDATE 操作：</strong> Undo Log 会记录下被修改行修改<strong>之前</strong>的旧值。如果事务回滚，InnoDB 可以根据 Undo Log 中的旧值将数据恢复原状。</p>
+</li>
+<li><p><strong>对于 DELETE 操作：</strong> Undo Log 会记录下被删除行的内容。如果事务回滚，InnoDB 可以根据 Undo Log 中的记录将这行数据重新插入回去。</p>
+</li>
+<li><p>这些 Undo Log 记录会与事务 ID 关联起来，形成一个操作链。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>事务提交 (Commit):</strong></p>
+<ul>
+<li><p>如果事务中的所有操作都成功执行，并且用户发出了 COMMIT 指令。</p>
+</li>
+<li><p>此时，事务被认为是成功的。虽然数据的最终落盘可能稍后由 Redo Log 保证（为了持久性），但从原子性的角度看，这个事务逻辑上已经完成了“全部执行”的部分。与该事务相关的 Undo Log 在不再被其他事务所需要（例如用于 MVCC 一致性读）之后，可以被清理。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>事务回滚 (Rollback):</strong></p>
+<ul>
+<li><p>如果在事务执行过程中发生任何错误（如违反约束、SQL 错误、死锁牺牲品等），或者用户显式执行了 ROLLBACK 命令。</p>
+</li>
+<li><p>数据库系统会利用该事务对应的 <strong>Undo Log</strong>。</p>
+</li>
+<li><p>它会<strong>按照与执行操作相反的顺序</strong>，读取 Undo Log 中的记录，并执行相应的“反向”操作：</p>
+<ul>
+<li><p>对于之前的 INSERT，执行 DELETE。</p>
+</li>
+<li><p>对于之前的 UPDATE，使用旧值恢复数据。</p>
+</li>
+<li><p>对于之前的 DELETE，重新 INSERT 数据。</p>
+</li>
+</ul>
+</li>
+<li><p>通过执行这些反向操作，数据库的状态被<strong>精确地恢复到该事务开始执行之前</strong>的样子。</p>
+</li>
+<li><p>这就实现了原子性的“全部不执行”部分。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>系统崩溃恢复:</strong></p>
+<ul>
+<li><p>如果数据库在事务执行过程中（尚未提交）发生崩溃。</p>
+</li>
+<li><p>当数据库重启时，它会检查事务日志（特别是 Redo Log 和 Undo Log）。</p>
+</li>
+<li><p>对于那些已经写入 Redo Log 但尚未标记为 Commit 的<strong>未完成事务</strong>，数据库会利用 Undo Log 将这些事务进行<strong>回滚</strong>，以确保它们没有部分更改留在数据库中，保证了原子性。</p>
+</li>
+<li><p>（对于已 Commit 但可能未完全刷盘的事务，则会用 Redo Log 来前滚，保证持久性）。</p>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="撤销日志（Undo-Log）"><a href="#撤销日志（Undo-Log）" class="headerlink" title="撤销日志（Undo Log）"></a><del>撤销日志（Undo Log）</del></h2><ul>
+<li><p><del>作用：记录事务执行前的数据状态</del></p>
+</li>
+<li><p><del>工作原理：</del></p>
+</li>
+<li><p><del>事务开始前，将修改的数据原始状态保存在撤销日志中</del></p>
+</li>
+<li><p><del>若事务需要回滚，系统使用撤销日志将数据恢复到事务前状态</del></p>
+</li>
+<li><p><del>对每个操作记录反向操作（如INSERT的反向是DELETE）</del></p>
+</li>
+<li><p><del>实现：InnoDB在回滚段（Rollback Segment）中维护撤销日志</del></p>
+</li>
+</ul>
 <h1 id="redolog-工作原理"><a href="#redolog-工作原理" class="headerlink" title="redolog 工作原理"></a>redolog 工作原理</h1><p>当有一条记录需要更新的时候，InnoDB 引擎就会先把记录写到 redo log 里面，并更新内存，这个时候更新就算完成了。同时，InnoDB 引擎会在适当的时候，将这个操作记录更新到磁盘里面，而这个更新往往是在系统比较空闲的时候做，</p>
-<p>InnoDB 的 redo log 是固定大小的，比如可以配置为一组 4 个文件，每个文件的大小是 1GB，那么这块“粉板”总共就可以记录 4GB 的操作。从头开始写，写到末尾就又回到开头循环写，如下面这个图所示。</p>
+<p>InnoDB 的 redo log 是固定大小的，比如可以配置为一组 4 个文件，每个文件的大小是 1GB，那么这块“粉板”总共就可以记录 4GB 的操作。从头开始写，写到末尾就又回到开头循环写，如下图所示。</p>
 <p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/redolog.webp" srcset="/img/loading.gif" lazyload></p>
 <p>write pos 是当前记录的位置，一边写一边后移，写到第 3 号文件末尾后就回到 0 号文件开头。checkpoint 是当前要擦除的位置，也是往后推移并且循环的，擦除记录前要把记录更新到数据文件。</p>
 <p>write pos 和 checkpoint 之间的是“粉板”上还空着的部分，可以用来记录新的操作。如果 write pos 追上 checkpoint，表示“粉板”满了，这时候不能再执行新的更新，得停下来先擦掉一些记录（也就是写入到硬盘），把 checkpoint 推进一下（写入成功后只移动 checkpoint，而不会清空数据，后续直接覆盖写即可）。</p>
-<h1 id="宕机后如何保证数据不丢失？"><a href="#宕机后如何保证数据不丢失？" class="headerlink" title="宕机后如何保证数据不丢失？"></a>宕机后如何保证数据不丢失？</h1><p>通过 redolog，MySQL 使用了 WAL，在更新记录时会先将操作写到 redo log（redo log 也是一个文件，保存在磁盘上），然后 MySQL 启动时会先检查一下 redo log，看里面有没有内容，有的话说明就说明存在未落盘的数据，此时就可以通过 redo log 将这些数据重新写入到磁盘，从而保证数据不丢失。</p>
-<p>redo log 的工作原理参见上面</p>
-<h1 id="undolog-在宕机时怎么保证原子性"><a href="#undolog-在宕机时怎么保证原子性" class="headerlink" title="undolog 在宕机时怎么保证原子性"></a>undolog 在宕机时怎么保证原子性</h1><h1 id="什么是-binlog"><a href="#什么是-binlog" class="headerlink" title="什么是 binlog"></a>什么是 binlog</h1><p>binlog 用于记录数据库执行的写入性操作（不包括查询）信息，以二进制的形式保存在磁盘中。binlog 是 MySQL 的逻辑日志，并且由 Server 层进行记录，使用任何存储引擎的 <a target="_blank" rel="noopener" href="https://cloud.tencent.com/product/cdb?from_column=20065&from=20065">MySQL数据库</a> 都会记录 binlog 日志。</p>
+<h1 id="redolog-中会存在未提交事务产生的内容吗"><a href="#redolog-中会存在未提交事务产生的内容吗" class="headerlink" title="redolog 中会存在未提交事务产生的内容吗"></a>redolog 中会存在未提交事务产生的内容吗</h1><p>是的，<strong>MySQL 的 redo log（重做日志）中</strong>是会存在<strong>未提交事务产生的内容</strong>的。</p>
+<hr>
+<h3 id="一、为什么-redo-log-中会有未提交事务的内容？"><a href="#一、为什么-redo-log-中会有未提交事务的内容？" class="headerlink" title="一、为什么 redo log 中会有未提交事务的内容？"></a>一、为什么 redo log 中会有未提交事务的内容？</h3><p>MySQL 的 InnoDB 存储引擎使用 <strong>WAL（Write-Ahead Logging）机制</strong>，即：</p>
+<ul>
+<li><p>修改数据时，<strong>先写 redo log</strong>，再更新内存中的数据（Buffer Pool），</p>
+</li>
+<li><p>之后再将数据异步刷新到磁盘的 <code>.ibd</code> 文件中（即真正的数据页）。</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>redo log 记录的是对数据页的物理更改，用于崩溃恢复（Crash Recovery）</strong></p>
+</blockquote>
+<p>关键点在于：</p>
+<ul>
+<li><p><strong>事务在执行过程中就会不断写入 redo log</strong>，但这些日志的 <code>trx id</code>（事务 id）对应的事务可能还没有提交。</p>
+</li>
+<li><p>所以 redo log 中<strong>包含了尚未提交的事务产生的变更信息</strong>。</p>
+</li>
+</ul>
+<hr>
+<h3 id="二、这些未提交的-redo-log-有什么用？"><a href="#二、这些未提交的-redo-log-有什么用？" class="headerlink" title="二、这些未提交的 redo log 有什么用？"></a>二、这些未提交的 redo log 有什么用？</h3><ol>
+<li><p><strong>崩溃恢复时会用到</strong></p>
+<ul>
+<li><p>如果发生宕机，MySQL 会在重启时根据 redo log 执行恢复操作。</p>
+</li>
+<li><p>InnoDB 会扫描 redo log，根据事务的提交状态：</p>
+<ul>
+<li><p><strong>已提交的事务</strong> → 做 <strong>重做（redo）</strong></p>
+</li>
+<li><p><strong>未提交的事务</strong> → 忽略（或做 undo）</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>性能优化（提前写入日志）</strong></p>
+<ul>
+<li><p>事务执行过程中先写日志，不等事务提交，有助于提高写入性能。</p>
+</li>
+<li><p>不必等所有修改完成、事务提交时才写日志。</p>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="三、redo-log-和事务提交的关系"><a href="#三、redo-log-和事务提交的关系" class="headerlink" title="三、redo log 和事务提交的关系"></a>三、redo log 和事务提交的关系</h3><ul>
+<li><p>redo log 分为两部分：</p>
+<ul>
+<li><p><strong>prepare 阶段</strong>：事务执行时写入 redo log，但未提交。</p>
+</li>
+<li><p><strong>commit 阶段</strong>：事务提交时写入 commit 标记（特殊日志）。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>只有在 redo log 中发现有 <strong>prepare + commit 标志</strong> 的事务，MySQL 才会在恢复时进行重做。</p>
+<hr>
+<h3 id="四、举个例子"><a href="#四、举个例子" class="headerlink" title="四、举个例子"></a>四、举个例子</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">BEGIN</span>;<br><span class="hljs-keyword">UPDATE</span> <span class="hljs-keyword">user</span> <span class="hljs-keyword">SET</span> balance <span class="hljs-operator">=</span> balance <span class="hljs-operator">-</span> <span class="hljs-number">100</span> <span class="hljs-keyword">WHERE</span> id <span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br><span class="hljs-keyword">UPDATE</span> <span class="hljs-keyword">user</span> <span class="hljs-keyword">SET</span> balance <span class="hljs-operator">=</span> balance <span class="hljs-operator">+</span> <span class="hljs-number">100</span> <span class="hljs-keyword">WHERE</span> id <span class="hljs-operator">=</span> <span class="hljs-number">2</span>;<br><span class="hljs-comment">-- 此时已经写入 redo log（prepare 阶段），但未 commit</span><br><span class="hljs-comment">-- 如果宕机，InnoDB 会发现这两个操作产生的 redo log 是未提交的</span><br><span class="hljs-comment">-- 所以不会做 redo</span><br><span class="hljs-keyword">COMMIT</span>;<br><span class="hljs-comment">-- 写入 redo log 的 commit 标记，此时事务才真正生效</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a>五、总结</h3><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>redo log 中是否存在</th>
+<th>redo log 是否生效</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>未提交</td>
+<td>✅ 有</td>
+<td>❌ 不生效</td>
+</tr>
+<tr>
+<td>已提交</td>
+<td>✅ 有</td>
+<td>✅ 恢复时生效</td>
+</tr>
+</tbody></table>
+<hr>
+<p>如你后续还有关于 undo log、binlog 的配合或 crash recovery 流程感兴趣，也可以展开聊聊 👍</p>
+<h1 id="宕机后如何保证数据不丢失？"><a href="#宕机后如何保证数据不丢失？" class="headerlink" title="宕机后如何保证数据不丢失？"></a>宕机后如何保证数据不丢失？</h1><p>保证 MySQL (特别是 InnoDB 存储引擎) 在宕机后数据不丢失，主要依赖于<strong>持久性 (Durability)</strong> 的实现，其核心机制是 **Write-Ahead Logging (WAL)**，具体体现在 <strong>Redo Log (重做日志)</strong> 的使用上。</p>
+<p>以下是保证数据不丢失的关键步骤和原理：</p>
+<ol>
+<li><p><strong>Redo Log (重做日志) - 先写日志，再写数据:</strong></p>
+<ul>
+<li><p><strong>什么是 Redo Log:</strong> 它是一个物理日志，记录的是对数据页（Data Page）所做的<strong>物理修改</strong>，而不是逻辑操作（比如不是记录 UPDATE SET col&#x3D;val WHERE id&#x3D;1，而是记录类似“在表空间 X 的 Y 页的偏移量 Z 处写入字节 W”这样的底层修改）。</p>
+</li>
+<li><p><strong>写在前面 (Write-Ahead):</strong> 当一个事务修改数据时，InnoDB <strong>首先</strong>会将这些修改操作对应的 Redo Log 记录写入到<strong>内存中的 Redo Log Buffer</strong>。然后，在事务<strong>提交 (Commit)</strong> 时（或根据配置策略），这些 Redo Log 记录<strong>必须先被刷新 (Flush) 到磁盘上的 Redo Log 文件中</strong>，然后事务才算真正成功提交。这个“先写日志”的操作是持久性的关键。</p>
+</li>
+<li><p><strong>顺序写入:</strong> Redo Log 文件通常是<strong>顺序写入</strong>的，这比向数据文件进行随机写入要快得多。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>Buffer Pool (缓冲池) - 内存加速:</strong></p>
+<ul>
+<li><p>InnoDB 在内存中维护一个 Buffer Pool，用于缓存磁盘上的数据页。</p>
+</li>
+<li><p>当事务修改数据时，它实际上是先修改<strong>内存中 Buffer Pool 里的数据页</strong>。这些被修改过的页被称为“脏页 (Dirty Pages)”。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>数据页延迟写入 (Delayed Write):</strong></p>
+<ul>
+<li><p>修改后的“脏页”<strong>不一定</strong>会在事务提交时立即被写回到磁盘上的数据文件 (.ibd 文件) 中。</p>
+</li>
+<li><p>InnoDB 会在后台根据一定的策略（如 Checkpoint 机制、Buffer Pool 空间不足时等）将这些脏页<strong>异步地、批量地</strong>刷新回磁盘。这样做可以合并写入操作，减少随机 I&#x2F;O，提高性能。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>事务提交的关键点:</strong></p>
+<ul>
+<li><p>一个事务被认为成功提交并具有持久性的<strong>充要条件</strong>是：与该事务相关的所有 Redo Log 记录<strong>已经成功写入到磁盘上的 Redo Log 文件中</strong>。</p>
+</li>
+<li><p>即使此时对应的“脏页”还没有刷新到磁盘数据文件中，数据也是安全的。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>宕机后的恢复过程 (Crash Recovery):</strong></p>
+<ul>
+<li><p>当 MySQL 因宕机（如断电、操作系统崩溃）重启时，InnoDB 会执行恢复流程：</p>
+<ul>
+<li><p><strong>检查 Redo Log:</strong> InnoDB 会读取磁盘上的 Redo Log 文件。</p>
+</li>
+<li><p><strong>找到最后检查点 (Checkpoint):</strong> 它会找到最后一个成功的检查点（Checkpoint LSN - Log Sequence Number），这个点表示在此之前的 Redo Log 对应的所有数据页修改都<strong>保证</strong>已经刷新到磁盘数据文件了。</p>
+</li>
+<li><p><strong>重放 Redo Log (Roll Forward):</strong> 对于检查点<strong>之后</strong>的 Redo Log 记录，InnoDB 会将这些记录代表的物理修改<strong>重新应用</strong>到内存的 Buffer Pool 中（如果需要，会先从磁盘加载对应的数据页）。这会把那些在宕机前已提交但其数据页修改尚未落盘的操作重新做一遍。</p>
+</li>
+<li><p><strong>(回滚未提交事务):</strong> 同时，InnoDB 也会利用 Undo Log 回滚那些在宕机时还未提交的事务（保证原子性）。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>结果:</strong> 通过重放 Redo Log，所有<strong>已成功提交</strong>的事务（即其 Redo Log 已落盘）的效果都被恢复到了数据库中，即使它们的数据页在宕机前没有写入磁盘，也保证了数据的持久性，不会丢失。</p>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>配置参数的影响 (innodb_flush_log_at_trx_commit)</strong></p>
+<p>这个参数直接影响 Redo Log 的刷盘时机，从而影响持久性的强度和性能：</p>
+<ul>
+<li><p><strong>1 (默认值):</strong> 最高安全性。每次事务提交时，都会将 Redo Log Buffer 的内容<strong>同步</strong>写入到磁盘上的 Redo Log 文件并完成 fsync 操作。即使操作系统或数据库主机宕机，也最多丢失未提交的事务。这是完全符合 ACID 持久性的设置。</p>
+</li>
+<li><p><strong>2:</strong> 性能较好。每次事务提交时，仅将 Redo Log Buffer 写入操作系统的文件缓存 (Page Cache)，大约每秒由操作系统将缓存刷新到磁盘。如果仅仅是 MySQL 进程崩溃，数据不会丢失；但如果操作系统也同时崩溃或服务器断电，可能会丢失最后一秒内提交的事务。</p>
+</li>
+<li><p><strong>0:</strong> 性能最好。大约每秒才将 Redo Log Buffer 写入操作系统的文件缓存，并由操作系统刷新到磁盘。MySQL 进程崩溃或操作系统崩溃&#x2F;断电都可能导致丢失最后一秒的事务。</p>
+</li>
+</ul>
+<p><strong>总结:</strong></p>
+<p>MySQL InnoDB 通过 <strong>Write-Ahead Logging (WAL)</strong> 策略，利用 <strong>Redo Log</strong> 实现了持久性。核心在于<strong>强制要求事务提交前必须先将对应的 Redo Log 记录写入磁盘</strong>。这样即使数据页的写入是延迟和异步的，在系统宕机后，也能通过重放 Redo Log 来恢复所有已提交事务的修改，从而保证数据不丢失。配置参数 innodb_flush_log_at_trx_commit 允许在持久性强度和性能之间进行权衡。</p>
+<p><del>通过 redolog，MySQL 使用了 WAL，在更新记录时会先将操作写到 redo log（redo log 也是一个文件，保存在磁盘上），然后 MySQL 启动时会先检查一下 redo log，看里面有没有内容，有的话说明就说明存在未落盘的数据，此时就可以通过 redo log 将这些数据重新写入到磁盘，从而保证数据不丢失。</del></p>
+<p><del>redo log 的工作原理参见上面</del></p>
+<h1 id="如果-rollback-了，之前已经写入到-redolog-的数据会一起删除吗？此外，redolog-的刷盘时机是什么？它不会把未提交事务的数据刷盘吗？"><a href="#如果-rollback-了，之前已经写入到-redolog-的数据会一起删除吗？此外，redolog-的刷盘时机是什么？它不会把未提交事务的数据刷盘吗？" class="headerlink" title="如果 rollback 了，之前已经写入到 redolog 的数据会一起删除吗？此外，redolog 的刷盘时机是什么？它不会把未提交事务的数据刷盘吗？"></a>如果 rollback 了，之前已经写入到 redolog 的数据会一起删除吗？此外，redolog 的刷盘时机是什么？它不会把未提交事务的数据刷盘吗？</h1><p> ✅ 问题一：如果 rollback 了，之前已经写入到 redo log 的内容会一起删除吗？</p>
+<p><strong>不会删除！但会被标记为无效。</strong></p>
+<p>原因：</p>
+<ol>
+<li><p><strong>redo log 是顺序写入的日志文件，不支持“回滚删除”</strong></p>
+<ul>
+<li><p>redo log 是一种物理日志，只记录数据页的修改操作，底层是顺序写入、环形结构。</p>
+</li>
+<li><p>不会因为事务回滚而“物理删除”之前写入的日志。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>rollback 时会写 undo log 来“逻辑回滚”</strong></p>
+<ul>
+<li><p>当你 <code>ROLLBACK</code> 一个事务时，InnoDB 会根据 <strong>undo log</strong> 来将数据恢复到原始状态。</p>
+</li>
+<li><p>redo log 里虽然还存在那些未提交时的修改记录，但这些事务是未提交的，因此恢复时会 <strong>忽略</strong>。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>crash recovery 时：</strong></p>
+<ul>
+<li><p>InnoDB 会遍历 redo log 日志：</p>
+<ul>
+<li><p>找到 <strong>已提交事务的日志</strong> → redo 恢复（应用日志）</p>
+</li>
+<li><p>找到 <strong>未提交事务的日志</strong> → <strong>不执行</strong>，等事务恢复机制清理它。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>🔁 所以你可以理解为：<strong>rollback 不会删除 redo log 中的数据，而是通过 undo log 做逻辑回退，redo log 留着作为 crash recovery 的一部分，但不会真正重放。</strong></p>
+<p><strong>redo log 的刷盘时机</strong></p>
+<p>InnoDB 会根据两种时机刷盘 redo log：</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1. 写入 redo log buffer（内存）时</td>
+<td>不立即刷盘（写入内存）</td>
+</tr>
+<tr>
+<td>2. 满足以下任何一种情况时才会刷盘（fsync 到磁盘）</td>
+<td></td>
+</tr>
+<tr>
+<td>- <code>COMMIT</code> 提交事务</td>
+<td>✅ 刷盘（取决于 <code>innodb_flush_log_at_trx_commit</code> 参数）</td>
+</tr>
+<tr>
+<td>- redo log buffer 空间不足</td>
+<td>✅ 刷盘</td>
+</tr>
+<tr>
+<td>- 后台定时刷新（如每秒）</td>
+<td>✅ 刷盘</td>
+</tr>
+<tr>
+<td>- crash recover</td>
+<td>✅ 读取 redo log 日志恢复</td>
+</tr>
+</tbody></table>
+<hr>
+<p><strong>关键参数：<code>innodb_flush_log_at_trx_commit</code></strong></p>
+<p>这个参数控制 <strong>事务提交时是否强制将 redo log 刷到磁盘</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>0</code></td>
+<td>不在事务提交时刷盘，只由后台线程周期性刷盘（如每秒）</td>
+</tr>
+<tr>
+<td><code>1</code></td>
+<td>每次事务提交时都立刻 fsync（最安全）✅ 推荐</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td>提交时写 redo buffer，不 fsync，fsync 交给后台</td>
+</tr>
+</tbody></table>
+<p>💡 <strong>说明：</strong></p>
+<ul>
+<li><p>即使你没有 commit，InnoDB 也可能把 redo log <strong>提前刷到磁盘</strong>（比如 buffer 快满了）。</p>
+</li>
+<li><p>所以磁盘上可能存在很多 <strong>未提交事务的 redo log 数据</strong>。</p>
+</li>
+</ul>
+<hr>
+<p><strong>这安全吗？为啥不怕刷了未提交事务？</strong></p>
+<p>这正是 <strong>InnoDB crash recovery 机制</strong> 的关键设计点：</p>
+<ul>
+<li><p><strong>刷盘 ≠ 提交成功</strong></p>
+</li>
+<li><p>redo log 中必须有 <code>COMMIT</code> 标志，才表示这个事务成功提交，才会在恢复时执行。</p>
+</li>
+<li><p>所以即使 redo log 中刷了很多还没提交的数据也没关系，<strong>崩溃恢复时不会重放这些“半成品”</strong>。</p>
+</li>
+</ul>
+<p><strong>✅ 总结</strong></p>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>答案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rollback 时 redo log 数据会删除吗？</td>
+<td>❌ 不会删除，但会被标记为“未提交”，恢复时不会执行</td>
+</tr>
+<tr>
+<td>redo log 会不会写未提交事务的数据？</td>
+<td>✅ 会，为了性能提前写入</td>
+</tr>
+<tr>
+<td>redo log 会不会把未提交事务的数据刷盘？</td>
+<td>✅ 会，但恢复时会根据是否有 COMMIT 标记判断是否应用</td>
+</tr>
+<tr>
+<td>为啥这样设计是安全的？</td>
+<td>因为 InnoDB crash recovery 会忽略没有 commit 的日志</td>
+</tr>
+</tbody></table>
+<h2 id="✅-redo-log-并不会“主动”将数据写入-ibd-文件"><a href="#✅-redo-log-并不会“主动”将数据写入-ibd-文件" class="headerlink" title="✅ redo log 并不会“主动”将数据写入 .ibd 文件"></a>✅ redo log 并不会“主动”将数据写入 <code>.ibd</code> 文件</h2><ul>
+<li><p><strong>redo log 是物理日志</strong>，它的主要作用是：<strong>在数据库崩溃后用于恢复未刷盘的脏页</strong>。</p>
+</li>
+<li><p>它<strong>不直接负责</strong>将内存中修改后的数据写入 <code>.ibd</code> 表空间文件。</p>
+</li>
+</ul>
+<h2 id="✅-ibd-文件的写入由-脏页刷盘机制-来完成："><a href="#✅-ibd-文件的写入由-脏页刷盘机制-来完成：" class="headerlink" title="✅ .ibd 文件的写入由 脏页刷盘机制 来完成："></a>✅ <code>.ibd</code> 文件的写入由 <strong>脏页刷盘机制</strong> 来完成：</h2><ul>
+<li><p>当 InnoDB 在 Buffer Pool 中修改了某个数据页后，该页变成了 <strong>dirty page（脏页）</strong>。</p>
+</li>
+<li><p>InnoDB 的后台线程（如 Page Cleaner）会根据策略（时间、水位、压力）<strong>异步将这些脏页 flush 到磁盘 <code>.ibd</code> 文件中</strong>。</p>
+</li>
+<li><p>这个过程 <strong>与 redo log 是否写入或刷盘没有直接关系</strong>，它们是<strong>并行的两个机制</strong>。</p>
+</li>
+</ul>
+<h1 id="undolog-在宕机时怎么保证原子性"><a href="#undolog-在宕机时怎么保证原子性" class="headerlink" title="undolog 在宕机时怎么保证原子性"></a>undolog 在宕机时怎么保证原子性</h1><p><strong>🔧 假设的未提交事务：</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">BEGIN</span>;<br><span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> <span class="hljs-keyword">user</span> <span class="hljs-keyword">VALUES</span> (<span class="hljs-number">2</span>, <span class="hljs-string">&#x27;Jerry&#x27;</span>);<br><span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> <span class="hljs-keyword">user</span> <span class="hljs-keyword">VALUES</span> (<span class="hljs-number">3</span>, <span class="hljs-string">&#x27;Bob&#x27;</span>);<br><span class="hljs-keyword">UPDATE</span> <span class="hljs-keyword">user</span> <span class="hljs-keyword">SET</span> name <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;Alice&#x27;</span> <span class="hljs-keyword">WHERE</span> id <span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br><span class="hljs-keyword">DELETE</span> <span class="hljs-keyword">FROM</span> <span class="hljs-keyword">user</span> <span class="hljs-keyword">WHERE</span> id <span class="hljs-operator">=</span> <span class="hljs-number">10</span>;<br><span class="hljs-comment">-- 还没 commit，MySQL 崩溃了 💥</span><br></code></pre></td></tr></table></figure>
+
+<p>这个事务还没提交，MySQL 崩溃了。现在我们来看看：</p>
+<p>每条操作的流程：</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>redo log 中记录了什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>INSERT INTO user VALUES (2, &#39;Jerry&#39;)</code></td>
+<td>哪个页插入了什么值的位置，插入前页的状态，插入的值</td>
+</tr>
+<tr>
+<td><code>INSERT INTO user VALUES (3, &#39;Bob&#39;)</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>UPDATE user SET name = &#39;Alice&#39; WHERE id = 1</code></td>
+<td>该页中某个记录字段从 “Tom” 改为 “Alice”</td>
+</tr>
+<tr>
+<td><code>DELETE FROM user WHERE id = 10</code></td>
+<td>哪个页删除了哪一行、位置在哪里等信息</td>
+</tr>
+<tr>
+<td>这些信息都写入 redo log 中，<strong>redo log 会打一个 “prepare” 标记</strong>，但<strong>还没有写 commit 标记</strong>。</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>此外，每条操作也会生成一份 undo log，供 rollback 使用。</p>
+<p>此时，我们再来模拟崩溃恢复。</p>
+<p><strong>🧠 恢复过程如下：</strong></p>
+<ol>
+<li><p><strong>MySQL 重启</strong>，Buffer Pool 是空的</p>
+</li>
+<li><p>InnoDB 读取 redo log，发现该事务有 <strong>prepare</strong>，但没有 <strong>commit</strong></p>
+</li>
+<li><p>确认这是个 <strong>未提交事务</strong></p>
+</li>
+<li><p><strong>不执行 redo log 的重做</strong></p>
+</li>
+<li><p>找到该事务的 undo log，执行回滚操作（相当于手动执行 rollback）</p>
+</li>
+<li><p>Buffer Pool 重新加载时，所有对页的恢复都是基于已提交事务</p>
+</li>
+</ol>
+<h1 id="为什么重启要做-undo？如果这个提交还没有-commit，那我直接把它扔掉不就好了吗？buffer-pool-直接加载当前数据？"><a href="#为什么重启要做-undo？如果这个提交还没有-commit，那我直接把它扔掉不就好了吗？buffer-pool-直接加载当前数据？" class="headerlink" title="为什么重启要做 undo？如果这个提交还没有 commit，那我直接把它扔掉不就好了吗？buffer pool 直接加载当前数据？"></a>为什么重启要做 undo？如果这个提交还没有 commit，那我直接把它扔掉不就好了吗？buffer pool 直接加载当前数据？</h1><p>这个问题问得非常精准！很多人第一次学 InnoDB crash recovery 时也会有这个疑惑：</p>
+<blockquote>
+<p>❓“未提交的事务不是没 commit 吗？为啥还要 rollback？直接别恢复它不就好了？”</p>
+</blockquote>
+<p>咱们今天就把这件事彻底讲清楚👇</p>
+<hr>
+<p> ✅ 先给出简洁回答：</p>
+<blockquote>
+<p><strong>InnoDB 不是真正把“未提交事务”数据忽略掉，而是需要主动用 undo log 回滚它</strong>，<br>因为：<strong>这些未提交的修改，已经写入到了数据页（甚至写入磁盘）中了！不能不管！</strong></p>
+</blockquote>
+<hr>
+<p>📌 为什么不能“直接不恢复”？</p>
+<p>我们得从 <strong>redo log 与数据页的时序关系</strong> 来看：</p>
+<ol>
+<li><p>redo log 是“先写日志，再修改内存页（Buffer Pool）”，对吧？</p>
+</li>
+<li><p>如果内存页（Buffer Pool）被刷到磁盘（.ibd 文件），但事务还没 commit，就成了“脏数据”</p>
+</li>
+</ol>
+<hr>
+<p> ⛔ 场景还原：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">BEGIN</span>;<br><span class="hljs-keyword">UPDATE</span> <span class="hljs-keyword">user</span> <span class="hljs-keyword">SET</span> name <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;Alice&#x27;</span> <span class="hljs-keyword">WHERE</span> id <span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br></code></pre></td></tr></table></figure>
+
+<p>执行完：</p>
+<ul>
+<li><p>🔸 生成 redo log（写到 redo buffer，可能已刷盘）</p>
+</li>
+<li><p>🔸 Buffer Pool 中修改页内容</p>
+</li>
+<li><p>🔸 Buffer Pool 脏页可能已经异步刷到磁盘（.ibd）</p>
+</li>
+</ul>
+<p>这时突然宕机！</p>
+<hr>
+<p>🔥 如果你“啥也不做”，直接加载当前数据页？</p>
+<ul>
+<li><p>数据页上已经是 “name &#x3D; ‘Alice’”</p>
+</li>
+<li><p>但这个事务没 commit！</p>
+</li>
+<li><p>你就相当于把一个“<strong>未提交事务的修改</strong>”当成“<strong>正常数据</strong>”用了！</p>
+</li>
+</ul>
+<p>这就破坏了 MySQL 的 <strong>事务原子性 &amp; 一致性</strong>（ACID）：</p>
+<blockquote>
+<p>❌ 未提交的内容绝不能被恢复成正式数据！</p>
+</blockquote>
+<hr>
+<p> ✅ 所以必须干嘛？</p>
+<blockquote>
+<p>🔁 在恢复阶段：</p>
+<ul>
+<li><p>识别 redo log 中哪些事务没 commit</p>
+</li>
+<li><p>用它们的 <strong>undo log 回滚</strong>这部分数据页的修改</p>
+</li>
+<li><p>让数据页回到事务开始之前的样子</p>
+</li>
+</ul>
+</blockquote>
+<p>这样才能做到 <strong>事务一致性</strong>：崩溃恢复后只留下那些“已经提交”的结果。</p>
+<hr>
+<p>🧠 简单总结一句话：</p>
+<blockquote>
+<p><strong>InnoDB 不是简单地“忽略”未提交事务，而是必须“显式地撤销”它做过的事。</strong></p>
+</blockquote>
+<p>因为它的修改很可能已经影响了磁盘数据，必须还原！</p>
+<hr>
+<p>如果你想更深入，我可以模拟一次“未提交事务刷脏页”+“undo 回滚”的具体过程（页号 + offset + undo slot），你要不要看看硬核版本的？😎</p>
+<h1 id="什么是-buffer-pool"><a href="#什么是-buffer-pool" class="headerlink" title="什么是 buffer pool"></a>什么是 buffer pool</h1><p><strong>Buffer Pool 是什么？</strong></p>
+<p>简单来说，<strong>Buffer Pool 是 InnoDB 存储引擎在内存中开辟的一块区域，用于缓存磁盘上数据文件（.ibd 文件）中的数据页 (Data Page) 和索引页 (Index Page)。</strong></p>
+<p>你可以把它想象成是数据库为了<strong>减少磁盘 I&#x2F;O</strong> 而在内存里建立的一个高速缓存区。</p>
+<p><strong>为什么需要 Buffer Pool？</strong></p>
+<ul>
+<li><p><strong>磁盘 I&#x2F;O 很慢:</strong> 相比于内存访问，磁盘的随机读写速度要慢好几个数量级。如果每次读写数据都要直接操作磁盘，数据库性能会非常低下。</p>
+</li>
+<li><p><strong>数据访问局部性原理:</strong> 应用程序访问数据通常具有局部性，即最近访问过的数据或其附近的数据很可能在不久的将来再次被访问。将这些热点数据缓存到内存中，可以极大地提高访问速度。</p>
+</li>
+</ul>
+<p><strong>Buffer Pool 如何工作？</strong></p>
+<ol>
+<li><p><strong>缓存数据页和索引页:</strong> 当 InnoDB 需要读取某个数据页或索引页时，它会首先检查这个页是否已经在 Buffer Pool 中：</p>
+<ul>
+<li><p><strong>缓存命中 (Cache Hit):</strong> 如果页在 Buffer Pool 中，InnoDB 直接从内存读取，速度非常快。</p>
+</li>
+<li><p><strong>缓存未命中 (Cache Miss):</strong> 如果页不在 Buffer Pool 中，InnoDB 需要从磁盘上的数据文件将其读取到 Buffer Pool 中一个空闲的缓存页位置，然后再从 Buffer Pool 读取。这个过程相对较慢，因为涉及磁盘 I&#x2F;O。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>缓存修改后的数据 (脏页 Dirty Pages):</strong> 当 InnoDB 需要修改某个数据页时（例如执行 UPDATE 或 INSERT）：</p>
+<ul>
+<li><p>它会先将该页读入 Buffer Pool（如果不在的话）。</p>
+</li>
+<li><p>然后，<strong>直接修改内存中 Buffer Pool 里的这个页</strong>。这个被修改过但尚未写回磁盘的页被称为“脏页 (Dirty Page)”。</p>
+</li>
+<li><p><strong>重要：</strong> 修改<strong>不会</strong>立即写回磁盘的数据文件。这是为了性能。内存修改非常快。</p>
+</li>
+<li><p>为了保证持久性（ACID 中的 D），对数据页的修改操作会先被记录到 <strong>Redo Log</strong> 中，并且 Redo Log 会在事务提交时（或根据策略）被刷到磁盘。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>脏页的刷盘 (Flush):</strong> Buffer Pool 中的脏页最终需要被写回到磁盘上的数据文件中。这个过程通常由后台线程异步、批量地完成，主要触发时机包括：</p>
+<ul>
+<li><p><strong>Checkpoint 机制:</strong> InnoDB 会定期执行 Checkpoint，将某个时间点之前的脏页刷新到磁盘，以推进 Redo Log 的可重用空间。</p>
+</li>
+<li><p><strong>Buffer Pool 空间不足:</strong> 当需要加载新页到 Buffer Pool 但没有足够空闲页时，需要将一些“最久未使用”的脏页刷盘腾出空间。</p>
+</li>
+<li><p><strong>Redo Log 写满:</strong> 为了推进 Redo Log，需要确保对应的脏页已落盘。</p>
+</li>
+<li><p><strong>数据库正常关闭时:</strong> 所有脏页会被刷盘。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>缓存页的淘汰 (Eviction):</strong> Buffer Pool 的大小是有限的。当需要加载新页但没有空闲缓存页时，InnoDB 需要选择一个现有的缓存页进行淘汰。它使用一种改进的 <strong>LRU (Least Recently Used - 最近最少使用)</strong> 算法来决定淘汰哪个页：</p>
+<ul>
+<li><p><strong>基本 LRU:</strong> 维护一个列表，最近访问的页放在列表头部，最久未访问的在尾部。淘汰时从尾部移除。</p>
+</li>
+<li><p><strong>InnoDB 的改进 (Midpoint Insertion Strategy):</strong> 为了防止全表扫描等操作污染缓存（将大量只访问一次的页放入热区），InnoDB 将 LRU 列表分为 “Young” (热数据) 和 “Old” (冷数据) 两个子列表。新读入的页通常先放入 Old 区的头部。只有当 Old 区的页再次被访问时，才会被移动到 Young 区的头部。淘汰优先从 Old 区的尾部进行。</p>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>Buffer Pool 的重要性:</strong></p>
+<ul>
+<li><p><strong>性能核心:</strong> Buffer Pool 是 InnoDB 性能的关键。一个配置合理、足够大的 Buffer Pool 可以显著减少磁盘 I&#x2F;O，大幅提升数据库的读写性能。</p>
+</li>
+<li><p><strong>配置关键参数:</strong> innodb_buffer_pool_size 是最重要的配置参数之一，它直接决定了 Buffer Pool 的大小。在专用的数据库服务器上，通常建议将其设置为物理内存的 50% 到 80%（需要给操作系统和其他进程留出内存）。</p>
+</li>
+<li><p><strong>监控:</strong> 通过 SHOW ENGINE INNODB STATUS 或相关的 Performance Schema&#x2F;Information Schema 表，可以监控 Buffer Pool 的命中率、脏页数量、I&#x2F;O 活动等关键指标，用于性能分析和调优。</p>
+</li>
+</ul>
+<p><strong>总结:</strong></p>
+<p>MySQL 的 Buffer Pool (主要指 InnoDB 的) 是一个<strong>内存缓存区</strong>，用于存放从磁盘读取的数据页和索引页。它通过将热点数据保留在内存中来<strong>加速读操作</strong>，并通过在内存中修改数据（产生脏页）再异步刷盘来<strong>优化写操作</strong>。其大小和管理效率直接影响数据库性能，是性能调优时必须关注的核心组件。</p>
+<h1 id="buffer-pool-可能会把未提交事务产生的数据刷到-ibd-里面吗？"><a href="#buffer-pool-可能会把未提交事务产生的数据刷到-ibd-里面吗？" class="headerlink" title="buffer pool 可能会把未提交事务产生的数据刷到 ibd 里面吗？"></a>buffer pool 可能会把未提交事务产生的数据刷到 ibd 里面吗？</h1><p>是的，<strong>Buffer Pool 完全有可能将包含未提交事务所做修改的数据页（即“脏页”）刷入到磁盘上的 .ibd 数据文件中</strong>。</p>
+<p>这听起来可能有点反直觉，但这是 InnoDB 设计中正常且必要的行为，并且 <strong>不会破坏事务的原子性或隔离性</strong>，原因如下：</p>
+<ol>
+<li><p><strong>刷盘是基于页 (Page)，而非基于事务 (Transaction):</strong></p>
+<ul>
+<li><p>Buffer Pool 管理和刷盘的基本单位是<strong>数据页</strong>。一个数据页上可能同时包含来自<strong>多个不同事务</strong>（包括已提交、未提交、活跃的）所做的修改记录。</p>
+</li>
+<li><p>InnoDB 的后台刷盘线程（如 Page Cleaner Thread）选择哪些脏页进行刷盘，主要是基于 LRU 算法（淘汰最近最少使用的页）、Checkpoint 进度、脏页比例等因素，而<strong>不是</strong>基于这些页上的修改是否都来自已提交的事务。</p>
+</li>
+<li><p>因此，一个包含未提交事务修改的脏页，完全可能因为上述原因被选中并刷回到 .ibd 文件。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>为什么允许这样做？性能！</strong></p>
+<ul>
+<li><p>如果要求必须等到页上所有的修改都来自已提交的事务才允许刷盘，那么刷盘效率会大大降低。一个包含活跃事务修改的“热点页”可能长时间无法刷盘，导致 Buffer Pool 中脏页堆积，增加恢复时间，并可能阻塞其他需要缓存空间的操作。</p>
+</li>
+<li><p>允许混合刷盘使得刷盘过程更加平滑和高效。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>如何保证原子性和一致性？靠 Undo Log！</strong></p>
+<ul>
+<li><p>即使包含了未提交事务修改的数据页被写入了磁盘，这并不会导致数据不一致或破坏原子性。</p>
+</li>
+<li><p><strong>如果事务最终提交：</strong> 那么这些修改就是有效的，写入磁盘是应该的（虽然 Redo Log 已经保证了持久性）。</p>
+</li>
+<li><p><strong>如果事务最终回滚 (Rollback)：</strong></p>
+<ul>
+<li><p>InnoDB 会使用该事务对应的 <strong>Undo Log</strong> 来撤销这些修改。这个撤销操作<strong>同样会修改 Buffer Pool 中的数据页</strong>（应用反向操作），将这些页再次标记为“脏页”，最终这些“撤销”后的状态也会被刷回磁盘。</p>
+</li>
+<li><p>如果是在<strong>宕机恢复</strong>时需要回滚未提交事务：InnoDB 会先通过 Redo Log 将数据库恢复到崩溃前的状态（这可能包含未提交的修改），然后利用 Undo Log 对所有未提交事务进行回滚操作，将数据页恢复到事务开始前的状态。最终写回磁盘的也是这个回滚后的状态。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>MVCC (多版本并发控制) 的作用：</strong> 对于其他正在运行的事务，它们通过 MVCC 机制读取数据。它们会根据事务的隔离级别和事务 ID，利用 Undo Log 来看到它们应该看到的、一致性的数据版本（通常是事务开始时的快照，或者已提交的数据），而<strong>不会读到</strong>其他未提交事务所做的、即使已经刷盘的修改。</p>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>总结:</strong></p>
+<ul>
+<li><p><strong>是的，包含未提交事务修改的脏页可能会被刷入 .ibd 文件。</strong></p>
+</li>
+<li><p>这是 InnoDB 出于<strong>性能考虑</strong>的正常设计。</p>
+</li>
+<li><p>数据库的<strong>原子性</strong>（未提交事务最终无效）和<strong>隔离性</strong>（并发事务不看到未提交的修改）是通过 <strong>Undo Log 和 MVCC</strong> 机制来保证的，<strong>而不是</strong>通过阻止未提交修改的数据页刷盘来实现的。</p>
+</li>
+<li><p>宕机恢复时，Redo Log 先恢复所有（包括未提交的）修改，然后 Undo Log 负责回滚未提交的事务，最终确保数据文件只反映已提交事务的状态。</p>
+</li>
+</ul>
+<h1 id="什么是-binlog"><a href="#什么是-binlog" class="headerlink" title="什么是 binlog"></a>什么是 binlog</h1><p>binlog 用于记录数据库执行的写入性操作（不包括查询）信息，以二进制的形式保存在磁盘中。binlog 是 MySQL 的逻辑日志，并且由 Server 层进行记录，使用任何存储引擎的 <a target="_blank" rel="noopener" href="https://cloud.tencent.com/product/cdb?from_column=20065&from=20065">MySQL数据库</a> 都会记录 binlog 日志。</p>
 <ul>
 <li>逻辑日志：可以简单理解为记录的就是 SQL 语句。</li>
 <li>物理日志：因为 MySQL 数据最终是保存在数据页中的，物理日志记录的就是数据页变更。</li>
@@ -403,6 +1079,63 @@
 <li>此时主库创建一个 binlog dump thread，把 bin log 的内容发送到从库。</li>
 <li>从库启动之后，创建一个 I&#x2F;O 线程，读取主库传过来的 bin log 内容并写入到 relay log（中继日志）。</li>
 <li>从库还会创建一个 SQL 线程，从 relay log 里面读取内容，从 ExecMasterLog_Pos 位置开始执行读取到的更新事件，将更新内容写入到 slave 的 db。</li>
+</ul>
+<h1 id="为什么有了-redolog-还需要-binlog？二者的区别和使用场景？"><a href="#为什么有了-redolog-还需要-binlog？二者的区别和使用场景？" class="headerlink" title="为什么有了 redolog 还需要 binlog？二者的区别和使用场景？"></a>为什么有了 redolog 还需要 binlog？二者的区别和使用场景？</h1><p><strong>为什么需要两者？&#x2F; 二者的关键区别与互补性</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>特性</td>
+<td>Redo Log (InnoDB)</td>
+<td>Binlog (MySQL Server)</td>
+</tr>
+<tr>
+<td><strong>层面</strong></td>
+<td>存储引擎层 (InnoDB 特有)</td>
+<td>Server 层 (所有引擎共享)</td>
+</tr>
+<tr>
+<td><strong>目的</strong></td>
+<td><strong>崩溃恢复</strong>, <strong>保证持久性 (Durability)</strong></td>
+<td><strong>复制</strong>, <strong>数据恢复 (PITR)</strong>, <strong>审计</strong></td>
+</tr>
+<tr>
+<td><strong>内容</strong></td>
+<td><strong>物理</strong>操作 (数据页修改)</td>
+<td><strong>逻辑</strong>操作 (SQL 语句或行变更)</td>
+</tr>
+<tr>
+<td><strong>格式</strong></td>
+<td>二进制物理格式</td>
+<td>逻辑格式 (Statement&#x2F;Row&#x2F;Mixed), 可解析</td>
+</tr>
+<tr>
+<td><strong>文件结构</strong></td>
+<td>固定大小, <strong>循环写入</strong></td>
+<td>追加写入, 文件序列, <strong>不循环</strong></td>
+</tr>
+<tr>
+<td><strong>写入时机</strong></td>
+<td>事务执行中产生, 提交时<strong>强制或按策略</strong>刷盘 (WAL)</td>
+<td>事务提交过程中写入 (通常在 Redo Log Prepare 后)</td>
+</tr>
+<tr>
+<td><strong>崩溃安全</strong></td>
+<td><strong>保证</strong> InnoDB 自身崩溃安全</td>
+<td><strong>不直接保证</strong> 引擎层崩溃安全 (依赖引擎的 Redo Log)</td>
+</tr>
+</tbody></table>
+<p><strong>核心原因：职责不同</strong></p>
+<ul>
+<li><p><strong>Redo Log 负责让 InnoDB 自己“不出错”:</strong> 它保证了 InnoDB 存储引擎自身在面对崩溃时的恢复能力，使得 InnoDB 符合 ACID 中的 D（持久性）。它只关心物理数据页如何恢复，不关心逻辑操作是什么。</p>
+</li>
+<li><p><strong>Binlog 负责让 MySQL Server“能被复制”和“能回溯”:</strong> 它记录了数据库发生的逻辑变更，使得其他 MySQL 服务器（从库）可以重放这些变更，或者 DBA 可以利用它进行精确到时间点的数据恢复。它不负责保证单个事务在引擎崩溃时的持久性。</p>
+</li>
 </ul>
 <h1 id="幻读和不可重复读的区别"><a href="#幻读和不可重复读的区别" class="headerlink" title="幻读和不可重复读的区别"></a>幻读和不可重复读的区别</h1><p>不可重复读与幻读的区别可以通俗的理解为：前者是数据变了，后者是数据的行数变了</p>
 <p>幻读（Phantom Read）和不可重复读（Non-repeatable Read）都是并发环境下可能出现的数据读取问题，但它们的原因和表现方式有所不同。</p>
@@ -425,6 +1158,161 @@
 <li>不可重复读通常通过使用锁或使用行级别的读取锁（Read Lock）来解决。</li>
 </ul>
 <p>需要注意的是，幻读和不可重复读是数据库事务隔离级别中的现象。在不同的事务隔离级别下，这些问题的出现与解决方式也可能有所不同。</p>
+<h1 id="事务隔离级别"><a href="#事务隔离级别" class="headerlink" title="事务隔离级别"></a>事务隔离级别</h1><p>四种事务隔离级别</p>
+<table>
+<thead>
+<tr>
+<th>隔离级别</th>
+<th>脏读</th>
+<th>不可重复读</th>
+<th>幻读</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>READ UNCOMMITTED</strong></td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>最低级别，可能读到未提交的数据（脏读）</td>
+</tr>
+<tr>
+<td><strong>READ COMMITTED</strong></td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+<td>Oracle 默认，解决脏读，但可能看到别的事务提交的新数据（不可重复读）</td>
+</tr>
+<tr>
+<td><strong>REPEATABLE READ</strong></td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+<td>MySQL InnoDB 默认，保证同一事务内多次读数据一致，但可能遇到幻读</td>
+</tr>
+<tr>
+<td><strong>SERIALIZABLE</strong></td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>最严格，串行执行（对每行加锁），最慢最安全</td>
+</tr>
+</tbody></table>
+<p><strong>1. 读未提交 (Read Uncommitted)</strong></p>
+<ul>
+<li><p><strong>级别最低：</strong> 一个事务可以读取到其他事务<strong>尚未提交</strong>的修改。</p>
+</li>
+<li><p><strong>存在问题：</strong></p>
+<ul>
+<li><p><strong>脏读 (Dirty Read):</strong> 读取到了其他事务未提交的数据，如果那个事务最终回滚，读取到的就是无效的脏数据。</p>
+</li>
+<li><p><strong>不可重复读 (Non-repeatable Read):</strong> 在同一事务内，两次读取同一行数据，结果可能不同，因为其他事务在此期间修改并提交了该行。</p>
+</li>
+<li><p><strong>幻读 (Phantom Read):</strong> 在同一事务内，两次执行相同的范围查询，结果集中的行数可能不同，因为其他事务在此期间插入或删除了符合条件的行。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>并发性能：</strong> 最高，因为读操作几乎不加锁（或加锁时间极短）。</p>
+</li>
+<li><p><strong>使用场景：</strong> 很少使用，除非对数据一致性要求极低，能容忍脏读。</p>
+</li>
+</ul>
+<p><strong>2. 读已提交 (Read Committed)</strong></p>
+<ul>
+<li><p><strong>解决了脏读：</strong> 一个事务只能读取到其他事务<strong>已经提交</strong>的修改。</p>
+</li>
+<li><p><strong>实现方式 (InnoDB):</strong> 通常通过 MVCC (多版本并发控制) 实现。每次 SELECT 语句执行时，都会创建一个新的读视图 (Read View)，只能看到在该视图创建之前已经提交的事务的修改。</p>
+</li>
+<li><p><strong>存在问题：</strong></p>
+<ul>
+<li><p><strong>不可重复读 (Non-repeatable Read):</strong> 因为事务内每次 SELECT 都会创建新的读视图，如果在两次 SELECT 之间，有其他事务修改了数据并提交，那么第二次 SELECT 就能看到这个提交后的新值，导致两次读取结果不一致。</p>
+</li>
+<li><p><strong>幻读 (Phantom Read):</strong> 同样因为每次 SELECT 创建新视图，可能看到其他事务新插入并提交的行。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>并发性能：</strong> 较好，读操作不阻塞写操作，写操作也不阻塞读操作（基于 MVCC）。</p>
+</li>
+<li><p><strong>使用场景：</strong> 很多数据库的默认级别（如 Oracle, PostgreSQL, SQL Server 的默认 RCSI）。适用于大多数要求避免脏读，但可以容忍不可重复读和幻读的应用。</p>
+</li>
+</ul>
+<p><strong>3. 可重复读 (Repeatable Read) - MySQL InnoDB 默认级别</strong></p>
+<ul>
+<li><p><strong>解决了脏读和不可重复读：</strong> 在同一个事务内，多次读取同一行数据，结果保证是一致的。</p>
+</li>
+<li><p><strong>实现方式 (InnoDB):</strong> 同样基于 MVCC。关键区别在于，<strong>读视图 (Read View) 是在事务第一次执行 SELECT 语句时创建的，并且在整个事务期间保持不变</strong>。后续的所有 SELECT 都使用这个<strong>初始的读视图</strong>，因此它们只能看到在事务开始时就已经提交的数据，或者本事务自己所做的修改，看不到其他并发事务在此期间提交的修改。</p>
+</li>
+<li><p><strong>存在问题：</strong></p>
+<ul>
+<li><p><strong>幻读 (Phantom Read):</strong> 理论上，标准的 RR 级别仍然允许幻读。但在 <strong>MySQL 的 InnoDB</strong> 中，通过结合 <strong>MVCC 和 Next-Key Locking (间隙锁 + 记录锁)<strong>，它在很大程度上</strong>解决了幻读问题</strong>。</p>
+<ul>
+<li><p>对于快照读 (SELECT)，MVCC 保证看不到新插入的行。</p>
+</li>
+<li><p>对于当前读 (SELECT … FOR UPDATE, SELECT … LOCK IN SHARE MODE, INSERT, UPDATE, DELETE)，Next-Key Lock 会锁定扫描到的索引记录及其间的间隙，阻止其他事务在这些间隙中插入新的、可能导致幻读的行。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>并发性能：</strong> 良好。快照读性能高。但由于 Next-Key Lock 的存在，在某些并发写入场景下可能会锁定更大范围，降低并发度，并增加死锁的风险。</p>
+</li>
+<li><p><strong>使用场景：</strong> MySQL InnoDB 的默认设置，提供了较高的数据一致性保证（基本避免幻读），适用于大多数需要事务内数据一致性的应用。</p>
+</li>
+</ul>
+<p><strong>4. 串行化 (Serializable)</strong></p>
+<ul>
+<li><p><strong>级别最高：</strong> 解决了脏读、不可重复读和幻读。强制事务串行执行，即一个接一个地执行，完全避免了并发问题。</p>
+</li>
+<li><p><strong>实现方式 (InnoDB):</strong> 通常会对所有读取的行都加上**共享锁 (S Lock)<strong>，对写入的行加上</strong>排他锁 (X Lock)**。如果遇到锁冲突，事务必须等待。相当于所有读操作都隐式地变成了 SELECT … LOCK IN SHARE MODE。</p>
+</li>
+<li><p><strong>存在问题：</strong></p>
+<ul>
+<li><strong>并发性能极差：</strong> 大量的锁竞争导致事务需要排队等待，系统吞吐量会急剧下降。</li>
+</ul>
+</li>
+<li><p><strong>并发性能：</strong> 最低。</p>
+</li>
+<li><p><strong>使用场景：</strong> 对数据一致性要求极其严格，且可以接受极低并发性能的场景。非常少用，通常只有在特定业务逻辑需要绝对串行保证时才会考虑。</p>
+</li>
+</ul>
+<h1 id="间隙锁是怎么解决幻读问题的？"><a href="#间隙锁是怎么解决幻读问题的？" class="headerlink" title="间隙锁是怎么解决幻读问题的？"></a>间隙锁是怎么解决幻读问题的？</h1><p>首先说明，RR 可重复度级别，如果是 SELECT 是不会有幻读问题的，因为使用的是快照读，且 RR 级别整个事务只会使用一个快照。只有使用类似 SELECT FOR UPDATE 这种当前读（读取最新的数据）时才会出现。</p>
+<p>解决的方法是间隙锁+Next-Key Lock，它的锁定范围会比行锁大一些，且这个锁会持续锁定，直到事务结束。Next-Key Lock 是间隙锁 + 行锁的结合，间隙锁锁定的是<strong>索引记录之间的间隙 (Gap)<strong>，</strong>不包括</strong>记录本身。</p>
+<p><strong>示例：</strong></p>
+<p>假设有一个 products 表，id 是主键，当前有数据 id &#x3D; 10 和 id &#x3D; 20。</p>
+<ul>
+<li><p><strong>事务 A</strong> 执行： SELECT * FROM products WHERE id &gt; 9 AND id &lt; 25 FOR UPDATE;</p>
+</li>
+<li><p><strong>InnoDB (RR 级别) 的锁定行为：</strong></p>
+<ul>
+<li><p>扫描索引，找到 id &#x3D; 10。对 id &#x3D; 10 加 Next-Key Lock（锁住记录 10 和间隙 (…, 10]）。</p>
+</li>
+<li><p>扫描索引，找到 id &#x3D; 20。对 id &#x3D; 20 加 Next-Key Lock（锁住记录 20 和间隙 (10, 20]）。</p>
+</li>
+<li><p>继续扫描，没有找到 id &#x3D; 25，但扫描会越过 id &#x3D; 20。它需要锁定 id &#x3D; 20 之后的间隙，直到下一个存在的键（或者无穷大）。所以，它会在 id &#x3D; 20 之后加上一个间隙锁，覆盖 (20, +∞) 的范围（具体范围取决于索引结构和查询）。</p>
+</li>
+<li><p><strong>关键效果：</strong> 现在，间隙 (10, 20] 和 (20, …) 都被事务 A 锁定了。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>事务 B</strong> 尝试执行： INSERT INTO products (id) VALUES (15);</p>
+</li>
+<li><p><strong>InnoDB 的反应：</strong></p>
+<ul>
+<li><p>事务 B 想要在 id &#x3D; 15 的位置插入数据。这个位置位于间隙 (10, 20] 中。</p>
+</li>
+<li><p>事务 A 持有覆盖该间隙的 Gap Lock（作为 id &#x3D; 20 的 Next-Key Lock 的一部分）。</p>
+</li>
+<li><p>事务 B 需要获取一个<strong>插入意向锁 (Insert Intention Lock)</strong> 才能在这个间隙插入。</p>
+</li>
+<li><p>插入意向锁与间隙锁是<strong>不兼容</strong>的。</p>
+</li>
+<li><p>因此，<strong>事务 B 的 INSERT 操作会被阻塞</strong>，直到事务 A 提交或回滚，释放了那个间隙锁。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>结果：</strong> 由于事务 B 被阻塞，无法插入 id &#x3D; 15 的新行，因此事务 A 在其后续的任何（当前读或快照读）查询中，都不会看到 id &#x3D; 15 这个“幻影”行。幻读被阻止了。</p>
+</li>
+</ul>
 <h1 id="介绍下乐观锁悲观锁，以及各自的使用场景"><a href="#介绍下乐观锁悲观锁，以及各自的使用场景" class="headerlink" title="介绍下乐观锁悲观锁，以及各自的使用场景"></a>介绍下乐观锁悲观锁，以及各自的使用场景</h1><p>乐观锁和悲观锁是并发控制中常见的两种策略，用于解决多个线程或进程并发访问共享资源时可能发生的数据一致性问题。</p>
 <ol>
 <li>悲观锁（Pessimistic Locking）： 悲观锁是一种保守的并发控制策略，它假设并发访问的操作会发生冲突，因此在访问共享资源之前，会先对资源进行加锁，确保其他线程无法同时修改该资源。悲观锁的典型应用是使用数据库的行级锁（如行锁、表锁）来保证数据的一致性。悲观锁的特点是阻塞其他线程的访问，可能导致线程等待和性能下降。</li>
@@ -485,7 +1373,7 @@
 <li>索引列的选择性不高：如果索引列的选择性非常低，即索引列的值重复率很高，MySQL 可能不会选择使用索引进行查询，而是进行全表扫描。</li>
 </ol>
 <p>需要注意的是，以上情况并不是绝对的，MySQL 的查询优化器会根据具体的情况和统计信息来选择合适的执行计划，有时即使符合上述情况，MySQL 仍然可能使用索引。因此，在实际使用中，需要结合具体情况进行分析和测试，确保索引的正确使用和性能优化。</p>
-<h1 id="B-树和-B-树的区别？为什么-MySQL-用-B-树实现索引？3-层-B-树有多少个节点？"><a href="#B-树和-B-树的区别？为什么-MySQL-用-B-树实现索引？3-层-B-树有多少个节点？" class="headerlink" title="B 树和 B+ 树的区别？为什么 MySQL 用 B+ 树实现索引？3 层 B+ 树有多少个节点？"></a>B 树和 B+ 树的区别？为什么 MySQL 用 B+ 树实现索引？3 层 B+ 树有多少个节点？</h1><h1 id="执行一条-SQL-的流程"><a href="#执行一条-SQL-的流程" class="headerlink" title="执行一条 SQL 的流程"></a>执行一条 SQL 的流程</h1><p><img src="https://camo.githubusercontent.com/d318aaf4eefb0297e8d605f69c76d95094effe92bcb7bd98fb07e203b1930e95/68747470733a2f2f7374617469633030312e6765656b62616e672e6f72672f7265736f757263652f696d6167652f30642f64392f30643230373065386638346334383031616462666130336264613166393864392e706e67" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h1 id="B-树和-B-树的区别？为什么-MySQL-用-B-树实现索引？3-层-B-树有多少个节点？"><a href="#B-树和-B-树的区别？为什么-MySQL-用-B-树实现索引？3-层-B-树有多少个节点？" class="headerlink" title="B 树和 B+ 树的区别？为什么 MySQL 用 B+ 树实现索引？3 层 B+ 树有多少个节点？"></a>B 树和 B+ 树的区别？为什么 MySQL 用 B+ 树实现索引？3 层 B+ 树有多少个节点？</h1><h1 id="执行一条-SQL-的流程"><a href="#执行一条-SQL-的流程" class="headerlink" title="执行一条 SQL 的流程"></a>执行一条 SQL 的流程</h1><p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250417150253.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
 <ol>
 <li><strong>连接器</strong></li>
 </ol>
@@ -526,7 +1414,15 @@
 <li><strong>执行器</strong></li>
 </ol>
 <p>根据执行计划执行 SQL 查询语句，从存储引擎读取记录，返回给客户端</p>
-<h1 id="MySQL-死锁，什么情况下会触发死锁"><a href="#MySQL-死锁，什么情况下会触发死锁" class="headerlink" title="MySQL 死锁，什么情况下会触发死锁"></a>MySQL 死锁，什么情况下会触发死锁</h1><h1 id="慢查询分析"><a href="#慢查询分析" class="headerlink" title="慢查询分析"></a>慢查询分析</h1><h2 id="慢查询相关系统参数"><a href="#慢查询相关系统参数" class="headerlink" title="慢查询相关系统参数"></a>慢查询相关系统参数</h2><h3 id="slow-query-log：开启慢查询日志"><a href="#slow-query-log：开启慢查询日志" class="headerlink" title="slow_query_log：开启慢查询日志"></a>slow_query_log：开启慢查询日志</h3><p>在 MySQL 中，慢查询日志默认为 OFF 状态，通过如下命令进行查看：</p>
+<h1 id="MySQL-死锁，什么情况下会触发死锁"><a href="#MySQL-死锁，什么情况下会触发死锁" class="headerlink" title="MySQL 死锁，什么情况下会触发死锁"></a>MySQL 死锁，什么情况下会触发死锁</h1><p> ✅ 1. <strong>两个事务操作同一资源，但顺序不同</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-comment">-- 事务 A</span><br><span class="hljs-keyword">BEGIN</span>;<br><span class="hljs-keyword">UPDATE</span> <span class="hljs-keyword">user</span> <span class="hljs-keyword">SET</span> name <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;Alice&#x27;</span> <span class="hljs-keyword">WHERE</span> id <span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br><span class="hljs-comment">-- 等待事务 B</span><br><br><span class="hljs-comment">-- 事务 B</span><br><span class="hljs-keyword">BEGIN</span>;<br><span class="hljs-keyword">UPDATE</span> <span class="hljs-keyword">user</span> <span class="hljs-keyword">SET</span> name <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;Bob&#x27;</span> <span class="hljs-keyword">WHERE</span> id <span class="hljs-operator">=</span> <span class="hljs-number">2</span>;<br><span class="hljs-comment">-- 等待事务 A</span><br></code></pre></td></tr></table></figure>
+
+<p>然后：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-comment">-- 事务 A</span><br><span class="hljs-keyword">UPDATE</span> <span class="hljs-keyword">user</span> <span class="hljs-keyword">SET</span> name <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;X&#x27;</span> <span class="hljs-keyword">WHERE</span> id <span class="hljs-operator">=</span> <span class="hljs-number">2</span>; <span class="hljs-comment">-- 🚫 被事务 B 锁住</span><br><br><span class="hljs-comment">-- 事务 B</span><br><span class="hljs-keyword">UPDATE</span> <span class="hljs-keyword">user</span> <span class="hljs-keyword">SET</span> name <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;Y&#x27;</span> <span class="hljs-keyword">WHERE</span> id <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; <span class="hljs-comment">-- 🚫 被事务 A 锁住</span><br></code></pre></td></tr></table></figure>
+
+<p>→ A 等 B，B 等 A，死锁！</p>
+<p>原因是：两个事务更新同一行，<strong>会加锁</strong>，而且是 <strong>排他锁（X 锁）</strong>！多个事务同时更新同一行，会发生锁竞争，后来的事务必须等待前一个释放锁或被回滚。</p>
+<h1 id="慢查询分析"><a href="#慢查询分析" class="headerlink" title="慢查询分析"></a>慢查询分析</h1><h2 id="慢查询相关系统参数"><a href="#慢查询相关系统参数" class="headerlink" title="慢查询相关系统参数"></a>慢查询相关系统参数</h2><h3 id="slow-query-log：开启慢查询日志"><a href="#slow-query-log：开启慢查询日志" class="headerlink" title="slow_query_log：开启慢查询日志"></a>slow_query_log：开启慢查询日志</h3><p>在 MySQL 中，慢查询日志默认为 OFF 状态，通过如下命令进行查看：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">mysql&gt; </span><span class="language-bash">show variables like <span class="hljs-string">&quot;slow_query_log&quot;</span>;</span><br>+----------------+-------+<br>| Variable_name  | Value |<br>+----------------+-------+<br>| slow_query_log | OFF   |<br>+----------------+-------+<br></code></pre></td></tr></table></figure>
 
 
@@ -575,9 +1471,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/">#面试题</a>
-      
         <a href="/tags/mysql/">#mysql</a>
+      
+        <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/">#面试题</a>
       
     </div>
   

@@ -62,7 +62,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -245,15 +245,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/10/04/zhuan-zai-jin-cheng-de-xu-ni-di-zhi-kong-jian-fen-bu/" target="_self">
-          [转载] 进程的虚拟地址空间分布
+        <a href="/2022/05/06/k8s-cun-huo-tan-zhen/" target="_self">
+          k8s 存活探针
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/10/04/zhuan-zai-jin-cheng-de-xu-ni-di-zhi-kong-jian-fen-bu/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/06/k8s-cun-huo-tan-zhen/" target="_self">
         <div>
-          https://www.cnblogs.com/Joezzz/p/9803344.html
+          本篇笔记摘自 《Kubernetes in Aciton 》4.1 保持 pod 健康  基本概念k8s 会 检测 pod 中的容器 是否正常工作，如果容器的主线程奔溃，那么 k8s 会自动重启该容器，对于开发者而言，无需对应用程序任何额外操作便获得了自动修复的能力，但有时容器没有奔溃也不一定就代表正常，比如遇到了死锁问题，此时虽然容器不会奔溃，但是整个程序已经完全卡死无法继续工作了，针对这种情
         </div>
       </a>
 
@@ -261,8 +261,281 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-10-04 11:57" pubdate>
-              2021-10-04
+            <time datetime="2022-05-06 16:40" pubdate>
+              2022-05-06
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/k8s/">#k8s</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/05/04/k8s-pod-bi-ji/" target="_self">
+          k8s pod
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/04/k8s-pod-bi-ji/" target="_self">
+        <div>
+          本篇笔记摘自 《Kubernetes in Aciton 》第三章：pod：运行于 Kubernetes 中的容器  什么是 PodK8s 中的 Pod 是 最小的可调度和管理单元，它可以 包含一个或多个容器。Pod 是 K8s 中部署和运行应用程序的基本单位，它提供了一个共享的网络命名空间、存储卷和容器之间的共享环境。 一个 Pod 可以包含多个容器，这些容器 共享相同的网络和存储，可以在同一
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-05-04 23:39" pubdate>
+              2022-05-04
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/k8s/">#k8s</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/04/10/vscode-xuan-zhong-wen-ben-shi-hua-dong-su-du-guo-kuai/" target="_self">
+          vscode 选中文本时滑动速度过快
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/04/10/vscode-xuan-zhong-wen-ben-shi-hua-dong-su-du-guo-kuai/" target="_self">
+        <div>
+          这是一个困扰我已久的问题，当选中一段代码并继续向下滑动时，滑动速度会非常快，导致无法准确选中我想要的部分，比如我的屏幕能显示200行代码，我想选中1-250行的代码，这就需要我向下滑动来选中剩余的50行，但是因为速度太快，导致我轻轻一滑就会瞬间跑到第800行代码的位置，于是我又要向上滑动，结果又瞬间到了第150行，非常令人蛋疼。 在网上用中文搜索不到相关的问题，没办法只能用我蹩脚的英文搜索 vsc
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-04-10 13:44" pubdate>
+              2022-04-10
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/vscode/">#vscode</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/04/08/k3s/" target="_self">
+          k3s 踩坑记录
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/04/08/k3s/" target="_self">
+        <div>
+          安装：1curl -sfL https://rancher-mirror.rancher.cn/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh -s - --write-kubeconfig-mode 666 –write-kubeconfig-mode设置读写权限，否则每次 kubectl 都要 sudo，同时使用国内镜像进行下载 设置镜像参考 htt
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-04-08 15:27" pubdate>
+              2022-04-08
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/k3s/">#k3s</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/03/26/mysql-suo-yin/" target="_self">
+          MySQL 索引
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/26/mysql-suo-yin/" target="_self">
+        <div>
+          聚簇索引和非聚簇索引索引类型分为主键索引和非主键索引。 主键索引的叶子节点存的是整行数据。在InnoDB里，主键索引也被称为聚簇索引（clustered index）。 非主键索引的叶子节点内容是主键的值。在InnoDB里，非主键索引也被称为二级索引（secondary index）。  比如在上图中，ID 就是聚簇索引，K 是非聚簇索引 根据上面的索引结构说明，我们来讨论一个问题：基于主键索引和
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-03-26 22:35" pubdate>
+              2022-03-26
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/mysql/">#mysql</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/03/16/mysql-buffer-pool-de-yi-xie-yi-wen-ji-lu/" target="_self">
+          Mysql Buffer Pool 的一些疑问记录
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/16/mysql-buffer-pool-de-yi-xie-yi-wen-ji-lu/" target="_self">
+        <div>
+          这是我在看 Mysql Buffer Pool 时的一个疑问，先说说 Buffer Pool，为了提高性能，Mysql 为读写操作添加了一层缓存，这样就可以直接从内存中操作，速度相比操作硬盘要快很多，只要之后再将内存中的数据定期写入到磁盘中即可保证数据一致。但是这样就产生了一个问题：如果在内存写入到磁盘之前，Mysql 进程挂掉了，这样岂不是就丢失数据了？ 通过网上查阅资料，了解了 Mysql 对
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-03-16 23:00" pubdate>
+              2022-03-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/mysql/">#mysql</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/03/10/go-slice-append-de-keng-cun-yi/" target="_self">
+          Go slice append 的坑 [存疑]
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/10/go-slice-append-de-keng-cun-yi/" target="_self">
+        <div>
+          引子使用过 Go 的小伙伴应该都遇到过这样一个坑：当使用 slice 作为参数传递时，如果调用方函数内部发生了 append 操作，那么对应的改变不会在实参处体现出来，比如： 1234567891011121314package mainimport &quot;fmt&quot;func main() &#123;	slice := make([]int, 0, 0)	slice = fn(sl
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-03-10 14:31" pubdate>
+              2022-03-10
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/02/15/cao-zuo-xi-tong-mian-shi-ti/" target="_self">
+          操作系统面试题
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/02/15/cao-zuo-xi-tong-mian-shi-ti/" target="_self">
+        <div>
+          页的概念线程怎么调度的进程间通信有哪几种方式，哪种方式最快？1.无名管道( pipe )：管道是一种半双工的通信方式，数据只能单向流动，而且只能在具有亲缘关系的进程间使用。进程的亲缘关系通常是指父子进程关系。 2.高级管道(popen)：将另一个程序当做一个新的进程在当前程序进程中启动，则它算是当前程序的子进程，这种方式我们成为高级管道方式。 3.有名管道 (named pipe) ： 有名管道也
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-02-15 01:28" pubdate>
+              2022-02-15
             </time>
           </div>
         
@@ -273,8 +546,6 @@
             
               <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">#操作系统</a>
             
-              <a href="/tags/%E8%BD%AC%E8%BD%BD/">#转载</a>
-            
           </div>
         
       </div>
@@ -287,15 +558,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/10/04/mac-tong-guo-dosbox-da-jian-hui-bian-huan-jing-fu-bian-yi-lian-jie-zhi-xing-diao-shi-xiang-xi-guo-cheng/" target="_self">
-          [转载] Mac 通过DOSBox搭建汇编环境（附编译、链接、执行、调试详细过程）
+        <a href="/2022/02/14/mvcc-yu-shi-wu-ge-chi/" target="_self">
+          MVCC 与事务隔离
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/10/04/mac-tong-guo-dosbox-da-jian-hui-bian-huan-jing-fu-bian-yi-lian-jie-zhi-xing-diao-shi-xiang-xi-guo-cheng/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/02/14/mvcc-yu-shi-wu-ge-chi/" target="_self">
         <div>
-          https://blog.csdn.net/qq_41855420/article/details/103746234
+          申明：以下内容来自网上的博客、课程，通过自己的理解进行一下转述，可能存在一些错误和纰漏  介绍MySQL 的 可重复读 和 读已提交 是基于 MVCC 实现的，它的最大优点是读不加锁，因此读写不冲突，并发性能好，其实现主要基于以下技术及数据结构： 首先，InnoDB 里面每个事务有一个唯一的事务 ID，叫作 transaction id。它是在事务开始的时候向 InnoDB 的事务系统申请的，
         </div>
       </a>
 
@@ -303,130 +574,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-10-04 11:57" pubdate>
-              2021-10-04
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E8%BD%AC%E8%BD%BD/">#转载</a>
-            
-              <a href="/tags/%E6%B1%87%E7%BC%96/">#汇编</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/09/25/39-zu-he-zong-he/" target="_self">
-          39. 组合总和
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/09/25/39-zu-he-zong-he/" target="_self">
-        <div>
-          给定一个无重复元素的正整数数组 candidates 和一个正整数 target ，找出 candidates 中所有可以使数字和为目标数 target 的唯一组合。 candidates 中的数字可以无限制重复被选取。如果至少一个所选数字数量不同，则两种组合是唯一的。  对于给定的输入，保证和为 target 的唯一组合数少于 150 个。 示例 1：输入: candidates &#x3D;
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-09-25 22:27" pubdate>
-              2021-09-25
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%9B%9E%E6%BA%AF%E6%B3%95/">#回溯法</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/09/21/linux-pi-liang-kill-jin-cheng/" target="_self">
-          Linux 批量 kill 进程
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/09/21/linux-pi-liang-kill-jin-cheng/" target="_self">
-        <div>
-          命令：1ps -ef | grep name | grep -v grep | awk &#x27;&#123;print $2&#125;&#x27; | xargs kill  解释：ps -ef：查看全格式的全部进程 grep name：将 ps -ef 的输出作为输入，过滤出其中包含 ”name“ 的结果 grep -v grep：-v 代表反向选择，这条是比较迷惑的，为什么要加这条语句呢
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-09-21 21:43" pubdate>
-              2021-09-21
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/linux/">#linux</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/09/11/mysql-wei-shi-me-shi-yong-b-shu/" target="_self">
-          MySQL 为什么使用 B+ 树
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/09/11/mysql-wei-shi-me-shi-yong-b-shu/" target="_self">
-        <div>
-          B 树和 B+ 树的区别来源：https://draveness.me/whys-the-design-mysql-b-plus-tree/ B 树与 B+ 树的最大区别就是，B 树可以在非叶结点中存储数据，但是 B+ 树的 所有数据其实都存储在叶子节点中，当一个表底层的数据结构是 B 树时，假设我们需要访问所有『大于 4，并且小于 9 的数据』： 如果不考虑任何优化，在上面的简单 B 树中我们需
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-09-11 19:56" pubdate>
-              2021-09-11
+            <time datetime="2022-02-14 16:01" pubdate>
+              2022-02-14
             </time>
           </div>
         
@@ -449,15 +598,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/08/31/mac-xia-gou-jian-ji-yu-c-de-grpc/" target="_self">
-          Mac 下构建基于 C++ 的 gRPC
+        <a href="/2022/02/10/so_reuseaddr-he-so_reuseport-shi-jian/" target="_self">
+          SO_REUSEADDR 和 SO_REUSEPORT 实践
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/31/mac-xia-gou-jian-ji-yu-c-de-grpc/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/02/10/so_reuseaddr-he-so_reuseport-shi-jian/" target="_self">
         <div>
-          来源于官方文档（https://grpc.io/docs/languages/cpp/quickstart/），但是其中有一些坑，特此记录，系统为 macOS 11.0.1 (20B29)： 1. 设置目录（很重要，必须执行该步骤）选择一个目录来保存本地安装的软件包。此页面假定环境变量MY_INSTALL_DIR包含此目录路径。例如： 123export MY_INSTALL_DIR=$HOME/
+          SO_REUSEADDR该选项可以绑定处于 TIME_WAIT 状态的地址，实践：server 端： 123456789101112131415161718192021222324252627282930313233func TestServer(t *testing.T) &#123;	fd, err := Socket(AF_INET, SOCK_STREAM, 0)	if err != ni
         </div>
       </a>
 
@@ -465,8 +614,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-08-31 17:16" pubdate>
-              2021-08-31
+            <time datetime="2022-02-10 22:03" pubdate>
+              2022-02-10
             </time>
           </div>
         
@@ -475,166 +624,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/c/">#c++</a>
-            
-              <a href="/tags/grpc/">#grpc</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/08/29/mysql-suo/" target="_self">
-          MySQL 锁
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/29/mysql-suo/" target="_self">
-        <div>
-          表级锁表锁语法：  加锁：   加读锁  LOCK TABLES [tablename] READ;     加写锁  LOCK TABLES [tablename] WRITE;    释放锁：UNLOCK TABLES;   加锁后会阻塞其他线程的部分操作，同时也会对加锁线程进行一些限制，直到加锁的线程释放锁。 读锁和写锁的区别：当加 读锁 后，其他线程的 SELECT 语句不会被阻塞，但是
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-08-29 10:55" pubdate>
-              2021-08-29
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/mysql/">#mysql</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/08/27/mysql-de-shi-wu-ge-chi-ji-bie/" target="_self">
-          MySQL 的事务隔离级别
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/27/mysql-de-shi-wu-ge-chi-ji-bie/" target="_self">
-        <div>
-          1. 未提交读（脏读）事务的修改，即使没有提交，对其他事务也是可见的。事务可以读取未提交的数据，称之为 脏读。它存在 4 个常见问题（脏读、不可重复读、幻读、丢失更新）。 2. 提交读（不可重复读）就是一个事务要等另一个事务提交后才能读取数据。 它解决了脏读问题，存在 3 个常见问题（不可重复读、幻读、丢失更新）。 新的问题：更新丢失（提交覆盖） 新的问题：不可重复读 新的问题：回滚丢失（回滚覆盖
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-08-27 23:17" pubdate>
-              2021-08-27
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/mysql/">#mysql</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/08/21/niu-ke-bi-shi-ti-tu-zi-fan-yan/" target="_self">
-          [牛客][笔试题] 兔子繁衍
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/21/niu-ke-bi-shi-ti-tu-zi-fan-yan/" target="_self">
-        <div>
-          有一对兔子，从出生后的第五个月起每月生出一对小兔子（即满4月就开始生小兔），小兔子也会出生从第五个月起每月生一对小免子。假如兔子不会死，第n个月时，兔群有多少对兔子。 输入描述:第n月（n为自然数，n&lt;101） 输出描述:第 n 个月时，兔子的对数（免群的兔子有多少对兔子）。示例 1输入5输出2说明第五个月时，有两对兔子 方法1 动态规划ACM 模式 12345678910111213141
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-08-21 19:18" pubdate>
-              2021-08-21
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/08/17/redis-zset-yuan-ma-yue-du/" target="_self">
-          Redis zset 源码阅读
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/08/17/redis-zset-yuan-ma-yue-du/" target="_self">
-        <div>
-          typeszskiplistNode12345678910typedef struct zskiplistNode &#123;    sds ele;    // 成员    double score;   // 分值    struct zskiplistNode *backward; // 后退指针    // 层    struct zskiplistLevel &#123;
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-08-17 11:50" pubdate>
-              2021-08-17
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Redis/">#Redis</a>
-            
-              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">#数据结构</a>
-            
-              <a href="/tags/%E8%B7%B3%E8%A1%A8/">#跳表</a>
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
             
           </div>
         
@@ -646,7 +636,7 @@
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/8/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/#board">7</a><a class="page-number" href="/page/8/#board">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/#board">10</a><a class="page-number" href="/page/11/#board">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/#board">17</a><a class="extend next" rel="next" href="/page/10/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/8/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/#board">7</a><a class="page-number" href="/page/8/#board">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/#board">10</a><a class="page-number" href="/page/11/#board">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/#board">18</a><a class="extend next" rel="next" href="/page/10/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

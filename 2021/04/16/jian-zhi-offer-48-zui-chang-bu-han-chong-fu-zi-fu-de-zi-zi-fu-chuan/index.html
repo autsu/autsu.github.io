@@ -23,17 +23,17 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="题目描述 请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。 示例 1: 123输入: &quot;abcabcbb&quot;输出: 3 解释: 因为无重复字符的最长子串是 &quot;abc&quot;，所以其长度为 3。  示例 2: 123输入: &quot;bbbbb&quot;输出: 1解释: 因为无重复字符的最长子串是 &quot;b&quot;，所以其长">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://zengh1.github.io/post-images/1618559975600.png">
-<meta property="og:image" content="https://zengh1.github.io/post-images/1618560095136.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618559975600.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618560095136.png">
 <meta property="article:published_time" content="2021-04-16T07:58:39.000Z">
-<meta property="article:modified_time" content="2023-08-09T11:10:23.357Z">
+<meta property="article:modified_time" content="2025-01-23T08:42:43.661Z">
 <meta property="article:author" content="void">
-<meta property="article:tag" content="剑指offer">
 <meta property="article:tag" content="字符串">
+<meta property="article:tag" content="剑指offer">
 <meta property="article:tag" content="哈希表">
 <meta property="article:tag" content="滑动窗口">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://zengh1.github.io/post-images/1618559975600.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618559975600.png">
   
   
   
@@ -79,7 +79,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -331,7 +331,7 @@
 <li>如果 j 在移动过程中遇到重复元素（在 map 中已存在），则将 i 移动到 max(i, map[重复元素]+1) 处，这里为什么要比较大小，后面会解释</li>
 <li>当 j 大于字符串长度时，结束循环，返回最大窗口值</li>
 </ol>
-<p><img src="https://zengh1.github.io/post-images/1618559975600.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618559975600.png" srcset="/img/loading.gif" lazyload></p>
 <p>对应代码如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">lengthOfLongestSubstring</span><span class="hljs-params">(s <span class="hljs-type">string</span>)</span></span> <span class="hljs-type">int</span> &#123;<br>	i, j, maxl := <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span><br>	m := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">byte</span>]<span class="hljs-type">int</span>)<br><br>	<span class="hljs-keyword">for</span> j &lt; <span class="hljs-built_in">len</span>(s) &#123;<br>		cur := s[j]<br>		<span class="hljs-comment">// 当前字符重复</span><br>		<span class="hljs-keyword">if</span> _, ok := m[cur]; ok &#123;<br>			<span class="hljs-comment">// 移动 i 到重复元素下标+1 处，如果当前位置下标大于 m[cur]+1，则不移动</span><br>			i = max(i, m[cur]+<span class="hljs-number">1</span>)<br>		&#125;<br>		<span class="hljs-comment">// 如果当前长度更大，则更新最大长度</span><br>		maxl = max(maxl, j-i+<span class="hljs-number">1</span>)<br>		m[cur] = j<br>		j++<br>	&#125;<br>	<span class="hljs-keyword">return</span> maxl<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">max</span><span class="hljs-params">(a, b <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">int</span> &#123;<br>	<span class="hljs-keyword">if</span> a &gt; b &#123;<br>		<span class="hljs-keyword">return</span> a<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		<span class="hljs-keyword">return</span> b<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// 执行用时: 8 ms</span><br><span class="hljs-comment">// 内存消耗: 3.1 MB</span><br><br></code></pre></td></tr></table></figure>
 
@@ -344,7 +344,7 @@
 
 
 <p>测试用例：abba，正确结果应该是 2 ，但是上面代码执行却诡异的返回了 3，通过画图分析后才知道了原因所在：</p>
-<p><img src="https://zengh1.github.io/post-images/1618560095136.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/1618560095136.png" srcset="/img/loading.gif" lazyload></p>
 <h4 id="错误记录"><a href="#错误记录" class="headerlink" title="错误记录"></a>错误记录</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs go"><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">lengthOfLongestSubstring</span><span class="hljs-params">(s <span class="hljs-type">string</span>)</span></span> <span class="hljs-type">int</span> &#123;<br>    i, j := <span class="hljs-number">0</span>, <span class="hljs-number">0</span><br>    m := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">byte</span>]<span class="hljs-type">int</span>)<br>    maxl := <span class="hljs-number">0</span><br><br>    <span class="hljs-keyword">for</span> j &lt; <span class="hljs-built_in">len</span>(s) &#123;<br>        char := s[j]<br>        <span class="hljs-keyword">if</span> _, ok := m[char]; ok &#123;<br>            maxl = max(maxl, j-i)<br>            i = m[char] + <span class="hljs-number">1</span><br>        &#125; <br>        m[char] = j<br>        j++<br>        <br>    &#125;<br>    <span class="hljs-keyword">return</span> maxl<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">max</span><span class="hljs-params">(a, b <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">int</span> &#123;<br>    <span class="hljs-keyword">if</span> a &gt; b &#123;<br>        <span class="hljs-keyword">return</span> a<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">return</span> b<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 
@@ -370,9 +370,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
-      
         <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/">#字符串</a>
+      
+        <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
       
         <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/">#哈希表</a>
       

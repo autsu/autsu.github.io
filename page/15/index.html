@@ -62,7 +62,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -245,15 +245,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/16/2021-3-26-leet-56-merge-interval/" target="_self">
-          LeetCode 56. 合并区间
+        <a href="/2021/04/23/goji-yi-ci-defer-cuo-wu/" target="_self">
+          go：记一次 defer 错误
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-26-leet-56-merge-interval/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/23/goji-yi-ci-defer-cuo-wu/" target="_self">
         <div>
-          题目描述 以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] &#x3D; [starti, endi] 。请你合并所有重叠的区间，并返回一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间。 示例 1： 输入：intervals &#x3D; [[1,3],[2,6],[8,10],[15,18]]输出：[[1,6],[8,10],[15,18]]解释：
+          错误1：12345678func test() error &#123;    if err := func1(); err != nil &#123;     // func1() 会产生错误        return err    &#125;    defer func() &#123;        fmt.Println(&quot;defer func&quot;)    &#125
         </div>
       </a>
 
@@ -261,8 +261,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 19:35" pubdate>
-              2021-04-16
+            <time datetime="2021-04-23 21:27" pubdate>
+              2021-04-23
             </time>
           </div>
         
@@ -271,7 +271,9 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E6%95%B0%E7%BB%84/">#数组</a>
+              <a href="/tags/issues/">#issues</a>
+            
+              <a href="/tags/go/">#go</a>
             
           </div>
         
@@ -285,15 +287,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/16/2021-3-27-find-binaryTree-root-to-node-path/" target="_self">
-          求二叉树根节点到指定节点的路径
+        <a href="/2021/04/23/wei-shi-me-bu-neng-yong-bian-liang-bao-cun-die-dai-qi/" target="_self">
+          再探 for 循环
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-27-find-binaryTree-root-to-node-path/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/23/wei-shi-me-bu-neng-yong-bian-liang-bao-cun-die-dai-qi/" target="_self">
         <div>
-          算法描述这不是一道力扣或者剑指上的原题，但却是二叉树问题的一个基础核心算法，适用于许多二叉树类型的题目，比如 剑指 Offer 68 - II. 二叉树的最近公共祖先，因为这里有必要记录一下，大致的说明如下： 例如如下一颗二叉树：  当指定节点为 4 时，输出 [3,5,2,4] 方法1 回溯，有返回值代码如下，参考 1234567891011121314151617181920212223242
+          有如下 c++ 代码，它的功能是删除容器中所有小于 10 的元素： 12345678910list&lt;int&gt; l&#123;1, 2, 3, 4, 12, 13, 15&#125;;int xx = 10;for (auto f = l.front(); f &lt; xx &amp;&amp; !l.empty(); ) &#123;    l.pop_front();&#125;f
         </div>
       </a>
 
@@ -301,8 +303,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 19:34" pubdate>
-              2021-04-16
+            <time datetime="2021-04-23 13:23" pubdate>
+              2021-04-23
             </time>
           </div>
         
@@ -311,11 +313,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/">#二叉树</a>
-            
-              <a href="/tags/%E7%AE%97%E6%B3%95/">#算法</a>
-            
-              <a href="/tags/%E5%9B%9E%E6%BA%AF%E6%B3%95/">#回溯法</a>
+              <a href="/tags/issues/">#issues</a>
             
           </div>
         
@@ -329,15 +327,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/16/2021-3-5-leet-165-compare-version-numbers/" target="_self">
-          LeetCode165.比较版本号
+        <a href="/2021/04/21/jian-zhi-offer-67-ba-zi-fu-chuan-zhuan-huan-cheng-zheng-shu/" target="_self">
+          剑指 Offer 67. 把字符串转换成整数
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-5-leet-165-compare-version-numbers/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/21/jian-zhi-offer-67-ba-zi-fu-chuan-zhuan-huan-cheng-zheng-shu/" target="_self">
         <div>
-          题目描述 给你两个版本号 version1 和 version2 ，请你比较它们。 版本号由一个或多个修订号组成，各修订号由一个 ‘.’ 连接。每个修订号由 多位数字 组成，可能包含 前导零 。每个版本号至少包含一个字符。修订号从左到右编号，下标从 0 开始，最左边的修订号下标为 0 ，下一个修订号下标为 1 ，以此类推。例如，2.5.33 和 0.1 都是有效的版本号。 比较版本号时，请按从左到
+          写一个函数 StrToInt，实现把字符串转换成整数这个功能。不能使用 atoi 或者其他类似的库函数。 首先，该函数会根据需要丢弃无用的开头空格字符，直到寻找到第一个非空格的字符为止。 当我们寻找到的第一个非空字符为正或者负号时，则将该符号与之后面尽可能多的连续数字组合起来，作为该整数的正负号；假如第一个非空字符是数字，则直接将其与之后连续的数字字符组合起来，形成整数。 该字符串除了有效的整数
         </div>
       </a>
 
@@ -345,8 +343,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 19:32" pubdate>
-              2021-04-16
+            <time datetime="2021-04-21 22:12" pubdate>
+              2021-04-21
             </time>
           </div>
         
@@ -357,91 +355,9 @@
             
               <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/">#字符串</a>
             
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/04/16/2021-3-6-offer-11-retate-array-min-num/" target="_self">
-          剑指 Offer 11. 旋转数组的最小数字
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-6-offer-11-retate-array-min-num/" target="_self">
-        <div>
-          题目描述 把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。输入一个递增排序的数组的一个旋转，输出旋转数组的最小元素。例如，数组 [3,4,5,1,2] 为 [1,2,3,4,5] 的一个旋转，该数组的最小值为1。   示例 1： 输入：[3,4,5,1,2]输出：1示例 2： 输入：[2,2,2,0,1]输出：0  图片来源：https://leetcode-cn.com/pro
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 19:28" pubdate>
-              2021-04-16
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">#二分查找</a>
-            
               <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
             
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/04/16/2021-4-3-offer-68-lowest-common-ancestor/" target="_self">
-          剑指 Offer 68 - II. 二叉树的最近公共祖先
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-4-3-offer-68-lowest-common-ancestor/" target="_self">
-        <div>
-          题目描述 给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。 百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。” 例如，给定如下二叉树:root &#x3D; [3,5,1,6,2,0,8,null,null,7,4] 示例 1: 输入: root &#x3
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 19:27" pubdate>
-              2021-04-16
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
-            
-              <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/">#二叉树</a>
-            
-              <a href="/tags/%E9%80%92%E5%BD%92/">#递归</a>
+              <a href="/tags/%E8%87%AA%E5%8A%A8%E6%9C%BA/">#自动机</a>
             
           </div>
         
@@ -455,15 +371,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/16/2021-4-6-leet-46-quan-pai-lie/" target="_self">
-          leetcode 46.全排列【未完】
+        <a href="/2021/04/19/leetcode-394-zi-fu-chuan-jie-ma/" target="_self">
+          leetcode 394. 字符串解码
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-4-6-leet-46-quan-pai-lie/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/19/leetcode-394-zi-fu-chuan-jie-ma/" target="_self">
         <div>
-          题目描述算法设计方法1 回溯法，使用 bool 数组记录每个数是否被访问（比较抽象的一张图，是我第一次学习全排列时边学边画的，当时对递归这个东西还完全理解不了，不过通过画这张图总算是理解一些了，感觉学算法画画图还是挺有助于理解的）  cpp 版本： 12345678910111213141516171819202122232425262728293031class Solution &#123;p
+          题目描述 给定一个经过编码的字符串，返回它解码后的字符串。 编码规则为: k[encoded_string]，表示其中方括号内部的 encoded_string 正好重复 k 次。注意 k保证为正整数。 你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。 此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 k ，例如不会出现像 3a 或 2[
         </div>
       </a>
 
@@ -471,8 +387,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 19:26" pubdate>
-              2021-04-16
+            <time datetime="2021-04-19 18:57" pubdate>
+              2021-04-19
             </time>
           </div>
         
@@ -480,146 +396,12 @@
         
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E7%AE%97%E6%B3%95/">#算法</a>
-            
-              <a href="/tags/%E5%9B%9E%E6%BA%AF%E6%B3%95/">#回溯法</a>
-            
-              <a href="/tags/%E5%85%A8%E6%8E%92%E5%88%97/">#全排列</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/04/16/jian-zhi-offer-04-er-wei-shu-zu-zhong-de-cha-zhao/" target="_self">
-          剑指 Offer 04. 二维数组中的查找
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/jian-zhi-offer-04-er-wei-shu-zu-zhong-de-cha-zhao/" target="_self">
-        <div>
-          题目描述 在一个 n * m 的二维数组中，每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个高效的函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数。 示例： 现有矩阵 matrix 如下： 1234567[  [1,   4,  7, 11, 15],  [2,   5,  8, 12, 19],  [3,   6,  9, 16, 22],  [
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 19:17" pubdate>
-              2021-04-16
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E6%95%B0%E7%BB%84/">#数组</a>
-            
-              <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
-            
-              <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/">#双指针</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/04/16/jian-zhi-offer-48-zui-chang-bu-han-chong-fu-zi-fu-de-zi-zi-fu-chuan/" target="_self">
-          剑指 Offer 48. 最长不含重复字符的子字符串
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/jian-zhi-offer-48-zui-chang-bu-han-chong-fu-zi-fu-de-zi-zi-fu-chuan/" target="_self">
-        <div>
-          题目描述 请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。 示例 1: 123输入: &quot;abcabcbb&quot;输出: 3 解释: 因为无重复字符的最长子串是 &quot;abc&quot;，所以其长度为 3。  示例 2: 123输入: &quot;bbbbb&quot;输出: 1解释: 因为无重复字符的最长子串是 &quot;b&quot;，所以其长
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 15:58" pubdate>
-              2021-04-16
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
             
               <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/">#字符串</a>
             
-              <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/">#哈希表</a>
+              <a href="/tags/%E6%A0%88/">#栈</a>
             
-              <a href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/">#滑动窗口</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/04/16/jian-zhi-offer-50-di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-shu-zhong-wei-35-ti/" target="_self">
-          剑指 Offer 50. 第一个只出现一次的字符（书中为35题）
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/jian-zhi-offer-50-di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-shu-zhong-wei-35-ti/" target="_self">
-        <div>
-          题目描述 在字符串 s 中找出第一个只出现一次的字符。如果没有，返回一个单空格。 s 只包含小写字母。 示例: 12345s = &quot;abaccdeff&quot;返回 &quot;b&quot;s = &quot;&quot; 返回 &quot; &quot;    限制： 10 &lt;= s 的长度 &lt;= 50000  方法1：哈希表可以将哈希表的 key 定义为 char，用
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 15:55" pubdate>
-              2021-04-16
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
-            
-              <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/">#字符串</a>
-            
-              <a href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/">#哈希表</a>
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/">#深度优先搜索</a>
             
           </div>
         
@@ -633,15 +415,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/04/16/jian-zhi-offer-22-lian-biao-zhong-dao-shu-di-k-ge-jie-dian/" target="_self">
-          剑指 Offer 22. 链表中倒数第k个节点
+        <a href="/2021/04/17/goiocopy-de-keng/" target="_self">
+          go：http.Request.Body 第二次读取为空 
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/jian-zhi-offer-22-lian-biao-zhong-dao-shu-di-k-ge-jie-dian/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/17/goiocopy-de-keng/" target="_self">
         <div>
-          题目描述 输入一个链表，输出该链表中倒数第k个节点。为了符合大多数人的习惯，本题从1开始计数，即链表的尾节点是倒数第1个节点。例如，一个链表有6个节点，从头节点开始，它们的值依次是1、2、3、4、5、6。这个链表的倒数第3个节点是值为4的节点。 示例： 给定一个链表: 1-&gt;2-&gt;3-&gt;4-&gt;5, 和 k &#x3D; 2. 返回链表 4-&gt;5.  双指针算法流程：
+          有如下代码，先使用 io.Copy 将 request.Body copy 到 stdout 标准输出，再使用 io.ReadAll 再次读取 request.Body： 1234567891011121314151617181920212223242526package mainimport (	&quot;fmt&quot;	&quot;net/http&quot;	&quot;io&quot
         </div>
       </a>
 
@@ -649,7 +431,49 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-16 15:53" pubdate>
+            <time datetime="2021-04-17 13:01" pubdate>
+              2021-04-17
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/issues/">#issues</a>
+            
+              <a href="/tags/go/">#go</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/16/goioutilreadall-yin-fa-de-out-of-memory/" target="_self">
+          go：ioutil.ReadAll() 引发的 out of memory 
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/goioutilreadall-yin-fa-de-out-of-memory/" target="_self">
+        <div>
+          情景某天突发奇想，写了一个在线阅读的 http 小程序，当访问某一路由时会读取电子书文件，并写入到 response 中，其中封装了一个读取文件的函数： 1234567891011121314func ReadFile(src string) ([]byte, error) &#123;	file, err := os.Open(src)	if err != nil &#123;		return
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-16 22:01" pubdate>
               2021-04-16
             </time>
           </div>
@@ -659,13 +483,171 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E5%89%91%E6%8C%87offer/">#剑指offer</a>
+              <a href="/tags/issues/">#issues</a>
             
-              <a href="/tags/%E9%93%BE%E8%A1%A8/">#链表</a>
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/16/2021-3-13-byte-array/" target="_self">
+          go 字节数组错误：\u0001
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-3-13-byte-array/" target="_self">
+        <div>
+          在做 压缩字符串 这道题时，提交的输出结果十分诡异，如下： 输入： [“a”,”a”,”b”,”b”,”c”,”c”,”c”] 输出： [“a”,”\u0002”,”b”,”\u0002”,”c”,”\u0003”] 预期： [“a”,”2”,”b”,”2”,”c”,”3”] 可以看到结果中的数字部分是对的，但是多了 \u000 这部分，这个结果令我百思不得其解，在 ide 中运行时正常的，但在力
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-16 19:48" pubdate>
+              2021-04-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E5%8F%8C%E6%8C%87%E9%92%88/">#双指针</a>
+              <a href="/tags/issues/">#issues</a>
             
-              <a href="/tags/%E7%AE%97%E6%B3%95/">#算法</a>
+              <a href="/tags/go/">#go</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/16/2021-4-10-golang-gdb/" target="_self">
+          Golang GDB 调试提示 No symbol table is loaded. Use the &#34;file&#34; command
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-4-10-golang-gdb/" target="_self">
+        <div>
+          背景：  本地 MacOS 上通过 GDB 调试 golang 程序，结果提示 No symbol table is loaded. Use the “file”command.  解决方法：  打包时加上 -ldflags&#x3D;-compressdwarf&#x3D;false 参数即可 比如在作者本地就是 go build -gcflags “-N -l”-ldflags&#x3D;-c
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-16 19:48" pubdate>
+              2021-04-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/gdb/">#gdb</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/16/2021-4-14-whats-different-in-cpp-iterator-var/" target="_self">
+          c++：iterator.begin() 和 *iterator.begin() 的区别
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2021-4-14-whats-different-in-cpp-iterator-var/" target="_self">
+        <div>
+          情景描述有如下 c++ 代码： 123456789101112131415161718192021#include &lt;iostream&gt;#include &lt;vector&gt;int main() &#123;    std::vector&lt;int&gt; vec&#123;1, 2, 3, 4, 5&#125;;    auto b = vec.begin();    *
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-16 19:48" pubdate>
+              2021-04-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/c/">#c++</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/04/16/2020-10-17-etcd-error/" target="_self">
+          etcd 错误：context deadline exceeded
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/04/16/2020-10-17-etcd-error/" target="_self">
+        <div>
+          etcd 远程操作失败：Error: context deadline exceeded在服务器启动 etcd，并在本地机器通过 etcdctl –endpoints&#x3D;http://ip:2379 put name “123” 命令，在服务器的 etcd 中创建一对键值对， 如下图所示：  服务端 etcd 的启动命令如下：  但是在执行 etcdctl 命令后发生了错误：  经过网上查
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-04-16 19:46" pubdate>
+              2021-04-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/issues/">#issues</a>
+            
+              <a href="/tags/etcd/">#etcd</a>
             
           </div>
         
@@ -677,7 +659,7 @@
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/14/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/#board">13</a><a class="page-number" href="/page/14/#board">14</a><span class="page-number current">15</span><a class="page-number" href="/page/16/#board">16</a><a class="page-number" href="/page/17/#board">17</a><a class="extend next" rel="next" href="/page/16/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/14/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/#board">13</a><a class="page-number" href="/page/14/#board">14</a><span class="page-number current">15</span><a class="page-number" href="/page/16/#board">16</a><a class="page-number" href="/page/17/#board">17</a><a class="page-number" href="/page/18/#board">18</a><a class="extend next" rel="next" href="/page/16/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

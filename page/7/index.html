@@ -62,7 +62,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -245,15 +245,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/05/08/multipass-xiu-gai-pei-zhi/" target="_self">
-          multipass 修改配置（内存、硬盘、CPU 等）适用于 m1 mac
+        <a href="/2022/06/08/go_seek/" target="_self">
+          go 文件操作的&#34;坑&#34;之 Seek()
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/08/multipass-xiu-gai-pei-zhi/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/06/08/go_seek/" target="_self">
         <div>
-          multipass 是一款比较轻量级的虚拟机方案，使用起来也比较方便，操作方式与容器类似，但是使用过程中发现没有直接提供修改配置的简单方法，比如默认创建的虚拟机硬盘大小只会分配 5G，如果要跑 k8s 之类的显然是不够用的（k3s 都不够），而且默认创建的 CPU 只有 1 核，连 minikube 都跑不起来（最低需要 2 核），所以就需要修改配置。 在 github 上找到的解决方案（适用于
+          引子最近买了块机械硬盘作为仓库盘，用硬盘盒连接到 mac，但是这块硬盘貌似有休眠机制（不确定），如果一段时间没有读写操作就会停转，等到需要操作时才会唤醒，唤醒会有比较明显的磁盘启动声音，并且需要等待 5s 左右才能使用。 但蛋疼的是不知道是系统原因还是什么，每次硬盘休眠后即便我没有对其进行操作仍然会自行唤醒，导致我总是能频繁听到硬盘的启停声，我还专门观察了一下，就算我躺在床上玩手机，完全不碰电脑，
         </div>
       </a>
 
@@ -261,8 +261,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-05-08 15:46" pubdate>
-              2022-05-08
+            <time datetime="2022-06-08 01:03" pubdate>
+              2022-06-08
             </time>
           </div>
         
@@ -271,7 +271,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/multipass/">#multipass</a>
+              <a href="/tags/go/">#go</a>
             
           </div>
         
@@ -285,15 +285,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/05/08/k8s-nginx-pod-de-containerport-wen-ti/" target="_self">
-          k8s nginx pod 的 containerPort 问题
+        <a href="/2022/06/07/k8s-configmap/" target="_self">
+          k8s ConfigMap
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/08/k8s-nginx-pod-de-containerport-wen-ti/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/06/07/k8s-configmap/" target="_self">
         <div>
-          问题重现有如下 yaml： 12345678910111213apiVersion: v1kind: Podmetadata:  name: nginx  labels:    app: nginxspec:  containers:  - name: nginx    image: nginx:alpine    ports:    - containerPort: 8080      host
+          说明：文章的部分地方会用 cm 来指代 ConfigMap  引子做过开发的同学都遇到过给程序进行配置的场景，比如非常常见的配置文件，将 Mysql 的地址、端口、用户名、密码等信息写到一个配置文件里，然后程序内部通过读取这个配置文件来获取信息，防止了硬编码信息到程序内部，这样如果发生变动只需要修改配置文件即可，无需重新编译整个程序；另一种常见的方式是运行程序时指定参数来进行配置，比如 Go 标
         </div>
       </a>
 
@@ -301,8 +301,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-05-08 15:42" pubdate>
-              2022-05-08
+            <time datetime="2022-06-07 19:17" pubdate>
+              2022-06-07
             </time>
           </div>
         
@@ -325,15 +325,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/05/07/k8s-daemonset/" target="_self">
-          k8s DaemonSet
+        <a href="/2022/06/01/go-gc/" target="_self">
+          go GC 白话版
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/07/k8s-daemonset/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/06/01/go-gc/" target="_self">
         <div>
-          顾名思义，daemon 代表守护程序，所以 DaemonSet （简称 ds）会在每个节点上运行一个专门的 pod，这个 pod 是特殊的，比如资源监控器或者日志收集器，或者 k8s 自己的 kube-proxy。与 rc 或者 rs 不同，这两个会随机地分布在整个集群中，比如副本数量为 5，一共有 4 个节点，可能会在节点 1 创建两个副本，节点 2 创建 1 个副本，节点 4 创建 2 个副本
+          主流的垃圾回收算法引用计数法根据对象自身的引用计数来回收，当引用计数归零时进行回收，但是计数频繁更新会带来更多开销，且无法解决循环引用的问题。  优点：简单直接，回收速度快 缺点：需要额外的空间存放计数，无法处理循环引用的情况；  标记清除法标记出所有不需要回收的对象，在标记完成后统一回收掉所有未被标记的对象。  优点：简单直接，速度快，适合可回收对象不多的场景 缺点：会造成不连续的内存空间（内存
         </div>
       </a>
 
@@ -341,8 +341,50 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-05-07 22:59" pubdate>
-              2022-05-07
+            <time datetime="2022-06-01 22:15" pubdate>
+              2022-06-01
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/go/">#go</a>
+            
+              <a href="/tags/GC/">#GC</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/05/31/k8s-namespace/" target="_self">
+          k8s namespace
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/31/k8s-namespace/" target="_self">
+        <div>
+          简介Namespace 是对一组资源和对象的抽象集合，比如可以用来将系统内部的对象划分为不同的项目组或用户组。常见的 pods, services, replication controllers 和 deployments 等都是属于某一个 namespace 的（默认是default），而 node, persistentVolumes 等则不属于任何 namespace。 Namespace
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-05-31 11:31" pubdate>
+              2022-05-31
             </time>
           </div>
         
@@ -365,15 +407,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/05/07/k8s-replicaset/" target="_self">
-          k8s ReplicaSet
+        <a href="/2022/05/28/errgroup/" target="_self">
+          Go errgroup 使用
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/07/k8s-replicaset/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/28/errgroup/" target="_self">
         <div>
-          本篇笔记摘自 《Kubernetes in Aciton 》  介绍ReplicaSet（简称 rs） 是 ReplicationController （简称 rc）的升级版，它的标签选择器功能更加强大。 标签选择器使用 selector.matchExpressions 进行标签选择，比如： 123456selector:	matchExpressions:	- key: app				#
+          简介errgroup 是 WaitGroup 的强化版，其在 WaitGroup 的基础上添加了错误处理的功能：如果一组 goroutine 中的某一个发生了错误，那么后续的所有 gorouine 都不会被执行。 示例示例 1一共开启 10 个 goroutine 执行任务，其中第三个 goroutine 会出错，使用 errgroup 可以保证第三个之后的所有 goroutine 都不会执行 1
         </div>
       </a>
 
@@ -381,8 +423,92 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-05-07 11:12" pubdate>
-              2022-05-07
+            <time datetime="2022-05-28 23:55" pubdate>
+              2022-05-28
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/go/">#go</a>
+            
+              <a href="/tags/%E6%BA%90%E7%A0%81/">#源码</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/05/28/kqueue/" target="_self">
+          kqueue
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/28/kqueue/" target="_self">
+        <div>
+          一个 echo server 示例： 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-05-28 01:10" pubdate>
+              2022-05-28
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/">#多路复用</a>
+            
+              <a href="/tags/kqueue/">#kqueue</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/05/20/k8s-juan/" target="_self">
+          k8s 卷
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/20/k8s-juan/" target="_self">
+        <div>
+          为什么需要卷pod 类似逻辑主机，在逻辑主机中运行的进程共享诸如 CPU、RAM、网络接口等资源。有时候人们会期望进程也能共享磁盘，但是因为 pod 中运行的是一个个容器，而每个容器都有自己独立的文件系统（因为文件系统来自于容器镜像），所以不能共享磁盘。有时候可能存在这样一种需求：pod 中某个容器存储的数据需要持久化，但是因为容器存在挂掉的可能，如果挂掉后会新创建一个 pod 来顶替，但是因为
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-05-20 19:41" pubdate>
+              2022-05-20
             </time>
           </div>
         
@@ -405,15 +531,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/05/06/k8s-replicationcontroller/" target="_self">
-          k8s ReplicationController
+        <a href="/2022/05/17/mac-shang-zhi-zuo-windows/" target="_self">
+          在 mac 上制作 windows10 启动盘，亲测可用
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/06/k8s-replicationcontroller/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/17/mac-shang-zhi-zuo-windows/" target="_self">
         <div>
-          本篇笔记摘自 《Kubernetes in Aciton 》  ReplicationController 通过标签选择器（selector）与 pod 相关联。可以通过修改一个 pod 的标签将其移出 ReplicationController 的管理，或者移入到另一个 ReplicationController。 查看所有的 ReplicationController: 123$ kubec
+          来源：https://chinese.freecodecamp.org/news/how-make-a-windows-10-usb-using-your-mac-build-a-bootable-iso-from-your-macs-terminal/  准备 windows iso 文件 一个大小至少 8G 的 U 盘 mac 上安装好 homebrew  步骤 1查看 U 盘的名称： 1$
         </div>
       </a>
 
@@ -421,8 +547,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-05-06 21:28" pubdate>
-              2022-05-06
+            <time datetime="2022-05-17 11:02" pubdate>
+              2022-05-17
             </time>
           </div>
         
@@ -431,7 +557,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/k8s/">#k8s</a>
+              <a href="/tags/%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/">#实用工具</a>
             
           </div>
         
@@ -445,15 +571,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/05/06/k8s-cun-huo-tan-zhen/" target="_self">
-          k8s 存活探针
+        <a href="/2022/05/16/iptables/" target="_self">
+          linux iptables
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/06/k8s-cun-huo-tan-zhen/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/16/iptables/" target="_self">
         <div>
-          本篇笔记摘自 《Kubernetes in Aciton 》4.1 保持 pod 健康  基本概念k8s 会 检测 pod 中的容器 是否正常工作，如果容器的主线程奔溃，那么 k8s 会自动重启该容器，对于开发者而言，无需对应用程序任何额外操作便获得了自动修复的能力，但有时容器没有奔溃也不一定就代表正常，比如遇到了死锁问题，此时虽然容器不会奔溃，但是整个程序已经完全卡死无法继续工作了，针对这种情
+          文档状态：Draft   链，表和规则规则顾名思义，规则就是针对网络包的不同 行为，做出对应的 处理操作，比如如果我收到的网络包的 IP 是 xx.xx.xx.xx，那么我就将其丢弃；如果我收到的包的端口是 8080，我就将其转发给 XXX 之类的，也可以说，规则就是匹配条件 + 处理操作。 动作包括：  ACCEPT - 允许数据包通过。 DROP - 丢弃数据包，不对发送者进行任何回应。 R
         </div>
       </a>
 
@@ -461,8 +587,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-05-06 16:40" pubdate>
-              2022-05-06
+            <time datetime="2022-05-16 10:53" pubdate>
+              2022-05-16
             </time>
           </div>
         
@@ -471,7 +597,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/k8s/">#k8s</a>
+              <a href="/tags/linux/">#linux</a>
             
           </div>
         
@@ -485,15 +611,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/05/04/k8s-pod-bi-ji/" target="_self">
-          k8s pod
+        <a href="/2022/05/13/block-code/" target="_self">
+          一段莫名阻塞的 reflect 代码
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/04/k8s-pod-bi-ji/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/05/13/block-code/" target="_self">
         <div>
-          本篇笔记摘自 《Kubernetes in Aciton 》第三章：pod：运行于 Kubernetes 中的容器  什么是 PodK8s 中的 Pod 是 最小的可调度和管理单元，它可以 包含一个或多个容器。Pod 是 K8s 中部署和运行应用程序的基本单位，它提供了一个共享的网络命名空间、存储卷和容器之间的共享环境。 一个 Pod 可以包含多个容器，这些容器 共享相同的网络和存储，可以在同一
+          123456789101112131415161718192021222324252627282930package mainimport (	&quot;fmt&quot;	&quot;reflect&quot;)type I interface &#123;	Do()&#125;type S struct&#123;&#125;func (s *S) Do() &#123;&#125;func
         </div>
       </a>
 
@@ -501,8 +627,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-05-04 23:39" pubdate>
-              2022-05-04
+            <time datetime="2022-05-13 10:53" pubdate>
+              2022-05-13
             </time>
           </div>
         
@@ -511,127 +637,9 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/k8s/">#k8s</a>
+              <a href="/tags/go/">#go</a>
             
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/04/10/vscode-xuan-zhong-wen-ben-shi-hua-dong-su-du-guo-kuai/" target="_self">
-          vscode 选中文本时滑动速度过快
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/04/10/vscode-xuan-zhong-wen-ben-shi-hua-dong-su-du-guo-kuai/" target="_self">
-        <div>
-          这是一个困扰我已久的问题，当选中一段代码并继续向下滑动时，滑动速度会非常快，导致无法准确选中我想要的部分，比如我的屏幕能显示200行代码，我想选中1-250行的代码，这就需要我向下滑动来选中剩余的50行，但是因为速度太快，导致我轻轻一滑就会瞬间跑到第800行代码的位置，于是我又要向上滑动，结果又瞬间到了第150行，非常令人蛋疼。 在网上用中文搜索不到相关的问题，没办法只能用我蹩脚的英文搜索 vsc
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-04-10 13:44" pubdate>
-              2022-04-10
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/vscode/">#vscode</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/04/08/k3s/" target="_self">
-          k3s 踩坑记录
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/04/08/k3s/" target="_self">
-        <div>
-          安装：1curl -sfL https://rancher-mirror.rancher.cn/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh -s - --write-kubeconfig-mode 666 –write-kubeconfig-mode设置读写权限，否则每次 kubectl 都要 sudo，同时使用国内镜像进行下载 设置镜像参考 htt
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-04-08 15:27" pubdate>
-              2022-04-08
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/k3s/">#k3s</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/03/26/mysql-suo-yin/" target="_self">
-          MySQL 索引
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/03/26/mysql-suo-yin/" target="_self">
-        <div>
-          聚簇索引和非聚簇索引索引类型分为主键索引和非主键索引。 主键索引的叶子节点存的是整行数据。在InnoDB里，主键索引也被称为聚簇索引（clustered index）。 非主键索引的叶子节点内容是主键的值。在InnoDB里，非主键索引也被称为二级索引（secondary index）。  比如在上图中，ID 就是聚簇索引，K 是非聚簇索引 根据上面的索引结构说明，我们来讨论一个问题：基于主键索引和
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-03-26 22:35" pubdate>
-              2022-03-26
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/mysql/">#mysql</a>
+              <a href="/tags/issue/">#issue</a>
             
           </div>
         
@@ -643,7 +651,7 @@
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/6/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/#board">5</a><a class="page-number" href="/page/6/#board">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/#board">8</a><a class="page-number" href="/page/9/#board">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/#board">17</a><a class="extend next" rel="next" href="/page/8/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/6/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/#board">5</a><a class="page-number" href="/page/6/#board">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/#board">8</a><a class="page-number" href="/page/9/#board">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/#board">18</a><a class="extend next" rel="next" href="/page/8/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

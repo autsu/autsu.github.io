@@ -1,0 +1,752 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="工作机制及实现Device Plugin 的大致信息：  Device Plugin 是一个以 unix socket 方式监听的 grpc server，它直接与节点上的 kubelet 通信。  Device Plugin 的工作机制： 作为一个 grpc server，它需要实现对应的 server interface，该 interface 定义如下： 123456789101112131">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DevicePlugin 工作机制及实现">
+<meta property="og:url" content="https://autsu.github.io/2024/08/20/DevicePlugin%20%E5%B7%A5%E4%BD%9C%E6%9C%BA%E5%88%B6%E5%8F%8A%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="工作机制及实现Device Plugin 的大致信息：  Device Plugin 是一个以 unix socket 方式监听的 grpc server，它直接与节点上的 kubelet 通信。  Device Plugin 的工作机制： 作为一个 grpc server，它需要实现对应的 server interface，该 interface 定义如下： 123456789101112131">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-08-20T14:37:45.000Z">
+<meta property="article:modified_time" content="2025-04-23T16:24:23.369Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="k8s">
+<meta property="article:tag" content="needSyncToBlog">
+<meta property="article:tag" content="devicePlugin">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>DevicePlugin 工作机制及实现 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="DevicePlugin 工作机制及实现"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-08-20 22:37" pubdate>
+          2024年8月20日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          40 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">DevicePlugin 工作机制及实现</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="工作机制及实现"><a href="#工作机制及实现" class="headerlink" title="工作机制及实现"></a>工作机制及实现</h1><p>Device Plugin 的大致信息：</p>
+<ul>
+<li>Device Plugin 是一个以 unix socket 方式监听的 grpc server，它直接与节点上的 kubelet 通信。</li>
+</ul>
+<p>Device Plugin 的工作机制：</p>
+<p>作为一个 grpc server，它需要实现对应的 server interface，该 interface 定义如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> DevicePluginServer <span class="hljs-keyword">interface</span> &#123;<br>	<span class="hljs-comment">// GetDevicePluginOptions returns options to be communicated with Device</span><br>	<span class="hljs-comment">// Manager</span><br>	GetDevicePluginOptions(context.Context, *Empty) (*DevicePluginOptions, <span class="hljs-type">error</span>)<br>	<span class="hljs-comment">// ListAndWatch returns a stream of List of Devices</span><br>	<span class="hljs-comment">// Whenever a Device state change or a Device disappears, ListAndWatch</span><br>	<span class="hljs-comment">// returns the new list</span><br>	ListAndWatch(*Empty, DevicePlugin_ListAndWatchServer) <span class="hljs-type">error</span><br>	<span class="hljs-comment">// GetPreferredAllocation returns a preferred set of devices to allocate</span><br>	<span class="hljs-comment">// from a list of available ones. The resulting preferred allocation is not</span><br>	<span class="hljs-comment">// guaranteed to be the allocation ultimately performed by the</span><br>	<span class="hljs-comment">// devicemanager. It is only designed to help the devicemanager make a more</span><br>	<span class="hljs-comment">// informed allocation decision when possible.</span><br>	GetPreferredAllocation(context.Context, *PreferredAllocationRequest) (*PreferredAllocationResponse, <span class="hljs-type">error</span>)<br>	<span class="hljs-comment">// Allocate is called during container creation so that the Device</span><br>	<span class="hljs-comment">// Plugin can run device specific operations and instruct Kubelet</span><br>	<span class="hljs-comment">// of the steps to make the Device available in the container</span><br>	Allocate(context.Context, *AllocateRequest) (*AllocateResponse, <span class="hljs-type">error</span>)<br>	<span class="hljs-comment">// PreStartContainer is called, if indicated by Device Plugin during registeration phase,</span><br>	<span class="hljs-comment">// before each container start. Device plugin can run device specific operations</span><br>	<span class="hljs-comment">// such as resetting the device before making devices available to the container</span><br>	PreStartContainer(context.Context, *PreStartContainerRequest) (*PreStartContainerResponse, <span class="hljs-type">error</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>主要关注 <code>ListAndWatch</code> 和 <code>Allocate</code> 这两个方法即可。</p>
+<p>其中：</p>
+<p><code>ListAndWatch</code> 负责上报本节点所拥有的设备信息给 kubelet，和 k8s 的 ListAndWatch 类似，也是先 List 拿到当前所有的设备列表，之后当有设备发生变更时，再进行增量更新。</p>
+<p>上报的设备信息如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Device <span class="hljs-keyword">struct</span> &#123;<br>	<span class="hljs-comment">// A unique ID assigned by the device plugin used</span><br>	<span class="hljs-comment">// to identify devices during the communication</span><br>	<span class="hljs-comment">// Max length of this field is 63 characters</span><br>	ID <span class="hljs-type">string</span> <span class="hljs-string">`protobuf:&quot;bytes,1,opt,name=ID,proto3&quot; json:&quot;ID,omitempty&quot;`</span><br>	<span class="hljs-comment">// Health of the device, can be healthy or unhealthy, see constants.go</span><br>	Health <span class="hljs-type">string</span> <span class="hljs-string">`protobuf:&quot;bytes,2,opt,name=health,proto3&quot; json:&quot;health,omitempty&quot;`</span><br>	<span class="hljs-comment">// Topology for device</span><br>	Topology             *TopologyInfo <span class="hljs-string">`protobuf:&quot;bytes,3,opt,name=topology,proto3&quot; json:&quot;topology,omitempty&quot;`</span><br>	XXX_NoUnkeyedLiteral <span class="hljs-keyword">struct</span>&#123;&#125;      <span class="hljs-string">`json:&quot;-&quot;`</span><br>	XXX_sizecache        <span class="hljs-type">int32</span>         <span class="hljs-string">`json:&quot;-&quot;`</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>主要就是 <code>ID</code> 和 <code>Health</code> 这两个字段。</p>
+<p><code>Allocate</code> </p>
+<p>先说一下 Device Plugin 的使用方式，当我们部署好了以后，可以在 Pod 的 resources 里指定需要的设备资源数量，就和 resources.requests.memory 一样。比如我们部署了一个名为 fake.io&#x2F;gpu 的 Device Plugin，那么就可以在 yaml 中这样申请资源：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">Pod</span><br><span class="hljs-attr">metadata:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">gpu</span><br>  <span class="hljs-attr">labels:</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">gpu</span><br><span class="hljs-attr">spec:</span><br>  <span class="hljs-attr">containers:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">gpu</span><br>      <span class="hljs-attr">image:</span> <span class="hljs-string">nginx</span><br>      <span class="hljs-attr">resources:</span><br>        <span class="hljs-attr">requests:</span><br>          <span class="hljs-attr">memory:</span> <span class="hljs-string">&quot;128Mi&quot;</span><br>          <span class="hljs-attr">cpu:</span> <span class="hljs-string">&quot;500m&quot;</span><br>          <span class="hljs-attr">fake.io/gpu:</span> <span class="hljs-number">10</span><br>        <span class="hljs-attr">limits:</span><br>          <span class="hljs-attr">memory:</span> <span class="hljs-string">&quot;128Mi&quot;</span><br>          <span class="hljs-attr">cpu:</span> <span class="hljs-string">&quot;500m&quot;</span><br>          <span class="hljs-attr">fake.io/gpu:</span> <span class="hljs-number">10</span><br>      <span class="hljs-attr">ports:</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-attr">containerPort:</span> <span class="hljs-number">80</span><br></code></pre></td></tr></table></figure>
+
+<p>这代表这个 Pod 只会被调度到拥有 10 个数量的 fake.io&#x2F;gpu 设备的节点上。</p>
+<p>当这个 Pod 调度到某个节点上时，这个节点的 kubelet 就会请求 Device Plugin 的 Allocate 方法，它请求的内容如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> AllocateRequest <span class="hljs-keyword">struct</span> &#123;<br>	ContainerRequests    []*ContainerAllocateRequest <br>	<span class="hljs-comment">// ... 省略无关字段以及 tag</span><br>&#125;<br><br><span class="hljs-keyword">type</span> ContainerAllocateRequest <span class="hljs-keyword">struct</span> &#123;<br>	DevicesIDs           []<span class="hljs-type">string</span><br>	<span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>其实就是一系列设备 ID 的集合，这里的设备 ID，自然就是 <code>ListAndWatch</code> 上报给 kubelet 的那些，kubelet 会从里面挑选一些。</p>
+<p>拿到设备 ID 后的具体处理就由 Device Plugin 自行实现了（比如：据 kubelet 传过来的设备 ID，去寻找这个设备 ID 对应的设备路径、驱动目录以及环境变量），最后会返回一些信息，包括环境变量，HostPath，ContainerPath 等，对应的容器会根据这些信息进行设备的挂载。</p>
+<p>同时，该节点的设备数量会对应减少掉 Pod 所申请的数量个数。比如该节点有 10 个 fakegpu，那么在上面这个 Pod 调度过来以后，该节点剩余 10 - 10 &#x3D; 0 个 fakegpu。后续如果还有需要 fakegpu 的 Pod，则不会被调度到该节点，因为该节点已经没有任何 fakegpu 了。</p>
+<p>到这里一个 Device Plugin 的核心实现流程就结束了，剩下还有一些要做的工作：</p>
+<p>注册 Device Plugin 到 kubelet：这一步主要是告诉 kubelet 自己的信息，如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> RegisterRequest <span class="hljs-keyword">struct</span> &#123;<br>	<span class="hljs-comment">// Version of the API the Device Plugin was built against</span><br>	Version <span class="hljs-type">string</span> <span class="hljs-string">`protobuf:&quot;bytes,1,opt,name=version,proto3&quot; json:&quot;version,omitempty&quot;`</span><br>	<span class="hljs-comment">// Name of the unix socket the device plugin is listening on</span><br>	<span class="hljs-comment">// PATH = path.Join(DevicePluginPath, endpoint)</span><br>	Endpoint <span class="hljs-type">string</span> <span class="hljs-string">`protobuf:&quot;bytes,2,opt,name=endpoint,proto3&quot; json:&quot;endpoint,omitempty&quot;`</span><br>	<span class="hljs-comment">// Schedulable resource name. As of now it&#x27;s expected to be a DNS Label</span><br>	ResourceName <span class="hljs-type">string</span> <span class="hljs-string">`protobuf:&quot;bytes,3,opt,name=resource_name,json=resourceName,proto3&quot; json:&quot;resource_name,omitempty&quot;`</span><br>	<span class="hljs-comment">// Options to be communicated with Device Manager</span><br>	Options              *DevicePluginOptions <span class="hljs-string">`protobuf:&quot;bytes,4,opt,name=options,proto3&quot; json:&quot;options,omitempty&quot;`</span><br>	XXX_NoUnkeyedLiteral <span class="hljs-keyword">struct</span>&#123;&#125;             <span class="hljs-string">`json:&quot;-&quot;`</span><br>	XXX_sizecache        <span class="hljs-type">int32</span>                <span class="hljs-string">`json:&quot;-&quot;`</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>其实主要就是 ResourceName 和 Endpoint，ResourceName 就是自己的名字，比如 <code>fake.io/gpu</code>，这样在 Pod 的 resources 中写入 <code>fake.io/gpu</code> 时，kubelet 才能知道这是一个什么设备，由哪个 Device Plugin 进行处理。Endpoint 是 Device Plugin 的 unix socket 名字（它会直接在 DevicePluginPath，也就是 <code>/var/lib/kubelet/device-plugins/</code> 下查找，所以你的 unix socket 需要在该目录下），这样 kubelet 就能和你的 Device Plugin 建立连接了。</p>
+<h1 id="UnexpectedAdmissionError"><a href="#UnexpectedAdmissionError" class="headerlink" title="UnexpectedAdmissionError"></a>UnexpectedAdmissionError</h1><p><a target="_blank" rel="noopener" href="https://izsk.me/2022/01/27/Kubernetes-pod-status-is-UnexpectedAdmissionError/">pod的状态出现UnexpectedAdmissionError是什么鬼? | Z.S.K.’s Records</a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/yunqishequ/p/12196389.html">从零开始入门 K8s | GPU 管理和 Device Plugin 工作机制 - 阿里云云栖号 - 博客园</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.myway5.com/index.php/2020/03/24/kubernetes-device-plugin/">Kubernetes开发知识-device-plugin的实现 - 一只安静的猫</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/k8s/">#k8s</a>
+      
+        <a href="/tags/needSyncToBlog/">#needSyncToBlog</a>
+      
+        <a href="/tags/devicePlugin/">#devicePlugin</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>DevicePlugin 工作机制及实现</div>
+      <div>https://autsu.github.io/2024/08/20/DevicePlugin 工作机制及实现/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年8月20日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/11/09/K8s%20Service%20iptables%20%E5%AE%9E%E8%B7%B5/" title="K8s Service iptables 实践">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">K8s Service iptables 实践</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/06/12/k8s-informer-controller-md/" title="k8s informer controller 源码">
+                        <span class="hidden-mobile">k8s informer controller 源码</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

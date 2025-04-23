@@ -1,0 +1,829 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/icon.png">
+  <link rel="icon" href="/img/icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="void">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="介绍Veth-Pair 是什么顾名思义，Veth-Pair 就是一对的虚拟设备接口，它总是以两张虚拟网卡（Veth Peer）成对出现，每个 Veth 都有两端，其中一端连着网络协议栈，另一端连接另一个 Veth。比如下图所示，该 Veth-Pair 有两张虚拟网卡 veth0 和 veth1，它们彼此相连，此外每个虚拟网卡都还连接着网络协议栈。 比如创建了一对 Veth，其中一个放到 names">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 虚拟网络设备 Veth-Pair">
+<meta property="og:url" content="https://autsu.github.io/2022/09/06/Veth%20%E8%AE%BE%E5%A4%87/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="介绍Veth-Pair 是什么顾名思义，Veth-Pair 就是一对的虚拟设备接口，它总是以两张虚拟网卡（Veth Peer）成对出现，每个 Veth 都有两端，其中一端连着网络协议栈，另一端连接另一个 Veth。比如下图所示，该 Veth-Pair 有两张虚拟网卡 veth0 和 veth1，它们彼此相连，此外每个虚拟网卡都还连接着网络协议栈。 比如创建了一对 Veth，其中一个放到 names">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250308122808.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250308171449.png">
+<meta property="article:published_time" content="2022-09-06T14:37:45.000Z">
+<meta property="article:modified_time" content="2025-04-23T16:18:57.827Z">
+<meta property="article:author" content="void">
+<meta property="article:tag" content="计算机网络">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="k8s">
+<meta property="article:tag" content="k8s网络">
+<meta property="article:tag" content="needSyncToBlog">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250308122808.png">
+  
+  
+  
+  <title>Linux 虚拟网络设备 Veth-Pair - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript('https://www.google-analytics.com/analytics.js', function() {
+          window.ga = window.ga || function() { (ga.q = ga.q || []).push(arguments) };
+          ga.l = +new Date;
+          ga('create', 'G-80J26VFWFL', 'auto');
+          ga('send', 'pageview');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>/dev/null</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Linux 虚拟网络设备 Veth-Pair"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-09-06 22:37" pubdate>
+          2022年9月6日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          15k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          126 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Linux 虚拟网络设备 Veth-Pair</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><h3 id="Veth-Pair-是什么"><a href="#Veth-Pair-是什么" class="headerlink" title="Veth-Pair 是什么"></a>Veth-Pair 是什么</h3><p>顾名思义，Veth-Pair 就是一对的虚拟设备接口，它总是以两张虚拟网卡（Veth Peer）<strong>成对出现</strong>，每个 Veth 都有两端，<strong>其中一端连着网络协议栈，另一端连接另一个 Veth</strong>。比如下图所示，该 Veth-Pair 有两张虚拟网卡 <code>veth0</code> 和 <code>veth1</code>，它们彼此相连，此外每个虚拟网卡都还连接着网络协议栈。</p>
+<p>比如创建了一对 Veth，其中一个放到 namespace 中，那么 namespace 经过 Veth 发出的包，就会到达另一个 Veth，该 Veth 位于宿主机，所以会流经宿主机的网络协议栈，进行后续操作。</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs gherkin">---------------------------------------------<br>|<span class="hljs-string">                                           </span>|<br>|<span class="hljs-string">               网络协议栈                    </span>|<br>|<span class="hljs-string">                                           </span>|<br>---------------------------------------------<br>    ^             ^               ^<br>    |<span class="hljs-string">             </span>|<span class="hljs-string">               </span>|<br>    |<span class="hljs-string">             </span>|<span class="hljs-string">               </span>|<br>    |<span class="hljs-string">         ---------       ---------	</span><br><span class="hljs-string">    </span>|<span class="hljs-string">         </span>|<span class="hljs-string"> veth0 </span>|<span class="hljs-string">       </span>|<span class="hljs-string"> veth1 </span>|<br>--------      ---------       ---------<br>|<span class="hljs-string"> eth0 </span>|<span class="hljs-string">          ^               ^</span><br><span class="hljs-string">--------          </span>|<span class="hljs-string">               </span>|<span class="hljs-string">	</span><br><span class="hljs-string">                  </span>|<span class="hljs-string">               </span>|<br>                   ---------------<br></code></pre></td></tr></table></figure>
+
+<p>搞清楚 Veth-Pair 的大致概念了，接下来需要了解一下 Veth-Pair 的作用，其实从上面的图中已经可以大致猜到了，既然这些东西都连在一起，那么一定和数据传输脱不了关系，实际上确实如此，对于 Veth-Pair 而言，从其中一张虚拟网卡发出的数据包，可以被另一张虚拟网卡接收到，而每张虚拟网卡又都连接到了网络协议栈，也就是说，Veth-Pair 可以充当网络协议栈中某些接口设备传递数据的桥梁。</p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>通过如下命令进行创建。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 创建一对 veth，一个叫 veth0，另一个叫 veth1</span><br>ip <span class="hljs-built_in">link</span> add veth0 <span class="hljs-built_in">type</span> veth peer name veth1<br><br><span class="hljs-comment"># 其中一个放到 namespace ns1 中</span><br>ip <span class="hljs-built_in">link</span> <span class="hljs-built_in">set</span> veth1 netns ns1<br><span class="hljs-comment"># 也可以接到网桥</span><br>ip <span class="hljs-built_in">link</span> <span class="hljs-built_in">set</span> veth0 master br0<br><br><span class="hljs-comment"># 添加 IP</span><br>ip netns <span class="hljs-built_in">exec</span> ns1 ip a a 10.1.2.3/24 dev veth1<br><br><span class="hljs-comment"># 启用</span><br>ip <span class="hljs-built_in">set</span> veth1 up<br></code></pre></td></tr></table></figure>
+
+<p>如何查看 Veth 对端设备？</p>
+<p>Veth 设备的名字以 xxx@ifx 格式命名，@ 后面的 ifx 代表的就是对端设备是第几个接口。比如下面是一对 Veth：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs bash">7: veth0@if6: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000<br>    <span class="hljs-built_in">link</span>/ether 1a:<span class="hljs-built_in">cd</span>:6c:65:56:ef brd ff:ff:ff:ff:ff:ff link-netns ns2<br>    inet 10.1.1.2/24 scope global veth0<br>       valid_lft forever preferred_lft forever<br>    inet6 fe80::18cd:6cff:fe65:56ef/64 scope <span class="hljs-built_in">link</span><br>       valid_lft forever preferred_lft forever<br>    <br>$ ip netns <span class="hljs-built_in">exec</span> ns2 ip addr<br>6: veth1@if7: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000<br>    <span class="hljs-built_in">link</span>/ether ea:01:47:a3:c9:e9 brd ff:ff:ff:ff:ff:ff link-netns ns1<br>    inet 10.1.1.3/24 scope global veth1<br>       valid_lft forever preferred_lft forever<br>    inet6 fe80::e801:47ff:fea3:c9e9/64 scope <span class="hljs-built_in">link</span><br>       valid_lft forever preferred_lft forever<br></code></pre></td></tr></table></figure>
+
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><h3 id="两个-network-namespace-间通信（直接连接）"><a href="#两个-network-namespace-间通信（直接连接）" class="headerlink" title="两个 network namespace 间通信（直接连接）"></a>两个 network namespace 间通信（直接连接）</h3><p>首先我们创建两个网络 namespace，然后再创建一对 Veth-Pair，并且给该 Veth-Pair 的两个虚拟网卡分配 IP 地址，最后，将这两个虚拟网卡分配给两个 namespace。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">创建 2 个 namespace</span><br>ip netns add ns1<br>ip netns add ns2<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">查看创建的 namespace</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">ip netns</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">ns2</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">ns1</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">创建一对 veth-pair，分别命名为 veth0 veth1</span><br>ip l a veth0 type veth peer name veth1<br><span class="hljs-meta prompt_"># </span><span class="language-bash">也可以写成：</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">ip <span class="hljs-built_in">link</span> add veth0 <span class="hljs-built_in">type</span> veth peer name veth1</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">将 veth0 veth1 分别加入两个 ns</span><br>ip l s veth0 netns ns1<br>ip l s veth1 netns ns2<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">给两个虚拟网卡 veth0 veth1 配上 IP 并启用</span><br>ip netns exec ns1 ip a a 10.1.1.2/24 dev veth0<br>ip netns exec ns1 ip l s veth0 up<br>ip netns exec ns2 ip a a 10.1.1.3/24 dev veth1<br>ip netns exec ns2 ip l s veth1 up<br></code></pre></td></tr></table></figure>
+
+<p>添加完后可以看一下每个 namespace 的网卡设备：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">ip netns <span class="hljs-built_in">exec</span> ns1 ip addr</span><br>1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN group default qlen 1000<br>    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00<br>7: veth0@if6: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000<br>    link/ether 1a:cd:6c:65:56:ef brd ff:ff:ff:ff:ff:ff link-netns ns2<br>    inet 10.1.1.2/24 scope global veth0<br>       valid_lft forever preferred_lft forever<br>    inet6 fe80::18cd:6cff:fe65:56ef/64 scope link<br>       valid_lft forever preferred_lft forever<br>    <br><span class="hljs-meta prompt_">$ </span><span class="language-bash">ip netns <span class="hljs-built_in">exec</span> ns2 ip addr</span><br>1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN group default qlen 1000<br>    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00<br>6: veth1@if7: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000<br>    link/ether ea:01:47:a3:c9:e9 brd ff:ff:ff:ff:ff:ff link-netns ns1<br>    inet 10.1.1.3/24 scope global veth1<br>       valid_lft forever preferred_lft forever<br>    inet6 fe80::e801:47ff:fea3:c9e9/64 scope link<br>       valid_lft forever preferred_lft forever<br></code></pre></td></tr></table></figure>
+
+<p>可以看到每个 namespace 都有一张以 veth 开头的网卡，这正是我们创建的 Veth-Pair 的两张虚拟网卡 <code>veth0</code> 和 <code>veth1</code>，并且每张网卡拥有一个 IP。 现在，我们创建了类似文章开头介绍中的图片的结构：veth0 和 veth1 相互连接，然后 veth0 又连接着 ns1，veth1 又连接着 ns2：</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs gherkin">---------       ---------<br>|<span class="hljs-string">  ns1  </span>|<span class="hljs-string">       </span>|<span class="hljs-string">  ns2  </span>|<br>---------       ---------    <br>    ^               ^<br>    |<span class="hljs-string">               </span>|<br>    |<span class="hljs-string">               </span>|<br>---------       ---------	<br>|<span class="hljs-string"> veth0 </span>|<span class="hljs-string">       </span>|<span class="hljs-string"> veth1 </span>|<br>---------       ---------<br>    ^               ^<br>    |<span class="hljs-string">               </span>|<span class="hljs-string">	</span><br><span class="hljs-string">    </span>|<span class="hljs-string">               </span>|<br>     ---------------<br></code></pre></td></tr></table></figure>
+
+<p>现在，两个本来相互隔离，各自拥有独立网络协议栈，像孤岛一样的网络命名空间，通过 Veth-Pair 这个“桥梁”，正式建立起了彼此沟通的渠道。让我们尝试一下，用 ns1 去 ping ns2，看看能不能 ping 通：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">从 veth0 ping veth1</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">ip netns <span class="hljs-built_in">exec</span> ns1 ping 10.1.1.3</span><br>PING 10.1.1.3 (10.1.1.3) 56(84) bytes of data.<br>64 bytes from 10.1.1.3: icmp_seq=1 ttl=64 time=0.997 ms<br>64 bytes from 10.1.1.3: icmp_seq=2 ttl=64 time=0.102 ms<br>64 bytes from 10.1.1.3: icmp_seq=3 ttl=64 time=0.063 ms<br>^C<br>--- 10.1.1.3 ping statistics ---<br>3 packets transmitted, 3 received, 0% packet loss, time 2026ms<br>rtt min/avg/max/mdev = 0.063/0.387/0.997/0.431 ms<br></code></pre></td></tr></table></figure>
+
+<p>可以看到 ping 能正常工作，说明二者已经可以通信了。</p>
+<p>看一下路由表：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">ip netns <span class="hljs-built_in">exec</span> ns1 ip r<br>10.1.1.0/24 dev veth0 proto kernel scope <span class="hljs-built_in">link</span> src 10.1.1.2<br><br><br>ip netns <span class="hljs-built_in">exec</span> ns2 ip r<br>10.1.1.0/24 dev veth1 proto kernel scope <span class="hljs-built_in">link</span> src 10.1.1.3<br></code></pre></td></tr></table></figure>
+
+<p>这代表目标地址为 <code>10.1.1.0/24</code> 的包可以直接通过 veth 设备发出，<code>scope link</code> 代表是直连的，也就是在同一个二层，不需要网关转发。</p>
+<p>抓包看看：</p>
+<p>分别在 3 个终端执行：</p>
+<p><code>sudo ip netns exec ns1 tcpdump -i veth0 -n -vvv -e -w veth0.pcap</code></p>
+<p><code>sudo ip netns exec ns2 tcpdump -i veth1 -n -vvv -e -w veth1.pcap</code></p>
+<p><code>ip netns exec ns1 ping 10.1.1.3</code></p>
+<p>抓包分析：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250308122808.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>看起来没什么好分析的，源 IP 和目的 IP 就不说了，然后 ns1 通过 ARP 请求目的 IP 的 MAC，构建出最终的 ICMP 报文即可。</p>
+<h3 id="多个-namespace-之间通信（通过-Bridge-相连）"><a href="#多个-namespace-之间通信（通过-Bridge-相连）" class="headerlink" title="多个 namespace 之间通信（通过 Bridge 相连）"></a>多个 namespace 之间通信（通过 Bridge 相连）</h3><p>上面 <strong>直接连接</strong> 的 demo 中，我们通过一对 Veth-Pair 让两个 namespace 之间实现了通信，但是如果我们想让三个，四个，甚至更多的 namespace 之间都能够通信呢？要还是采用直接连接的方式，那可就太复杂了，比如如果有四个 namespace，分别是 ns1，ns2，ns3，ns4，那么 ns1 和 ns2 通信需要一对 Veth-Pair，ns1 和 ns3，ns1 和 ns4，ns2 和 ns3，ns2 和 ns4，ns3 和 ns4 都需要一对 Veth-Pair。。。有什么办法可以解决这个问题呢？</p>
+<p>解决办法就是引入一个新的网络设备：能够起到虚拟交换机作用的 <strong>网桥</strong>，它是一个在 <strong>数据链路层</strong> 工作的设备，主要功能是根据 MAC 地址学习将数据包转发到网桥的不同端口上。</p>
+<blockquote>
+<p>突击测试：什么是 MAC 地址学习？</p>
+</blockquote>
+<p>我们可以通过 Veth-Pair，将各个 namespace 与网桥连接起来，这些 namespace 全部都加入到同一个网桥，相当于都在同一个局域网下，所以彼此之间可以互相通信。</p>
+<blockquote>
+<p>🤔 这些虚拟网卡（连接到 namespace 这一端的，比如下图中的 veth0，veth1，veth2，veth3）的 IP 是否必须要处于同一网段？否则即使都在同一个网桥，也无法进行通信？</p>
+<p>📢 如果两个网卡的 IP 不在同一个子网，将它们加入到同一个网桥后，它们在网络层（IP 层）仍然无法直接通信。这是因为网桥工作在数据链路层，它只负责根据 MAC 地址转发数据包，并不涉及 IP 地址的路由。</p>
+<p>待实践</p>
+</blockquote>
+<p>拓扑结构如下：</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs gherkin">---------       ---------    ---------    ---------<br>|<span class="hljs-string">  ns1  </span>|<span class="hljs-string">       </span>|<span class="hljs-string">  ns2  </span>|<span class="hljs-string">    </span>|<span class="hljs-string">  ns3  </span>|<span class="hljs-string">    </span>|<span class="hljs-string">  ns4  </span>|<span class="hljs-string"> </span><br><span class="hljs-string">---------       ---------    ---------    ---------   </span><br><span class="hljs-string">    ^               ^            ^            ^</span><br><span class="hljs-string">    </span>|<span class="hljs-string">               </span>|<span class="hljs-string">            </span>|<span class="hljs-string">            </span>|<br>    |<span class="hljs-string">               </span>|<span class="hljs-string">            </span>|<span class="hljs-string">            </span>|<br>---------       ---------	   ---------    ---------<br>|<span class="hljs-string"> veth0 </span>|<span class="hljs-string">       </span>|<span class="hljs-string"> veth1 </span>|<span class="hljs-string">    </span>|<span class="hljs-string"> veth2 </span>|<span class="hljs-string">    </span>|<span class="hljs-string"> veth3 </span>|<br>---------       ---------    ---------    ---------<br>    ^               ^            ^            ^<br>    |<span class="hljs-string">               </span>|<span class="hljs-string">            </span>|<span class="hljs-string">            </span>|<br>    |<span class="hljs-string">               </span>|<span class="hljs-string">            </span>|<span class="hljs-string">            </span>|<br>    ∨               ∨            ∨            ∨<br>-----------     ------------  ------------  ------------<br>|<span class="hljs-string"> br-veth0 </span>|<span class="hljs-string">    </span>|<span class="hljs-string"> br-veth1 </span>|<span class="hljs-string">  </span>|<span class="hljs-string"> br-veth2 </span>|<span class="hljs-string">  </span>|<span class="hljs-string"> br-veth3 </span>|<br>-----------     ------------  ------------  ------------<br>    ^               ^               ^            ^<br>    |<span class="hljs-string">               </span>|<span class="hljs-string">               </span>|<span class="hljs-string">            </span>|<br>    |<span class="hljs-string">               </span>|<span class="hljs-string">               </span>|<span class="hljs-string">            </span>|<br>    ∨               ∨               ∨            ∨<br>------------------------------------------------------<br>|<span class="hljs-string">                       网桥                          </span>|<br>------------------------------------------------------<br></code></pre></td></tr></table></figure>
+
+<p>上面创建了 4 对 Veth-Pair，每对 Veth-Pair 的一端连接到一个 network namespace，另一端连接到 bridge。比如在最左边的 veth0 和 br-veth0 就是这对 Veth-Pair 的两端，即两张虚拟网卡，然后 veth0 连接到了 ns1，而 br-veth0 连接到了网桥。 </p>
+<p>实践：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">首先创建 bridge br0</span><br>ip l a br0 type bridge<br>ip l s br0 up <br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">可以查看一下创建出来的网桥</span><br>ip link show type bridge<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">然后我们在之前实验的基础上，再创建两个 namespace</span><br>ip netns add ns3<br>ip netns add ns4<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">然后创建 4 对新的 veth-pair</span><br>ip l a veth2 type veth peer name br-veth2<br>ip l a veth3 type veth peer name br-veth3<br>ip l a veth4 type veth peer name br-veth4<br>ip l a veth5 type veth peer name br-veth5<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">将这 4 对 veth-pair 加入到 ns 和 br0</span><br>ip l s veth2 netns ns1<br>ip l s br-veth2 master br0<br>ip l s br-veth2 up<br><br>ip l s veth3 netns ns2<br>ip l s br-veth3 master br0<br>ip l s br-veth3 up<br><br>ip l s veth4 netns ns3<br>ip l s br-veth4 master br0<br>ip l s br-veth4 up<br><br>ip l s veth5 netns ns4<br>ip l s br-veth5 master br0<br>ip l s br-veth5 up<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">给 veth 配置 IP 并启用</span><br>ip netns exec ns1 ip a a 10.1.2.2/24 dev veth2<br>ip netns exec ns1 ip l s veth2 up<br><br>ip netns exec ns2 ip a a 10.1.2.3/24 dev veth3<br>ip netns exec ns2 ip l s veth3 up<br><br>ip netns exec ns3 ip a a 10.1.2.4/24 dev veth4<br>ip netns exec ns3 ip l s veth4 up<br><br>ip netns exec ns4 ip a a 10.1.2.5/24 dev veth5<br>ip netns exec ns4 ip l s veth5 up<br></code></pre></td></tr></table></figure>
+
+<p>同样的，我们也可以看一下各个 namespace 的网卡情况：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">ip netns <span class="hljs-built_in">exec</span> ns1 ip addr</span><br>1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN group default qlen 1000<br>    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00<br>5: veth0@if4: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000<br>    link/ether 4a:19:b1:f3:af:22 brd ff:ff:ff:ff:ff:ff link-netns ns2<br>    inet 10.1.1.2/24 scope global veth0<br>       valid_lft forever preferred_lft forever<br>    inet6 fe80::4819:b1ff:fef3:af22/64 scope link<br>       valid_lft forever preferred_lft forever<br>12: veth2@if11: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000<br>    link/ether 0e:24:20:80:09:97 brd ff:ff:ff:ff:ff:ff link-netnsid 0<br>    inet 10.1.2.2/24 scope global veth2<br>       valid_lft forever preferred_lft forever<br>    inet6 fe80::c24:20ff:fe80:997/64 scope link<br>       valid_lft forever preferred_lft forever<br>       <br><span class="hljs-meta prompt_">$ </span><span class="language-bash">ip netns <span class="hljs-built_in">exec</span> ns3 ip addr</span><br>1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN group default qlen 1000<br>    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00<br>16: veth4@if15: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000<br>    link/ether 9e:84:97:27:44:c4 brd ff:ff:ff:ff:ff:ff link-netnsid 0<br>    inet 10.1.2.4/24 scope global veth4<br>       valid_lft forever preferred_lft forever<br>    inet6 fe80::9c84:97ff:fe27:44c4/64 scope link<br>       valid_lft forever preferred_lft forever<br></code></pre></td></tr></table></figure>
+
+<p>这里为了方便只查看了 ns1 和 ns3 这两个 namespace 的情况，因为 ns1 这个 namespace 是之前创建好的，在其基础上又插入了一个 Veth，所以有 veth0 和 veth2 两张网卡，而 ns3 是新创建的，所以只有 veth4 这一张网卡（lo 代表回环网卡，与本次实验无关，可以忽略）。</p>
+<p>然后我们验证一下这几个 namespace 之间的连通情况：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">ip netns exec ns4 ping 10.1.2.2<br>ip netns exec ns4 ping 10.1.2.3<br>ip netns exec ns4 ping 10.1.2.4<br><span class="hljs-meta prompt_"># </span><span class="language-bash">.... 就不全部测试了，测过的都可以 ping 通</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="抓包实践"><a href="#抓包实践" class="headerlink" title="抓包实践"></a>抓包实践</h2><p>首先执行下面的命令来创建实验环境。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 1. 创建网络命名空间（使用新名字）</span><br>ip netns add ns11<br>ip netns add ns22<br><br><span class="hljs-comment"># 2. 创建网桥（使用新名字）</span><br>ip <span class="hljs-built_in">link</span> add br11 <span class="hljs-built_in">type</span> bridge<br>ip <span class="hljs-built_in">link</span> <span class="hljs-built_in">set</span> br11 up<br><br><span class="hljs-comment"># 3. 创建两对veth（使用新名字）</span><br><span class="hljs-comment"># ns11 &lt;-&gt; br11 的连接</span><br>ip <span class="hljs-built_in">link</span> add veth11-ns <span class="hljs-built_in">type</span> veth peer name veth11-br<br><span class="hljs-comment"># ns22 &lt;-&gt; br11 的连接</span><br>ip <span class="hljs-built_in">link</span> add veth22-ns <span class="hljs-built_in">type</span> veth peer name veth22-br<br><br><span class="hljs-comment"># 4. 将veth一端移至namespace，另一端接入网桥</span><br><span class="hljs-comment"># 第一对</span><br>ip <span class="hljs-built_in">link</span> <span class="hljs-built_in">set</span> veth11-ns netns ns11<br>ip <span class="hljs-built_in">link</span> <span class="hljs-built_in">set</span> veth11-br master br11<br><span class="hljs-comment"># 第二对</span><br>ip <span class="hljs-built_in">link</span> <span class="hljs-built_in">set</span> veth22-ns netns ns22<br>ip <span class="hljs-built_in">link</span> <span class="hljs-built_in">set</span> veth22-br master br11<br><br><span class="hljs-comment"># 5. 配置namespace中的网卡</span><br><span class="hljs-comment"># ns11</span><br>ip netns <span class="hljs-built_in">exec</span> ns11 ip addr add 10.0.0.11/24 dev veth11-ns<br>ip netns <span class="hljs-built_in">exec</span> ns11 ip <span class="hljs-built_in">link</span> <span class="hljs-built_in">set</span> veth11-ns up<br><span class="hljs-comment"># ns22</span><br>ip netns <span class="hljs-built_in">exec</span> ns22 ip addr add 10.0.0.22/24 dev veth22-ns<br>ip netns <span class="hljs-built_in">exec</span> ns22 ip <span class="hljs-built_in">link</span> <span class="hljs-built_in">set</span> veth22-ns up<br><br><span class="hljs-comment"># 6. 启用网桥上的接口</span><br>ip <span class="hljs-built_in">link</span> <span class="hljs-built_in">set</span> veth11-br up<br>ip <span class="hljs-built_in">link</span> <span class="hljs-built_in">set</span> veth22-br up<br></code></pre></td></tr></table></figure>
+
+<p>上面的命令会创建两个 namespace，一个网桥，两对 veth-pair，然后每对分别连接到 namespace 和网桥。然后，namespace 会尝试去 Ping 另一个 namespace。</p>
+<p>抓包结果如下：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/20250308171449.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>可以看到，首先 ns11 会通过 ARP 来尝试获取目标的 MAC 地址。这个 ARP 包会来到网桥，然后网桥进行广播发给每一个连接它的设备，同时进行 MAC 学习，记录这个端口连接的是 ns11 到 FDB 表中。当 ns22 响应时，它同样也会记录到 FDB 表。然后 ns22 发送 ARP 响应报文，ns11 收到后，就知道了 MAC 地址，就可以构建完整报文了。</p>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><h3 id="发送包"><a href="#发送包" class="headerlink" title="发送包"></a>发送包</h3><p>发送入口：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-type">netdev_tx_t</span> <span class="hljs-title function_">veth_xmit</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> sk_buff *skb, <span class="hljs-keyword">struct</span> net_device *dev)</span><br>&#123;<br>    <span class="hljs-comment">// 设备私有数据结构</span><br>	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">veth_priv</span> *<span class="hljs-title">rcv_priv</span>, *<span class="hljs-title">priv</span> =</span> netdev_priv(dev);<br>	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">veth_rq</span> *<span class="hljs-title">rq</span> =</span> <span class="hljs-literal">NULL</span>;<br>	<span class="hljs-type">int</span> ret = NETDEV_TX_OK;<br>	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">net_device</span> *<span class="hljs-title">rcv</span>;</span><br>	<span class="hljs-type">int</span> length = skb-&gt;len;<br>	<span class="hljs-type">bool</span> use_napi = <span class="hljs-literal">false</span>;<br>	<span class="hljs-type">int</span> rxq;<br><br>	<span class="hljs-comment">// 使用 RCU 读锁保护</span><br>	rcu_read_lock();<br>	rcv = rcu_dereference(priv-&gt;peer); <span class="hljs-comment">// 获取对端设备</span><br>	<span class="hljs-comment">// 检查对端设备是否存在，及确保包至少有以太网头长度</span><br>	<span class="hljs-keyword">if</span> (unlikely(!rcv) || !pskb_may_pull(skb, ETH_HLEN)) &#123;<br>		kfree_skb(skb);<br>		<span class="hljs-keyword">goto</span> drop;<br>	&#125;<br><br>	<span class="hljs-comment">// 获取接收端私有数据</span><br>	rcv_priv = netdev_priv(rcv);<br>	rxq = skb_get_queue_mapping(skb);<br>	<span class="hljs-keyword">if</span> (rxq &lt; rcv-&gt;real_num_rx_queues) &#123;<br>		<span class="hljs-comment">// 获取对应的接收队列</span><br>		rq = &amp;rcv_priv-&gt;rq[rxq];<br><br>		<span class="hljs-comment">/* The napi pointer is available when an XDP program is</span><br><span class="hljs-comment">		 * attached or when GRO is enabled</span><br><span class="hljs-comment">		 * Don&#x27;t bother with napi/GRO if the skb can&#x27;t be aggregated</span><br><span class="hljs-comment">		 */</span><br>		use_napi = rcu_access_pointer(rq-&gt;napi) &amp;&amp;<br>			   veth_skb_is_eligible_for_gro(dev, rcv, skb);<br>	&#125;<br><br>	skb_tx_timestamp(skb);<br>	<span class="hljs-comment">// 转发数据包</span><br>	<span class="hljs-keyword">if</span> (likely(veth_forward_skb(rcv, skb, rq, use_napi) == NET_RX_SUCCESS)) &#123;<br>		<span class="hljs-keyword">if</span> (!use_napi)<br>			<span class="hljs-comment">// 更新软件统计信息</span><br>			dev_sw_netstats_tx_add(dev, <span class="hljs-number">1</span>, length);<br>		<span class="hljs-keyword">else</span><br>			__veth_xdp_flush(rq);<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>drop:<br>		atomic64_inc(&amp;priv-&gt;dropped);<br>		ret = NET_XMIT_DROP;<br>	&#125;<br>    <span class="hljs-comment">// 释放 RCU 读锁</span><br>	rcu_read_unlock();<br><br>	<span class="hljs-keyword">return</span> ret;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<p>转发处理 veth_forward_skb：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">veth_forward_skb</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> net_device *dev, <span class="hljs-keyword">struct</span> sk_buff *skb,</span><br><span class="hljs-params">			    <span class="hljs-keyword">struct</span> veth_rq *rq, <span class="hljs-type">bool</span> xdp)</span><br>&#123;<br>	<span class="hljs-keyword">return</span> __dev_forward_skb(dev, skb) ?: xdp ?<br>		veth_xdp_rx(rq, skb) :<br>		__netif_rx(skb);<br>&#125;<br><br><span class="hljs-type">int</span> __dev_forward_skb(<span class="hljs-keyword">struct</span> net_device *dev, <span class="hljs-keyword">struct</span> sk_buff *skb)<br>&#123;<br>	<span class="hljs-keyword">return</span> __dev_forward_skb2(dev, skb, <span class="hljs-literal">true</span>);<br>&#125;<br><br><span class="hljs-type">static</span> <span class="hljs-type">int</span> __dev_forward_skb2(<span class="hljs-keyword">struct</span> net_device *dev, <span class="hljs-keyword">struct</span> sk_buff *skb,<br>			      <span class="hljs-type">bool</span> check_mtu)<br>&#123;<br>	<span class="hljs-type">int</span> ret = ____dev_forward_skb(dev, skb, check_mtu);<br><br>	<span class="hljs-keyword">if</span> (likely(!ret)) &#123;<br>		skb-&gt;protocol = eth_type_trans(skb, dev);<br>		skb_postpull_rcsum(skb, eth_hdr(skb), ETH_HLEN);<br>	&#125;<br><br>	<span class="hljs-keyword">return</span> ret;<br>&#125;<br><br><br></code></pre></td></tr></table></figure>
+
+<p><code>__dev_forward_skb</code> 如果成功了，继续根据是否启用 xdp 来选择转发方式。</p>
+<p><code>____dev_forward_skb</code> 是数据包转发过程中的基础预处理函数</p>
+<p>普通接收路径：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> __netif_rx(<span class="hljs-keyword">struct</span> sk_buff *skb)<br>&#123;<br>	<span class="hljs-type">int</span> ret;<br><br>	lockdep_assert_once(hardirq_count() | softirq_count());<br><br>	trace_netif_rx_entry(skb);<br>	ret = netif_rx_internal(skb);<br>	trace_netif_rx_exit(ret);<br>	<span class="hljs-keyword">return</span> ret;<br>&#125;<br><br><br><span class="hljs-type">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">netif_rx_internal</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> sk_buff *skb)</span><br>&#123;<br>	<span class="hljs-type">int</span> ret;<br><br>	net_timestamp_check(READ_ONCE(netdev_tstamp_prequeue), skb);<br><br>	trace_netif_rx(skb);<br><br><span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> CONFIG_RPS</span><br>    <span class="hljs-comment">// 如果启用了 RPS</span><br>    <span class="hljs-keyword">if</span> (static_branch_unlikely(&amp;rps_needed)) &#123;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">rps_dev_flow</span> <span class="hljs-title">voidflow</span>, *<span class="hljs-title">rflow</span> =</span> &amp;voidflow;<br>        <span class="hljs-type">int</span> cpu;<br><br>        rcu_read_lock();  <span class="hljs-comment">// RCU 读锁保护</span><br><br>        <span class="hljs-comment">// 根据包的特征选择目标 CPU</span><br>        cpu = get_rps_cpu(skb-&gt;dev, skb, &amp;rflow);<br>        <span class="hljs-keyword">if</span> (cpu &lt; <span class="hljs-number">0</span>)<br>            cpu = smp_processor_id();  <span class="hljs-comment">// 如果选择失败，使用当前 CPU</span><br><br>        <span class="hljs-comment">// 将包加入选中 CPU 的后备队列</span><br>        ret = enqueue_to_backlog(skb, cpu, &amp;rflow-&gt;last_qtail);<br><br>        rcu_read_unlock();<br>    &#125; <span class="hljs-keyword">else</span><br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>	<span class="hljs-comment">// 非 RPS 处理</span><br>	&#123;<br>		<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> qtail;<br>		<span class="hljs-comment">// 直接使用当前 CPU</span><br>		ret = enqueue_to_backlog(skb, smp_processor_id(), &amp;qtail);<br>	&#125;<br>	<span class="hljs-keyword">return</span> ret;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>enqueue_to_backlog</code> 把 skb 入队到对端 Veth 设备的接收队列，并且触发软中断，然后对端设备就能开始处理了。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">enqueue_to_backlog</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> sk_buff *skb, <span class="hljs-type">int</span> cpu,</span><br><span class="hljs-params">			      <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> *qtail)</span><br>&#123;<br>enqueue:<br>			__skb_queue_tail(&amp;sd-&gt;input_pkt_queue, skb);<br>			input_queue_tail_incr_save(sd, qtail);<br>			rps_unlock_irq_restore(sd, &amp;flags);<br>			<span class="hljs-keyword">return</span> NET_RX_SUCCESS;<br>		&#125;<br><br>		<span class="hljs-comment">/* Schedule NAPI for backlog device</span><br><span class="hljs-comment">		 * We can use non atomic operation since we own the queue lock</span><br><span class="hljs-comment">		 */</span><br>		<span class="hljs-keyword">if</span> (!__test_and_set_bit(NAPI_STATE_SCHED, &amp;sd-&gt;backlog.state))<br>			<span class="hljs-comment">// 软中断</span><br>			napi_schedule_rps(sd);<br>		<span class="hljs-keyword">goto</span> enqueue;<br>	&#125;<br>	reason = SKB_DROP_REASON_CPU_BACKLOG;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">enqueue_to_backlog()<br>    |<br>    +---&gt; 队列为空？<br>          |<br>          +---&gt; 是 ---&gt; NAPI 已调度？<br>          |             |<br>          |             +---&gt; 否 ---&gt; 设置 NAPI_STATE_SCHED<br>          |             |             触发软中断<br>          |             |<br>          |             +---&gt; 是 ---&gt; 直接入队<br>          |<br>          +---&gt; 否 ---&gt; 直接入队<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">1. enqueue_to_backlog<br>   |<br>2. 触发软中断<br>   |<br>3. net_rx_action 执行<br>   |<br>4. process_backlog 处理队列<br>   |<br>5. __netif_receive_skb 处理包<br>   |<br>6. 协议栈处理<br>   |<br>7. 最终到达应用层或其他目的地<br></code></pre></td></tr></table></figure>
+
+<h3 id="接收包"><a href="#接收包" class="headerlink" title="接收包"></a>接收包</h3><p>处理 backlog：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">process_backlog</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> napi_struct *napi, <span class="hljs-type">int</span> quota)</span><br>&#123;<br>	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">softnet_data</span> *<span class="hljs-title">sd</span> =</span> container_of(napi, <span class="hljs-keyword">struct</span> softnet_data, backlog);<br>	<span class="hljs-type">bool</span> again = <span class="hljs-literal">true</span>;<br>	<span class="hljs-type">int</span> work = <span class="hljs-number">0</span>;<br><br>	<span class="hljs-comment">/* Check if we have pending ipi, its better to send them now,</span><br><span class="hljs-comment">	 * not waiting net_rx_action() end.</span><br><span class="hljs-comment">	 */</span><br>	<span class="hljs-keyword">if</span> (sd_has_rps_ipi_waiting(sd)) &#123;<br>		local_irq_disable();<br>		net_rps_action_and_irq_enable(sd);<br>	&#125;<br><br>	napi-&gt;weight = READ_ONCE(net_hotdata.dev_rx_weight);<br>	<span class="hljs-keyword">while</span> (again) &#123;<br>		<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sk_buff</span> *<span class="hljs-title">skb</span>;</span><br><br>		local_lock_nested_bh(&amp;softnet_data.process_queue_bh_lock);<br>		<span class="hljs-keyword">while</span> ((skb = __skb_dequeue(&amp;sd-&gt;process_queue))) &#123;<br>			local_unlock_nested_bh(&amp;softnet_data.process_queue_bh_lock);<br>			rcu_read_lock();<br>			<span class="hljs-comment">// 这里处理</span><br>			__netif_receive_skb(skb);<br>			rcu_read_unlock();<br>			<span class="hljs-keyword">if</span> (++work &gt;= quota) &#123;<br>				rps_input_queue_head_add(sd, work);<br>				<span class="hljs-keyword">return</span> work;<br>			&#125;<br><br>			local_lock_nested_bh(&amp;softnet_data.process_queue_bh_lock);<br>		&#125;<br>		local_unlock_nested_bh(&amp;softnet_data.process_queue_bh_lock);<br><br>		backlog_lock_irq_disable(sd);<br>		<span class="hljs-keyword">if</span> (skb_queue_empty(&amp;sd-&gt;input_pkt_queue)) &#123;<br>			<span class="hljs-comment">/*</span><br><span class="hljs-comment">			 * Inline a custom version of __napi_complete().</span><br><span class="hljs-comment">			 * only current cpu owns and manipulates this napi,</span><br><span class="hljs-comment">			 * and NAPI_STATE_SCHED is the only possible flag set</span><br><span class="hljs-comment">			 * on backlog.</span><br><span class="hljs-comment">			 * We can use a plain write instead of clear_bit(),</span><br><span class="hljs-comment">			 * and we dont need an smp_mb() memory barrier.</span><br><span class="hljs-comment">			 */</span><br>			napi-&gt;state &amp;= NAPIF_STATE_THREADED;<br>			again = <span class="hljs-literal">false</span>;<br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>			local_lock_nested_bh(&amp;softnet_data.process_queue_bh_lock);<br>			skb_queue_splice_tail_init(&amp;sd-&gt;input_pkt_queue,<br>						   &amp;sd-&gt;process_queue);<br>			local_unlock_nested_bh(&amp;softnet_data.process_queue_bh_lock);<br>		&#125;<br>		backlog_unlock_irq_enable(sd);<br>	&#125;<br><br>	<span class="hljs-keyword">if</span> (work)<br>		rps_input_queue_head_add(sd, work);<br>	<span class="hljs-keyword">return</span> work;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>调用 <code>__netif_receive_skb</code>，然后一路会调用到下面这个函数： </p>
+<p><code>pt_prev-&gt;func</code> 根据包的协议类型进行相应处理</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-keyword">inline</span> <span class="hljs-type">int</span> <span class="hljs-title function_">deliver_skb</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> sk_buff *skb,</span><br><span class="hljs-params">			      <span class="hljs-keyword">struct</span> packet_type *pt_prev,</span><br><span class="hljs-params">			      <span class="hljs-keyword">struct</span> net_device *orig_dev)</span><br>&#123;<br>	<span class="hljs-keyword">if</span> (unlikely(skb_orphan_frags_rx(skb, GFP_ATOMIC)))<br>		<span class="hljs-keyword">return</span> -ENOMEM;<br>	refcount_inc(&amp;skb-&gt;users);<br>	<span class="hljs-keyword">return</span> pt_prev-&gt;func(skb, skb-&gt;dev, pt_prev, orig_dev);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<h1 id="剥夺"><a href="#剥夺" class="headerlink" title="剥夺"></a>剥夺</h1><p>一旦一张虚拟网卡被“插”在网桥上，它就会变成该网桥的“从设备”。从设备会被“剥夺”调用网络协议栈处理数据包的资格，从而“降级”成为网桥上的一个端口。而这个端口唯一的作用，就是接收流入的数据包，然后把这些数据包的“生杀大权”（比如转发或者丢弃），全部交给对应的网桥。</p>
+<p>container1 -&gt; veth -&gt; bridge</p>
+<p>当 container1 发送给 veth 时，会直接流入到 bridge</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/bakari/p/10613710.html">https://www.cnblogs.com/bakari/p/10613710.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000009251098">https://segmentfault.com/a/1190000009251098</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/dP12ptPlsxS35qPr0mDjCw">https://mp.weixin.qq.com/s/dP12ptPlsxS35qPr0mDjCw</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
+      
+        <a href="/tags/linux/">#linux</a>
+      
+        <a href="/tags/k8s/">#k8s</a>
+      
+        <a href="/tags/k8s%E7%BD%91%E7%BB%9C/">#k8s网络</a>
+      
+        <a href="/tags/needSyncToBlog/">#needSyncToBlog</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Linux 虚拟网络设备 Veth-Pair</div>
+      <div>https://autsu.github.io/2022/09/06/Veth 设备/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>void</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年9月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/09/08/jetbrain_crash/" title="GoLand/Idea 启动闪退，报错 NSInternalInconsistencyException 的解决方法">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">GoLand/Idea 启动闪退，报错 NSInternalInconsistencyException 的解决方法</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/09/06/EOF_cuo_wu/" title="一个 EOF 引发的低级错误">
+                        <span class="hidden-mobile">一个 EOF 引发的低级错误</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","appKey":"qIMQwH4WrxTe8ds3Ua4HAbet","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

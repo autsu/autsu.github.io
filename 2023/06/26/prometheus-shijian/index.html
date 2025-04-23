@@ -16,27 +16,33 @@
   <meta name="author" content="void">
   <meta name="keywords" content="">
   
-    <meta name="description" content="实践搭建  prometheu 和 grafana使用下面的 docker-compose 来运行 prometheus，grafana，nodeExporter。 其中，grafana 提供可视化界面，nodeExporter 提供数据源。 12345678910111213141516171819202122232425262728293031323334353637383940version">
+    <meta name="description" content="什么是 Prometheus让我们先跳过那些繁杂而枯燥的理论知识，你暂时只需要知道这是一个用来 监控 的组件就 OK 了，我们会通过实践来逐渐拨开 Prometheus 的神秘面纱。 实践 1：搭建想快速了解一个系统&#x2F;软件，最好的方法就是将其搭建出来，实际使用一下，所以我们的第一个实践就是搭建出 Prometheus，简单起见，我们先使用 Docker 而不是 K8s 来搭建。 使用 d">
 <meta property="og:type" content="article">
-<meta property="og:title" content="prometheus 实践 [draft]">
+<meta property="og:title" content="Prometheus try 1：初识 Prometheus [draft]">
 <meta property="og:url" content="https://autsu.github.io/2023/06/26/prometheus-shijian/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="实践搭建  prometheu 和 grafana使用下面的 docker-compose 来运行 prometheus，grafana，nodeExporter。 其中，grafana 提供可视化界面，nodeExporter 提供数据源。 12345678910111213141516171819202122232425262728293031323334353637383940version">
+<meta property="og:description" content="什么是 Prometheus让我们先跳过那些繁杂而枯燥的理论知识，你暂时只需要知道这是一个用来 监控 的组件就 OK 了，我们会通过实践来逐渐拨开 Prometheus 的神秘面纱。 实践 1：搭建想快速了解一个系统&#x2F;软件，最好的方法就是将其搭建出来，实际使用一下，所以我们的第一个实践就是搭建出 Prometheus，简单起见，我们先使用 Docker 而不是 K8s 来搭建。 使用 d">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/prom_targets.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/grafana_login.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/grafana_add_data_source.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/grafana_prom_addr.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/grafana_save_test.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/grafana_datasource_list.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/prom1.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/prom2.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/prom3.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/prom4.png">
 <meta property="article:published_time" content="2023-06-25T16:30:52.000Z">
-<meta property="article:modified_time" content="2023-08-09T11:10:23.376Z">
+<meta property="article:modified_time" content="2023-12-18T06:49:13.023Z">
 <meta property="article:author" content="void">
 <meta property="article:tag" content="prometheus">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/prom1.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/autsu/diagrams/master/img/prom_targets.jpg">
   
   
   
-  <title>prometheus 实践 [draft] - Hexo</title>
+  <title>Prometheus try 1：初识 Prometheus [draft] - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -78,7 +84,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -223,7 +229,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="prometheus 实践 [draft]"></span>
+            <span id="subtitle" data-typed-text="Prometheus try 1：初识 Prometheus [draft]"></span>
           
         </div>
 
@@ -246,7 +252,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          6.5k 字
+          8.2k 字
         
       </span>
     
@@ -257,7 +263,7 @@
         
         
         
-          55 分钟
+          69 分钟
         
       </span>
     
@@ -303,57 +309,84 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">prometheus 实践 [draft]</h1>
+            <h1 style="display: none">Prometheus try 1：初识 Prometheus [draft]</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h1><h2 id="搭建-prometheu-和-grafana"><a href="#搭建-prometheu-和-grafana" class="headerlink" title="搭建  prometheu 和 grafana"></a>搭建  prometheu 和 grafana</h2><p>使用下面的 docker-compose 来运行 prometheus，grafana，nodeExporter。</p>
-<p>其中，grafana 提供可视化界面，nodeExporter 提供数据源。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">version:</span> <span class="hljs-string">&#x27;2&#x27;</span><br><span class="hljs-attr">services:</span><br>  <span class="hljs-attr">prometheus:</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">prom/prometheus:latest</span><br>    <span class="hljs-attr">volumes:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">./prometheus.yml:/etc/prometheus/prometheus.yml</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">./alert.rules:/etc/prometheus/alert.rules</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">prometheus_data:/prometheus</span><br>    <span class="hljs-attr">command:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;--config.file=/etc/prometheus/prometheus.yml&#x27;</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;9090:9090&#x27;</span><br>  <span class="hljs-attr">grafana:</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">grafana/grafana:latest</span><br>    <span class="hljs-attr">volumes:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">grafana_data:/var/lib/grafana</span><br>    <span class="hljs-attr">environment:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">GF_SECURITY_ADMIN_PASSWORD=admin</span><br>    <span class="hljs-attr">depends_on:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">prometheus</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;3000:3000&#x27;</span><br>  <span class="hljs-attr">node_exporter:</span> <span class="hljs-comment"># 通过 9100 端口访问</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">quay.io/prometheus/node-exporter:latest</span><br>    <span class="hljs-attr">container_name:</span> <span class="hljs-string">node_exporter</span><br>    <span class="hljs-attr">command:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;--path.procfs=/host/proc&#x27;</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;--path.rootfs=/rootfs&#x27;</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;--path.sysfs=/host/sys&#x27;</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)&#x27;</span><br>    <span class="hljs-attr">network_mode:</span> <span class="hljs-string">host</span><br>    <span class="hljs-attr">pid:</span> <span class="hljs-string">host</span><br>    <span class="hljs-attr">restart:</span> <span class="hljs-string">unless-stopped</span><br>    <span class="hljs-attr">volumes:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">/proc:/host/proc:ro</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">/sys:/host/sys:ro</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">/:/rootfs:ro</span><br><span class="hljs-attr">volumes:</span><br>  <span class="hljs-attr">grafana_data:</span> &#123;&#125;<br>  <span class="hljs-attr">prometheus_data:</span> &#123;&#125;<br></code></pre></td></tr></table></figure>
+                <h1 id="什么是-Prometheus"><a href="#什么是-Prometheus" class="headerlink" title="什么是 Prometheus"></a>什么是 Prometheus</h1><p>让我们先跳过那些繁杂而枯燥的理论知识，你暂时只需要知道这是一个用来 <strong>监控</strong> 的组件就 OK 了，我们会通过实践来逐渐拨开 Prometheus 的神秘面纱。</p>
+<h1 id="实践-1：搭建"><a href="#实践-1：搭建" class="headerlink" title="实践 1：搭建"></a>实践 1：搭建</h1><p>想快速了解一个系统&#x2F;软件，最好的方法就是将其搭建出来，实际使用一下，所以我们的第一个实践就是搭建出 Prometheus，简单起见，我们先使用 Docker 而不是 K8s 来搭建。</p>
+<h2 id="使用-docker-compose-搭建-prometheus-和-grafana"><a href="#使用-docker-compose-搭建-prometheus-和-grafana" class="headerlink" title="使用 docker-compose 搭建  prometheus 和 grafana"></a>使用 docker-compose 搭建  prometheus 和 grafana</h2><p>首先我们需要先准备两个文件，一个 docker-compose 文件以及一个 prometheus 的配置文件。</p>
+<p>使用下面的 docker-compose 来运行 prometheus，grafana，nodeExporter。</p>
+<p>其中，grafana 提供 <strong>可视化界面</strong>，nodeExporter 提供 <strong>数据源</strong>。</p>
+<blockquote>
+<p>这里简单介绍一下 <strong>可视化界面</strong> 和 <strong>数据源</strong></p>
+<p>顾名思义，可视化界面就是以一种更直观，更美观的方式观察我们监控的数据指标，这个比较好理解。</p>
+<p>而数据源就是提供我们关注的监控数据的来源，一般数据源是一个 http server，然后它会提供一些接口，Prometheus 通过这些接口从数据源中获取监控数据，并存储起来。这里的 nodeExporter 会提供节点的 CPU 使用率、内存使用情况、磁盘空间等监控信息，后面就可以看到效果。</p>
+</blockquote>
+<p>docker-compose 文件如下，可以看到跑了 3 个容器：prometheus，grafana，nodeExporter，其他参数我们先不关注。</p>
+<p><code>docker-compose.yml</code></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">version:</span> <span class="hljs-string">&#x27;2&#x27;</span><br><span class="hljs-attr">services:</span><br>  <span class="hljs-attr">prometheus:</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">prom/prometheus:latest</span><br>    <span class="hljs-attr">volumes:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">./prometheus.yml:/etc/prometheus/prometheus.yml</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">prometheus_data:/prometheus</span><br>    <span class="hljs-attr">command:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;--config.file=/etc/prometheus/prometheus.yml&#x27;</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;9090:9090&#x27;</span><br>  <span class="hljs-attr">grafana:</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">grafana/grafana:latest</span><br>    <span class="hljs-attr">volumes:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">grafana_data:/var/lib/grafana</span><br>    <span class="hljs-attr">environment:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">GF_SECURITY_ADMIN_PASSWORD=admin</span><br>    <span class="hljs-attr">depends_on:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">prometheus</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;3000:3000&#x27;</span><br>  <span class="hljs-attr">node_exporter:</span> <span class="hljs-comment"># 通过 9100 端口访问</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">quay.io/prometheus/node-exporter:latest</span><br>    <span class="hljs-attr">container_name:</span> <span class="hljs-string">node_exporter</span><br>    <span class="hljs-attr">command:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;--path.procfs=/host/proc&#x27;</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;--path.rootfs=/rootfs&#x27;</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;--path.sysfs=/host/sys&#x27;</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)&#x27;</span><br>    <span class="hljs-attr">pid:</span> <span class="hljs-string">host</span><br>    <span class="hljs-attr">restart:</span> <span class="hljs-string">unless-stopped</span><br>    <span class="hljs-attr">volumes:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">/proc:/host/proc:ro</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">/sys:/host/sys:ro</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">/:/rootfs:ro</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;9100:9100&#x27;</span><br><span class="hljs-attr">volumes:</span><br>  <span class="hljs-attr">grafana_data:</span> &#123;&#125;<br>  <span class="hljs-attr">prometheus_data:</span> &#123;&#125;<br></code></pre></td></tr></table></figure>
 
-<p>Prometheus 的 配置文件：</p>
-<p>prometheus.yml</p>
+<p>Prometheus 的配置文件如下，注意文件名必须是 prometheus.yml，因为在上面的 <code>docker-compose.yml</code> 中，我们指定了挂载的配置文件名为 <code>./prometheus.yml</code>。</p>
+<p>在上面的 docker-compose 中，我们启动了 node_exporter 这个数据源，它的访问端口是 9100，根据这些信息，我们就可以写出下面的 job 参数，<strong>你只需要修改 static_configs 中的 IP 为你的机器的 IP 地址即可</strong>。</p>
+<blockquote>
+<p>这里的其他配置我们先忽略，只需要需要简单关注一下 scrape_configs 这个配置，可以看到该配置下有一个 job_name，每个 job 其实就是一个监控作业（也就是前面提到的数据源），然后每个 job 下又指定了 metrics_path 和 targets，前面提到过，数据源一般都是一个 http server，所以 targets 就是 server 的 addr，而 metrics_path 就是接口的访问路径，Prometheus 通过这些信息就可以访问数据源，抓取监控数据。</p>
+</blockquote>
+<p><code>prometheus.yml</code></p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># my global config</span><br><span class="hljs-attr">global:</span><br>  <span class="hljs-attr">scrape_interval:</span> <span class="hljs-string">15s</span> <span class="hljs-comment"># Set the scrape interval to every 15 seconds. Default is every 1 minute.</span><br>  <span class="hljs-attr">evaluation_interval:</span> <span class="hljs-string">15s</span> <span class="hljs-comment"># Evaluate rules every 15 seconds. The default is every 1 minute.</span><br>  <span class="hljs-comment"># scrape_timeout is set to the global default (10s).</span><br><br><span class="hljs-comment"># Alertmanager configuration</span><br><span class="hljs-attr">alerting:</span><br>  <span class="hljs-attr">alertmanagers:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">static_configs:</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-attr">targets:</span><br>          <span class="hljs-comment"># - alertmanager:9093</span><br><br><span class="hljs-comment"># Load rules once and periodically evaluate them according to the global &#x27;evaluation_interval&#x27;.</span><br><span class="hljs-attr">rule_files:</span><br>  <span class="hljs-comment"># - &quot;first_rules.yml&quot;</span><br>  <span class="hljs-comment"># - &quot;second_rules.yml&quot;</span><br><br><span class="hljs-comment"># A scrape configuration containing exactly one endpoint to scrape:</span><br><span class="hljs-comment"># Here it&#x27;s Prometheus itself.</span><br><span class="hljs-attr">scrape_configs:</span><br>  <span class="hljs-comment"># The job name is added as a label `job=&lt;job_name&gt;` to any timeseries scraped from this config.</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">job_name:</span> <span class="hljs-string">&quot;node&quot;</span><br><br>    <span class="hljs-comment"># metrics_path defaults to &#x27;/metrics&#x27;</span><br>    <span class="hljs-comment"># scheme defaults to &#x27;http&#x27;.</span><br>    <span class="hljs-attr">scrape_interval:</span> <span class="hljs-string">1s</span><br>    <span class="hljs-attr">metrics_path:</span> <span class="hljs-string">/metrics</span><br>    <span class="hljs-attr">static_configs:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">targets:</span> [<span class="hljs-string">&#x27;$宿主机ip:9100&#x27;</span>]<br></code></pre></td></tr></table></figure>
 
-<p>然后访问 <a target="_blank" rel="noopener" href="http://localhost:9090/graph">http://localhost:9090/graph</a>, 在查询框中输入 up，查看添加的 job 是否已存在且可访问：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs YAML"><span class="hljs-string">up&#123;instance=&quot;10.71.104.120:9100&quot;,</span> <span class="hljs-string">job=&quot;node&quot;&#125;</span>   <span class="hljs-number">1</span><br><span class="hljs-string">up&#123;instance=&quot;localhost:9091&quot;,</span> <span class="hljs-string">job=&quot;hertz&quot;&#125;</span>      <span class="hljs-number">0</span><br></code></pre></td></tr></table></figure>
+<p>然后执行 <code>docker-compose up</code> 将这些镜像部署起来：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker-compose up<br></code></pre></td></tr></table></figure>
 
-<p>Value 代表该 job 是否存活，如果是 1 就对了。</p>
-<p>然后就可以进入 Grafana 添加数据了：</p>
+<p>然后访问 <a target="_blank" rel="noopener" href="http://localhost:9090/graph">http://localhost:9090/graph</a>, 在查询框中输入 up 并回车，查看添加的 job 是否已存在且可访问：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs YAML"><span class="hljs-string">up&#123;instance=&quot;10.71.104.120:9100&quot;,</span> <span class="hljs-string">job=&quot;node&quot;&#125;</span>   <span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
+
+<p>右边这个数字 value 代表该 job 是否可达，如果是 1 则代表可达。</p>
+<p>也可以在 Status&#x2F;Targets 里面查询所有的 job，并且这里可以看到每个 job 更详细的信息：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/prom_targets.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>然后就可以访问 <a target="_blank" rel="noopener" href="http://localhost:3000/">http://localhost:3000</a> 进入 Grafana ，进行可视化操作了。</p>
+<p>进入以后，首先需要登录，账号和密码都是 admin：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/grafana_login.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>登录成功后会让你设置新密码，因为我们只是实践，所以直接 Skip。</p>
+<p>我们先添加数据源，将 Prometheus 添加进去：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/grafana_add_data_source.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>这里填写 Prometheus 的地址（这里的端口应该是 9090，我写错了，懒得重新截图了）：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/grafana_prom_addr.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>填写完毕后，点一下最下面的 Save &amp; test，看看能不能成功访问到 Prometheus：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/grafana_save_test.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>然后看一下 Data sources，就可以看到我们刚才添加的 Prometheus 数据源：</p>
+<p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/grafana_datasource_list.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>然后我们再添加一个 Dashboard 用于展示数据，点击左上角的三条杠，选择 Dashboards 进入下面的界面：</p>
 <p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/prom1.png" srcset="/img/loading.gif" lazyload></p>
-<p>导入一个 Dashboards 主题：</p>
+<p>导入一个 Dashboards 主题，点击右边的 Load：</p>
 <p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/prom2.png" srcset="/img/loading.gif" lazyload></p>
-<p>导入数据源：</p>
+<p>导入数据源，选择 Prometheus：</p>
 <p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/prom3.png" srcset="/img/loading.gif" lazyload></p>
-<p>查看效果：</p>
+<p>查看效果，看起来还挺高大上的：</p>
 <p><img src="https://raw.githubusercontent.com/autsu/diagrams/master/img/prom4.png" srcset="/img/loading.gif" lazyload></p>
-<h2 id="实现一个简单的自定义监控"><a href="#实现一个简单的自定义监控" class="headerlink" title="实现一个简单的自定义监控"></a>实现一个简单的自定义监控</h2><p>基本流程：</p>
+<p>至此，我们成功搭建了 Prometheus。</p>
+<h1 id="实践-2：实现一个简单的自定义监控"><a href="#实践-2：实现一个简单的自定义监控" class="headerlink" title="实践 2：实现一个简单的自定义监控"></a>实践 2：实现一个简单的自定义监控</h1><p>基本流程：</p>
 <ol>
-<li>创建一个 metrics ，同时指定该 metrics 的查询名，以及可以通过哪些 label 来进行数据查询。metrics 有以下几种类型：</li>
-</ol>
-<div class="note note-info">
-            <p><strong>Counter</strong></p><p>可以理解为只增不减的计数器，典型的应用如：请求的个数，结束的任务数， 出现的错误数等等；</p><p>对应 gopkg&#x2F;metrics 的 EmitStore。</p>
-          </div>
-
-
-
-<div class="note note-info">
-            <p><strong>Gauge</strong></p><p>一种常规的 metric，典型的应用如：goroutines 的数量；</p><p>可以任意加减；</p><p>对应 gopkg&#x2F;metrics 的 EmitCounter。</p>
-          </div>
-
-
-
-<div class="note note-info">
-            <p><strong>Histogram</strong></p><p>生成直方图数据，用于统计和分析样本的分布情况，典型的应用如：pct99，CPU 的平均使用率等；</p><p>可以对观察结果采样，分组及统计。</p><p>对应 gopkg&#x2F;metrics 的 EmitTimer。</p>
-          </div>
-
-<div class="note note-info">
-            <p><strong>Summary</strong></p><p>类似于 Histogram，提供观测值的 count 和 sum 功能；</p><p>提供百分位的功能，即可以按百分比划分跟踪结果；</p><p> Summary 的分位数是直接在客户端计算完成，因此对于分位数的计算而言，Summary 在通过 PromQL 进行查询时有更好的性能表现，而 Histogram 则会消耗更多的资源，对于客户端而言 Histogram 消耗的资源更少。</p>
-          </div>
-
-<p>- </p>
-<ol start="2">
+<li><p>创建一个 metrics ，同时指定该 metrics 的查询名，以及可以通过哪些 label 来进行数据查询。metrics 有以下几种类型：</p>
+<blockquote>
+<p><strong>Counter</strong></p>
+<p>可以理解为只增不减的计数器，典型的应用如：请求的个数，结束的任务数， 出现的错误数等等；</p>
+<p>对应 gopkg&#x2F;metrics 的 EmitStore。</p>
+<p><strong>Gauge</strong></p>
+<p>一种常规的 metric，典型的应用如：goroutines 的数量；</p>
+<p>可以任意加减；</p>
+<p>对应 gopkg&#x2F;metrics 的 EmitCounter。</p>
+<p><strong>Histogram</strong></p>
+<p>生成直方图数据，用于统计和分析样本的分布情况，典型的应用如：pct99，CPU 的平均使用率等；</p>
+<p>可以对观察结果采样，分组及统计。</p>
+<p>对应 gopkg&#x2F;metrics 的 EmitTimer。</p>
+<p><strong>Summary</strong></p>
+<p>类似于 Histogram，提供观测值的 count 和 sum 功能；</p>
+<p>提供百分位的功能，即可以按百分比划分跟踪结果；</p>
+<p> Summary 的分位数是直接在客户端计算完成，因此对于分位数的计算而言，Summary 在通过 PromQL 进行查询时有更好的性能表现，而 Histogram 则会消耗更多的资源，对于客户端而言 Histogram 消耗的资源更少。</p>
+</blockquote>
+</li>
 <li><p>创建一个 prometheu registry，将你定义的这些 metrics 注册进来。</p>
 </li>
 <li><p>创建一个 http server 用来对外提供 metrics 信息，其中 path 和 addr 自行指定，然后使用 promhttp.HandlerFor() 将上一步的 registry 作为 handle 对外提供。</p>
@@ -365,6 +398,8 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br></pre></td><td class="code"><pre><code class="hljs Go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>    <span class="hljs-string">&quot;context&quot;</span><br>    <span class="hljs-string">&quot;errors&quot;</span><br>    <span class="hljs-string">&quot;log&quot;</span><br>    <span class="hljs-string">&quot;net/http&quot;</span><br><br>    <span class="hljs-string">&quot;github.com/cloudwego/hertz/pkg/app&quot;</span><br>    <span class="hljs-string">&quot;github.com/cloudwego/hertz/pkg/app/server&quot;</span><br>    <span class="hljs-string">&quot;github.com/cloudwego/hertz/pkg/common/hlog&quot;</span><br>    prom <span class="hljs-string">&quot;github.com/prometheus/client_golang/prometheus&quot;</span><br>    <span class="hljs-string">&quot;github.com/prometheus/client_golang/prometheus/promhttp&quot;</span><br>)<br><br><span class="hljs-keyword">const</span> (<br>    routePathFoo = <span class="hljs-string">&quot;/foo&quot;</span><br>    routePathBar = <span class="hljs-string">&quot;/bar&quot;</span><br>)<br><br><span class="hljs-keyword">const</span> (<br>    LabelName = <span class="hljs-string">&quot;name&quot;</span><br>    LabelAge  = <span class="hljs-string">&quot;age&quot;</span><br>)<br><br><span class="hljs-keyword">type</span> trace <span class="hljs-keyword">interface</span> &#123;<br>    Record(context.Context, *app.RequestContext) <span class="hljs-type">error</span><br>&#125;<br><br><span class="hljs-keyword">type</span> httpRouteTrace <span class="hljs-keyword">struct</span> &#123;<br>    fooCount *prom.CounterVec<br>    barCount *prom.CounterVec<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(f *httpRouteTrace)</span></span> Record(ctx context.Context, c *app.RequestContext) <span class="hljs-type">error</span> &#123;<br>    labels := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>)<br>    <span class="hljs-keyword">if</span> v := c.Query(LabelName); v != <span class="hljs-string">&quot;&quot;</span> &#123;<br>       labels[LabelName] = v<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>       <span class="hljs-keyword">return</span> errors.New(<span class="hljs-string">&quot;must provide name param&quot;</span>)<br>    &#125;<br>    <span class="hljs-keyword">if</span> v := c.Query(LabelAge); v != <span class="hljs-string">&quot;&quot;</span> &#123;<br>       labels[LabelAge] = v<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>       <span class="hljs-keyword">return</span> errors.New(<span class="hljs-string">&quot;must provide age param&quot;</span>)<br>    &#125;<br><br>    <span class="hljs-keyword">switch</span> <span class="hljs-type">string</span>(c.Path()) &#123;<br>    <span class="hljs-keyword">case</span> routePathFoo:<br>       <span class="hljs-keyword">if</span> err := countAdd(f.fooCount, labels); err != <span class="hljs-literal">nil</span> &#123;<br>          <span class="hljs-keyword">return</span> err<br>       &#125;<br>    <span class="hljs-keyword">case</span> routePathBar:<br>       <span class="hljs-keyword">if</span> err := countAdd(f.barCount, labels); err != <span class="hljs-literal">nil</span> &#123;<br>          <span class="hljs-keyword">return</span> err<br>       &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">countAdd</span><span class="hljs-params">(vec *prom.CounterVec, labels prom.Labels)</span></span> <span class="hljs-type">error</span> &#123;<br>    <span class="hljs-comment">// 这里的 labels 数量必须要与 NewCounterVec 时指定的 label 数量相同</span><br>    counter, err := vec.GetMetricWith(labels)<br>    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>       <span class="hljs-keyword">return</span> err<br>    &#125;<br>    counter.Inc()<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">newHttpRouteTrace</span><span class="hljs-params">(addr, path <span class="hljs-type">string</span>)</span></span> trace &#123;<br>    <span class="hljs-comment">// 形如 NewXxxVec 的函数代表提供了 label 选项，可以通过 label 对数据进行过滤筛选</span><br>    fooCounter := prom.NewCounterVec(<br>       prom.CounterOpts&#123;<br>          Name: <span class="hljs-string">&quot;route_foo_visits_num&quot;</span>,<br>          Help: <span class="hljs-string">&quot;Total visits number of route path /foo&quot;</span>,<br>       &#125;,<br>       []<span class="hljs-type">string</span>&#123;LabelName, LabelAge&#125;, <span class="hljs-comment">// 这里定义了两个 label</span><br>    )<br><br>    barCounter := prom.NewCounterVec(<br>       prom.CounterOpts&#123;<br>          Name: <span class="hljs-string">&quot;route_bar_visits_num&quot;</span>,<br>          Help: <span class="hljs-string">&quot;Total visits number of route path /bar&quot;</span>,<br>       &#125;,<br>       []<span class="hljs-type">string</span>&#123;LabelName, LabelAge&#125;,<br>    )<br><br>    registry := prom.NewRegistry()<br>    registry.MustRegister(fooCounter)<br>    registry.MustRegister(barCounter)<br><br>    f := &amp;httpRouteTrace&#123;fooCount: fooCounter, barCount: barCounter&#125;<br><br>    <span class="hljs-comment">// start server for prometheus</span><br>    <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>       http.Handle(path, promhttp.HandlerFor(registry, promhttp.HandlerOpts&#123;ErrorHandling: promhttp.ContinueOnError&#125;))<br>       log.Fatalln(http.ListenAndServe(addr, <span class="hljs-literal">nil</span>))<br>    &#125;()<br><br>    <span class="hljs-keyword">return</span> f<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    f := newHttpRouteTrace(<span class="hljs-string">&quot;:9300&quot;</span>, <span class="hljs-string">&quot;/metrics&quot;</span>)<br>    h := server.Default(server.WithHostPorts(<span class="hljs-string">&quot;:8887&quot;</span>))<br>    h.GET(routePathFoo, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(ctx context.Context, c *app.RequestContext)</span></span> &#123;<br>       <span class="hljs-keyword">if</span> err := f.Record(ctx, c); err != <span class="hljs-literal">nil</span> &#123;<br>          hlog.Error(err)<br>          c.Error(err)<br>          <span class="hljs-keyword">return</span><br>       &#125;<br>       c.WriteString(<span class="hljs-string">&quot;foo&quot;</span>)<br>    &#125;)<br>    h.GET(routePathBar, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(ctx context.Context, c *app.RequestContext)</span></span> &#123;<br>       <span class="hljs-keyword">if</span> err := f.Record(ctx, c); err != <span class="hljs-literal">nil</span> &#123;<br>          hlog.Error(err)<br>          c.Error(err)<br>          <span class="hljs-keyword">return</span><br>       &#125;<br>       c.WriteString(<span class="hljs-string">&quot;bar&quot;</span>)<br>    &#125;)<br>    h.Spin()<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>编写完成后，编辑 Prometheus 的 配置文件，将上面的监控作为一个 job 添加进来，并定义相关信息，比如提供 metrics 信息的 http server 的 addr 和 path，然后重启 prom，重启后在 prometheus web 中执行 up 命令，看这个 job 是否添加进来了，并且确保存活。</p>
+<h1 id="实践-3：告警"><a href="#实践-3：告警" class="headerlink" title="实践 3：告警"></a>实践 3：告警</h1><figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs xquery"><span class="hljs-built_in">(sum</span> <span class="hljs-keyword">by</span>(<span class="hljs-keyword">instance</span>) (irate(node_cpu_seconds_total&#123;<span class="hljs-keyword">instance</span>=<span class="hljs-string">&quot;$node&quot;</span>,job=<span class="hljs-string">&quot;$job&quot;</span>, mode!=<span class="hljs-string">&quot;idle&quot;</span>&#125;[<span class="hljs-variable">$__rate_interval</span>])) / on(<span class="hljs-keyword">instance</span>) group_left<span class="hljs-built_in"> sum</span> <span class="hljs-keyword">by</span> (<span class="hljs-keyword">instance</span>)((irate(node_cpu_seconds_total&#123;<span class="hljs-keyword">instance</span>=<span class="hljs-string">&quot;$node&quot;</span>,job=<span class="hljs-string">&quot;$job&quot;</span>&#125;[<span class="hljs-variable">$__rate_interval</span>])))) * <span class="hljs-number">100</span><br><br><span class="hljs-built_in"></span><br><span class="hljs-built_in">sum</span><span class="hljs-built_in">(avg</span> without (cpu)(irate(node_cpu_seconds_total&#123;mode!=<span class="hljs-string">&#x27;idle&#x27;</span>&#125;[<span class="hljs-number">5</span>m]))) <span class="hljs-keyword">by</span> (<span class="hljs-keyword">instance</span>)<br></code></pre></td></tr></table></figure>
+
 
                 
               </div>
@@ -389,7 +424,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>prometheus 实践 [draft]</div>
+      <div>Prometheus try 1：初识 Prometheus [draft]</div>
       <div>https://autsu.github.io/2023/06/26/prometheus-shijian/</div>
     </div>
     <div class="license-meta">

@@ -62,7 +62,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -245,15 +245,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/08/31/gu_er_jin_cheng_he_jiang_shi_jin_cheng/" target="_self">
-          孤儿进程与僵尸进程
+        <a href="/2023/04/14/zhuangji-jilu/" target="_self">
+          装机记录
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/31/gu_er_jin_cheng_he_jiang_shi_jin_cheng/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/14/zhuangji-jilu/" target="_self">
         <div>
-          来源：https://www.cnblogs.com/Anker/p/3271773.html  基本概念孤儿进程：一个父进程退出，而它的一个或多个子进程还在运行，那么那些子进程将成为孤儿进程。孤儿进程将被 init 进程(进程号为 1 )所收养，并由 init 进程对它们完成状态收集工作。 僵尸进程：一个进程使用 fork 创建子进程，如果子进程退出，而父进程并没有调用 wait 或 wait
+          最近组了台台式，用来当做迷你服务器使用，因为是自己第一次独立装机，所以特此记录一下期间的心路历程。 坑爹 1：CPU坑爹指数：⭐️ 老实说这玩意安装还是非常简单的，主要是包装和说明书上各种警告，还有网上各种压弯针脚的帖子，搞得人心惶惶的，其实感觉问题不大，按照说明书的步骤来，稍微小心一点，很容易就安装好了。 坑爹 2： 主板坑爹指数：⭐️⭐️⭐️⭐️ 主板本身的安装没什么难的，对准螺丝柱，拧上螺丝
         </div>
       </a>
 
@@ -261,8 +261,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-08-31 00:59" pubdate>
-              2022-08-31
+            <time datetime="2023-04-14 15:19" pubdate>
+              2023-04-14
             </time>
           </div>
         
@@ -271,9 +271,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/linux/">#linux</a>
-            
-              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">#操作系统</a>
+              <a href="/tags/misc/">#misc</a>
             
           </div>
         
@@ -287,15 +285,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/08/27/huan_cun_yi_zhi_xing/" target="_self">
-          如何保证缓存和数据库的一致性
+        <a href="/2023/04/13/k8s-binray-install/" target="_self">
+          K8s 二进制安装
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/27/huan_cun_yi_zhi_xing/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/13/k8s-binray-install/" target="_self">
         <div>
-          一道高频面试题：如何保证缓存和数据库的一致性 通常情况下，容易想到以下几种策略： 先更新数据库，再更新缓存存在的问题：  更新数据库成功，更新缓存失败  并发情况下可能会存在问题，如下（纵轴代表时间线）：    A B    更新 DB x &#x3D; 1     更新 DB，x &#x3D; 2    更新缓存，x &#x3D; 2   更新缓存，x &#x3D; 1    可以看到因为并发操
+          环境主机系统为 win11，通过 vmware 创建了 3 台虚拟机，详情如下：    hostname os ip cpu mem disk    k8s-master Ubuntu 22.04.2 LTS 192.168.223.128 4c 8g 50g   k8s-worker1 Ubuntu 22.04.2 LTS 192.168.223.129 4c 8g 50g   k8s-work
         </div>
       </a>
 
@@ -303,8 +301,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-08-27 23:49" pubdate>
-              2022-08-27
+            <time datetime="2023-04-13 14:05" pubdate>
+              2023-04-13
             </time>
           </div>
         
@@ -313,9 +311,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E7%BC%93%E5%AD%98/">#缓存</a>
-            
-              <a href="/tags/%E8%AE%BE%E8%AE%A1/">#设计</a>
+              <a href="/tags/k8s/">#k8s</a>
             
           </div>
         
@@ -329,15 +325,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/08/18/go-mian_shi_ti/" target="_self">
-          Go 面试题
+        <a href="/2023/04/06/nginx-practice/" target="_self">
+          通过实践学习 Nginx [draft]
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/18/go-mian_shi_ti/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/06/nginx-practice/" target="_self">
         <div>
-          基础map、channel、slice 的底层实现mapmap 使用的是拉链法，用哈希桶来保存键值对，每个桶可以保存 8 个键值对，它会用哈希算法计算出 key 的 hash 值，然后用这个哈希值的高 8 位作为 tophash，用于在一个桶中区别出 key；然后桶的数量是 2^b ，用低 b 位来决定这个 key 放到哪个桶。每个桶还会连接一个溢出桶，如果一个桶已经满了，但是依然有 key 落入
+          代理静态文件&#x2F;虚拟主机在 /usr/share/nginx/html 目录下新建两个文件夹 a 和 b，分别存放 a.html 和 b.html，两个 html 的内容如下： a.html 1&lt;h1&gt;Hello1&lt;/h1&gt;  b.html 1&lt;h1&gt;Hello2&lt;/h1&gt;  然后修改 nginx 的配置文件，在 http 块中添加如下内容：
         </div>
       </a>
 
@@ -345,8 +341,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-08-18 22:12" pubdate>
-              2022-08-18
+            <time datetime="2023-04-06 16:20" pubdate>
+              2023-04-06
             </time>
           </div>
         
@@ -355,9 +351,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/go/">#go</a>
-            
-              <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/">#面试题</a>
+              <a href="/tags/nginx/">#nginx</a>
             
           </div>
         
@@ -371,15 +365,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/08/17/leetcode_347_and_692/" target="_self">
-          两个类似的堆问题：leetcode 347 前 K 个高频元素 和 692. 前 K 个高频单词 
+        <a href="/2022/10/10/k8s-secret/" target="_self">
+          k8s Secret
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/17/leetcode_347_and_692/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/10/10/k8s-secret/" target="_self">
         <div>
-          首先先来看一下这两个问题： 347. 前 K 个高频元素 给你一个整数数组 nums 和一个整数 k ，请你返回其中出现频率前 k 高的元素。你可以按 任意顺序 返回答案。 示例 1: 输入: nums &#x3D; [1,1,1,2,2,3], k &#x3D; 2输出: [1,2] 示例 2: 输入: nums &#x3D; [1], k &#x3D; 1输出: [1] 提示： 1 &lt;&
+          Opaque Secret要求 value 必须是 base64 编码的 测试：如果 value 不是 base64 呢？准备如下 yaml 用来创建 secret，其中 value 不是 base64 格式的： secret_not_base64.yaml 12345678apiVersion: v1kind: Secretmetadata:  name: mysecret-not-base64
         </div>
       </a>
 
@@ -387,8 +381,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-08-17 23:02" pubdate>
-              2022-08-17
+            <time datetime="2022-10-10 22:11" pubdate>
+              2022-10-10
             </time>
           </div>
         
@@ -397,7 +391,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E5%A0%86/">#堆</a>
+              <a href="/tags/k8s/">#k8s</a>
             
           </div>
         
@@ -411,15 +405,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/08/08/go_binary/" target="_self">
-          go binary 使用指南 
+        <a href="/2022/10/07/client-go-yuan-ma/" target="_self">
+          k8s client-go informer 源码阅读 [draft]
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/08/go_binary/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/10/07/client-go-yuan-ma/" target="_self">
         <div>
-          一个示例 demo： 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950package mainimport (	&quot;bytes&quot;	&quot;encoding/binary&quot;	&quot;fmt&quot;	&quot;io&quot;)
+          架构 Informers 由几个核心的组件构成：  Reflector：负责从 api-server List（全量拉取数据） and Watch（监听数据变更），然后扔到 DeltaFIFO 里面  DeltaFIFO：一个存储事件的队列，里面记录了事件的类型以及对象  Indexer：就是 Informer 的本地 cache，缓存的是 apiserver 中的对象，这样当调用者请求获取数据时
         </div>
       </a>
 
@@ -427,8 +421,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-08-08 20:35" pubdate>
-              2022-08-08
+            <time datetime="2022-10-07 12:57" pubdate>
+              2022-10-07
             </time>
           </div>
         
@@ -437,7 +431,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/go/">#go</a>
+              <a href="/tags/k8s/">#k8s</a>
             
           </div>
         
@@ -451,15 +445,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/08/02/tcp_yong_se_kong_zhi/" target="_self">
-          TCP 拥塞控制
+        <a href="/2022/10/03/kubebuilder/" target="_self">
+          kubebuilder 实践
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/02/tcp_yong_se_kong_zhi/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/10/03/kubebuilder/" target="_self">
         <div>
-          发送方维护一个叫做 拥塞窗口 cwnd 的状态变量，其值 取决于网络的拥塞程度，并且 动态变化。  拥塞窗口 cwnd 的维护原则：只要网络 没有出现拥塞，拥塞窗口 就再 增大 一些；但只要网络 出现拥塞，拥塞窗口就减少一些。 判断出现 网络拥塞的依据：没有按时收到应当到达的确认报文（即发生超时重传）。  发送方将拥塞窗口作为 发送窗口 swnd，即 swnd &#x3D; cwnd。**拥塞窗口
+          快速入门下载 kubebuiler123456$ os=$(go env GOOS)$ arch=$(go env GOARCH)$ curl -L -o kubebuilder https://go.kubebuilder.io/dl/latest/$&#123;os&#125;/$&#123;arch&#125;$ chmod +x kubebuilder$ sudo mv ./kubebui
         </div>
       </a>
 
@@ -467,8 +461,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-08-02 19:04" pubdate>
-              2022-08-02
+            <time datetime="2022-10-03 22:08" pubdate>
+              2022-10-03
             </time>
           </div>
         
@@ -477,9 +471,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
-            
-              <a href="/tags/TCP/">#TCP</a>
+              <a href="/tags/k8s/">#k8s</a>
             
           </div>
         
@@ -493,15 +485,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/07/18/wei-shen-me-go-you-nil-chan/" target="_self">
-          为什么 go 需要 nil chan
+        <a href="/2022/09/29/docker-tag/" target="_self">
+          docker tag 的用处
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/07/18/wei-shen-me-go-you-nil-chan/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/29/docker-tag/" target="_self">
         <div>
-          如果没有调用 make 来对一个 chan 进行初始化，那么这个 chan 就是 nil chan。 对于 nil chan：  从 nil chan 接收将永远阻塞 发送值到 nil chan 会永远阻塞 close 一个 nil chan 会引发 panic  看到这里我不禁有点疑问，这样设计的意义在哪里？为什么写入和读取要阻塞，而不是像 nil map 一样直接 panic？ 带着这个问题找
+          docker tag 相当于对镜像做一次备份，将当前的镜像（比如 tag:latest）备份出去一份（比如 tag: v1），然后如果开发了新的镜像，可以直接覆盖掉当前的（tag:latest），然后再给 latest 打个标签：tag:v2，相当于又备份了一份，现在就有了 v1，v2，latest 三个镜像，使用 tag 不仅可以备份镜像，还可以对镜像做标注区分。 详细可以看下面的例子：  12
         </div>
       </a>
 
@@ -509,8 +501,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-07-18 22:35" pubdate>
-              2022-07-18
+            <time datetime="2022-09-29 00:14" pubdate>
+              2022-09-29
             </time>
           </div>
         
@@ -519,7 +511,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/go/">#go</a>
+              <a href="/tags/docker/">#docker</a>
             
           </div>
         
@@ -533,15 +525,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/07/14/go-rabbitmq/" target="_self">
-          rabbitmq 学习笔记
+        <a href="/2022/09/11/k8s-statefulset/" target="_self">
+          k8s StatefulSet
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/07/14/go-rabbitmq/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/11/k8s-statefulset/" target="_self">
         <div>
-          本笔记主要记录 go rabbitmq 库的使用示例，同时结合学习 rabbitmq  一个基本的发布&#x2F;订阅程序示例首先可以通过一个最基础的程序，来一览 rabbitmq 的大致面貌：  PS：这段代码没有定义 exchange 以及执行队列和 exchange 的绑定操作，这是因为存在一个默认交换机的概念。具体参见 组件&#x2F;exchange 交换机&#x2F;exchange
+          有状态与无状态无状态应用，指的是在运行时不需要维护或跟踪任何特定状态的应用程序。例如，Web 服务器或 API 服务器通常可以处理来自客户端的请求，而无需了解以前的请求或客户端状态。这些应用程序可以很容易地水平扩展，因为它们不需要共享状态，所以可以在任何节点上运行。像 Deployment 也是一个典型的“无状态应用”，它会按照事先声明的模板创建出 pod，这表示每个 pod 的定义将会是一模一样
         </div>
       </a>
 
@@ -549,8 +541,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-07-14 14:30" pubdate>
-              2022-07-14
+            <time datetime="2022-09-11 23:43" pubdate>
+              2022-09-11
             </time>
           </div>
         
@@ -559,9 +551,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/mq/">#mq</a>
-            
-              <a href="/tags/rabbitmq/">#rabbitmq</a>
+              <a href="/tags/k8s/">#k8s</a>
             
           </div>
         
@@ -575,15 +565,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/07/14/minikube_wen_ti_hui_zong/" target="_self">
-          minikube 问题汇总
+        <a href="/2022/09/10/ubuntu-arm64-an-zhuang-docker/" target="_self">
+          ubuntu arm64 使用 apt-get 安装 docker，以及 snap 的一些问题记录
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/07/14/minikube_wen_ti_hui_zong/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/10/ubuntu-arm64-an-zhuang-docker/" target="_self">
         <div>
-          设置代理后，minikube kubectl 无响应在给虚拟机设置了代理后，整个网络体验爽快多了，再也不用担心拉不下来包了。。。 只需要将虚拟机的网络设置为桥接模式，然后开启 clashx 的 “允许局域网连接”（非常重要的一步，之前就是因为忽略了这一步，导致虚拟机无法使用宿主机代理），然后再点击 clashx 的 “复制终端代理命令”，将里面的 127.0.0.1 替换为宿主机的 ip，然后粘贴
+          使用 snap 可以比较方便的安装 docker，但是有一次出现了 k8s pod 无法拉取镜像的问题，看了下 pod describe，发现是因为走代理的问题（我使用的是 ubuntu 虚拟机，连接宿主机的 clashx 进行代理），连接的代理是宿主机的老地址 192.168.2.5，但是因为重启过路由器，所以宿主机的地址变更为了 192.168.2.3，代理不通自然也拉取不了镜像了，报错： 1
         </div>
       </a>
 
@@ -591,8 +581,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-07-14 14:30" pubdate>
-              2022-07-14
+            <time datetime="2022-09-10 19:41" pubdate>
+              2022-09-10
             </time>
           </div>
         
@@ -601,9 +591,9 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/issues/">#issues</a>
+              <a href="/tags/docker/">#docker</a>
             
-              <a href="/tags/minikube/">#minikube</a>
+              <a href="/tags/issue/">#issue</a>
             
           </div>
         
@@ -617,15 +607,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/07/14/tls_wo_shou/" target="_self">
-          TLS 握手流程
+        <a href="/2022/09/08/jetbrain_crash/" target="_self">
+          GoLand/Idea 启动闪退，报错 NSInternalInconsistencyException 的解决方法
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/07/14/tls_wo_shou/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/09/08/jetbrain_crash/" target="_self">
         <div>
-          注：以下内容引用自 cloudflare 学习中心  TLS 握手有哪些步骤？TLS 握手是由客户端和服务器交换的一系列数据报或消息。TLS 握手涉及多个步骤，因为客户端和服务器要交换完成握手和进行进一步对话所需的信息。 TLS 握手的确切步骤将根据所使用的密钥交换算法的类型以及双方支持的密码套件而有所不同。RSA 密钥交换算法最为常用。具体如下：  “客户端问候（client hello）”
+          环境：  机器：MacBook Air (M1, 2020) 系统：MacOS 12.5.1 Goland 版本：2022.2.2 Idea 版本：2022.1.1  今天启动 GoLand 发现会立马闪退，提示程序意外退出，后来又试了下 Idea 和 Clion，发现全部都是如此，尝试在终端启动查看错误信息： 1234567891011121314151617181920212223242526
         </div>
       </a>
 
@@ -633,8 +623,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2022-07-14 14:30" pubdate>
-              2022-07-14
+            <time datetime="2022-09-08 00:55" pubdate>
+              2022-09-08
             </time>
           </div>
         
@@ -643,9 +633,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">#计算机网络</a>
-            
-              <a href="/tags/https/">#https</a>
+              <a href="/tags/issue/">#issue</a>
             
           </div>
         
@@ -657,7 +645,7 @@
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/3/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/#board">5</a><a class="page-number" href="/page/6/#board">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/#board">17</a><a class="extend next" rel="next" href="/page/5/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/3/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/#board">5</a><a class="page-number" href="/page/6/#board">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/#board">18</a><a class="extend next" rel="next" href="/page/5/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

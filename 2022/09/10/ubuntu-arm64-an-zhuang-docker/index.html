@@ -24,7 +24,7 @@
 <meta property="og:description" content="使用 snap 可以比较方便的安装 docker，但是有一次出现了 k8s pod 无法拉取镜像的问题，看了下 pod describe，发现是因为走代理的问题（我使用的是 ubuntu 虚拟机，连接宿主机的 clashx 进行代理），连接的代理是宿主机的老地址 192.168.2.5，但是因为重启过路由器，所以宿主机的地址变更为了 192.168.2.3，代理不通自然也拉取不了镜像了，报错： 1">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-09-10T11:41:35.000Z">
-<meta property="article:modified_time" content="2023-08-24T14:49:52.709Z">
+<meta property="article:modified_time" content="2023-09-25T15:22:58.569Z">
 <meta property="article:author" content="void">
 <meta property="article:tag" content="docker">
 <meta property="article:tag" content="issue">
@@ -74,7 +74,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"autsu.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":"G-80J26VFWFL","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"6KXGn05vaODkTMKM7zd5lWwl-gzGzoHsz","app_key":"qIMQwH4WrxTe8ds3Ua4HAbet","server_url":"https://6kxgn05v.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -242,7 +242,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.5k 字
+          2.5k 字
         
       </span>
     
@@ -253,7 +253,7 @@
         
         
         
-          13 分钟
+          21 分钟
         
       </span>
     
@@ -313,7 +313,16 @@
 
 <p>看起来已经重启成功了，但是等我执行 docker ps 时，直接报错：<code>docker ps Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?</code>，根本就没重启成功！于是我又尝试执行 <code>snap start docker </code> 命令，返回 <code>Started.</code>，但是然并卵，依然报之前的错误，实属是个坑爹玩意。</p>
 <p>没得办法，只能从 snap 中删掉 docker，再重新使用 apt-get 安装了，但是 apt-get 安装就略有繁琐了，参照 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/143156163">这篇文章</a> ：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo apt update</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo apt install apt-transport-https ca-certificates curl gnupg-agent software-properties-common</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -</span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">注意这一步，<span class="hljs-built_in">arch</span> 这里，要根据你的机器架构来指定，比如 arm64 或者是 amd64，我一开始就是直接复制文章中的命令，导致加入的是</span> <br><span class="hljs-meta prompt_"># </span><span class="language-bash">amd64 的软件源，而我的机器是 arm 的，导致后面安装 docker 失败</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">可以使用 <span class="hljs-built_in">uname</span> -c 查看机器的架构</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo add-apt-repository <span class="hljs-string">&quot;deb [arch=arm64] https://download.docker.com/linux/ubuntu <span class="hljs-subst">$(lsb_release -cs)</span> stable&quot;</span></span><br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo apt update</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">sudo apt install docker-ce docker-ce-cli containerd.io</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo apt update<br>sudo apt install apt-transport-https ca-certificates curl gnupg-agent software-properties-common<br>curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">注意这一步，<span class="hljs-built_in">arch</span> 这里，要根据你的机器架构来指定，通常是 arm64 或者是 amd64，我一开始就是直接复制文章中的命令，导致加入的是</span> <br><span class="hljs-meta prompt_"># </span><span class="language-bash">amd64 的软件源，而我的机器是 arm 的，导致后面安装 docker 失败</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">可以使用 <span class="hljs-built_in">uname</span> -c（ubuntu 下是 <span class="hljs-built_in">arch</span>）查看机器的架构</span><br>sudo add-apt-repository &quot;deb [arch=arm64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable&quot;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">或者可以直接这样，就能自动下载符合机器架构的包：</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">⚠️：这个方法不行，因为 amd64 架构的机器执行 <span class="hljs-built_in">arch</span> 显示的是 x86_64，而实际需要执行的参数为 amd64</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">sudo add-apt-repository <span class="hljs-string">&quot;deb [arch=<span class="hljs-subst">$(arch)</span>] https://download.docker.com/linux/ubuntu <span class="hljs-subst">$(lsb_release -cs)</span> stable&quot;</span></span><br><br>sudo apt update<br>sudo apt install docker-ce docker-ce-cli containerd.io<br></code></pre></td></tr></table></figure>
+
+<p>为了方便，直接贴出所有的安装命令：</p>
+<p>amd64：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo apt update<br>sudo apt install apt-transport-https ca-certificates curl gnupg-agent software-properties-common -y<br>curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -<br>sudo add-apt-repository &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable&quot;<br>sudo apt update<br>sudo apt install docker-ce docker-ce-cli containerd.io -y<br></code></pre></td></tr></table></figure>
+
+<p>arm64：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo apt update<br>sudo apt install apt-transport-https ca-certificates curl gnupg-agent software-properties-common -y<br>curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -<br>sudo add-apt-repository &quot;deb [arch=arm64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable&quot;<br>sudo apt update<br>sudo apt install docker-ce docker-ce-cli containerd.io -y<br></code></pre></td></tr></table></figure>
+
+
 
 <p>使用 apt-get 安装的 docker 就可以使用 systemctl 操作了。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">systemctl restart docker</span><br></code></pre></td></tr></table></figure>
