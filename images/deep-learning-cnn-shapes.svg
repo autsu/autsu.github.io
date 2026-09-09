@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">卷积网络入门的两类合成图片</title>
+  <desc id="desc">左侧是竖线类别，右侧是横线类别，下方展示图片 Tensor 从四维输入经过卷积和池化得到特征的过程。</desc>
+  <defs>
+    <pattern id="grid" width="12" height="12" patternUnits="userSpaceOnUse">
+      <rect width="12" height="12" fill="#f8fafc"/>
+      <path d="M 12 0 L 0 0 0 12" fill="none" stroke="#cbd5e1" stroke-width="0.8"/>
+    </pattern>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="520" rx="18" fill="#ffffff"/>
+  <text x="48" y="54" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="28" font-weight="700" fill="#0f172a">先让模型分清两种简单图形</text>
+  <text x="48" y="86" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="17" fill="#475569">每张图片是 16×16 的灰度 Tensor，线条位置随机，类别由方向决定。</text>
+
+  <rect x="48" y="120" width="310" height="250" rx="16" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+  <text x="78" y="160" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="21" font-weight="700" fill="#1e3a8a">类别 0：竖线</text>
+  <rect x="128" y="184" width="144" height="144" fill="url(#grid)" stroke="#60a5fa" stroke-width="2"/>
+  <rect x="188" y="184" width="24" height="144" fill="#2563eb" opacity="0.92"/>
+  <text x="78" y="348" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="15" fill="#475569">输入形状： [1, 16, 16]</text>
+
+  <rect x="400" y="120" width="310" height="250" rx="16" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+  <text x="430" y="160" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="21" font-weight="700" fill="#166534">类别 1：横线</text>
+  <rect x="480" y="184" width="144" height="144" fill="url(#grid)" stroke="#4ade80" stroke-width="2"/>
+  <rect x="480" y="244" width="144" height="24" fill="#16a34a" opacity="0.92"/>
+  <text x="430" y="348" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="15" fill="#475569">输入形状： [1, 16, 16]</text>
+
+  <line x1="750" y1="245" x2="830" y2="245" stroke="#64748b" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="850" y="120" width="300" height="250" rx="16" fill="#faf5ff" stroke="#d8b4fe" stroke-width="2"/>
+  <text x="880" y="160" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="21" font-weight="700" fill="#6b21a8">卷积网络</text>
+  <rect x="890" y="194" width="94" height="94" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="2"/>
+  <rect x="920" y="224" width="34" height="34" fill="#7c3aed"/>
+  <text x="1000" y="222" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="16" fill="#475569">局部窗口</text>
+  <text x="1000" y="249" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="16" fill="#475569">共享卷积核</text>
+  <text x="880" y="328" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="15" fill="#475569">输出：类别 0 或类别 1</text>
+
+  <rect x="48" y="408" width="1102" height="72" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="76" y="439" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="17" font-weight="700" fill="#334155">批量输入</text>
+  <text x="212" y="439" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="17" fill="#475569">[N, C, H, W] = [32, 1, 16, 16]</text>
+  <text x="76" y="465" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="15" fill="#64748b">N 是图片数量，C 是通道数，H 和 W 是图片的高度与宽度。</text>
+</svg>
