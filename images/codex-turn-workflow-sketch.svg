@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1680" viewBox="0 0 1600 1680" role="img" aria-labelledby="title desc">
+  <title id="title">一次 turn/start：提交、一次性回复与持续事件</title>
+  <desc id="desc">App Server 按 thread_id 串行处理 RPC，向 Core Session 的操作队列提交带 reply_tx 的 Op。Core 决定新建或追加 Turn，经同一 oneshot 通道回复 reply_rx。新建 Turn 启动 RegularTask；Core 通过 tx_event 发送多个 Event，App Server 从 rx_event 逐条接收并通知客户端。</desc>
+  <defs>
+    <pattern id="paper-grid" width="34" height="34" patternUnits="userSpaceOnUse">
+      <path d="M34 0H0V34" fill="none" stroke="#e1e8e2" stroke-width="1"/>
+    </pattern>
+    <filter id="paper-shadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="1" dy="4" stdDeviation="5" flood-color="#748783" flood-opacity=".12"/>
+    </filter>
+    <marker id="arrow-dark" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1 1L10 6L1 11" fill="none" stroke="#32494b" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1 1L10 6L1 11" fill="none" stroke="#bd6941" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1 1L10 6L1 11" fill="none" stroke="#59866b" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      text { font-family: "LXGW WenKai", "PingFang SC", "Noto Sans CJK SC", sans-serif; fill: #263d40; }
+      .heading { font-size: 43px; font-weight: 700; }
+      .subheading { font-size: 24px; }
+      .panel-title { font-size: 37px; font-weight: 700; }
+      .title { font-size: 28px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 23px; text-anchor: middle; }
+      .note { font-size: 21px; }
+      .caption { font-size: 23px; font-weight: 600; text-anchor: middle; }
+      .req { fill: none; stroke: #32494b; stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-dark); }
+      .reply { fill: none; stroke: #bd6941; stroke-width: 4.2; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-orange); }
+      .event { fill: none; stroke: #59866b; stroke-width: 4.2; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-green); }
+      .fine { fill: none; stroke: #8ba5a0; stroke-width: 1.3; opacity: .75; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1680" fill="#faf8f2"/>
+  <rect width="1600" height="1680" fill="url(#paper-grid)" opacity=".8"/>
+  <path d="M62 32Q796 26 1538 34M60 1650Q798 1655 1540 1648" class="fine"/>
+  <text x="75" y="81" class="heading">一次 turn/start：提交、执行和事件</text>
+  <path d="M76 105Q389 101 689 106" fill="none" stroke="#d59a72" stroke-width="7" opacity=".48" stroke-linecap="round"/>
+  <text x="76" y="138" class="subheading">深色：提交与接口响应　橙色：一次性回复　绿色：运行事件</text>
+
+  <!-- The client stays outside both components. -->
+  <path d="M90 159Q220 154 350 160L352 232Q220 237 88 230Z" fill="#fffdf8" stroke="#32494b" stroke-width="3.4" filter="url(#paper-shadow)"/>
+  <text x="220" y="205" class="title">客户端</text>
+
+  <!-- Component boundaries. -->
+  <path d="M60 270Q410 263 760 273L765 1385Q410 1393 61 1383Z" fill="#f0f6f3" stroke="#527a77" stroke-width="4" filter="url(#paper-shadow)"/>
+  <path d="M68 279Q412 272 752 281L755 1376Q409 1384 69 1374Z" class="fine"/>
+  <text x="101" y="324" class="panel-title">App Server</text>
+  <path d="M100 343Q255 338 390 343" fill="none" stroke="#98bdb0" stroke-width="6" stroke-linecap="round" opacity=".64"/>
+
+  <path d="M839 271Q1190 264 1540 273L1544 1385Q1190 1392 840 1382Z" fill="#f7f2e9" stroke="#927d65" stroke-width="4" filter="url(#paper-shadow)"/>
+  <path d="M846 279Q1190 272 1532 280L1535 1376Q1188 1384 847 1374Z" class="fine"/>
+  <text x="878" y="324" class="panel-title">Core Session</text>
+  <path d="M877 343Q1052 338 1194 343" fill="none" stroke="#dcb58b" stroke-width="6" stroke-linecap="round" opacity=".7"/>
+
+  <!-- Request enters the App Server queue. -->
+  <path d="M89 193H39V415H117" class="req"/>
+  <text x="76" y="253" class="note">turn/start</text>
+  <g transform="rotate(-2 240 417)">
+    <rect x="111" y="375" width="240" height="100" rx="10" fill="#dcebe5" stroke="#5a817b" stroke-width="3"/>
+    <rect x="119" y="366" width="240" height="100" rx="10" fill="#fffdf8" stroke="#5a817b" stroke-width="3"/>
+  </g>
+  <text x="240" y="412" class="title">RPC 请求队列</text>
+  <text x="240" y="449" class="body">请求 A → 请求 B</text>
+  <text x="240" y="505" class="caption">按 thread_id 串行</text>
+
+  <path d="M360 415H440" class="req"/>
+  <text x="400" y="387" class="note" text-anchor="middle">drain</text>
+  <path d="M444 368Q587 362 730 369L731 465Q587 472 443 464Z" fill="#fffdf8" stroke="#527a77" stroke-width="3.4"/>
+  <text x="587" y="409" class="title">turn_start_inner</text>
+  <text x="587" y="447" class="body">创建 oneshot，提交 Op</text>
+
+  <!-- A small note makes the sender/receiver pair explicit. -->
+  <path d="M145 626Q414 621 684 627L685 831Q414 837 144 829Z" fill="#fff9e9" stroke="#b09b70" stroke-width="3" filter="url(#paper-shadow)"/>
+  <path d="M350 622L468 624L460 641L356 640Z" fill="#e5d1a7" opacity=".65"/>
+  <text x="415" y="678" class="title">oneshot::channel()</text>
+  <text x="415" y="724" class="body">reply_tx：发送端，随 Op 进入 Core</text>
+  <text x="415" y="766" class="body">reply_rx：接收端，留在提交方等待</text>
+  <text x="415" y="808" class="body">同一条通道，只传一次提交决定</text>
+
+  <!-- Core submission channel and its persistent consumer. -->
+  <path d="M731 416H889" class="req"/>
+  <text x="807" y="388" class="note" text-anchor="middle">Op::TurnInput</text>
+  <path d="M890 367Q1005 362 1121 368L1122 466Q1004 473 889 465Z" fill="#fffdf8" stroke="#a48468" stroke-width="3.4"/>
+  <text x="1005" y="407" class="title">Op 队列</text>
+  <text x="1005" y="446" class="body">reply 字段带 reply_tx</text>
+  <text x="1005" y="506" class="caption">Session Submission Channel</text>
+
+  <path d="M1122 415H1219" class="req"/>
+  <path d="M1220 367Q1355 362 1490 368L1491 466Q1355 473 1219 465Z" fill="#fffdf8" stroke="#a48468" stroke-width="3.4"/>
+  <text x="1355" y="407" class="title">submission_loop</text>
+  <text x="1355" y="447" class="body">取出并处理 Op</text>
+  <path d="M1355 468V516" class="req"/>
+
+  <!-- Decision: a new task is spawned only on the Started side. -->
+  <path d="M1355 518L1490 588L1355 658L1220 588Z" fill="#fff9ed" stroke="#b1906d" stroke-width="3.6"/>
+  <path d="M1355 526L1481 588L1355 650L1229 588Z" class="fine"/>
+  <text x="1355" y="595" class="title">活动 Turn？</text>
+  <path d="M1218 588C1090 595 1032 644 1032 697" class="reply"/>
+  <text x="945" y="602" class="note" fill="#a95f3b">无：新建</text>
+  <path d="M1492 588C1538 625 1390 655 1380 698" class="req"/>
+  <text x="1428" y="680" class="note">有：追加</text>
+
+  <path d="M880 704Q1030 699 1181 705L1182 809Q1030 815 879 807Z" fill="#fff1e5" stroke="#bd6941" stroke-width="3.4"/>
+  <text x="1030" y="751" class="title" style="font-size:25px">Session::start_task</text>
+  <text x="1030" y="791" class="body">启动 RegularTask</text>
+  <path d="M1257 704Q1381 699 1502 705L1503 809Q1380 815 1256 807Z" fill="#f1f6ee" stroke="#6d9277" stroke-width="3.4"/>
+  <text x="1380" y="751" class="title">pending input</text>
+  <text x="1380" y="791" class="body">加入当前 Turn</text>
+
+  <path d="M1032 811V875" class="event"/>
+  <path d="M899 880Q1040 874 1180 881L1181 1011Q1041 1017 898 1009Z" fill="#f0f6ee" stroke="#59866b" stroke-width="3.5"/>
+  <text x="1040" y="922" class="title">RegularTask::run</text>
+  <text x="1040" y="964" class="body">TurnStarted → run_turn</text>
+  <text x="1040" y="997" class="body">模型 / 工具循环 → 结束</text>
+
+  <!-- Both branches send only the routing decision via the same oneshot pair. -->
+  <path d="M1183 757H1204V986H1238" class="reply"/>
+  <path d="M1380 812V939" class="req"/>
+  <path d="M1239 943Q1365 938 1501 944L1502 1036Q1366 1042 1238 1034Z" fill="#fffdf8" stroke="#bd6941" stroke-width="3.5"/>
+  <text x="1370" y="983" class="title">reply.send(...)</text>
+  <text x="1370" y="1020" class="body">Started / Steered + turn_id</text>
+
+  <path d="M905 1173Q1190 1168 1480 1174L1481 1351Q1190 1357 904 1349Z" fill="#f1f7ee" stroke="#7aa084" stroke-width="3"/>
+  <text x="1193" y="1212" class="title">运行事件从哪里来</text>
+  <text x="1193" y="1251" class="body">TurnStarted：RegularTask 启动时</text>
+  <text x="1193" y="1288" class="body">文字 / 工具进度：运行过程中</text>
+  <text x="1193" y="1323" class="body">TurnComplete：on_task_finished 收尾时</text>
+
+  <!-- The reply travels below the background task, with no crossing lines. -->
+  <path d="M1370 1038V1086H785V1103H731" class="reply"/>
+  <text x="952" y="1135" class="note" text-anchor="middle" fill="#a95f3b">同一个 oneshot：只回复一次</text>
+  <path d="M444 1054Q587 1049 731 1055L732 1159Q587 1165 443 1157Z" fill="#fff7ee" stroke="#bd6941" stroke-width="3.4"/>
+  <text x="587" y="1098" class="title">reply_rx.await</text>
+  <text x="587" y="1138" class="body">收到提交决定和 turn_id</text>
+
+  <path d="M443 1106H367" class="req"/>
+  <path d="M118 1055Q242 1050 367 1055L368 1159Q242 1165 117 1157Z" fill="#fffdf8" stroke="#527a77" stroke-width="3.4"/>
+  <text x="242" y="1097" class="title">turn/start 响应</text>
+  <text x="242" y="1137" class="body">turn.id + InProgress</text>
+  <path d="M116 1106H22V171H87" class="req"/>
+  <text x="93" y="1033" class="note">接口回复</text>
+
+  <!-- Event listener, independent of the turn/start response. -->
+  <path d="M118 1210Q242 1205 367 1211L368 1315Q242 1321 117 1313Z" fill="#f0f7ef" stroke="#59866b" stroke-width="3.4"/>
+  <text x="242" y="1254" class="title">客户端通知</text>
+  <text x="242" y="1293" class="body">进度 / turn/completed</text>
+  <path d="M444 1210Q587 1205 731 1211L732 1315Q587 1321 443 1313Z" fill="#f0f7ef" stroke="#59866b" stroke-width="3.4"/>
+  <text x="587" y="1254" class="title">Thread 事件监听任务</text>
+  <text x="587" y="1293" class="body">next_event() 逐条读取</text>
+  <path d="M442 1261H369" class="event"/>
+  <path d="M116 1261H8V171H87" class="event"/>
+  <text x="83" y="1191" class="note" fill="#4b795f">事件通知</text>
+
+  <!-- Independent, multi-message event channel: send -> buffered queue -> receive. -->
+  <circle cx="774" cy="1103" r="10" fill="#faf8f2"/>
+  <path d="M1040 1013V1053H774V1427H1308V1514" class="event"/>
+  <text x="1040" y="1408" class="note" text-anchor="middle" fill="#4b795f">持续发送 Event</text>
+  <path d="M120 1453Q800 1445 1481 1454L1484 1638Q800 1646 119 1636Z" fill="#eaf4ec" stroke="#59866b" stroke-width="3.8" filter="url(#paper-shadow)"/>
+  <text x="153" y="1491" class="caption" style="text-anchor:start">Session 事件通道</text>
+  <text x="770" y="1491" class="note" text-anchor="middle">TurnStarted · 工具进度 · TurnComplete 等多个 Event</text>
+
+  <path d="M250 1516Q375 1511 500 1517L501 1608Q375 1614 249 1606Z" fill="#fffdf8" stroke="#78a184" stroke-width="3"/>
+  <text x="375" y="1555" class="title">rx_event</text>
+  <text x="375" y="1593" class="body">recv() 取出一条</text>
+  <path d="M650 1516Q860 1511 1070 1517L1071 1608Q860 1614 649 1606Z" fill="#fffdf8" stroke="#78a184" stroke-width="3"/>
+  <text x="860" y="1555" class="title">事件缓冲区</text>
+  <text x="860" y="1593" class="body">unbounded：暂存未读 Event</text>
+  <path d="M1190 1516Q1310 1511 1430 1517L1431 1608Q1310 1614 1189 1606Z" fill="#fffdf8" stroke="#78a184" stroke-width="3"/>
+  <text x="1310" y="1555" class="title">tx_event</text>
+  <text x="1310" y="1593" class="body">send(Event)</text>
+  <path d="M1187 1562H1074" class="event"/>
+  <path d="M647 1562H504" class="event"/>
+  <path d="M375 1514V1419H587V1318" class="event"/>
+</svg>
